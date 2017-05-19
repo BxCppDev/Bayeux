@@ -1,6 +1,6 @@
 /* output_module.cc
  *
- * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,7 @@ namespace dpp {
   void output_module::_set_defaults()
   {
     _preserve_existing_output_ = false;
-    _sink_   = 0;
+    _sink_   = nullptr;
     return;
   }
 
@@ -230,14 +230,14 @@ namespace dpp {
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/
+    if (a_config.has_flag("preserve_existing_files")) {
+      set_preserve_existing_output(true);
+    }
+
     if (! _common_) {
       _grab_common();
     }
     _common_.get()->initialize(a_config, a_service_manager);
-
-    if (a_config.has_flag("preserve_existing_files")) {
-      set_preserve_existing_output(true);
-    }
 
     this->_open_sink();
 
@@ -263,17 +263,16 @@ namespace dpp {
      *  revert to some defaults *
      ****************************/
 
-    if (_sink_ != 0) {
+    if (_sink_ != nullptr) {
       if (_sink_->is_open()) {
         _sink_->close();
       }
       delete _sink_;
-      _sink_ = 0;
+      _sink_ = nullptr;
     }
     _grab_common().clear_metadata_store();
     _common_.get()->reset();
-    _common_.reset(0);
-    // XXX
+    _common_.reset();
     _set_defaults();
 
     /****************************
@@ -297,8 +296,6 @@ namespace dpp {
 
   void output_module::_store_metadata_()
   {
-    // std::cerr << "DEVEL: dpp::output_module::_store_metadata_: Entering..." << std::endl;
-
     // First consider the external context service (if any) and its global metadata sections:
     if (get_common().has_context_service()) {
       const context_service & ctx_service = get_common().get_context_service();
@@ -365,15 +362,14 @@ namespace dpp {
       props.store_integer(io_common::metadata_rank(), i);
       _sink_->store_metadata(props);
     }
-    // std::cerr << "DEVEL: dpp::output_module::_store_metadata_: Exiting." << std::endl;
     return;
   }
 
   base_module::process_status output_module::_open_sink()
   {
-    if (_sink_ == 0) {
+    if (_sink_ == nullptr) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
-      if (get_common().get_file_index() >= (int)get_common().get_filenames().size()) {
+      if (get_common().get_file_index() >= (int) get_common().get_filenames().size()) {
         _grab_common().set_terminated(true);
         return PROCESS_FATAL;
       }
@@ -509,6 +505,9 @@ namespace dpp {
       indent = a_indent;
     }
 
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Preserve existing output : " << std::boolalpha << _preserve_existing_output_ << std::endl;
+
     if (_common_) {
       a_out << indent << datatools::i_tree_dumpable::tag
             << "Common   : " << std::endl;
@@ -518,10 +517,7 @@ namespace dpp {
     }
 
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Has metadata store : " << has_metadata_store() << std::endl;
-
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Preserve existing output : " << _preserve_existing_output_ << std::endl;
+          << "Has metadata store : " << std::boolalpha << has_metadata_store() << std::endl;
 
     a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
           << "Sink : " << _sink_  << std::endl;
@@ -531,10 +527,8 @@ namespace dpp {
 
 } // namespace dpp
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

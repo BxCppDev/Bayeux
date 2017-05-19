@@ -40,6 +40,7 @@
 
 // - Bayeux:
 #include <bayeux/bayeux.h>
+#include <bayeux/version.h>
 
 // - Bayeux/datatools:
 #include <datatools/kernel.h>
@@ -59,32 +60,41 @@ namespace dtc = datatools::configuration;
 
 struct ui {
 
+  //! \brief Application configuration parameters
+  struct app_config_params {
+    //! Logging level
+    std::string                  logging_label = "fatal";
+    datatools::logger::priority  logging = datatools::logger::PRIO_FATAL;
+    bool                         no_splash = false; //!< Do not print splash screen
+    dtc::variant_service::config variants; //!< Variant support parameters
+    dpp::dpp_driver_params       driver;   //!< dpp driver parameters
+  };
+
   /// Return the application name
   static std::string app_name();
 
   /// Print application usage (supported options and arguments)
-  static void app_usage(std::ostream & out_,
-                        const bpo::options_description & desc_);
+  static void app_print_usage(std::ostream & out_,
+                              const bpo::options_description & desc_);
+
+  //! Print application splash screen
+  static void app_print_splash(std::ostream & out_ = std::clog);
 
   /// Print application version
   static void app_version(std::ostream & out_);
 
   /// Build options
-  static void app_build_driver_opts(boost::program_options::options_description &,
-                                    dpp::dpp_driver_params &);
+  static void app_build_opts(boost::program_options::options_description & desc_,
+                             app_config_params & params_);
+
+  /// Build driver options
+  static void app_build_driver_opts(boost::program_options::options_description & desc_,
+                                    dpp::dpp_driver_params & drv_params_);
 
   /// Return kernel initialization flags for this application
   static uint32_t app_kernel_init_flags();
 
   static void app_dump_debug(std::ostream & out_, const dtc::variant_repository & vrep_);
-
-  //! \brief Application configuration parameters
-  struct app_config_params {
-    //! Logging level
-    datatools::logger::priority  logging = datatools::logger::PRIO_FATAL;
-    dtc::variant_service::config variants; //!< Variant support
-    dpp::dpp_driver_params       driver;   //!< dpp driver parameters
-  };
 
 };
 
@@ -97,6 +107,7 @@ int main(int argc_, char ** argv_)
   try {
     // Describe driver's command line options:
     bpo::options_description optDesc("Options");
+    ui::app_build_opts(optDesc, params);
     ui::app_build_driver_opts(optDesc, params.driver);
 
     // Describe driver's command line arguments:
@@ -122,7 +133,10 @@ int main(int argc_, char ** argv_)
 
     // Aggregate options:
     bpo::options_description optPublic;
-    optPublic.add(optDesc).add(optVariant).add(optKernel);
+    optPublic
+      .add(optDesc)
+      .add(optVariant)
+      .add(optKernel);
 
     // Parse options:
     bpo::variables_map vMap;
@@ -141,24 +155,34 @@ int main(int argc_, char ** argv_)
     bpo::notify(vMap);
 
     // Handle any non-bound options:
-    if (vMap.count("help")) {
-      ui::app_usage(std::cout, optPublic);
+    if (vMap.count("help") && vMap["help"].as<bool>()) {
+      ui::app_print_usage(std::cout, optPublic);
       error_code = -1;
     }
 
-    if (vMap.count("version")) {
+    if (vMap.count("version") && vMap["version"].as<bool>()) {
       ui::app_version(std::cout);
       error_code = -1;
     }
 
     // Run dpp driver session:
     if (error_code == EXIT_SUCCESS) {
+
       if (vMap.count("logging")) {
+        params.logging_label = vMap["logging"].as<std::string>();
         datatools::logger::priority prio
-          = datatools::logger::get_priority(params.driver.logging_label);
+          = datatools::logger::get_priority(params.logging_label);
         if (prio != datatools::logger::PRIO_UNDEFINED) {
           params.logging = prio;
+          params.driver.logging_label = datatools::logger::get_priority_label(prio);
+        } else {
+          DT_THROW(std::logic_error,
+                   "Invalid logging priority '" << params.logging_label << "' !");
         }
+      }
+
+      if (! params.no_splash) {
+        ui::app_print_splash(std::cerr);
       }
 
       // Variant service:
@@ -173,12 +197,6 @@ int main(int argc_, char ** argv_)
         // Start the variant service:
         vserv->start();
       }
-
-      // Fetch general opts :
-      params.logging = datatools::logger::get_priority(params.driver.logging_label);
-      DT_THROW_IF(params.logging == datatools::logger::PRIO_UNDEFINED,
-                  std::logic_error,
-                  "Invalid logging priority '" << params.driver.logging_label << "' !");
 
       // dpp driver session :
       if (params.logging >= datatools::logger::PRIO_DEBUG) {
@@ -222,7 +240,20 @@ std::string ui::app_name()
 
 void ui::app_version(std::ostream & out_)
 {
-  out_ << app_name() << " " << datatools::version::get_version() << std::endl;
+  out_ << app_name() << " " << BAYEUX_LIB_VERSION << std::endl;
+  return;
+}
+
+void ui::app_print_splash(std::ostream & out_)
+{
+  out_ << "                                                   \n"
+       << "\tB A Y E U X  -  D P P    P R O C E S S I N G     \n"
+       << "\tVersion " << BAYEUX_LIB_VERSION << "             \n"
+       << "                                                   \n"
+       << "\tCopyright (C) 2009-2017, the BxCppDev group      \n"
+       << "\tFrancois Mauger, Xavier Garrido                  \n"
+       << "                                                   \n";
+  out_ << "                                                   \n";
   return;
 }
 
@@ -237,10 +268,11 @@ uint32_t ui::app_kernel_init_flags()
   kernel_init_flags |= datatools::kernel::init_no_inhibit_variant;
   kernel_init_flags |= datatools::kernel::init_no_locale_category;
   kernel_init_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_urnquery;
   return kernel_init_flags;
 }
 
-void ui::app_usage(std::ostream & out_, const bpo::options_description & opts_)
+void ui::app_print_usage(std::ostream & out_, const bpo::options_description & opts_)
 {
   out_ << app_name() << " -- A generic data chain processing program" << std::endl;
   out_ << "Usage : " << std::endl;
@@ -287,18 +319,35 @@ void ui::app_usage(std::ostream & out_, const bpo::options_description & opts_)
   return;
 }
 
+void ui::app_build_opts(boost::program_options::options_description & opts_,
+                        app_config_params & params_)
+{
+  namespace po = boost::program_options;
+  opts_.add_options()
+    ("help,h", bpo::value<bool>()
+     ->zero_tokens()
+     ->default_value(false),
+     "produce help message.")
+    ("version", bpo::value<bool>()
+     ->zero_tokens()
+     ->default_value(false),
+     "print version number then exit.")
+    ("logging,P",
+     bpo::value<std::string>()->default_value("fatal"),
+     "set the logging priority.")
+    ("no-splash",
+     po::value<bool>(&params_.no_splash)->zero_tokens()->default_value(false),
+     "do not print the splash screen.\n"
+     )
+    ;
+  return;
+}
+
 void ui::app_build_driver_opts(boost::program_options::options_description & opts_,
                                dpp::dpp_driver_params & params_)
 {
   namespace po = boost::program_options;
   opts_.add_options()
-    ("help,h", bpo::value<bool>(&params_.help)
-     ->zero_tokens()
-     ->default_value(false),
-     "produce help message.")
-    ("logging-priority,P",
-     bpo::value<std::string>(&params_.logging_label)->default_value("warning"),
-     "set the logging priority.")
     ("load-dll,l",
      bpo::value<std::vector<std::string> >(&params_.LL_dlls),
      "set a DLL to be loaded.")
@@ -344,9 +393,6 @@ void ui::app_build_driver_opts(boost::program_options::options_description & opt
     ("slice-store-out,T",
      bpo::value<bool>(&params_.slice_store_out)->zero_tokens()->default_value(false),
      "set the flag to store only the sliced data records.")
-    // ("save-stopped-records,s",
-    //  po::value<bool>(&save_stopped_data_records)->zero_tokens()->default_value(false),
-    //  "Blablabla.")
     ;
   return;
 }
@@ -378,10 +424,8 @@ void ui::app_dump_debug(std::ostream & out_, const dtc::variant_repository & vre
   return;
 }
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

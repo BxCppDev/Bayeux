@@ -2,9 +2,22 @@
  *
  * Copyright (C) 2011-2017 François Mauger <mauger@lpccaen.in2p3.fr>
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  *
  */
-
 
 // Ourselves:
 #include <dpp/dpp_driver.h>
@@ -79,7 +92,7 @@ namespace dpp {
     out_ << indent << datatools::i_tree_dumpable::tag << "logging_label  : '"
          << logging_label << "'" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "break_on_error_as_fatal  : "
-         << break_on_error_as_fatal << "" << std::endl;
+         << std::boolalpha << break_on_error_as_fatal << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "print_modulo  : "
          << print_modulo << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "module_manager_config_file  : '"
@@ -95,7 +108,7 @@ namespace dpp {
     out_ << indent << datatools::i_tree_dumpable::tag << "output_files  : "
          << output_files.size() << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "no_max_records  : "
-         << no_max_records << "" << std::endl;
+         << std::boolalpha << no_max_records << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "max_records  : "
          << max_records << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "max_records_per_output_file  : "
@@ -107,11 +120,11 @@ namespace dpp {
     out_ << indent << datatools::i_tree_dumpable::tag << "slice_width  : "
          << slice_width << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "slice_store_out  : "
-         << slice_store_out << "" << std::endl;
+         << std::boolalpha << slice_store_out << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "save_stopped_data_records  : "
-         << save_stopped_data_records << "" << std::endl;
+         << std::boolalpha << save_stopped_data_records << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "preserve_existing_files  : "
-         << preserve_existing_files << "" << std::endl;
+         << std::boolalpha << preserve_existing_files << "" << std::endl;
     return;
   }
 
@@ -201,7 +214,7 @@ namespace dpp {
                   std::runtime_error,
                   "Loading DLL '" << dll_name  << "' fails !");
     }
-    _lib_loader_->print(std::cerr);
+    // _lib_loader_->print(std::cerr);
     // Load properties from the configuration file:
     // DT_THROW_IF(_params_.module_names.empty() && _params_.module_manager_config_file.empty(),
     //             std::logic_error,
@@ -248,9 +261,13 @@ namespace dpp {
     // Setup the data output sink :
     if (_params_.output_files.size() > 0) {
       _sink_.reset(new dpp::output_module(_logging_));
-      _sink_->set_logging_priority(datatools::logger::PRIO_DEBUG);
+      // _sink_->set_logging_priority(datatools::logger::PRIO_DEBUG);
       datatools::properties sink_config;
-      if (_params_.preserve_existing_files) sink_config.store_flag("preserve_existing_files");
+      DT_LOG_DEBUG(_logging_, "Preserve existing files = "
+                   << std::boolalpha << _params_.preserve_existing_files);
+      if (_params_.preserve_existing_files) {
+        sink_config.store_flag("preserve_existing_files");
+      }
       sink_config.store("name", "data_output_sink");
       sink_config.store("files.mode", "list");
       sink_config.store("files.list.filenames", _params_.output_files);
@@ -263,6 +280,9 @@ namespace dpp {
                                         _module_mgr_->grab_service_manager());
       } else {
         _sink_->initialize_standalone(sink_config);
+      }
+      if (datatools::logger::is_debug(_logging_)) {
+        _sink_->tree_dump(std::cerr, "Sink: ", "[debug] ");
       }
     }
 

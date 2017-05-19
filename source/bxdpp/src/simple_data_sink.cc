@@ -60,7 +60,7 @@ namespace dpp {
     if (_sink_record.status == sink_record::STATUS_CLOSED) {
       return;
     }
-    if (_boost_io_file_writer_ != 0) {
+    if (_boost_io_file_writer_ != nullptr) {
       this->simple_data_sink::close_file_sink_ ();
     }
     return;
@@ -121,12 +121,12 @@ namespace dpp {
 
   void simple_data_sink::close_file_sink_ ()
   {
-    if (_boost_io_file_writer_ != 0) {
+    if (_boost_io_file_writer_ != nullptr) {
       if (_boost_io_file_writer_->is_initialized()) {
         _boost_io_file_writer_->reset ();
       }
       delete _boost_io_file_writer_;
-      _boost_io_file_writer_ = 0;
+      _boost_io_file_writer_ = nullptr;
       _sink_record.status = sink_record::STATUS_CLOSED;
       _sink_record.reset ();
       _record_counter_ = 0;
@@ -138,6 +138,8 @@ namespace dpp {
   void simple_data_sink::open_file_sink_ ()
   {
     namespace ds = datatools;
+
+    // std::cerr << "DEVEL ******** " << is_preserve_existing_sink() << std::endl;
     if (boost::filesystem::exists (_sink_record.effective_label)) {
       DT_THROW_IF (is_preserve_existing_sink (),
                    std::runtime_error,
@@ -151,7 +153,7 @@ namespace dpp {
     DT_THROW_IF (status == ds::io_factory::ERROR,
                  std::logic_error,
                  "File format not recognized for '" << _sink_record.effective_label << "' !");
-    if (_boost_io_file_writer_ == 0) {
+    if (_boost_io_file_writer_ == nullptr) {
       _record_counter_ = 0;
       _metadata_counter_ = 0;
       _boost_io_file_writer_ = new ds::data_writer;
@@ -165,7 +167,7 @@ namespace dpp {
   bool simple_data_sink::store_next_record (const datatools::things & a_event_record)
   {
     bool done = false;
-    if (_boost_io_file_writer_ != 0) {
+    if (_boost_io_file_writer_ != nullptr) {
       _boost_io_file_writer_->store(a_event_record);
       _record_counter_++;
       done = true;
@@ -184,7 +186,7 @@ namespace dpp {
   bool simple_data_sink::store_metadata (const datatools::properties & a_metadata)
   {
     bool done = false;
-    if (_boost_io_file_writer_ != 0) {
+    if (_boost_io_file_writer_ != nullptr) {
       if (_record_counter_ == 0) {
         _boost_io_file_writer_->store(a_metadata);
         _metadata_counter_++;
@@ -213,7 +215,7 @@ namespace dpp {
                                       datatools::logger::priority a_priority)
     : i_data_sink (a_sink_label, a_priority)
   {
-    _boost_io_file_writer_ = 0;
+    _boost_io_file_writer_ = nullptr;
     _record_counter_ = 0;
     _metadata_counter_ = 0;
     this->simple_data_sink::open ();
@@ -228,11 +230,9 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-/*
-** Local Variables: --
-** mode: c++ --
-** indent-tabs-mode: nil --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// indent-tabs-mode: nil --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

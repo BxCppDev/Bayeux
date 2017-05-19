@@ -151,7 +151,17 @@ int main(int argc_, char ** argv_)
     po::store(parsed, vm);
     po::notify(vm);
 
-    params.logging = datatools::logger::get_priority(params.logging_label);
+    {
+      datatools::logger::priority prio
+        = datatools::logger::get_priority(params.logging_label);
+      if (prio != datatools::logger::PRIO_UNDEFINED) {
+        params.logging = prio;
+      } else {
+        DT_THROW(std::logic_error,
+                 "Invalid logging priority '" << params.logging_label << "' !");
+      }
+    }
+
     if (params.help) {
       app_print_help(optPublic, std::cout);
       params.run_session = false;
@@ -244,6 +254,7 @@ uint32_t app_kernel_init_flags()
   kernel_init_flags |= datatools::kernel::init_no_inhibit_variant;
   kernel_init_flags |= datatools::kernel::init_no_locale_category;
   kernel_init_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_urnquery;
   return kernel_init_flags;
 }
 
@@ -284,15 +295,14 @@ void app_build_general_opts(boost::program_options::options_description & opts_,
 
 void app_print_splash(std::ostream & out_)
 {
-  out_ << "                                                   \n"
-       << "\tG E N V T X    P R O D U C T I O N               \n"
-       << "\tVersion " << GENVTX_LIB_VERSION << "             \n"
-       << "                                                   \n"
-       << "\tCopyright (C) 2009-2016                          \n"
-       << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon, \n"
-       << "\tBen Morgan and Arnaud Chapon                     \n"
-       << "                                                   \n";
-  out_ << "                                                   \n";
+  out_ << "                                                    \n"
+       << "\tB A Y E U X  -  G E N V T X    P R O D U C T I O N\n"
+       << "\tVersion " << GENVTX_LIB_VERSION << "              \n"
+       << "                                                    \n"
+       << "\tCopyright (C) 2009-2017, the BxCppDev group       \n"
+       << "\tFrancois Mauger, Xavier Garrido, Arnaud Chapon    \n"
+       << "                                                    \n";
+  out_ << "                                                    \n";
   return;
 }
 
