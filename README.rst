@@ -604,11 +604,12 @@ Current development staff:
 * Jean Hommet (LPC Caen): initial development of the Boost/Serialization features.
 * Yves Lemière (LPC Caen, Université de Caen, Normandie Université): validation.
 * François Mauger (LPC Caen, Université de Caen, Normandie Université, project leader): all modules.
+* Guillaume Oliviéro (LPC Caen, Université de Caen, Normandie Université): validation
 
 Other contributors:
 
-* Arnaud Chapon (Cerap): geometry, validation.
-* Benoit Guillon (LPC Caen, ENSICAEN): first version of the ``Bayeux/materials`` modules.
+* Arnaud Chapon ((LPC Caen, Cerap): geometry, validation.
+* Benoit Guillon (LPC Caen, ENSICAEN): original implementation of the ``Bayeux/materials`` module.
 * Ben Morgan (University of Warwick): CMake support, logging features in datatools,
   other management and integration tools, Doxygen based documentation support,
   Trac/SVN to GitHub migration.
