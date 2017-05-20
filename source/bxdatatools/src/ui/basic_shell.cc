@@ -1217,7 +1217,9 @@ namespace datatools {
         } // End of continuation marks management.
 
         // Interpreter block:
-        // bool success = true;
+#if DATATOOLS_WITH_READLINE == 1
+        bool success = true;
+#endif // DATATOOLS_WITH_READLINE
         {
           cri.set_success();
           cri = _run_command(line);
@@ -1227,7 +1229,9 @@ namespace datatools {
             DT_LOG_TRACE(get_logging(), "Command requests a shell stop.");
             go_on = false;
           } else if (cri.is_failure()) {
-            // success = false;
+#if DATATOOLS_WITH_READLINE == 1
+            success = false;
+#endif // DATATOOLS_WITH_READLINE
             DT_LOG_TRACE(get_logging(), "Command failed.");
             std::cerr << get_name() << ": error: ";
             const parser_context & pcontext = _grab_pimpl().pcontexts.back();
