@@ -83,17 +83,18 @@ lahague
 Bayeux's roots
 --------------
 
-Original  work on  Bayeux was  initiated at the
-`Laboratoire de  Physique Corpusculaire  de Caen`_  in the  framework
-of  the  NEMO3  double-beta  decay  experiment and  the  R&D  for  its
-successor: the SuperNEMO  experiment. Bayeux is developped  by a group
-of physicists working in Nuclear and Particle Physics.
-It is now the  cornerstone of the SuperNEMO_ experiment's
-production  software  chain.     It is also  used by
-several  projects for  the  simulation of  particle transport  through
-matter,  detector design  for  nuclear  physics, detection  efficiency
-calculation,  data   serialization,  data  processing   and  analysis,
-radiation protection, dosimetry...
+Original work on Bayeux was  initiated at the `Laboratoire de Physique
+Corpusculaire  de Caen`_  in the  framework of  the NEMO3  double-beta
+decay  experiment  and  the  R&D  for  its  successor:  the  SuperNEMO
+experiment. Bayeux is  developped by a group of  physicists working in
+Nuclear and  Particle Physics. It  provides generic classes  and tools
+that  can  be  used  in  many  different  contexts.   It  is  now  the
+cornerstone of the SuperNEMO_  experiment's production software chain.
+As a  generic toolbox,  it is  also used by  several projects  for the
+simulation of  particle transport through matter,  detector design for
+nuclear physics, detection efficiency calculation, data serialization,
+data  processing  and  analysis, radiation  protection  and  dosimetry
+studies.
 
 .. _SuperNEMO: https://github.com/SuperNEMO-DBD
 
