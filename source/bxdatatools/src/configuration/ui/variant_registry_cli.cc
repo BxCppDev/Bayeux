@@ -36,7 +36,8 @@ namespace datatools {
     namespace ui {
 
       variant_registry_cli::variant_registry_cli(variant_registry & registry_)
-        : _registry_(registry_)
+        : _logging_(datatools::logger::PRIO_FATAL)
+        , _registry_(registry_)
       {
         return;
       }
@@ -167,6 +168,7 @@ namespace datatools {
                      << "in registry '" << _registry_.get_name() << "'!");
           }
         } catch (std::exception & x) {
+          DT_LOG_ERROR(_logging_, x.what());
           cri.set_error_message(x.what());
         }
         return cri;

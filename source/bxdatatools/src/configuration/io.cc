@@ -843,26 +843,35 @@ namespace datatools {
         bool variant_parameter_found = false;
         std::string variant_parameter_value;
         if (repository_is_active()) {
+          DT_LOG_TRACE(_logging_, "repository is active");
           // Search for registrated variant parameter in the associated variant repository:
           const variant_repository & rep = get_repository();
-          ui::variant_repository_cli vrepCLi(const_cast<variant_repository &>(rep));
-          command::returned_info cri2 = vrepCLi.cmd_get_parameter(variant_registry_name,
+          ui::variant_repository_cli vrepCli(const_cast<variant_repository &>(rep));
+          vrepCli.set_logging(_logging_);
+          DT_LOG_TRACE(_logging_, "Invoking cmd_get_parameter...");
+          command::returned_info cri2 = vrepCli.cmd_get_parameter(variant_registry_name,
                                                                   variant_parameter_path,
                                                                   variant_parameter_value);
           if (cri2.is_success()) {
+            DT_LOG_TRACE(_logging_, "Success.");
             effective_property_value_str = variant_parameter_value;
             variant_parameter_found = true;
             DT_LOG_TRACE(_logging_, "Found value for variant parameter '" << variant_path << "' = '"
                                       << variant_parameter_value << "'");
           } else {
+            DT_LOG_TRACE(_logging_, "cmd_get_parameter failed.");
+            // if (datatools::logger::is_debug(_logging_)) {
+            //   std::cerr << "[debug] " << cri2 << std::endl;
+            // }
+            DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "An error occured: " << cri2);
             // DT_LOG_WARNING(logging, "Bayeux/datatools kernel's variant repository could not provide the value of "
             //                << "parameter '" << variant_path << "' : " << cri.get_error_message());
             // Handle error cases:
             // * CEC_SCOPE_INVALID:             registry does not exists -> fallback to default value if any (see below)
             // * CEC_FAILURE:                   fatal error -> cannot fallback to default value
-            // * CEC_PARAMETER_INVALID_KEY:     fatal error ->  cannot fallback to default value
-            // * CEC_PARAMETER_INVALID_CONTEXT: fatal error ->  cannot fallback to default value
-            // * CEC_PARAMETER_INVALID_TYPE:    fatal error ->  cannot fallback to default value
+            // * CEC_PARAMETER_INVALID_KEY:     fatal error -> cannot fallback to default value
+            // * CEC_PARAMETER_INVALID_CONTEXT: fatal error -> cannot fallback to default value
+            // * CEC_PARAMETER_INVALID_TYPE:    fatal error -> cannot fallback to default value
             if (cri2.get_error_code() != command::CEC_SCOPE_INVALID) {
               // All error cases but CEC_SCOPE_INVALID (missing variant registry) are considered
               // as fatal error with no hope to fallback to a possible default value:
