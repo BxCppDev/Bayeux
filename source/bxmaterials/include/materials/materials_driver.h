@@ -1,7 +1,7 @@
 /// \file materials/materials_driver.h
 /* Author(s)    : François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-08-23
- * Last modified: 2014-06-11
+ * Last modified: 2017-05-21
  *
  * Description:  Isotopes/elements/materials application driver.
  */
@@ -58,6 +58,7 @@ namespace materials {
 
   public:
 
+    datatools::logger::priority logging;
     int         action;
     bool        with_decoration;
     std::vector<std::string> action_options;
@@ -65,7 +66,6 @@ namespace materials {
     std::vector<std::string> LL_dlls;
     std::string LL_config;
     std::string MaterialsMgrConfigFile;
-    datatools::logger::priority logging;
 
   };
 
@@ -97,7 +97,7 @@ namespace materials {
 
     bool _initialized_;               //!< Initialization flag
     materials_driver_params _params_; //!< Configuration parameters
-    boost::scoped_ptr<manager> _mgr_; //!< Embeded manager
+    std::unique_ptr<manager> _mgr_;   //!< Embedded manager
 
   };
 
@@ -105,10 +105,8 @@ namespace materials {
 
 #endif // MATERIALS_MATERIALS_DRIVER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

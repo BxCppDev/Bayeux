@@ -16,7 +16,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
+// along with Bayeux. If not, see <http://www.gnu.org/licenses/>.
 
 // Standard libraries:
 #include <cstdlib>
@@ -30,6 +30,7 @@
 #include <boost/program_options.hpp>
 // - Bayeux:
 #include <bayeux/bayeux.h>
+#include <bayeux/version.h>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/exception.h>
@@ -41,18 +42,16 @@
 // - Bayeux/geomtools:
 #include <geomtools/color.h>
 // - Bayeux/genvtx:
-#include <genvtx/genvtx_config.h>
-#include <genvtx/version.h>
 #include <genvtx/genvtx_driver.h>
 
 namespace dtc = datatools::configuration;
+namespace po = boost::program_options;
 
-//! \brief Application configuration parameters
+//! \brief Application configuration/running parameters
 struct app_config_params {
   std::string logging_label = "fatal";
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL; ///< Logging priority threshold
   bool help        = false;                   ///< Help flag
-  bool run_session = true;                    ///< Effective session run flag
   bool no_splash   = false;                   ///< Do not print splash screen
   genvtx::genvtx_driver_params genvtx_params; ///< Parameters specific to the genvtx driver
   std::vector<std::string> GD_argv;           ///< ???
@@ -77,25 +76,25 @@ void app_print_help(boost::program_options::options_description &,
                     std::ostream & out_ = std::clog);
 
 /// Build genvtx driver initialization options
-void driver_build_initialization_opts(boost::program_options::options_description &,
-                                      genvtx::genvtx_driver_params &);
+void app_driver_build_initialization_opts(boost::program_options::options_description &,
+                                          genvtx::genvtx_driver_params &);
 
 /// Build genvtx driver action options
-void driver_build_action_opts(boost::program_options::options_description &,
-                              genvtx::genvtx_driver_params &);
+void app_driver_build_action_opts(boost::program_options::options_description &,
+                                  genvtx::genvtx_driver_params &);
 
+//! Main program
 int main(int argc_, char ** argv_)
 {
   bayeux::initialize(argc_, argv_, app_kernel_init_flags());
 
   int error_code = EXIT_SUCCESS;
   app_config_params params;
-
-  namespace po = boost::program_options;
   po::options_description optPublic;
-  po::options_description optDesc("General configuration parameters");
+
   try {
     // Describe general command line options:
+    po::options_description optDesc("General options");
     app_build_general_opts(optDesc, params);
 
     // Declare options for variant support:
@@ -117,8 +116,8 @@ int main(int argc_, char ** argv_)
     // Declare options for the driver:
     po::options_description optDriverInit("Driver initialization parameters");
     po::options_description optDriverAction("Driver action parameters");
-    driver_build_initialization_opts(optDriverInit, params.genvtx_params);
-    driver_build_action_opts(optDriverAction, params.genvtx_params);
+    app_driver_build_initialization_opts(optDriverInit, params.genvtx_params);
+    app_driver_build_action_opts(optDriverAction, params.genvtx_params);
 
     // Aggregate options:
     optPublic
@@ -136,8 +135,8 @@ int main(int argc_, char ** argv_)
     std::vector<std::string> preprocessed_arguments;
     vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
 
+    // Parse command line options:
     po::positional_options_description args;
-
     po::variables_map vm;
     po::parsed_options parsed =
       po::command_line_parser(preprocessed_arguments)
@@ -162,25 +161,29 @@ int main(int argc_, char ** argv_)
       }
     }
 
+    bool run_session = true;
     if (params.help) {
       app_print_help(optPublic, std::cout);
-      params.run_session = false;
+      run_session = false;
     }
 
-    // Variant service:
-    std::unique_ptr<dtc::variant_service> vserv;
-    if (params.variants.is_active()) {
-      // Create and start the variant service:
-      vserv.reset(new dtc::variant_service);
-      vserv->configure(params.variants);
-      vserv->start();
-      // vserv->get_repository().tree_dump(std::cerr, "Repository:");
-    }
-
-    if (params.run_session) {
+    // Run the driver session:
+    if (run_session) {
       DT_LOG_DEBUG(params.logging, "Running session...");
       if (! params.no_splash) {
         app_print_splash(std::cerr);
+      }
+
+      // Variant service:
+      std::unique_ptr<dtc::variant_service> vserv;
+      if (params.variants.is_active()) {
+        // Create and start the variant service:
+        vserv.reset(new dtc::variant_service);
+        vserv->configure(params.variants);
+        vserv->start();
+        if (datatools::logger::is_debug(params.logging)) {
+          vserv->get_repository().tree_dump(std::cerr, "Repository:");
+        }
       }
 
       // Processing of special options:
@@ -216,14 +219,17 @@ int main(int argc_, char ** argv_)
 
       // Terminate the driver:
       GD.reset();
-      DT_LOG_DEBUG(params.logging, "End of session.");
-    }
 
-    if (vserv) {
-      // Stop the variant service:
-      vserv->stop();
-      vserv.reset();
-    }
+      if (vserv) {
+        if (vserv->is_started()) {
+          // Stop the variant service:
+          vserv->stop();
+        }
+        vserv.reset();
+      }
+
+      DT_LOG_DEBUG(params.logging, "End of session.");
+    } // end of runs session
 
     // The end.
   } catch (std::exception & x) {
@@ -285,7 +291,7 @@ void app_build_general_opts(boost::program_options::options_description & opts_,
      ->zero_tokens()
      ->default_value(false)
      ,
-     "Do not print the genvtx splash screen.\n"
+     "Do not print the splash screen.\n"
      "Example : \n"
      "  --no-splash "
      )
@@ -297,7 +303,7 @@ void app_print_splash(std::ostream & out_)
 {
   out_ << "                                                    \n"
        << "\tB A Y E U X  -  G E N V T X    P R O D U C T I O N\n"
-       << "\tVersion " << GENVTX_LIB_VERSION << "              \n"
+       << "\tVersion " << bayeux::version::get_version() << "\n"
        << "                                                    \n"
        << "\tCopyright (C) 2009-2017, the BxCppDev group       \n"
        << "\tFrancois Mauger, Xavier Garrido, Arnaud Chapon    \n"
@@ -352,8 +358,8 @@ void app_print_help(boost::program_options::options_description & opts_,
 }
 
 
-void driver_build_initialization_opts(boost::program_options::options_description & opts_,
-                                      genvtx::genvtx_driver_params & params_)
+void app_driver_build_initialization_opts(boost::program_options::options_description & opts_,
+                                          genvtx::genvtx_driver_params & params_)
 {
   namespace po = boost::program_options;
   opts_.add_options()
@@ -365,8 +371,8 @@ void driver_build_initialization_opts(boost::program_options::options_descriptio
      )
     ("load-dll",
      po::value<std::vector<std::string> >(&params_.LL_dlls),
-     "Load a given dynamic library (DLL).      \n"
-     "Example :                                \n"
+     "Load a dynamic library (DLL).      \n"
+     "Example :                          \n"
      "  --load-dll \"foo\" --load-dll \"bar\" "
      )
     ("geometry-manager",
@@ -385,8 +391,8 @@ void driver_build_initialization_opts(boost::program_options::options_descriptio
   return;
 }
 
-void driver_build_action_opts(boost::program_options::options_description & opts_,
-                              genvtx::genvtx_driver_params & params_)
+void app_driver_build_action_opts(boost::program_options::options_description & opts_,
+                                  genvtx::genvtx_driver_params & params_)
 {
   namespace po = boost::program_options;
   opts_.add_options()
