@@ -10,6 +10,7 @@
 
 // Headers for serialization defs
 #include <datatools/i_serializable.ipp>
+#include <datatools/enriched_base.ipp>
 #include <datatools/properties.ipp>
 #include <datatools/multi_properties.ipp>
 #include <datatools/things.ipp>
@@ -28,6 +29,11 @@
  * datatools::i_serializable                *
  ********************************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::i_serializable)
+
+/********************************
+ * datatools::enriched_base     *
+ ********************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::enriched_base)
 
 /********************************
  * datatools::properties        *
