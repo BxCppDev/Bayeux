@@ -57,7 +57,8 @@ namespace genvtx {
     visu_spot_size  = 1.0 * CLHEP::mm;
     visu_spot_color = geomtools::color::magenta();
     visu_max_counts = 10000;
-    // - Visu: store display data
+    visu_view  = geomtools::gnuplot_drawer::view_3d();
+     // - Visu: store display data
     action_visu_store_dd = false;
     return;
   }
@@ -100,6 +101,7 @@ namespace genvtx {
     out_ << " - visu_spot_color  = '" << visu_spot_color << "'" << std::endl;
     out_ << " - visu_object      = '" << visu_object << "'" << std::endl;
     out_ << " - visu_max_counts  = '" << visu_max_counts << "'" << std::endl;
+    out_ << " - visu_view        = '" << visu_view << "'" << std::endl;
     out_ << " - action_visu_store_dd  = " << action_visu_store_dd << std::endl;
     out_ << " - visu_store_dd_out     = '" << visu_store_dd_out << "'" << std::endl;
     return;
@@ -143,14 +145,6 @@ namespace genvtx {
     }
     return;
   }
-
-  /*
-  void genvtx_driver::set_logging(datatools::logger::priority lp_)
-  {
-    _logging_ = lp_;
-    return;
-  }
-  */
 
   datatools::logger::priority genvtx_driver::get_logging() const
   {
@@ -326,7 +320,11 @@ namespace genvtx {
       dd_pl.set_translation(0.0, 0.0, 0.0);
       GPD.add_display_data(dd, dd_pl);
       GPD.set_drawing_display_data(true);
-      GPD.set_view(geomtools::gnuplot_drawer::view_3d());
+      std::string visu_view = _params_.visu_view;
+      if (!geomtools::gnuplot_drawer::check_view(visu_view)) {
+        visu_view = geomtools::gnuplot_drawer::view_3d();
+      }
+      GPD.set_view(visu_view);
       GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
       int visu_depth = 100;
       int view_code = GPD.draw(*_geo_mgr_, _params_.visu_object, visu_depth);
