@@ -89,6 +89,9 @@ set(BAYEUX_GEANT4_VERSION "9.6.0")
     endforeach()
     string(REPLACE ";" "" MCTOOLS_G4_DATA_ASSIGNMENTS ${MCTOOLS_G4_DATA_ASSIGNMENTS})
   endif()
+  # message(STATUS "Geant4_DEFINITIONS  = '${Geant4_DEFINITIONS}'")
+  # message(STATUS "Geant4_INCLUDE_DIRS = '${Geant4_INCLUDE_DIRS}'")
+  # message(STATUS "Geant4_LIBRARIES    = '${Geant4_LIBRARIES}'")
 endif()
 
 # - CLHEP
