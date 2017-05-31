@@ -1638,8 +1638,8 @@ namespace geomtools {
             pl_nappe.child_to_mother_direction(normal_c, normal);
           }
         }
-        break;
       }
+      break;
     case FACE_START_ANGLE:
       if (has_partial_angle()) {
         for (size_t i = 0; i < number_of_frustra(); i++) {
