@@ -197,12 +197,12 @@ namespace dpp {
     io_type     _io_;                        //!< I/O flag
     format_type _format_;                    //!< Format flag
     datatools::logger::priority * _logging_; //!< Handle to the logging priority of the associated module
-    int _max_record_per_file_;       //!< Maximum number of event records per file
-    int _max_record_total_;          //!< Maximum number of event records to be processed
-    int _max_files_;                 //!< Maximum number of data files to be processed
-    datatools::smart_filename _filenames_; //!< Smart list of data filenames
+    int _max_record_per_file_;               //!< Maximum number of event records per file
+    int _max_record_total_;                  //!< Maximum number of event records to be processed
+    int _max_files_;                         //!< Maximum number of data files to be processed
+    datatools::smart_filename _filenames_;   //!< Smart list of data filenames
 
-    /* Running/dynamic attributes: */
+    // Running/dynamic attributes:
     bool _terminated_;            //!< Termination flag
     int _file_record_counter_;    //!< Event record counter in the current file
     int _record_counter_;         //!< Total event record counter
@@ -223,10 +223,8 @@ namespace dpp {
 
 #endif // DPP_IO_COMMON_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

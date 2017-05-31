@@ -39,7 +39,8 @@ namespace datatools {
     namespace ui {
 
       variant_repository_cli::variant_repository_cli(datatools::configuration::variant_repository & repository_)
-        : _repository_(repository_)
+        : _logging_(datatools::logger::PRIO_FATAL)
+        , _repository_(repository_)
       {
         return;
       }
@@ -78,10 +79,14 @@ namespace datatools {
                                                 const std::string & param_path_,
                                                 std::string & param_value_token_) const
       {
+        datatools::logger::priority logging = _logging_;
         datatools::command::returned_info cri;
+        DT_LOG_TRACE(logging, "registry_key = " << registry_key_);
         if (_repository_.has_registry(registry_key_)) {
           const variant_registry & vreg = _repository_.get_registry(registry_key_);
           ui::variant_registry_cli vregCli(const_cast<variant_registry&>(vreg));
+          vregCli.set_logging(logging);
+          DT_LOG_TRACE(logging, "param_path = " << param_path_);
           cri = vregCli.cmd_get_parameter_value(param_path_, param_value_token_);
         } else {
           DT_COMMAND_RETURNED_ERROR(cri, command::CEC_SCOPE_INVALID,

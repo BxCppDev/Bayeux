@@ -18,6 +18,7 @@
 
 // - Bayeux:
 #include <bayeux/bayeux.h>
+#include <bayeux/version.h>
 #if GEOMTOOLS_WITH_READLINE == 1
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -32,7 +33,6 @@
 #include <datatools/configuration/variant_service.h>
 
 // This project:
-#include <geomtools/version.h>
 #include <geomtools/geomtools_driver.h>
 
 namespace dtc = datatools::configuration;
@@ -491,10 +491,10 @@ std::string app_name()
 void app_print_splash(std::ostream & out_)
 {
   out_ << "                                                   \n"
-       << "\tG E O M T O O L S    I N S P E C T O R           \n"
-       << "\tVersion " << GEOMTOOLS_LIB_VERSION << "          \n"
+       << "\tB A Y E U X  -  G E O M T O O L S    I N S P E C T O R \n"
+       << "\tVersion " << bayeux::version::get_version() << "\n"
        << "                                                   \n"
-       << "\tCopyright (C) 2009-2016                          \n"
+       << "\tCopyright (C) 2009-2017                          \n"
        << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon, \n"
        << "\tBen Morgan and Arnaud Chapon                     \n"
        << "                                                   \n"

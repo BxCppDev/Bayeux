@@ -75,6 +75,7 @@ namespace genvtx {
     double      visu_spot_zoom;  ///< Display zoom factor
     double      visu_spot_size;  ///< Display splot size
     std::string visu_spot_color; ///< Display splot color
+    std::string visu_view;       ///< Display view (default: "3d")
 
     bool        action_visu_store_dd = false; ///< Flag to store generated vertexes as a display data objects
     std::string visu_store_dd_out;            ///< Output file where to store generated vertexes as display data object

@@ -1,11 +1,11 @@
 /// \file g4_production.cxx
 /* Description :
  *
- *   The main mctools Geant4 simulation program.
+ *   The main Bayeux/mctools Geant4 simulation program.
  *
  * Licence :
  *
- * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@
 
 // Third party:
 // - Boost:
-#include <boost/foreach.hpp>
 #include <boost/program_options.hpp>
 
 // - Bayeux
 #include <bayeux/bayeux.h>
+#include <bayeux/version.h>
 // - Bayeux/datatools:
 #include <datatools/datatools_config.h>
 #include <datatools/utils.h>
@@ -66,6 +66,9 @@
 
 /// \brief User interface of the (bx)g4_production application:
 struct ui {
+
+  static
+  std::string app_name();
 
   static
   void splash(std::ostream & out_ = std::clog);
@@ -219,7 +222,7 @@ int main(int argc_, char ** argv_)
         params.dlls.push_back(g4_opengl_dll);
       }
     }
-    BOOST_FOREACH (const std::string & dll_name, params.dlls) {
+    for (const std::string & dll_name :  params.dlls) {
       DT_LOG_NOTICE(logging, "Loading DLL '" << dll_name << "'...");
       DT_THROW_IF (dll_loader.load (dll_name) != EXIT_SUCCESS,
                    std::logic_error,
@@ -279,17 +282,21 @@ int main(int argc_, char ** argv_)
   return error_code;
 }
 
+std::string ui::app_name()
+{
+  return "bxg4_production";
+}
+
 void ui::splash(std::ostream & out_)
 {
-  const std::string APP_NAME = "bxg4_production";
   out_ << "\n"
-       << "     M C T O O L S - G 4";
+       << "     B A Y E U X  - G 4   P R O D U C T I O N";
   out_ << "\n";
-  out_ << "     Version " << MCTOOLS_LIB_VERSION << "\n";
-  out_ << "     " << APP_NAME << "\n";
+  out_ << "     Version " << bayeux::version::get_version() << "\n";
+  out_ << "     " << app_name() << "\n";
   out_ << "\n"
-       << "     Copyright (C) 2011-2017\n"
-       << "     Francois Mauger, Xavier Garrido, Ben Morgan and Arnaud Chapon\n"
+       << "     Copyright (C) 2011-2017, the BxCppDev group\n"
+       << "     Francois Mauger, Xavier Garrido and Arnaud Chapon\n"
        << "\n";
   return;
 }
@@ -297,18 +304,15 @@ void ui::splash(std::ostream & out_)
 void ui::print_usage(const boost::program_options::options_description & opts_,
                      std::ostream & out_)
 {
-  const std::string APP_NAME = "bxg4_production";
-  out_ << APP_NAME << " -- A generic GEANT4 simulation wrapper" << std::endl;
+  out_ << app_name() << " -- A generic GEANT4 simulation wrapper" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
   out_ << std::endl;
-  out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] "
+  out_ << "  " << app_name() << " [OPTIONS] [ARGUMENTS] "
        << std::endl;
   out_ << std::endl;
   out_ << opts_ << std::endl;
-  ui::print_examples(out_,
-                     APP_NAME,
-                     "Examples : ");
+  ui::print_examples(out_, app_name(), "Examples : ");
   out_ << std::endl;
   return;
 }

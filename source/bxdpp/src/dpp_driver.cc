@@ -1,10 +1,23 @@
 /* dpp_driver.cc
  *
- * Copyright (C) 2011-2016 François Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 François Mauger <mauger@lpccaen.in2p3.fr>
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  *
  */
-
 
 // Ourselves:
 #include <dpp/dpp_driver.h>
@@ -19,7 +32,6 @@
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/utils.h>
-// #include <datatools/library_loader.h>
 
 // This project:
 #include <dpp/dpp_config.h>
@@ -38,7 +50,6 @@ namespace dpp {
 
   void dpp_driver_params::reset()
   {
-    help = false;
     logging_label = "fatal";
     break_on_error_as_fatal = false;
     print_modulo = 10;
@@ -78,12 +89,10 @@ namespace dpp {
     if (! title_.empty()) {
       out_ << indent << title_ << std::endl;
     }
-    out_ << indent << datatools::i_tree_dumpable::tag << "help  : "
-         << help << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "logging_label  : '"
          << logging_label << "'" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "break_on_error_as_fatal  : "
-         << break_on_error_as_fatal << "" << std::endl;
+         << std::boolalpha << break_on_error_as_fatal << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "print_modulo  : "
          << print_modulo << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "module_manager_config_file  : '"
@@ -99,7 +108,7 @@ namespace dpp {
     out_ << indent << datatools::i_tree_dumpable::tag << "output_files  : "
          << output_files.size() << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "no_max_records  : "
-         << no_max_records << "" << std::endl;
+         << std::boolalpha << no_max_records << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "max_records  : "
          << max_records << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "max_records_per_output_file  : "
@@ -111,68 +120,13 @@ namespace dpp {
     out_ << indent << datatools::i_tree_dumpable::tag << "slice_width  : "
          << slice_width << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "slice_store_out  : "
-         << slice_store_out << "" << std::endl;
+         << std::boolalpha << slice_store_out << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "save_stopped_data_records  : "
-         << save_stopped_data_records << "" << std::endl;
+         << std::boolalpha << save_stopped_data_records << "" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "preserve_existing_files  : "
-         << preserve_existing_files << "" << std::endl;
+         << std::boolalpha << preserve_existing_files << "" << std::endl;
     return;
   }
-
-  /*
-  // static
-  void dpp_driver_params::build_opts(boost::program_options::options_description & opts_,
-  dpp_driver_params & params_)
-  {
-  namespace po = boost::program_options;
-  opts_.add_options ()
-  ("help,h", po::value<bool> (&params_.help)
-  ->zero_tokens()
-  ->default_value(false),
-  "produce help message.")
-  ("logging-priority,P",
-  po::value<std::string>(&params_.logging_label)->default_value ("warning"),
-  "set the logging priority.")
-  ("load-dll,l",
-  po::value<std::vector<std::string> > (&params_.LL_dlls),
-  "set a DLL to be loaded.")
-  ("dlls-config,L",
-  po::value<std::string> (&params_.LL_config),
-  "set the DLL loader configuration file.")
-  ("modulo,%",
-  po::value<int> (&params_.print_modulo)->default_value (10),
-  "set the modulo print period for data record.")
-  ("max-records,M",
-  po::value<int> (&params_.max_records)->default_value (0),
-  "set the maximum number of data records to be processed.")
-  ("no-max-records,X",
-  po::value<bool>(&params_.no_max_records)->zero_tokens()->default_value (false),
-  "Do not limit the maximum number of data records to be processed.")
-  ("module,m",
-  po::value<std::vector<std::string> > (&params_.module_names),
-  "add a module in the pipeline (optional).")
-  ("module-manager-config,c",
-  po::value<std::string> (&params_.module_manager_config_file),
-  "set the module manager configuration file.")
-  ("input-file,i",
-  po::value<std::vector<std::string> > (&params_.input_files),
-  "set an input file (optional).")
-  ("output-file,o",
-  po::value<std::vector<std::string> > (&params_.output_files),
-  "set the output file (optional).")
-  ("preserve-existing-files,x",
-  po::value<bool>(&params_.preserve_existing_files)->zero_tokens()->default_value (false),
-  "preserve existing files (recommended).")
-  ("max-records-per-output-file,O",
-  po::value<int> (&params_.max_records_per_output_file)->default_value (0),
-  "set the maximum number of data records per output file.")
-  // ("save-stopped-records,s",
-  //  po::value<bool>(&save_stopped_data_records)->zero_tokens()->default_value (false),
-  //  "Blablabla.")
-  ;
-  return;
-  }
-  */
 
   /* ------------------------------------------------------------ */
 
@@ -260,7 +214,7 @@ namespace dpp {
                   std::runtime_error,
                   "Loading DLL '" << dll_name  << "' fails !");
     }
-    _lib_loader_->print(std::cerr);
+    // _lib_loader_->print(std::cerr);
     // Load properties from the configuration file:
     // DT_THROW_IF(_params_.module_names.empty() && _params_.module_manager_config_file.empty(),
     //             std::logic_error,
@@ -307,9 +261,13 @@ namespace dpp {
     // Setup the data output sink :
     if (_params_.output_files.size() > 0) {
       _sink_.reset(new dpp::output_module(_logging_));
-      _sink_->set_logging_priority(datatools::logger::PRIO_DEBUG);
+      // _sink_->set_logging_priority(datatools::logger::PRIO_DEBUG);
       datatools::properties sink_config;
-      if (_params_.preserve_existing_files) sink_config.store_flag("preserve_existing_files");
+      DT_LOG_DEBUG(_logging_, "Preserve existing files = "
+                   << std::boolalpha << _params_.preserve_existing_files);
+      if (_params_.preserve_existing_files) {
+        sink_config.store_flag("preserve_existing_files");
+      }
       sink_config.store("name", "data_output_sink");
       sink_config.store("files.mode", "list");
       sink_config.store("files.list.filenames", _params_.output_files);
@@ -322,6 +280,9 @@ namespace dpp {
                                         _module_mgr_->grab_service_manager());
       } else {
         _sink_->initialize_standalone(sink_config);
+      }
+      if (datatools::logger::is_debug(_logging_)) {
+        _sink_->tree_dump(std::cerr, "Sink: ", "[debug] ");
       }
     }
 
@@ -363,15 +324,16 @@ namespace dpp {
     if (_params_.slice_width > 0 && _params_.slice_start < 0) {
       _params_.slice_start = 0;
     }
-    // std::cerr << "DEVEL: dpp::dpp_driver::initialize: slice_start = " << _params_.slice_start << std::endl;
-    // std::cerr << "DEVEL: dpp::dpp_driver::initialize: slice_stop  = " << _params_.slice_stop  << std::endl;
-    // std::cerr << "DEVEL: dpp::dpp_driver::initialize: slice_width = " << _params_.slice_width << std::endl;
-    // std::cerr << "DEVEL: dpp::dpp_driver::initialize: slice_store_out = " << _params_.slice_store_out << std::endl;
+
+    DT_LOG_DEBUG(_logging_, "Slice_start     = " << _params_.slice_start);
+    DT_LOG_DEBUG(_logging_, "Slice_stop      = " << _params_.slice_stop);
+    DT_LOG_DEBUG(_logging_, "Slice_width     = " << _params_.slice_width);
+    DT_LOG_DEBUG(_logging_, "Slice_store_out = " << _params_.slice_store_out);
 
     if (_params_.slice_start >= 0 || _params_.slice_stop >= 0 || _params_.slice_width >= 0) {
       _use_slice_ = true;
     }
-    // std::cerr << "DEVEL: dpp::dpp_driver::initialize: using slice = " << _use_slice_ << std::endl;
+    DT_LOG_DEBUG(_logging_, "Using slice     = " << _use_slice_);
 
     _initialized_ = true;
     return;
@@ -410,7 +372,6 @@ namespace dpp {
   {
     int error_code = EXIT_SUCCESS;
     datatools::logger::priority logging = _logging_;
-    // logging = datatools::logger::PRIO_DEBUG;
     DT_THROW_IF(! is_initialized(), std::logic_error, "Driver is not initialized !");
 
     // Loop on the data records from the data source file :
@@ -463,7 +424,7 @@ namespace dpp {
           in_slice = false;
         }
       }
-      // std::cerr << "DEVEL: dpp::dpp_driver::run: in_slice = " << in_slice << std::endl;
+      DT_LOG_DEBUG(_logging_, "in_slice = " << in_slice);
 
       bool process_it = true;
       if (_use_slice_ && !in_slice) {

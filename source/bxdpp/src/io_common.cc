@@ -425,6 +425,7 @@ namespace dpp {
                              datatools::service_manager & a_service_manager)
   {
 
+    // a_config.tree_dump(std::cerr, "I/O common initialize: ", "[DEVEL] ");
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/

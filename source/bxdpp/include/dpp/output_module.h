@@ -25,8 +25,6 @@
  *
  *   An output data processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_OUTPUT_MODULE_H
@@ -148,7 +146,7 @@ namespace dpp {
 
     bool                         _preserve_existing_output_; //!< Flag to preserve existing output files
     boost::scoped_ptr<io_common> _common_; //!< Common data structure
-    i_data_sink                * _sink_;   //!< Abstract data writer
+    i_data_sink                * _sink_ = nullptr; //!< Abstract data writer
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(output_module)
@@ -159,10 +157,8 @@ namespace dpp {
 
 #endif // DPP_OUTPUT_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -1219,7 +1219,7 @@ namespace datatools {
         // Interpreter block:
 #if DATATOOLS_WITH_READLINE == 1
         bool success = true;
-#endif
+#endif // DATATOOLS_WITH_READLINE
         {
           cri.set_success();
           cri = _run_command(line);
@@ -1231,7 +1231,7 @@ namespace datatools {
           } else if (cri.is_failure()) {
 #if DATATOOLS_WITH_READLINE == 1
             success = false;
-#endif
+#endif // DATATOOLS_WITH_READLINE
             DT_LOG_TRACE(get_logging(), "Command failed.");
             std::cerr << get_name() << ": error: ";
             const parser_context & pcontext = _grab_pimpl().pcontexts.back();
