@@ -540,6 +540,12 @@ void app_driver_build_action_opts(boost::program_options::options_description & 
      "Example :                          \n"
      "  --visu-output-file \"vertexes-dd.data\""
      )
+    ("visu-view",
+     po::value<std::string>(&params_.visu_view),
+     "Set the display view ('xyz', 'xy', 'xz', 'yz') \n"
+     "Example :                          \n"
+     "  --visu-view \"xy\""
+     )
     ;
   return;
 }
