@@ -290,13 +290,13 @@ std::string ui::app_name()
 void ui::splash(std::ostream & out_)
 {
   out_ << "\n"
-       << "     B A Y E U X  - G 4  P R O D U C T I O N";
+       << "     B A Y E U X  - G 4   P R O D U C T I O N";
   out_ << "\n";
   out_ << "     Version " << bayeux::version::get_version() << "\n";
   out_ << "     " << app_name() << "\n";
   out_ << "\n"
-       << "     Copyright (C) 2011-2017\n"
-       << "     Francois Mauger, Xavier Garrido, Ben Morgan and Arnaud Chapon\n"
+       << "     Copyright (C) 2011-2017, the BxCppDev group\n"
+       << "     Francois Mauger, Xavier Garrido and Arnaud Chapon\n"
        << "\n";
   return;
 }
