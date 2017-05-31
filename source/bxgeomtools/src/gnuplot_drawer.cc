@@ -74,60 +74,81 @@ namespace geomtools {
     return gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
   }
 
+  // static
   const std::string & gnuplot_drawer::view_key()
   {
     static std::string token = "view";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::view_2d_xy()
   {
     static std::string token = "xy";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::view_2d_xz()
   {
     static std::string token = "xz";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::view_2d_yz()
   {
     static std::string token = "yz";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::view_3d()
   {
     static std::string token = "xyz";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::view_3d_free_scale()
   {
     static std::string token = "xyz_free";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::default_view()
   {
     static std::string token = gnuplot_drawer::view_3d();
     return token;
   }
 
+  // static
+  bool gnuplot_drawer::check_view(const std::string & view_)
+  {
+    if (view_ == gnuplot_drawer::view_2d_xy()) return true;
+    if (view_ == gnuplot_drawer::view_2d_xz()) return true;
+    if (view_ == gnuplot_drawer::view_2d_yz()) return true;
+    if (view_ == gnuplot_drawer::view_3d()) return true;
+    if (view_ == gnuplot_drawer::view_3d_free_scale()) return true;
+    return false;
+  }
+
+  // static
   const std::string & gnuplot_drawer::mode_wired()
   {
     static std::string token = "wired";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::mode_solid()
   {
     static std::string token = "solid";
     return token;
   }
 
+  // static
   const std::string & gnuplot_drawer::default_mode()
   {
     static std::string token = gnuplot_drawer::mode_wired();
@@ -279,54 +300,55 @@ namespace geomtools {
     return _drawing_display_data_;
   }
 
-  void gnuplot_drawer::set_view (const std::string & view_)
+  void gnuplot_drawer::set_view(const std::string & view_)
   {
+    DT_THROW_IF(!check_view(view_), std::logic_error, "Invalid display view '" << view_ << "'!");
     _view_ = view_;
     return;
   }
 
-  const std::string & gnuplot_drawer::get_view () const
+  const std::string & gnuplot_drawer::get_view() const
   {
     return _view_;
   }
 
-  void gnuplot_drawer::set_mode (const std::string & mode_)
+  void gnuplot_drawer::set_mode(const std::string & mode_)
   {
     _mode_ = mode_;
     return;
   }
 
-  const std::string & gnuplot_drawer::get_mode () const
+  const std::string & gnuplot_drawer::get_mode() const
   {
     return _mode_;
   }
 
-  datatools::properties & gnuplot_drawer::grab_properties ()
+  datatools::properties & gnuplot_drawer::grab_properties()
   {
     return _props_;
   }
 
-  const datatools::properties & gnuplot_drawer::get_properties () const
+  const datatools::properties & gnuplot_drawer::get_properties() const
   {
     return _props_;
   }
 
-  bool gnuplot_drawer::is_view_2d () const
+  bool gnuplot_drawer::is_view_2d() const
   {
     return ! is_view_3d ();
   }
 
-  bool gnuplot_drawer::is_view_3d () const
+  bool gnuplot_drawer::is_view_3d() const
   {
     return _view_ == view_3d();
   }
 
-  bool gnuplot_drawer::is_solid () const
+  bool gnuplot_drawer::is_solid() const
   {
     return _mode_ == mode_solid();
   }
 
-  bool gnuplot_drawer::is_wired () const
+  bool gnuplot_drawer::is_wired() const
   {
     return _mode_ == mode_wired();
   }

@@ -53,6 +53,7 @@ namespace geomtools {
     static const std::string & view_3d();
     static const std::string & view_3d_free_scale();
     static const std::string & default_view();
+    static bool check_view(const std::string & view_label_);
     static const std::string & mode_wired();
     static const std::string & mode_solid();
     static const std::string & default_mode();
