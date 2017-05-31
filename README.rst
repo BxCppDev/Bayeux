@@ -83,17 +83,18 @@ lahague
 Bayeux's roots
 --------------
 
-Original  work on  Bayeux was  initiated at the
-`Laboratoire de  Physique Corpusculaire  de Caen`_  in the  framework
-of  the  NEMO3  double-beta  decay  experiment and  the  R&D  for  its
-successor: the SuperNEMO  experiment. Bayeux is developped  by a group
-of physicists working in Nuclear and Particle Physics.
-It is now the  cornerstone of the SuperNEMO_ experiment's
-production  software  chain.     It is also  used by
-several  projects for  the  simulation of  particle transport  through
-matter,  detector design  for  nuclear  physics, detection  efficiency
-calculation,  data   serialization,  data  processing   and  analysis,
-radiation protection, dosimetry...
+Original work on Bayeux was  initiated at the `Laboratoire de Physique
+Corpusculaire  de Caen`_  in the  framework of  the NEMO3  double-beta
+decay  experiment  and  the  R&D  for  its  successor:  the  SuperNEMO
+experiment. Bayeux is  developped by a group of  physicists working in
+Nuclear and  Particle Physics. It  provides generic classes  and tools
+that  can  be  used  in  many  different  contexts.   It  is  now  the
+cornerstone of the SuperNEMO_  experiment's production software chain.
+As a  generic toolbox,  it is  also used by  several projects  for the
+simulation of  particle transport through matter,  detector design for
+nuclear physics, detection efficiency calculation, data serialization,
+data  processing  and  analysis, radiation  protection  and  dosimetry
+studies.
 
 .. _SuperNEMO: https://github.com/SuperNEMO-DBD
 
@@ -603,11 +604,12 @@ Current development staff:
 * Jean Hommet (LPC Caen): initial development of the Boost/Serialization features.
 * Yves Lemière (LPC Caen, Université de Caen, Normandie Université): validation.
 * François Mauger (LPC Caen, Université de Caen, Normandie Université, project leader): all modules.
+* Guillaume Oliviéro (LPC Caen, Université de Caen, Normandie Université): validation
 
 Other contributors:
 
-* Arnaud Chapon (Cerap): geometry, validation.
-* Benoit Guillon (LPC Caen, ENSICAEN): first version of the ``Bayeux/materials`` modules.
+* Arnaud Chapon ((LPC Caen, Cerap): geometry, validation.
+* Benoit Guillon (LPC Caen, ENSICAEN): original implementation of the ``Bayeux/materials`` module.
 * Ben Morgan (University of Warwick): CMake support, logging features in datatools,
   other management and integration tools, Doxygen based documentation support,
   Trac/SVN to GitHub migration.
