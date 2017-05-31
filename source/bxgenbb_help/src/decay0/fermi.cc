@@ -9,6 +9,8 @@
 #include <gsl/gsl_sf.h>
 #include <CLHEP/Units/SystemOfUnits.h>
 
+#include <datatools/exception.h>
+
 #include <genbb_help/decay0/fermi.h>
 #include <genbb_help/decay0/particle.h>
 
@@ -47,11 +49,8 @@ namespace genbb {
       double g = std::sqrt (1. - alfaz * alfaz);
       gsl_sf_result res_lnr, res_arg;
       int status = gsl_sf_lngamma_complex_e (g, y, &res_lnr, &res_arg);
-      if (status != GSL_SUCCESS) {
-          std::cerr << "genbb_help::decay0_fermi_func_orig: GSL error: "
-               << gsl_strerror (status) << std::endl;
-          throw std::logic_error ("genbb_help::decay0_fermi_func_orig: GSL error at 'gsl_sf_lngamma_complex_e' invocation!");
-        }
+      DT_THROW_IF(status != GSL_SUCCESS, std::logic_error, "GSL error at 'gsl_sf_lngamma_complex_e' invocation: "
+                  << gsl_strerror (status));
       double lnr = res_lnr.val;
       double res = std::pow (p, 2. * g - 2.) * std::exp (M_PI * y + 2. * lnr);
       return res;
