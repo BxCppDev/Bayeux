@@ -81,14 +81,8 @@ namespace genbb {
       double g2 = gsl_sf_gamma (2. * gamma1 + 1.);
       gsl_sf_result res_lnr, res_arg;
       int status = gsl_sf_lngamma_complex_e (gamma1, y, &res_lnr, &res_arg);
-      if (status != GSL_SUCCESS)
-        {
-          std::ostringstream message;
-          message << "genbb::decay0::decay0_fermi_func: "
-                  << "GSL error at 'gsl_sf_lngamma_complex_e' invocation: "
-                  << gsl_strerror (status) << std::endl;
-          throw std::logic_error (message.str());
-        }
+      DT_THROW_IF(status != GSL_SUCCESS, std::logic_error, "GSL error at 'gsl_sf_lngamma_complex_e' invocation: "
+                  << gsl_strerror (status));
       double lnr = res_lnr.val;
       double g1 = std::exp (lnr);
       F0 *= (g1 * g1);
@@ -118,7 +112,9 @@ namespace genbb {
       double y = aZ * we / pe;
       double gamma1 = sqrt (1. - aZ * aZ);
       gsl_sf_result res, arg;
-      gsl_sf_lngamma_complex_e (gamma1, y, &res, &arg);
+      int status = gsl_sf_lngamma_complex_e (gamma1, y, &res, &arg);
+      DT_THROW_IF(status != GSL_SUCCESS, std::logic_error, "GSL error at 'gsl_sf_lngamma_complex_e' invocation: "
+                  << gsl_strerror (status));
       double lnr = res.val;
       //double lnr_err = res.err;
       //double zarg     = arg.val;
