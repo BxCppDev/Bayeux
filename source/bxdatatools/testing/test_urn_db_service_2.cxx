@@ -69,12 +69,12 @@ void test_urn_db_service_0()
   const datatools::urn_info & uiB = urnDbService.add("urn:sw:B", "library", "B");
   const datatools::urn_info & uiC = urnDbService.add("urn:sw:C", "library", "C");
   const datatools::urn_info & uiD = urnDbService.add("urn:sw:D", "library", "D");
-  const datatools::urn_info & uiE = urnDbService.add("urn:sw:E", "library", "E");
-  const datatools::urn_info & uiF = urnDbService.add("urn:sw:F", "library", "F");
-  const datatools::urn_info & uiG = urnDbService.add("urn:sw:G", "library", "G");
+  //const datatools::urn_info & uiE = urnDbService.add("urn:sw:E", "library", "E");
+  //const datatools::urn_info & uiF = urnDbService.add("urn:sw:F", "library", "F");
+  //const datatools::urn_info & uiG = urnDbService.add("urn:sw:G", "library", "G");
   const datatools::urn_info & uiH = urnDbService.add("urn:sw:H", "library", "H");
-  const datatools::urn_info & uiT = urnDbService.add("urn:sw:T", "plugin",  "T");
-  const datatools::urn_info & uiU = urnDbService.add("urn:sw:U", "plugin",  "U");
+  //const datatools::urn_info & uiT = urnDbService.add("urn:sw:T", "plugin",  "T");
+  //const datatools::urn_info & uiU = urnDbService.add("urn:sw:U", "plugin",  "U");
   const datatools::urn_info & uiV = urnDbService.add("urn:sw:V", "library", "V");
   const datatools::urn_info & uiW = urnDbService.add("urn:sw:W", "plugin",  "W");
 
