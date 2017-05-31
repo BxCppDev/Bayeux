@@ -117,9 +117,9 @@ namespace genbb {
       //double beta  = pe / we;
       double y = aZ * we / pe;
       double gamma1 = sqrt (1. - aZ * aZ);
-      gsl_sf_result res;
-      //int err = gsl_sf_lngamma_complex_e (gamma1, y, &res, &arg);
-      double lnr     = res.val;
+      gsl_sf_result res, arg;
+      gsl_sf_lngamma_complex_e (gamma1, y, &res, &arg);
+      double lnr = res.val;
       //double lnr_err = res.err;
       //double zarg     = arg.val;
       //double zarg_err = arg.err;
