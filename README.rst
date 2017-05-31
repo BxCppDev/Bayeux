@@ -276,7 +276,7 @@ Core Libraries Required
 * CLHEP 2.1.3.1 or higher: http://proj-clhep.web.cern.ch
 * Geant4 9.6.0 or higher: http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
-* ROOT 5.34.0 or higher: http://root.cern.ch
+* ROOT 5.34.0 or higher (6.X): http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
 
   * minimal X11,
@@ -288,7 +288,7 @@ For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
 Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
 clients of Bayeux.  It is **strongly** advised to use this bundle.  It
 will  provide,  for  Linux  and macOS  systems,  an  uniform  software
-environement with  a selected set  of blessed software,  including the
+environment with  a selected set  of blessed software,  including the
 C++ compiler if needed.
 
 Additional Software Required
