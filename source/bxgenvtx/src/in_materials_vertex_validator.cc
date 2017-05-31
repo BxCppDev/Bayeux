@@ -24,7 +24,7 @@ namespace genvtx {
     : cuts::i_cut(logging_priority_)
   {
     _reversed_ = false;
-    _max_depth_ = 10;
+    _max_depth_ = 100;
     return;
   }
 
@@ -125,6 +125,7 @@ namespace genvtx {
   {
     _set_initialized (false);
     _materials_.clear();
+    _max_depth_ = 100;
     _reversed_ = false;
     this->i_cut::_reset ();
     return;
@@ -138,21 +139,24 @@ namespace genvtx {
       status = cuts::SELECTION_INAPPLICABLE;
       DT_THROW_IF(true, std::logic_error, "Cannot process user data with invalid type!");
     } else {
+      DT_LOG_DEBUG(get_logging_priority(), "max_depth = " << _max_depth_);
       double tolerance = 0.0 * CLHEP::mm;
       double daughter_tolerance = 0.0 * CLHEP::mm;
       const vertex_validation::geometry_context & gc
         = this->get_user_data<vertex_validation::geometry_context>();
       const geomtools::logical_volume & logvol = gc.get_logical_volume();
       const geomtools::vector_3d & vtx = gc.get_local_candidate_vertex();
-      DT_LOG_TRACE(get_logging_priority(), "Local candidate vertex = " << vtx);
+      DT_LOG_DEBUG(get_logging_priority(), "Local candidate vertex = " << vtx);
       int current_depth = 0;
       const geomtools::logical_volume * current_logvol = &logvol;
       geomtools::vector_3d current_vtx = vtx;
       bool ignore_daughters = false;
       do {
-        DT_LOG_TRACE(get_logging_priority(), "New try...");
+        DT_LOG_DEBUG(get_logging_priority(), "New try within logical volume '" << current_logvol->get_name() << "'..." );
+        DT_LOG_DEBUG(get_logging_priority(), "current_depth = " << current_depth);
         if (has_max_depth() && (current_depth >= _max_depth_)) {
           ignore_daughters = true;
+          DT_LOG_DEBUG(get_logging_priority(), "ignore daughters...");
         }
         geomtools::logical_volume::locate_result lr;
         uint32_t locate_bits = current_logvol->locate(current_vtx,
@@ -161,34 +165,36 @@ namespace genvtx {
                                                       daughter_tolerance,
                                                       &lr);
         if (locate_bits & geomtools::SHAPE_DOMAIN_INSIDE) {
-          DT_LOG_TRACE(get_logging_priority(), "SHAPE_DOMAIN_INSIDE");
+          DT_LOG_DEBUG(get_logging_priority(), "vertex is located as SHAPE_DOMAIN_INSIDE");
           bool only_parent = true;
           if (locate_bits & geomtools::SHAPE_DOMAIN_ON_DAUGHTER_SURFACE) {
-            DT_LOG_TRACE(get_logging_priority(), "SHAPE_DOMAIN_ON_DAUGHTER_SURFACE");
+            DT_LOG_DEBUG(get_logging_priority(), "vertex is located as SHAPE_DOMAIN_ON_DAUGHTER_SURFACE");
             only_parent = false;
             // status = cuts::SELECTION_REJECTED;
           }
           if (locate_bits & geomtools::SHAPE_DOMAIN_INSIDE_DAUGHTER) {
-            DT_LOG_TRACE(get_logging_priority(), "SHAPE_DOMAIN_INSIDE_DAUGHTER");
+            DT_LOG_DEBUG(get_logging_priority(), "vertex is located as SHAPE_DOMAIN_INSIDE_DAUGHTER");
             only_parent = false;
             // status = cuts::SELECTION_REJECTED;
           }
-          DT_LOG_TRACE(get_logging_priority(),
+          DT_LOG_DEBUG(get_logging_priority(), "only_parent = " << only_parent);
+          DT_LOG_DEBUG(get_logging_priority(),
                        "Checking material '" << current_logvol->get_material_ref() << "' ...");
           if (only_parent) {
             status = cuts::SELECTION_ACCEPTED;
             if (! has_material(current_logvol->get_material_ref())) {
               status = cuts::SELECTION_REJECTED;
             } else {
-              DT_LOG_TRACE(get_logging_priority(),
+              DT_LOG_DEBUG(get_logging_priority(),
                            "Found matching material '" << current_logvol->get_material_ref() << "'");
             }
             break;
           } else {
             // Investigate the matching daughter volume:
+            DT_LOG_DEBUG(get_logging_priority(), "only_parent = " << only_parent);
             status = cuts::SELECTION_REJECTED;
             if (lr.has_daughter()) {
-              DT_LOG_TRACE(get_logging_priority(),
+              DT_LOG_DEBUG(get_logging_priority(),
                            "Investigating the matching daughter volume '" << lr.get_daughter_name() << "'...");
               const geomtools::physical_volume & phys = lr.get_daughter();
               const geomtools::vector_3d & phys_vtx = lr.get_position_in_daughter();
