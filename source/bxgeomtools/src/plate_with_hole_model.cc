@@ -180,7 +180,7 @@ namespace geomtools {
                  "Invalid dimension(s) for the mother box in plate with hole model '" << name_ << "' !");
 
     geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0, 0, 0, 0);
-    bool hole_vol = 0.0;
+    double hole_vol = 0.0;
     if (datatools::is_valid (_r_hole_)) {
       _cyl_hole_.set_r (_r_hole_);
       _cyl_hole_.set_z (_z_hole_);
