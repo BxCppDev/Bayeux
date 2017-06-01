@@ -346,7 +346,7 @@ int main (void)
     {
       std::clog << std::endl << "*** far_negative_region *** " << std::endl;
       datatools::real_range far_negative_region;
-      far_negative_region.make_lower_unbounded(-50.0 * CLHEP::cm, datatools::range_bound_excluded);
+      far_negative_region.make_lower_unbounded(-50.0 * CLHEP::cm, false);
       double z = -10 * CLHEP::cm;
       /*
       std::cerr << "DEVEL: "
