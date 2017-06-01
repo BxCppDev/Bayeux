@@ -106,13 +106,13 @@ void test1bis()
   CP.add_variant("far_positive",  iCV3.get_variant_handle(), "Variant for large positive Z positions");
 
   datatools::real_range far_negative_region;
-  far_negative_region.make_lower_unbounded(-50.0 * CLHEP::cm, datatools::range_bound_excluded);
+  far_negative_region.make_lower_unbounded(-50.0 * CLHEP::cm, false);
 
   datatools::real_range near_zero_region;
   near_zero_region.make_bounded(-50.0 * CLHEP::cm, +50.0 * CLHEP::cm);
 
   datatools::real_range far_positive_region;
-  far_positive_region.make_upper_unbounded(+50.0 * CLHEP::cm, datatools::range_bound_excluded);
+  far_positive_region.make_upper_unbounded(+50.0 * CLHEP::cm, false);
 
   std::clog << "far_negative_region = " << far_negative_region << std::endl;
   std::clog << "near_zero_region    = " << near_zero_region    << std::endl;
@@ -180,13 +180,13 @@ void test1ter()
   CP.add_variant("far_positive",  iCV3.get_variant_handle(), "Variant for large positive Z positions");
 
   datatools::real_range far_negative_region;
-  far_negative_region.make_lower_unbounded(-50.0 * CLHEP::cm, datatools::range_bound_excluded);
+  far_negative_region.make_lower_unbounded(-50.0 * CLHEP::cm, false);
 
   datatools::real_range near_zero_region;
   near_zero_region.make_bounded(-50.0 * CLHEP::cm, +50.0 * CLHEP::cm);
 
   datatools::real_range far_positive_region;
-  far_positive_region.make_upper_unbounded(+50.0 * CLHEP::cm, datatools::range_bound_excluded);
+  far_positive_region.make_upper_unbounded(+50.0 * CLHEP::cm, false);
 
   std::clog << "far_negative_region = " << far_negative_region << std::endl;
   std::clog << "near_zero_region    = " << near_zero_region    << std::endl;
