@@ -484,7 +484,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::combined_vg,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(false)
-      .add_example("Combinaison of two generators by absolute weights::  \n"
+      .add_example("Combinaison of two generators by relative weights::  \n"
                    "                                                     \n"
                    "  generators : string[2] = \\                        \n"
                    "       \"east_wall\"   \\                            \n"
