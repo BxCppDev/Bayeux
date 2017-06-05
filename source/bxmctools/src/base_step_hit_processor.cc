@@ -672,7 +672,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::push_all_step_hit_processor,ocd_)
                                 "This is particularly useful when we want to visualize the truth step      \n"
                                 "hits from an external rendering tools. In such case, we conventionnaly    \n"
                                 "use a hit category named ``__visu.tracks`` that collects truth MC hits    \n"
-                                "from various *push all* processors attached to various sensitive detector.\n"
+                                "from various *push all* processors attached to various sensitive detectors.\n"
                                 "However this name ``__visu.tracks`` is not mandatory and users are free to\n"
                                 "use another name. We recommend that this name starts with a double        \n"
                                 "underscore prefix to highlight the fact that the output hit category is   \n"
