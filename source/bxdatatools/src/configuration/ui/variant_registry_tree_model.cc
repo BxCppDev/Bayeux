@@ -315,11 +315,28 @@ namespace datatools {
         } else if (column_ == tree_item::CI_DESCRIPTION) {
 
           if (_record_->is_parameter()) {
-            return QString::fromStdString(_record_->get_parameter_model().get_terse_description());
+            std::string desc = _record_->get_parameter_model().get_terse_description();
+            std::cerr << "[devel] desc = " << desc << "\n";
+            if (_record_->has_parent()) {
+              std::cerr << "[devel] record has parent\n";
+              const variant_record & vrec = _record_->get_parent();
+              const variant_model & vmod = vrec.get_variant_model();
+              std::cerr << "[devel] variant model = " << vmod.get_name() << "\n";
+              if (vmod.has_parameter(_record_->get_leaf_name())) {
+                std::cerr << "[devel] variant model has parameter " << _record_->get_leaf_name() << "\n";
+                std::string par_desc = vmod.get_parameter_description(_record_->get_leaf_name());
+                std::cerr << "[devel] parameter description = " << par_desc << "\n";
+                if (!par_desc.empty()) {
+                  desc = par_desc;
+                }
+              }
+            }
+            return QString::fromStdString(desc);
           }
 
           if (_record_->is_variant()) {
-            return QString::fromStdString(_record_->get_parameter_model().get_terse_description());
+            std::string desc = _record_->get_parameter_model().get_terse_description();
+            return QString::fromStdString(desc);
           }
 
         }
@@ -835,25 +852,30 @@ namespace datatools {
           } else if (index_.column() == tree_item::CI_DESCRIPTION) {
 
             if (a_node->get_record().is_parameter()) {
-              return QString::fromStdString(a_node->get_record().get_parameter_model().get_terse_description());
+              std::string desc = a_node->get_record().get_parameter_model().get_terse_description();
+              //std::cerr << "[devel] desc = " << desc << "\n";
+              if (a_node->get_record().has_parent()) {
+                //std::cerr << "[devel] record has parent\n";
+                const variant_record & vrec = a_node->get_record().get_parent();
+                const variant_model & vmod = vrec.get_variant_model();
+                //std::cerr << "[devel] variant model = " << vmod.get_name() << "\n";
+                if (vmod.has_parameter(a_node->get_record().get_leaf_name())) {
+                  //std::cerr << "[devel] variant model has parameter " << a_node->get_record().get_leaf_name() << "\n";
+                  std::string par_desc = vmod.get_parameter_description(a_node->get_record().get_leaf_name());
+                  //std::cerr << "[devel] parameter description = " << par_desc << "\n";
+                  if (!par_desc.empty()) {
+                    desc = par_desc;
+                  }
+                }
+              }
+              return QString::fromStdString(desc);
             } // is_parameter
 
             if (a_node->get_record().is_variant()) {
-              return QString::fromStdString(a_node->get_record().get_variant_model().get_terse_description());
+              std::string desc = a_node->get_record().get_variant_model().get_terse_description();
+              return QString::fromStdString(desc);
             } // is_variant
 
-            /*
-            if (a_node->get_record().is_parameter()) {
-
-              return QString::fromStdString(a_node->get_record().get_terse_description());
-
-              if (a_node->get_record().get_parameter_model().is_boolean()) {
-                return QString::fromStdString(a_node->get_record().get_terse_description());
-              }
-
-            } // is_parameter
-            */
-            // return QString::fromStdString(a_node->get_record().get_terse_description());
           }
 
         }
