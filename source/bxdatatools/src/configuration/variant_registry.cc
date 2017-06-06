@@ -377,6 +377,22 @@ namespace datatools {
       return found->second;
     }
 
+    bool variant_registry::parameter_exists(const std::string & variant_path_) const
+    {
+      if (!has_variant_record(record_path_)) return false;
+      const variant_record & variant_rec = get_variant_record(variant_path_);
+      if (!variant_rec.is_parameter()) return false;
+      return true;
+    }
+
+    bool variant_registry::variant_exists(const std::string & variant_path_) const
+    {
+      if (!has_variant_record(record_path_)) return false;
+      const variant_record & variant_rec = get_variant_record(variant_path_);
+      if (!variant_rec.is_variant()) return false;
+      return true;
+    }
+
     bool variant_registry::is_active_variant(const std::string & variant_path_) const
     {
       const variant_record & variant_rec = get_variant_record(variant_path_);

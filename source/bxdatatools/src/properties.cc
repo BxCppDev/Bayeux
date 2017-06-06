@@ -3695,11 +3695,11 @@ namespace datatools {
               for (std::list<std::string>::const_iterator ivib = variant_if_blocks.begin();
                    ivib != variant_if_blocks.end();
                    ivib++) {
-                bool variant_if_found = false;
+                bool variant_if_active = false;
                 bool variant_if_reverse = false;
                 const std::string & variant_if_rule = *ivib;
                 command::returned_info cri = vpp.resolve_variant(variant_if_rule,
-                                                                 variant_if_found,
+                                                                 variant_if_active,
                                                                  variant_if_reverse);
                 DT_PROP_CFG_READ_THROW_IF(cri.is_failure(),
                                           std::logic_error,
@@ -3710,9 +3710,9 @@ namespace datatools {
                                           "Cannot preprocess variant if block directive from '"
                                           << variant_if_rule << "' : "
                                           << cri.get_error_message());
-                exhibit_property = variant_if_found;
+                exhibit_property = variant_if_active;
                 if (variant_if_reverse) {
-                  exhibit_property = !variant_if_found;
+                  exhibit_property = !variant_if_active;
                 }
                 if (!exhibit_property) {
                   // We break at first inhibited conditional block:

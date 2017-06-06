@@ -121,6 +121,12 @@ namespace datatools {
       /// Return a reference to a mutable variant record
       variant_record & grab_variant_record(const std::string & record_path_);
 
+      /// Check if a variant parameter exists (active or not)
+      bool parameter_exists(const std::string & variant_path_) const;
+
+      /// Check if a variant exists (active or not)
+      bool variant_exists(const std::string & variant_path_) const;
+
       /// Check if a variant is active
       bool is_active_variant(const std::string & variant_path_) const;
 

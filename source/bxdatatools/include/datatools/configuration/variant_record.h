@@ -38,7 +38,6 @@
 // This project (Bayeux/datatools):
 #include <datatools/configuration/utils.h>
 #include <datatools/command_utils.h>
-// #include <datatools/enriched_base.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/logger.h>

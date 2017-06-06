@@ -755,31 +755,45 @@ namespace datatools {
       DT_LOG_TRACE(_logging_, "variant_path = '" << variant_path << "'");
       // Search for registrated variant parameter in the associated variant repository:
       bool variant_active = false;
-      if (repository_is_active()) {
-        const variant_repository & rep = get_repository();
-        try {
-          variant_active = rep.is_active_variant(variant_registry_name,
-                                                 variant_path);
-          variant_found = true;
-        } catch (std::exception & error) {
-          variant_found = false;
-          DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Check variant active failed: " << error.what());
-        // if (local_cri.is_success()) {
-        //   variant_found = true;
-        //   DT_LOG_TRACE(_logging_, "Found variant only from '" << variant_desc << "'");
-        // } else {
-        //   DT_LOG_TRACE(_logging_, "Cannot found variant only from '" << variant_desc << "' :  "
-        //                << local_cri.get_error_message());
-        //   variant_found = false;
-        //   // DT_THROW_IF(true, std::logic_error,
-        //   //          "Cannot resolve configuration variant '" << variant_desc
-        //   //          << "' from the variant repository!");
-        }
-      } else {
-        //DT_LOG_WARNING(logging,  "Bayeux/datatools kernel's variant repository is not used!");
-        // DT_THROW_IF(true, std::logic_error,
-        //             "Variant repository is not used!");
+      // XXX
+      bool should_try_default = false;
+      if (!repository_is_active()) {
+        DT_COMMAND_RETURNED_ERROR(cri, command::CEC_CONTEXT_INVALID,
+                                  "Inactive variant repository while processing '" << variant_desc << "' !");
+        return cri;
       }
+      const variant_repository & rep = get_repository();
+      if (!rep.has_registry(variant_registry_name)) {
+        DT_COMMAND_RETURNED_ERROR(cri, command::CEC_SCOPE_INVALID,
+                                  "Unknown registry '" << variant_registry_name << "' while processing '" << variant_desc << "' !");
+        return cri;
+      }
+      const variant_registry & reg = rep. get_registry(variant_registry_name);
+      if (!reg.variant_exists(variant_path)) {
+        DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARAMETER_INVALID_KEY,
+                                  "Unknown variant record '" << variant_path << " in registry '" << variant_registry_name << "' while processing '" << variant_desc << "' !");
+        return cri;
+      }
+      variant_active = reg.is_active_variant(variant_path);
+      // XXX
+      if (variant_active) {
+        variant_found = true;
+      }
+     // } catch (std::exception & error) {
+      //   variant_found = false;
+      //   DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+      //                  "Check variant active failed: " << error.what());
+      //   // if (local_cri.is_success()) {
+      //   //   variant_found = true;
+      //   //   DT_LOG_TRACE(_logging_, "Found variant only from '" << variant_desc << "'");
+      //   // } else {
+      //   //   DT_LOG_TRACE(_logging_, "Cannot found variant only from '" << variant_desc << "' :  "
+      //   //                << local_cri.get_error_message());
+      //   //   variant_found = false;
+      //   //   // DT_THROW_IF(true, std::logic_error,
+      //   //   //          "Cannot resolve configuration variant '" << variant_desc
+      //   //   //          << "' from the variant repository!");
+      // }
       if (!variant_found) {
         if (!has_variant_default) {
           DT_COMMAND_RETURNED_ERROR(cri, command::CEC_COMMAND_INVALID_CONTEXT,

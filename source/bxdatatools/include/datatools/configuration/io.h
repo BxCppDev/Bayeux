@@ -244,6 +244,14 @@ namespace datatools {
         @param variant_desc_    The string to be parsed
         @param variant_active_  The flag that checks if the variant is activated
         @param variant_reverse_ The flag that checks if the test must be reversed
+        @return The command error record with supported error codes:
+
+                * command::CEC_SUCCESS :
+                * command::CEC_PARSING_FAILURE :
+                * command::CEC_CONTEXT_INVALID : variant repository is not activated
+                * command::CEC_SCOPE_INVALID : variant registry is unknown
+                * command::CEC_PARAMETER_INVALID_KEY : variant record is unknown
+
 
         Supported syntax is:
 
