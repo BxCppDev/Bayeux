@@ -1,6 +1,6 @@
 // datatools/configuration/ui/variant_registry_tree_model.cc
 /*
- * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -316,16 +316,16 @@ namespace datatools {
 
           if (_record_->is_parameter()) {
             std::string desc = _record_->get_parameter_model().get_terse_description();
-            std::cerr << "[devel] desc = " << desc << "\n";
+            //std::cerr << "[devel] desc = " << desc << "\n";
             if (_record_->has_parent()) {
-              std::cerr << "[devel] record has parent\n";
+              //std::cerr << "[devel] record has parent\n";
               const variant_record & vrec = _record_->get_parent();
               const variant_model & vmod = vrec.get_variant_model();
-              std::cerr << "[devel] variant model = " << vmod.get_name() << "\n";
+              //std::cerr << "[devel] variant model = " << vmod.get_name() << "\n";
               if (vmod.has_parameter(_record_->get_leaf_name())) {
-                std::cerr << "[devel] variant model has parameter " << _record_->get_leaf_name() << "\n";
+                //std::cerr << "[devel] variant model has parameter " << _record_->get_leaf_name() << "\n";
                 std::string par_desc = vmod.get_parameter_description(_record_->get_leaf_name());
-                std::cerr << "[devel] parameter description = " << par_desc << "\n";
+                //std::cerr << "[devel] parameter description = " << par_desc << "\n";
                 if (!par_desc.empty()) {
                   desc = par_desc;
                 }
@@ -335,7 +335,17 @@ namespace datatools {
           }
 
           if (_record_->is_variant()) {
-            std::string desc = _record_->get_parameter_model().get_terse_description();
+            std::string desc = _record_->get_variant_model().get_terse_description();
+            if (_record_->has_parent()) {
+              const variant_record & vrec = _record_->get_parent();
+              const parameter_model & pmod = vrec.get_parameter_model();
+              if (pmod.has_variant(_record_->get_leaf_name())) {
+                std::string var_desc = pmod.get_variant_description(_record_->get_leaf_name());
+                if (!var_desc.empty()) {
+                  desc = var_desc;
+                }
+              }
+            }
             return QString::fromStdString(desc);
           }
 
@@ -873,6 +883,16 @@ namespace datatools {
 
             if (a_node->get_record().is_variant()) {
               std::string desc = a_node->get_record().get_variant_model().get_terse_description();
+              if (a_node->get_record().has_parent()) {
+                const variant_record & vrec = a_node->get_record().get_parent();
+                const parameter_model & pmod = vrec.get_parameter_model();
+                if (pmod.has_variant(a_node->get_record().get_leaf_name())) {
+                  std::string var_desc = pmod.get_variant_description(a_node->get_record().get_leaf_name());
+                  if (!var_desc.empty()) {
+                    desc = var_desc;
+                  }
+                }
+              }
               return QString::fromStdString(desc);
             } // is_variant
 
