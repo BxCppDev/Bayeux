@@ -70,6 +70,6 @@ display_name              : string = "On/Off flag"
 terse_description         : string = "The activation flag"
 type                      : string = "boolean"
 mutability                : string = "variable"
-boolean.default           : boolean = 0
+boolean.default           : boolean = false
 
 # end

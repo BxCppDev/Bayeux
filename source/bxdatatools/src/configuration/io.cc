@@ -703,9 +703,8 @@ namespace datatools {
 
       // Working area:
       std::string variant_desc = variant_desc_;
-      bool variant_default = false;
-      bool variant_found   = false;
       bool has_variant_default = false;
+      bool variant_default = false;
       bool variant_reverse = false;
 
       std::vector<std::string> variant_tokens;
@@ -755,12 +754,22 @@ namespace datatools {
       DT_LOG_TRACE(_logging_, "variant_path = '" << variant_path << "'");
       // Search for registrated variant parameter in the associated variant repository:
       bool variant_active = false;
-      // XXX
-      bool should_try_default = false;
+      // NOTE: 2017-06-08 FM: Should we use : if (!has_repository()) ...
       if (!repository_is_active()) {
-        DT_COMMAND_RETURNED_ERROR(cri, command::CEC_CONTEXT_INVALID,
-                                  "Inactive variant repository while processing '" << variant_desc << "' !");
-        return cri;
+        // If variant repository is not activated:
+        if (has_variant_default) {
+          // We fallback to the default value if any. Syntax is:
+          //   {variant-description}|true
+          //   {variant-description}|false
+          variant_active_ = variant_default;
+          variant_reverse_ = false;
+          return cri;
+        } else {
+          // It is an error: no variant repository nor fallback default value is available:
+          DT_COMMAND_RETURNED_ERROR(cri, command::CEC_CONTEXT_INVALID,
+                                    "Inactive variant repository while processing '" << variant_desc << "' !");
+          return cri;
+        }
       }
       const variant_repository & rep = get_repository();
       if (!rep.has_registry(variant_registry_name)) {
@@ -775,45 +784,13 @@ namespace datatools {
         return cri;
       }
       variant_active = reg.is_active_variant(variant_path);
-      // XXX
-      if (variant_active) {
-        variant_found = true;
-      }
-     // } catch (std::exception & error) {
-      //   variant_found = false;
-      //   DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-      //                  "Check variant active failed: " << error.what());
-      //   // if (local_cri.is_success()) {
-      //   //   variant_found = true;
-      //   //   DT_LOG_TRACE(_logging_, "Found variant only from '" << variant_desc << "'");
-      //   // } else {
-      //   //   DT_LOG_TRACE(_logging_, "Cannot found variant only from '" << variant_desc << "' :  "
-      //   //                << local_cri.get_error_message());
-      //   //   variant_found = false;
-      //   //   // DT_THROW_IF(true, std::logic_error,
-      //   //   //          "Cannot resolve configuration variant '" << variant_desc
-      //   //   //          << "' from the variant repository!");
-      // }
-      if (!variant_found) {
-        if (!has_variant_default) {
-          DT_COMMAND_RETURNED_ERROR(cri, command::CEC_COMMAND_INVALID_CONTEXT,
-                                    "No available default value for variant only directive '" << variant_desc << "' !");
-          return cri;
-        }
-        variant_active = variant_default;
-      }
       DT_LOG_TRACE(_logging_, "variant_registry_name = '" << variant_registry_name << "'");
       DT_LOG_TRACE(_logging_, "variant_path          = '" << variant_path << "'");
-      DT_LOG_TRACE(_logging_, "variant_found         = " << variant_found);
-      DT_LOG_TRACE(_logging_, "has_variant_default   = " << has_variant_default);
-      DT_LOG_TRACE(_logging_, "variant_default       = '" << variant_default << "'");
       DT_LOG_TRACE(_logging_, "variant_active        = " << variant_active);
       DT_LOG_TRACE(_logging_, "variant_reverse       = " << variant_reverse);
-      if (cri.is_success()) {
-        // Validate output:
-        variant_active_  = variant_active;
-        variant_reverse_ = variant_reverse;
-      }
+      // Validate output:
+      variant_active_  = variant_active;
+      variant_reverse_ = variant_reverse;
       DT_LOG_TRACE_EXITING(_logging_);
       return cri;
     }
@@ -836,6 +813,7 @@ namespace datatools {
           return cri;
         }
         std::string variant_path = variant_tokens[0];
+        // XXXXXXXXXXXX
         bool        has_variant_def_value = false;
         std::string variant_def_value;
         if (variant_tokens.size() > 1) {
@@ -877,7 +855,7 @@ namespace datatools {
             // if (datatools::logger::is_debug(_logging_)) {
             //   std::cerr << "[debug] " << cri2 << std::endl;
             // }
-            DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "An error occured: " << cri2);
+            // DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "An error occured: " << cri2);
             // DT_LOG_WARNING(logging, "Bayeux/datatools kernel's variant repository could not provide the value of "
             //                << "parameter '" << variant_path << "' : " << cri.get_error_message());
             // Handle error cases:
@@ -930,7 +908,6 @@ namespace datatools {
       DT_LOG_TRACE_EXITING(_logging_);
       return cri;
     }
-
 
     std::string
     variant_preprocessor::preprocess_string(const std::string & source_) const

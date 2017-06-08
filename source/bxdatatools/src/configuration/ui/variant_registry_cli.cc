@@ -8,7 +8,7 @@
  * your option) any later version.
  *
  * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * WITHOUT ANY WARRANTY; without Even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
@@ -283,10 +283,16 @@ namespace datatools {
                        "Real value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
             }
             cri = param_rec.set_real_value(value);
+            double param_unit = 1.0;
+            std::string param_unit_symbol;
+            if (!parmod.fetch_real_display_unit(param_unit_symbol, param_unit)) {
+              param_unit = 1.0;
+              param_unit_symbol.clear();
+            }
             if (cri.is_failure()) {
               cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
               DT_THROW(std::logic_error,
-                       "Real value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+                       "Real value for parameter '" << param_path_ << "' cannot accept value='" << value / param_unit << ' ' << param_unit_symbol << "'!");
             }
           } else if (parmod.is_string()) {
             std::string value = value_token_;

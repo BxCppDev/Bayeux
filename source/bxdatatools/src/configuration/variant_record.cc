@@ -938,7 +938,7 @@ namespace datatools {
         if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set boolean value failed: " << cri.get_error_message());
+        // DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set boolean value failed: " << cri.get_error_message());
       }
       return cri;
     }
@@ -977,7 +977,7 @@ namespace datatools {
         if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set integer value failed: " << cri.get_error_message());
+        // DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set integer value failed: " << cri.get_error_message());
       }
       DT_LOG_TRACE_EXITING(logging);
       return cri;
@@ -1018,7 +1018,7 @@ namespace datatools {
         if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
-        DT_LOG_ERROR(logging, "Real value failed: " << cri.get_error_message());
+        // DT_LOG_ERROR(logging, "Real value failed: " << cri.get_error_message());
       }
       DT_LOG_DEBUG(logging, "New real value = " << _real_value_);
       DT_LOG_TRACE_EXITING(logging);
@@ -1090,7 +1090,7 @@ namespace datatools {
         if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set string value failed: " << cri.get_error_message());
+        // DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set string value failed: " << cri.get_error_message());
       }
       return cri;
     }
@@ -1462,26 +1462,26 @@ namespace datatools {
           bool value;
           if (!io::read_boolean(value_iss, value)) {
             cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
+            // DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
             DT_THROW(std::logic_error,
                      "Invalid format '" << format_ << "' for boolean record '" << _path_ << "'!");
           }
           cri = set_boolean_value(value);
           if (cri.is_failure()) {
-            DT_LOG_ERROR(_logging_, "Could not set boolean value [" << value << "]:" << cri.get_error_message());
+            // DT_LOG_ERROR(_logging_, "Could not set boolean value [" << value << "]:" << cri.get_error_message());
           }
         } else if (get_parameter_model().is_integer()) {
           DT_LOG_DEBUG(_logging_, "Integer...");
           int value;
           if (!io::read_integer(value_iss, value)) {
             cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
+            // DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
             DT_THROW(std::logic_error,
                      "Invalid format '" << format_ << " for integer record '" << _path_ << "'!");
           }
           cri = set_integer_value(value);
           if (cri.is_failure()) {
-            DT_LOG_ERROR(_logging_, "Could not set integer value [" << value << "]:" << cri.get_error_message());
+            // DT_LOG_ERROR(_logging_, "Could not set integer value [" << value << "]:" << cri.get_error_message());
           }
         } else if (get_parameter_model().is_real()) {
           DT_LOG_DEBUG(_logging_, "Real...");
@@ -1492,7 +1492,7 @@ namespace datatools {
                                                             unit_symbol, unit_label);
           if (!ok) {
             cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
+            // DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
             DT_THROW(std::logic_error,
                      "Invalid format '" << format_ << "' for real record '" << _path_ << "'!");
           }
@@ -1511,20 +1511,20 @@ namespace datatools {
           DT_LOG_DEBUG(_logging_, "Setting real value = " << value);
           cri = set_real_value(value);
           if (cri.is_failure()) {
-            DT_LOG_ERROR(_logging_, "Could not set real value [" << value << "]:" << cri.get_error_message());
+            // DT_LOG_ERROR(_logging_, "Could not set real value [" << value << "]:" << cri.get_error_message());
           }
         } else if (get_parameter_model().is_string()) {
           DT_LOG_DEBUG(_logging_, "String...");
           std::string value;
           if (!io::read_quoted_string(value_iss, value)) {
             cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
+            // DT_LOG_ERROR(_logging_, "Parsing of '" << format_ << "' failed!");
             DT_THROW(std::logic_error,
                      "Invalid format for string record '" << _path_ << "'!");
           }
           cri = set_string_value(value);
           if (cri.is_failure()) {
-            DT_LOG_ERROR(_logging_, "Could not set string value [" << value << "]:" << cri.get_error_message());
+            // DT_LOG_ERROR(_logging_, "Could not set string value [" << value << "]:" << cri.get_error_message());
           }
         } else {
           cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
@@ -1532,7 +1532,7 @@ namespace datatools {
                    "Invalid parameter type for record '" << _path_ << "'!");
         }
       } catch (std::exception & x) {
-        DT_LOG_ERROR(_logging_, "Set value failure: " << x.what());
+        // DT_LOG_ERROR(_logging_, "Set value failure: " << x.what());
         cri.set_error_message(x.what());
       }
       return cri;

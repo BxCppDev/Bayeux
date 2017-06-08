@@ -379,7 +379,7 @@ namespace datatools {
 
     bool variant_registry::parameter_exists(const std::string & variant_path_) const
     {
-      if (!has_variant_record(record_path_)) return false;
+      if (!has_variant_record(variant_path_)) return false;
       const variant_record & variant_rec = get_variant_record(variant_path_);
       if (!variant_rec.is_parameter()) return false;
       return true;
@@ -387,7 +387,7 @@ namespace datatools {
 
     bool variant_registry::variant_exists(const std::string & variant_path_) const
     {
-      if (!has_variant_record(record_path_)) return false;
+      if (!has_variant_record(variant_path_)) return false;
       const variant_record & variant_rec = get_variant_record(variant_path_);
       if (!variant_rec.is_variant()) return false;
       return true;

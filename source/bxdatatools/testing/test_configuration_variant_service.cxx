@@ -115,7 +115,9 @@ int main(int argc_, char ** argv_)
       }
 
       // Terminate variant service:
-      app_var_serv.stop();
+      if (app_var_serv.is_started()) {
+        app_var_serv.stop();
+      }
 
     } catch (std::exception& e) {
       std::cerr << "[error] " << e.what()
