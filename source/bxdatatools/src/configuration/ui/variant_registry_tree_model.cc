@@ -665,7 +665,7 @@ namespace datatools {
         if ( role_ == Qt::ForegroundRole ) {
           if (a_node->get_record().is_parameter()) {
             if (index_.column() == tree_item::CI_VALUE) {
-              const parameter_model & par_mod = a_node->get_record().get_parameter_model();
+              const parameter_model & par_mod  = a_node->get_record().get_parameter_model();
               if (!par_mod.is_variable()) {
                 return QColor(192,128,128);
               }
