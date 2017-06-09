@@ -77,9 +77,9 @@ namespace geomtools {
     ///   associated to the NAME addressing level
     /// Example:
     /// \code
-    /// category : string = "detector"
-    /// address.row.set = {1} # Row #1
-    /// address.column.set = [0;4] # Column from #0 to #4
+    /// category           : string = "detector"  # Detection unit
+    /// address.row.set    : string = "{1}"       # Row #1
+    /// address.column.set : string = "[0;4]"     # Column from #0 to #4
     /// \endcode
     void initialize(const datatools::properties & config_);
 
