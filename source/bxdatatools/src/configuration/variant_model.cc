@@ -237,6 +237,29 @@ namespace datatools {
       return found_parameter->second.physical.get_model_handle();
     }
 
+    bool
+    variant_model::has_parameter_occurrence(const std::string & parameter_name_) const
+    {
+      parameter_dict_type::const_iterator found_parameter = _parameters_.find(parameter_name_);
+      DT_THROW_IF(found_parameter == _parameters_.end(),
+                  std::logic_error, "Variant model '" << get_name() << "' has no parameter named '"
+                  << parameter_name_ << "' !");
+      DT_THROW_IF(!found_parameter->second.physical.has_occurrence(),
+                  std::logic_error, "Variant model '" << get_name() << "' with parameter named '"
+                  << parameter_name_ << "' without explicit occurrence!");
+      return found_parameter->second.physical.has_occurrence();
+    }
+
+    const i_occurrence &
+    variant_model::get_parameter_occurrence(const std::string & parameter_name_) const
+    {
+      parameter_dict_type::const_iterator found_parameter = _parameters_.find(parameter_name_);
+      DT_THROW_IF(found_parameter == _parameters_.end(),
+                  std::logic_error, "Variant model '" << get_name() << "' has no parameter named '"
+                  << parameter_name_ << "' !");
+      return found_parameter->second.physical.get_occurrence();
+    }
+
     bool variant_model::is_initialized() const
     {
       return _initialized_;

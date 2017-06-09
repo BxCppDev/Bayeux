@@ -296,21 +296,11 @@ namespace datatools {
               } // is_string
 
             } /* value_is_set */ else {
-              return QString(tr("__unset__"));
+              return QString(tr("__unset__")); // Use: ascii_io::unset_label() ?
             } // ! value_is_set
 
           } // _record_->is_parameter()
 
-        // } else if (column_ == tree_item::CI_EDIT) {
-        //   if (_record_->is_parameter()) {
-        //     const parameter_model & par_mod = _record_->get_parameter_model();
-        //     if (par_mod.is_path()) {
-        //       // Nothing
-        //     } // is_path
-        //     if (par_mod.is_real()) {
-        //       // Nothing
-        //     } // is_real
-        //   }
         } else if (column_ == tree_item::CI_DESCRIPTION) {
 
           if (_record_->is_parameter()) {
@@ -321,9 +311,9 @@ namespace datatools {
               const variant_record & vrec = _record_->get_parent();
               const variant_model & vmod = vrec.get_variant_model();
               //std::cerr << "[devel] variant model = " << vmod.get_name() << "\n";
-              if (vmod.has_parameter(_record_->get_leaf_name())) {
+              if (vmod.has_parameter(_record_->get_base_name())) {
                 //std::cerr << "[devel] variant model has parameter " << _record_->get_leaf_name() << "\n";
-                std::string par_desc = vmod.get_parameter_description(_record_->get_leaf_name());
+                std::string par_desc = vmod.get_parameter_description(_record_->get_base_name());
                 //std::cerr << "[devel] parameter description = " << par_desc << "\n";
                 if (!par_desc.empty()) {
                   desc = par_desc;
@@ -859,8 +849,6 @@ namespace datatools {
 
             } // is_parameter
 
-          // } else if (index_.column() == tree_item::CI_EDIT) {
-
           } else if (index_.column() == tree_item::CI_DESCRIPTION) {
 
             if (a_node->get_record().is_parameter()) {
@@ -871,9 +859,10 @@ namespace datatools {
                 const variant_record & vrec = a_node->get_record().get_parent();
                 const variant_model & vmod = vrec.get_variant_model();
                 //std::cerr << "[devel] variant model = " << vmod.get_name() << "\n";
-                if (vmod.has_parameter(a_node->get_record().get_leaf_name())) {
-                  //std::cerr << "[devel] variant model has parameter " << a_node->get_record().get_leaf_name() << "\n";
-                  std::string par_desc = vmod.get_parameter_description(a_node->get_record().get_leaf_name());
+                std::string base_name = a_node->get_record().get_base_name();
+                if (vmod.has_parameter(base_name)) {
+                  //std::cerr << "[devel] variant model has parameter '" << base_name << "'\n";
+                  std::string par_desc = vmod.get_parameter_description(base_name);
                   //std::cerr << "[devel] parameter description = " << par_desc << "\n";
                   if (!par_desc.empty()) {
                     desc = par_desc;
@@ -1049,8 +1038,6 @@ namespace datatools {
             return tr("Type");
           } else if (section_ == tree_item::CI_VALUE) {
             return tr("Value");
-          // } else if (section_ == tree_item::CI_EDIT) {
-          //   return tr("Edit");
           } else if (section_ == tree_item::CI_DESCRIPTION) {
             return tr("Description");
           }

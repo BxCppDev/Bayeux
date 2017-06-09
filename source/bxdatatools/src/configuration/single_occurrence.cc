@@ -77,7 +77,6 @@ namespace datatools {
     {
       DT_THROW_IF(rank_ != 0, std::range_error, "Invalid rank '" << rank_ << "' !");
       path_.clear();
-      // path_.push_back(0);
       return path_.size();
     }
 

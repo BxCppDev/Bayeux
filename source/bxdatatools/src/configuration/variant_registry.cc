@@ -26,6 +26,10 @@
 #include <sstream>
 #include <fstream>
 
+// // Third party
+// // - Boost:
+// #include <boost/filesystem/path.hpp>
+
 // This project:
 #include <datatools/exception.h>
 #include <datatools/properties.h>
@@ -635,6 +639,10 @@ namespace datatools {
           std::string param_path = param_path_oss.str();
           DT_LOG_DEBUG(get_logging_priority(), "Adding param record '" << param_path << "'...");
           variant_record & param_rec = add_record(param_path);
+          // param_rec.set_base_name(param_name);
+          // if (indexes.size()) {
+          //   param_rec.set_indexes(indexes);
+          // }
           if (parent_variant_record_ != nullptr) {
             param_rec.set_parent(*parent_variant_record_, param_name_full, current_rank++);
           }

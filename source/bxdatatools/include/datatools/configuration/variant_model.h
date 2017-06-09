@@ -126,6 +126,12 @@ namespace datatools {
       /// Return a parameter model handle associated to a given parameter
       pm_handle_type get_parameter_model_handle(const std::string & parameter_name_) const;
 
+      /// Check is an occurrence is associated to a given parameter
+      bool has_parameter_occurrence(const std::string & parameter_name_) const;
+
+      /// Return a const reference to the occurrence associated to a given parameter
+      const i_occurrence & get_parameter_occurrence(const std::string & parameter_name_) const;
+
       /// Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",

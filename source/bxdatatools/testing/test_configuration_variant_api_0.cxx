@@ -408,7 +408,7 @@ void test1(bool debug_, bool
                                      "has_detector_0/if_detector/material",
                                      "Betty");
         if (ri.is_failure()) {
-          std::cerr << "ERROR: Command 'geometry:has_detector_0/if_detector/material' failed: " << ri.get_error_message() << std::endl;
+          std::cerr << "WARNING: As expected, command 'geometry:has_detector_0/if_detector/material' failed: " << ri.get_error_message() << std::endl;
         }
       }
 

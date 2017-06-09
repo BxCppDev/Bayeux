@@ -98,6 +98,21 @@ namespace datatools {
       /// Return the path
       const std::string & get_path() const;
 
+      /// Set the base name
+      void set_base_name(const std::string &);
+
+      /// Return the base name
+      const std::string & get_base_name() const;
+
+      /// Set the vector of indexes
+      void set_indexes(const std::vector<uint32_t>&);
+
+      /// Return the vector of indexes
+      const std::vector<uint32_t> & get_indexes() const;
+
+      /// Return the dimension of the occurence
+      std::size_t get_occurrence_dimension() const;
+
       /// Set with update
       void set_with_update(bool);
 
@@ -106,6 +121,9 @@ namespace datatools {
 
       /// Return the leaf name
       std::string get_leaf_name() const;
+
+      /// Return the parent name
+      std::string get_parent_name() const;
 
       /// Check if the parent registry handle is set
       bool has_parent_registry() const;
@@ -310,7 +328,9 @@ namespace datatools {
       bool                        _with_update_ = false;       //!< Update flag
 
       // Configuration:
-      std::string              _path_;                      //!< Full path of the record
+      std::string              _path_;                      //!< Full path of the record (ex: "aaa/bbb/ccc/ddd[3][1]")
+      std::string              _base_name_;                 //!< Base leaf name of the record (ex: "ddd")
+      std::vector<uint32_t>    _indexes_;                   //!< Indexes in occurence (ex: "{3; 1}")
       const variant_registry * _parent_registry_ = nullptr; //!< Handle to the parent registry
       const parameter_model *  _parameter_model_ = nullptr; //!< Handle to a parameter model
       const variant_model   *  _variant_model_ = nullptr;   //!< Handle to a variant model

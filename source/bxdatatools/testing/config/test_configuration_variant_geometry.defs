@@ -104,7 +104,7 @@ real.enumerated_4.group   : string =  "Thick"
 #########################################
 [name="thin_behaviour.VM" type="variant"]
 display_name    : string = "Thin detector behaviour"
-terse_description     : string = "The parameters of the behaviour of a thin detector"
+terse_description     : string = "Case of a thin detector"
 # parameters : string[2] = "A" "B"
 # parameters.A.model       : string = "???.PM"
 # parameters.A.description : string = "???"
@@ -115,13 +115,13 @@ terse_description     : string = "The parameters of the behaviour of a thin dete
 ##########################################
 [name="thick_behaviour.VM" type="variant"]
 display_name    : string = "Thick detector behaviour"
-terse_description     : string = "The parameters of the behaviour of a thick detector"
+terse_description     : string = "Case of a thick detector"
 
 
 ###############################################
 [name="detector.thickness.PM" type="parameter"]
-display_name    : string = "Detector thickness"
-terse_description     : string = "The thickness of the detector"
+display_name      : string = "Detector thickness"
+terse_description : string = "The thickness of the detector"
 type            : string = "real"
 mutability      : string = "variable"
 real.unit_label : string = "length"
@@ -146,8 +146,8 @@ real.ranges.large.variant  : string = "thick_behaviour"
 
 ##############################################
 [name="detector.material.PM" type="parameter"]
-display_name    : string = "Detector material"
-terse_description     : string = "The material the detector is made of"
+display_name      : string = "Detector material"
+terse_description : string = "The material the detector is made of"
 type            : string = "string"
 mutability      : string = "variable"
 variable.mode   : string = "enumeration"
@@ -165,19 +165,19 @@ string.default  : string = "Silicium"
 
 variants : string[1] = "if_radioactive"
 variants.if_radioactive.model       : string = "if_radioactive.VM"
-variants.if_radioactive.description : string = "Material intrinsic radioactivity"
+variants.if_radioactive.description : string = "Case of a material with intrinsic radioactivity"
 string.enumerated_2.variant : string = "if_radioactive"
 
 
 #########################################
 [name="if_no_detector.VM" type="variant"]
 display_name                     : string = "No detector"
-terse_description                      : string = "No detector case"
+terse_description                : string = "No detector usecase"
 
 ######################################
 [name="if_detector.VM" type="variant"]
 display_name                     : string = "Detector parameters"
-terse_description                      : string = "The parameters of an existing detector"
+terse_description                : string = "The parameters of an existing detector"
 parameters                       : string[4] = "length" "width" "thickness" "material"
 parameters.length.model          : string = "detector.length.PM"
 parameters.length.description    : string = "Length of the sensitive part of the detector"
@@ -192,15 +192,16 @@ parameters.material.description  : string = "Material of the sensitive part of t
 ##########################################
 [name="detector_flag.PM" type="parameter"]
 display_name                     : string = "Detector exists"
-terse_description                      : string = "A flag to make a detector existing"
+terse_description                : string = "A flag to make a detector existing"
 type                             : string = "boolean"
 mutability                       : string = "variable"
 boolean.default                  : boolean = 0
 variants                         : string[2] = "if_detector" "if_no_detector"
-variants.if_detector.model       : string = "if_detector.VM"
-#variants.if_detector.description : string = "Variant activated by the use of the detector"
+variants.if_detector.model          : string = "if_detector.VM"
+variants.if_detector.description    : string = "Case with detector"
 variants.if_no_detector.model       : string = "if_no_detector.VM"
-#variants.if_no_detector.description : string = "Case with no detector"
+variants.if_no_detector.description : string = "Case with no detector"
+
 boolean.true.variant                : string = "if_detector"
 boolean.false.variant               : string = "if_no_detector"
 
@@ -208,7 +209,7 @@ boolean.false.variant               : string = "if_no_detector"
 ######################################
 [name="firstname.PM" type="parameter"]
 display_name              : string = "Firstname"
-terse_description               : string = "The firstname"
+terse_description         : string = "The firstname"
 type                      : string = "string"
 mutability                : string = "variable"
 variable.mode             : string = "enumeration"
@@ -225,6 +226,7 @@ string.enumerated_2.group : string = "Male"
 
 string.enumerated_3.value : string = "Betty"
 string.enumerated_3.group : string = "Female"
+string.enumerated_3.variant : string = "if_betty"
 
 string.enumerated_4.value : string = "Nelly"
 string.enumerated_4.group : string = "Female"
@@ -232,13 +234,14 @@ string.enumerated_4.group : string = "Female"
 string.default            : string = "John"
 
 variants : string[1] = "if_betty"
-variants.if_betty.model : string = "datatools::basic::is_on.VM"
+variants.if_betty.model       : string = "datatools::basic::is_on.VM"
+variants.if_betty.description : string = "Special case for Betty"
 
 
 ###################################
 [name="nloops.PM" type="parameter"]
-display_name    : string = "Number of loops"
-terse_description     : string = "The number of loops for an algorithm"
+display_name      : string = "Number of loops"
+terse_description : string = "The number of loops for an algorithm"
 type            : string = "integer"
 mutability      : string = "variable"
 variable.mode   : string = "interval"
@@ -258,8 +261,8 @@ string.default  : string = "${HOME}/app.conf"
 
 #########################################
 [name="free_integer.PM" type="parameter"]
-display_name    : string = "A number"
-terse_description     : string = "A dummy number"
+display_name      : string = "A number"
+terse_description : string = "A dummy number"
 type            : string = "integer"
 mutability      : string = "variable"
 variable.mode   : string = "free"
@@ -268,8 +271,8 @@ integer.default : integer = 7
 
 #########################################
 [name="enum_integer.PM" type="parameter"]
-display_name    : string = "A number"
-terse_description     : string = "A dummy number"
+display_name      : string = "A number"
+terse_description : string = "A dummy number"
 type            : string = "integer"
 mutability      : string = "variable"
 variable.mode   : string = "enumeration"
@@ -284,8 +287,8 @@ integer.enumerated_4.value : integer = 16
 
 #########################################
 [name="free_length.PM" type="parameter"]
-display_name    : string = "A length"
-terse_description     : string = "A dummy length"
+display_name      : string = "A length"
+terse_description : string = "A dummy length"
 type            : string = "real"
 mutability      : string = "variable"
 variable.mode   : string = "free"
@@ -297,8 +300,8 @@ real.default    : real   = 30 cm
 
 ########################################
 [name="free_string.PM" type="parameter"]
-display_name    : string = "A string"
-terse_description     : string = "A dummy string"
+display_name      : string = "A string"
+terse_description : string = "A dummy string"
 type            : string = "string"
 mutability      : string = "variable"
 variable.mode   : string = "free"
@@ -307,8 +310,8 @@ string.default  : string = "Hello, World!"
 
 ###################################
 [name="geometry.VM" type="variant"]
-display_name    : string = "Geometry setup"
-terse_description     : string = "The parameters of the geometry"
+display_name      : string = "Geometry setup"
+terse_description : string = "The parameters of the geometry"
 parameters : string[11] = \
   "has_detector_0" \
   "has_detector_1" \
@@ -353,7 +356,7 @@ parameters.words.model                 : string = "free_string.PM"
 parameters.words.description           : string = "Some words"
 
 parameters.params.model                : string = "free_length.PM"
-parameters.params.description          : string = "A parameter"
+parameters.params.description          : string = "Parameter"
 parameters.params.occurrence           : string = "array size=4 start_with=0"
 
 # end

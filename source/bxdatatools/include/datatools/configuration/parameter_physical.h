@@ -98,7 +98,6 @@ namespace datatools {
     private:
 
       pm_handle_type _model_; //!< Model of the parameter
-      //boost::shared_ptr<i_occurrence> _occurrence_; //!< Occurrence
       std::shared_ptr<i_occurrence> _occurrence_; //!< Occurrence
 
     };

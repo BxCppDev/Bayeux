@@ -39,7 +39,6 @@ namespace datatools {
     // virtual
     bool parameter_physical::is_name_valid(const std::string & name_) const
     {
-      // std::cerr << "DEVEL: parameter_physical::is_name_valid: name = '" << name_ << "'" << std::endl;
       return ::datatools::configuration::validate_instance_name(name_);
     }
 
@@ -83,7 +82,7 @@ namespace datatools {
 
     bool parameter_physical::has_occurrence() const
     {
-      return _occurrence_.get() != 0;
+      return _occurrence_.get() != nullptr;
     }
 
     const i_occurrence & parameter_physical::get_occurrence() const

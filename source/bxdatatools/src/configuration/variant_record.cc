@@ -25,6 +25,8 @@
 // Third party
 // - Boost:
 #include <boost/filesystem/path.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 // This project:
 #include <datatools/logger.h>
@@ -519,6 +521,8 @@ namespace datatools {
       _logging_ = datatools::logger::PRIO_FATAL;
       _with_update_ = false;
       _path_.clear();
+      _base_name_.clear();
+      _indexes_.clear();
       _parent_registry_ = nullptr;
       _parameter_model_ = nullptr;
       _variant_model_ = nullptr;
@@ -570,12 +574,56 @@ namespace datatools {
     void variant_record::set_path(const std::string & p_)
     {
       _path_ = p_;
+      {
+        boost::filesystem::path pth(_path_);
+        std::string bname = pth.filename().string();
+        std::vector<std::string> bname_tokens;
+        boost::split(bname_tokens, bname, boost::is_any_of("["));
+        set_base_name(bname_tokens[0]);
+        std::vector<uint32_t> indexes;
+        for (std::size_t i = 1; i < bname_tokens.size(); i++) {
+          std::string sidx = bname_tokens[i];
+          boost::algorithm::erase_all(sidx, "]");
+          uint32_t idx = boost::lexical_cast<uint32_t>(sidx);
+          indexes.push_back(idx);
+        }
+        if (indexes.size()) {
+          set_indexes(indexes);
+        }
+      }
       return;
     }
 
     const std::string & variant_record::get_path() const
     {
       return _path_;
+    }
+
+    void variant_record::set_base_name(const std::string & p_)
+    {
+      _base_name_ = p_;
+      return;
+    }
+
+    const std::string & variant_record::get_base_name() const
+    {
+      return _base_name_;
+    }
+
+    void variant_record::set_indexes(const std::vector<uint32_t> & i_)
+    {
+      _indexes_ = i_;
+      return;
+    }
+
+    const std::vector<uint32_t> & variant_record::get_indexes() const
+    {
+      return _indexes_;
+    }
+
+    std::size_t variant_record::get_occurrence_dimension() const
+    {
+      return _indexes_.size();
     }
 
     bool variant_record::has_parent_registry() const
@@ -614,7 +662,13 @@ namespace datatools {
     std::string variant_record::get_leaf_name() const
     {
       boost::filesystem::path pth(_path_);
-      return pth.leaf().string();
+      return pth.filename().string();
+    }
+
+    std::string variant_record::get_parent_name() const
+    {
+      boost::filesystem::path pth(_path_);
+      return pth.parent_path().string();
     }
 
     bool variant_record::is_top_variant() const
@@ -947,11 +1001,6 @@ namespace datatools {
     variant_record::set_integer_value(int value_)
     {
       datatools::logger::priority logging = _logging_;
-      // // XXX
-      // if (get_leaf_name() == "accuracy" ) {
-      //   logging = datatools::logger::PRIO_TRACE;
-      //   _logging_ = datatools::logger::PRIO_TRACE;
-      // }
       DT_LOG_TRACE_ENTERING(logging);
       command::returned_info cri;
       try {
@@ -988,11 +1037,6 @@ namespace datatools {
     {
       command::returned_info cri;
       datatools::logger::priority logging = _logging_;
-      // // XXX
-      // if (get_leaf_name() == "value") {
-      //   logging = datatools::logger::PRIO_TRACE;
-      //   _logging_ = datatools::logger::PRIO_TRACE;
-      // }
       DT_LOG_TRACE_ENTERING(logging);
       DT_LOG_DEBUG(logging, "Setting real value = " << value_ << " ... ");
       try {
@@ -1191,10 +1235,6 @@ namespace datatools {
 
     void variant_record::update()
     {
-      // XXX
-      // if (get_leaf_name() == "generator") {
-      //   _logging_ = datatools::logger::PRIO_TRACE;
-      // }
       if (_with_update_) {
         DT_LOG_TRACE(_logging_, "Record '" << get_path() << "' with update");
         _update_();
@@ -1259,9 +1299,6 @@ namespace datatools {
       datatools::logger::priority logging = _logging_;
       // logging = datatools::logger::PRIO_TRACE;
       DT_LOG_TRACE_ENTERING(logging);
-      // if (get_leaf_name() == "palette") {
-      //   logging = datatools::logger::PRIO_TRACE;
-      // }
       DT_LOG_DEBUG(logging, "Updating parameter '" << get_path() << "'...");
       // First we deactivate all variants by default...
       if (_daughters_.size()) {
