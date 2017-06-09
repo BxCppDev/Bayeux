@@ -613,9 +613,6 @@ namespace datatools {
         return parent_node->get_children().count();
       }
 
-      // The number of columns is fixed at 2.
-      // The first column holds the node key;
-      // the second column holds the node value.
       int variant_registry_tree_model::columnCount(const QModelIndex & parent_) const
       {
         if (parent_.isValid()) {
@@ -638,7 +635,6 @@ namespace datatools {
         }
 
         if ( role_ == Qt::BackgroundRole ) {
-          // std::cerr << "DEVEL: variant_registry_tree_model::data: BackgroundRole" << "\n";
           if (a_node->get_record().is_variant()) {
             if ((index_.row() % 2) == 0) {
               return QColor(210,210,255);
@@ -647,10 +643,8 @@ namespace datatools {
             }
           }
           if (a_node->get_record().is_parameter()) {
-            // std::cerr << "DEVEL: variant_registry_tree_model::data: index_.column=" << index_.column() << "\n";
             if (index_.column() == tree_item::CI_VALUE) {
-              // std::cerr << "DEVEL: variant_registry_tree_model::data: index_.column=" << index_.column() << "\n";
-              if (a_node->get_record().is_active() && !a_node->get_record().value_is_set()) {
+               if (a_node->get_record().is_active() && !a_node->get_record().value_is_set()) {
                 return QColor(255,75,25);
               }
             }
