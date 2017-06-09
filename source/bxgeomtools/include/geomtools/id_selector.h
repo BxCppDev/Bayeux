@@ -48,10 +48,39 @@ namespace geomtools {
     /// Check initialization status
     bool is_initialized() const;
 
-    /// Initialize the selector frop a textual rule
+    /// Initialize the selector from a textual rule
+    /// Supported syntax is:
+    /// \code
+    /// "category='name' [NAME1=rule1 [NAME1=rule2 [...]]]"
+    /// \endcode
+    /// where :
+    /// - 'name' is the identifier of an exiting geometry category
+    ///   published by the ID manager.
+    /// - 'ruleN' represents a set of addresses associated to the NAMEN
+    ///   addressing level.
+    ///   Supported formats are:
+    ///   - singleton: {5}
+    ///   - range: [0;4]
+    ///   - list: [0; 1; 4; 12; 42]
+    ///   - all: {*}
+    /// Example:
+    /// \code
+    /// "category='detector' row={1} column=[0;4]"
+    /// \endcode
     void initialize(const std::string & rules_);
 
-    /// Initialize the selector frop a textual rule
+    /// Initialize the selector from a set of properties
+    /// Supported properties are:
+    /// - category (string) : the identifier of an exiting geometry category
+    ///   published by the ID manager.
+    /// - address.NAME.set (string) : the rule representing the set of addresses
+    ///   associated to the NAME addressing level
+    /// Example:
+    /// \code
+    /// category : string = "detector"
+    /// address.row.set = {1} # Row #1
+    /// address.column.set = [0;4] # Column from #0 to #4
+    /// \endcode
     void initialize(const datatools::properties & config_);
 
     /// Reset the selector

@@ -90,7 +90,7 @@ namespace geomtools {
     for (size_t addr_index = 0; addr_index < _cat_info_->get_addresses().size(); addr_index++) {
       bool addr_processed = false;
       const std::string & addr_name = _cat_info_->get_addresses()[addr_index];
-      {
+      if (!addr_processed) {
         // Search for a unique value for a given address, examples:
         //   address.row    : integer = 3
         //   address.column : integer = 7
@@ -98,7 +98,7 @@ namespace geomtools {
         unique_addr_name_oss << "address." << addr_name;
         if (config_.has_key(unique_addr_name_oss.str())) {
           addr_processed = true;
-          int unique_addr = config_.fetch_integer(unique_addr_name_oss.str());
+          int unique_addr = config_.fetch_positive_integer(unique_addr_name_oss.str());
           DT_THROW_IF(unique_addr < 0, std::logic_error, "Invalid unique address '" << addr_name << "' in category '" << category << "'!");
           address_set as;
           as.set_mode_list();
@@ -107,28 +107,39 @@ namespace geomtools {
           addr_processed = true;
         }
       }
-      /*
-      {
-        // Search for a range of values for a given address, examples:
-        //   address.row.range  : string = "[0;3]"
-        addr_processed = true;
-      }
-      {
-        // Search for a list of values for a given address, examples:
-        //   address.row.list   : string = "{0;1;7,8}"
-        addr_processed = true;
-      }
-      */
+
       if (!addr_processed) {
+        // Search for a set of values for a given address, examples:
+        //   address.row.set : string = "[0;3]"      # range
+        //   address.row.set : string = "{0;1;7,8}"  # list
+        //   address.row.set : string = "{*}"        # all
+        std::ostringstream set_addr_name_oss;
+        set_addr_name_oss << "address." << addr_name << ".set";
+        if (config_.has_key(set_addr_name_oss.str())) {
+          std::string set_str = config_.fetch_string(set_addr_name_oss.str());
+          address_set as;
+          std::istringstream iss(set_str);
+          iss >> as;
+          DT_THROW_IF(!iss, std::logic_error,
+                      "Invalid set format for address '" << addr_name << "' in category '" << category << "'!");
+          DT_THROW_IF(!as.is_mode_all() &&
+                      !as.is_mode_range() &&
+                      !as.is_mode_list(),
+                      std::logic_error,
+                      "Invalid set for address '" << addr_name << "' in category '" << category << "'!");
+          _addr_sets_[addr_index] = as;
+          addr_processed = true;
+        }
+      }
+
+      if (!addr_processed) {
+        // Default to all:
         address_set as;
         as.set_mode_all();
         _addr_sets_[addr_index] = as;
         addr_processed = true;
-        // DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-        //                "Address '" << addr_name << "' in category '" << category << "' is set to 'all'!");
-        // DT_THROW(std::logic_error,
-        //          "Address '" << addr_name << "' in category '" << category << "' is not specified!");
       }
+
     }
     return;
   }
