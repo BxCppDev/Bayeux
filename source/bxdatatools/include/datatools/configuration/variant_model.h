@@ -56,7 +56,8 @@ namespace datatools {
     class parameter_physical;
 
     /// \brief Model of a configuration variant
-    class variant_model : public datatools::enriched_base
+    class variant_model
+      : public datatools::enriched_base
     {
     public:
 
