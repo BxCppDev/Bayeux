@@ -3721,7 +3721,7 @@ namespace datatools {
               }
             }
 
-            bool variant_only_found = false;
+            bool variant_only_active = false;
             /* The variant_only_reverse flag reverses the condition:
              *
              *  Example:
@@ -3735,7 +3735,7 @@ namespace datatools {
             // Process the variant_only directive if it exists:
             if (exhibit_property && !variant_only.empty()) {
               command::returned_info cri = vpp.resolve_variant(variant_only,
-                                                               variant_only_found,
+                                                               variant_only_active,
                                                                variant_only_reverse);
               DT_PROP_CFG_READ_THROW_IF(cri.is_failure(),
                                         std::logic_error,
@@ -3746,7 +3746,7 @@ namespace datatools {
                                         "Cannot preprocess variant only directive from '"
                                         << variant_only << "' : "
                                         << cri.get_error_message());
-              DT_LOG_TRACE(logging, "VPP ==> variant_only_found='" << variant_only_found << "'");
+              DT_LOG_TRACE(logging, "VPP ==> variant_only_active='" << variant_only_active << "'");
               DT_LOG_TRACE(logging, "VPP ==> variant_only_reverse='" << variant_only_reverse << "'");
             }
 
@@ -3755,9 +3755,9 @@ namespace datatools {
             if (process_line) {
               // variant_only may inhibit the property:
               if (! variant_only.empty()) {
-                process_line = variant_only_found;
+                process_line = variant_only_active;
                 if (variant_only_reverse) {
-                  process_line = !variant_only_found;
+                  process_line = !variant_only_active;
                 }
               }
             }
@@ -4022,9 +4022,9 @@ namespace datatools {
               // bool store_it = exhibit_property;
               // if (store_it) {
               //        if (! variant_only.empty()) {
-              //          store_it = variant_only_found;
+              //          store_it = variant_only_active;
               //          if (variant_only_reverse) {
-              //            store_it = !variant_only_found;
+              //            store_it = !variant_only_active;
               //          }
               //        }
               // }

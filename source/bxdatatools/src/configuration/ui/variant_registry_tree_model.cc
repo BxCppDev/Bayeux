@@ -32,8 +32,7 @@
 
 // Third party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
-#include <boost/filesystem/path.hpp>
+// #include <boost/filesystem/path.hpp>
 // - Qt:
 #include <QColor>
 
@@ -637,6 +636,7 @@ namespace datatools {
         if (!a_node) {
           return QVariant();
         }
+
         if ( role_ == Qt::BackgroundRole ) {
           // std::cerr << "DEVEL: variant_registry_tree_model::data: BackgroundRole" << "\n";
           if (a_node->get_record().is_variant()) {
@@ -663,6 +663,14 @@ namespace datatools {
         }
 
         if ( role_ == Qt::ForegroundRole ) {
+          if (a_node->get_record().is_parameter()) {
+            if (index_.column() == tree_item::CI_VALUE) {
+              const parameter_model & par_mod = a_node->get_record().get_parameter_model();
+              if (!par_mod.is_variable()) {
+                return QColor(192,128,128);
+              }
+            }
+          }
         }
 
         if ( role_ == Qt::ToolTipRole ) {

@@ -706,7 +706,7 @@ void test1(bool debug_, bool
         datatools::properties::read_config(config_filename, config);
         config.tree_dump(std::clog, "Configuration properties: ");
       } catch (std::exception & error) {
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "As expected: " << error.what());
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "As expected: " << error.what());
       }
 
       try {
@@ -717,7 +717,7 @@ void test1(bool debug_, bool
         datatools::properties::read_config(config_filename, config);
         config.tree_dump(std::clog, "Configuration properties 2: ");
       } catch (std::exception & error) {
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "As expected: " << error.what());
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
       }
 
     }

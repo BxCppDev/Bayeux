@@ -70,6 +70,9 @@ namespace datatools {
       /// Return unset parameter label
       static const std::string & unset_label();
 
+      /// Return error parameter label
+      static const std::string & error_label();
+
       /// Return format label
       static const std::string & format_label();
 

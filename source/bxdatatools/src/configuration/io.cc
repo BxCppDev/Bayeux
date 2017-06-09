@@ -1,6 +1,6 @@
 // datatools/configuration/io.cc
 /*
- * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@
 // Ourselves:
 #include <datatools/configuration/io.h>
 
+// Standard library:
+#include <memory>
+
 // Third party:
 // - Boost:
 #include <boost/algorithm/string.hpp>
-#include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/exception.h>
@@ -53,6 +55,13 @@ namespace datatools {
     }
 
     // static
+    const std::string & ascii_io::error_label()
+    {
+      static const std::string _label("__error__");
+      return _label;
+    }
+
+    // static
     const std::string & ascii_io::format_label()
     {
       static const std::string _label("datatools::configuration::variant");
@@ -62,8 +71,8 @@ namespace datatools {
     // static
     version_id ascii_io::current_format_version_id()
     {
-      static boost::scoped_ptr<version_id> _vid;
-      if (_vid.get() == 0) {
+      static std::unique_ptr<version_id> _vid;
+      if (_vid.get() == nullptr) {
         _vid.reset(new version_id(1,0));
       }
       return *_vid;
@@ -813,7 +822,6 @@ namespace datatools {
           return cri;
         }
         std::string variant_path = variant_tokens[0];
-        // XXXXXXXXXXXX
         bool        has_variant_def_value = false;
         std::string variant_def_value;
         if (variant_tokens.size() > 1) {
@@ -832,74 +840,62 @@ namespace datatools {
         std::string variant_parameter_path = variant_path_tokens[1];
         DT_LOG_TRACE(_logging_, "variant_registry_name  = '" << variant_registry_name << "'");
         DT_LOG_TRACE(_logging_, "variant_parameter_path = '" << variant_parameter_path << "'");
-        bool variant_parameter_found = false;
         std::string variant_parameter_value;
-        if (repository_is_active()) {
-          DT_LOG_TRACE(_logging_, "repository is active");
-          // Search for registrated variant parameter in the associated variant repository:
-          const variant_repository & rep = get_repository();
-          ui::variant_repository_cli vrepCli(const_cast<variant_repository &>(rep));
-          vrepCli.set_logging(_logging_);
-          DT_LOG_TRACE(_logging_, "Invoking cmd_get_parameter...");
-          command::returned_info cri2 = vrepCli.cmd_get_parameter(variant_registry_name,
-                                                                  variant_parameter_path,
-                                                                  variant_parameter_value);
-          if (cri2.is_success()) {
-            DT_LOG_TRACE(_logging_, "Success.");
-            effective_property_value_str = variant_parameter_value;
-            variant_parameter_found = true;
-            DT_LOG_TRACE(_logging_, "Found value for variant parameter '" << variant_path << "' = '"
-                                      << variant_parameter_value << "'");
+        if (!repository_is_active()) {
+          if (has_variant_def_value) {
+            parameter_effective_token_ = variant_def_value;
+            return cri;
           } else {
-            DT_LOG_TRACE(_logging_, "cmd_get_parameter failed.");
-            // if (datatools::logger::is_debug(_logging_)) {
-            //   std::cerr << "[debug] " << cri2 << std::endl;
-            // }
-            // DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "An error occured: " << cri2);
-            // DT_LOG_WARNING(logging, "Bayeux/datatools kernel's variant repository could not provide the value of "
-            //                << "parameter '" << variant_path << "' : " << cri.get_error_message());
-            // Handle error cases:
-            // * CEC_SCOPE_INVALID:             registry does not exists -> fallback to default value if any (see below)
-            // * CEC_FAILURE:                   fatal error -> cannot fallback to default value
-            // * CEC_PARAMETER_INVALID_KEY:     fatal error -> cannot fallback to default value
-            // * CEC_PARAMETER_INVALID_CONTEXT: fatal error -> cannot fallback to default value
-            // * CEC_PARAMETER_INVALID_TYPE:    fatal error -> cannot fallback to default value
-            if (cri2.get_error_code() != command::CEC_SCOPE_INVALID) {
-              // All error cases but CEC_SCOPE_INVALID (missing variant registry) are considered
-              // as fatal error with no hope to fallback to a possible default value:
-              cri = cri2;
-            }
+            DT_COMMAND_RETURNED_ERROR(cri, command::CEC_CONTEXT_INVALID,
+                                      "Inactive variant repository while processing '" << parameter_token_ << "'!");
+            return cri;
           }
         }
-        if (! variant_parameter_found && cri.is_success()) {
-          // If no error before, we try to fallback to a default value:
-          if (!has_variant_def_value) {
-            DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARAMETER_UNSET_VALUE,
-                                      "No available default value for variant parameter '" << variant_path << "' !");
-          } else {
-            effective_property_value_str = variant_def_value;
-            DT_LOG_TRACE(_logging_, "Use default value for variant parameter '" << variant_path << "' = '"
-                                      << effective_property_value_str << "'");
-          }
+        DT_LOG_TRACE(_logging_, "repository is active");
+        // Search for registrated variant parameter in the associated variant repository:
+        const variant_repository & rep = get_repository();
+        ui::variant_repository_cli vrepCli(const_cast<variant_repository &>(rep));
+        vrepCli.set_logging(_logging_);
+        DT_LOG_TRACE(_logging_, "Invoking cmd_get_parameter...");
+        command::returned_info cri2 = vrepCli.cmd_get_parameter(variant_registry_name,
+                                                                variant_parameter_path,
+                                                                variant_parameter_value);
+        if (cri2.is_failure()) {
+          cri = cri2;
+          return cri;
         }
-        if (cri.is_success()) {
-          parameter_effective_token_ = effective_property_value_str;
-          // Reporting here...
-          DT_LOG_TRACE(_logging_, "Reporting for variant_path = '" << variant_path << "'");
-          if (_repository_->has_reporting()) {
-            DT_LOG_TRACE(_logging_, "Repository '" << _repository_->get_name() << " has reporting!");
-            variant_repository & mutable_repository = const_cast<variant_repository&>(get_repository());
-            variant_reporting & rptg = mutable_repository.grab_reporting();
-            rptg.add(variant_path);
-          } else {
-            DT_LOG_TRACE(_logging_, "Repository '" << _repository_->get_name() << " has NO reporting!");
-          }
-          if (is_remove_quotes()) {
-            if (datatools::is_quoted(parameter_effective_token_, '"')) {
-              datatools::remove_quotes(parameter_effective_token_, '"');
-            } else if (datatools::is_quoted(parameter_effective_token_, '\'')) {
-              datatools::remove_quotes(parameter_effective_token_, '\'');
-            }
+        DT_LOG_TRACE(_logging_, "Success.");
+        effective_property_value_str = variant_parameter_value;
+        DT_LOG_TRACE(_logging_, "Found value for variant parameter '" << variant_path << "' = '"
+                     << variant_parameter_value << "'");
+
+        // if (! variant_parameter_found && cri.is_success()) {
+        //   // If no error before, we try to fallback to a default value:
+        //   if (!has_variant_def_value) {
+        //     DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARAMETER_UNSET_VALUE,
+        //                               "No available default value for variant parameter '" << variant_path << "' !");
+        //   } else {
+        //     effective_property_value_str = variant_def_value;
+        //     DT_LOG_TRACE(_logging_, "Use default value for variant parameter '" << variant_path << "' = '"
+        //                               << effective_property_value_str << "'");
+        //   }
+        // }
+        parameter_effective_token_ = effective_property_value_str;
+        // Reporting here...
+        DT_LOG_TRACE(_logging_, "Reporting for variant_path = '" << variant_path << "'");
+        if (_repository_->has_reporting()) {
+          DT_LOG_TRACE(_logging_, "Repository '" << _repository_->get_name() << " has reporting!");
+          variant_repository & mutable_repository = const_cast<variant_repository&>(get_repository());
+          variant_reporting & rptg = mutable_repository.grab_reporting();
+          rptg.add(variant_path);
+        } else {
+          DT_LOG_TRACE(_logging_, "Repository '" << _repository_->get_name() << " has no reporting!");
+        }
+        if (is_remove_quotes()) {
+          if (datatools::is_quoted(parameter_effective_token_, '"')) {
+            datatools::remove_quotes(parameter_effective_token_, '"');
+          } else if (datatools::is_quoted(parameter_effective_token_, '\'')) {
+            datatools::remove_quotes(parameter_effective_token_, '\'');
           }
         }
       } catch (std::exception & error) {
