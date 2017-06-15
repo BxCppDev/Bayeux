@@ -25,17 +25,47 @@
 #ifndef BAYEUX_BAYEUX_CONFIG_H
 #define BAYEUX_BAYEUX_CONFIG_H
 
+//! Evaluates to true if Bayeux was built with the cuts module
+#define BAYEUX_WITH_CUTS @Bayeux_WITH_CUTS@
+
+//! Evaluates to true if Bayeux was built with the materials module
+#define BAYEUX_WITH_MATERIALS @Bayeux_WITH_MATERIALS@
+
+//! Evaluates to true if Bayeux was built with the mygsl module
+#define BAYEUX_WITH_MYGSL @Bayeux_WITH_MYGSL@
+
+//! Evaluates to true if Bayeux was built with the brio module
+#define BAYEUX_WITH_BRIO @Bayeux_WITH_BRIO@
+
+//! Evaluates to true if Bayeux was built with the dpp module
+#define BAYEUX_WITH_DPP @Bayeux_WITH_DPP@
+
+//! Evaluates to true if Bayeux was built with the geomtools module
+#define BAYEUX_WITH_GEOMTOOLS @Bayeux_WITH_GEOMTOOLS@
+
+//! Evaluates to true if Bayeux was built with the emfield module
+#define BAYEUX_WITH_EMFIELD @Bayeux_WITH_EMFIELD@
+
+//! Evaluates to true if Bayeux was built with the genbb_help module
+#define BAYEUX_WITH_GENBB @Bayeux_WITH_GENBB@
+
+//! Evaluates to true if Bayeux was built with the genvtx module
+#define BAYEUX_WITH_GENVTX @Bayeux_WITH_GENVTX@
+
+//! Evaluates to true if Bayeux was built with the mctools module
+#define BAYEUX_WITH_MCTOOLS @Bayeux_WITH_MCTOOLS@
+
 //! Evaluates to true if Bayeux was built with Geant4 extension module
-#cmakedefine01 BAYEUX_WITH_GEANT4_MODULE
+#define BAYEUX_WITH_GEANT4_MODULE @Bayeux_WITH_GEANT4_MODULE@
 
 //! Evaluates to true if Bayeux was built with MCNP extension module
-#cmakedefine01 BAYEUX_WITH_MCNP_MODULE
+#define BAYEUX_WITH_MCNP_MODULE @Bayeux_WITH_MCNP_MODULE@
 
 //! Evaluates to true if Bayeux was built with the lahague module
-#cmakedefine01 BAYEUX_WITH_LAHAGUE
+#define BAYEUX_WITH_LAHAGUE @Bayeux_WITH_LAHAGUE@
 
 //! Evaluates to true if Bayeux was built with Qt-based GUI components
-#cmakedefine01 BAYEUX_WITH_QT_GUI
+#define BAYEUX_WITH_QT_GUI @Bayeux_WITH_QT_GUI@
 
 //! The base directory of Bayeux resource files
 #define BAYEUX_ENV_RESOURCE_DIR "BAYEUX_RESOURCE_DIR"

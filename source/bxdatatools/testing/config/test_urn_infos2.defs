@@ -46,16 +46,16 @@ description : string = "Foo experiment monitoring setup version 2.1"
 
 description : string = "Foo experiment dataset 1"
 
-topics : string[2] = "data" "metadata"
+topics : string[2] = "composition" "dependency"
 
 #@description Several components associated to this topic
-topic.data.components : string[3] = \
+topic.composition.components : string[3] = \
   "urn:fooexp:commissioning:run:1" \
   "urn:fooexp:commissioning:run:2" \
   "urn:fooexp:commissioning:run:3"
 
 #@description Unique component associated to this topic
-topic.metadata.component : string = "urn:fooexp:monitoring:2.1"
+topic.dependency.component : string = "urn:fooexp:monitoring:2.1"
 
 
 ########################################################
@@ -65,10 +65,10 @@ topic.metadata.component : string = "urn:fooexp:monitoring:2.1"
 
 description : string = "Foo experiment analysis 1.0"
 
-topics : string[2] = "geometry" "input"
+topics : string[2] = "service" "usage"
 
-topic.geometry.component : string = "urn:fooexp:geometry:setup:1.0"
+topic.service.component : string = "urn:fooexp:geometry:setup:1.0"
 
-topic.input.component    : string = "urn:fooexp:commissioning:dataset:1"
+topic.usage.component   : string = "urn:fooexp:commissioning:dataset:1"
 
 # end

@@ -7,14 +7,14 @@
 ########################################################
 [urn="urn:bayeux:images:logo:small" category="graphics"]
 
-#@config URN info parameters for small Bayeux logo
+#@config URN info for small Bayeux logo
 
 description : string = "Bayeux logo (small)"
 
 ########################################################
 [urn="urn:bayeux:images:logo:large" category="graphics"]
 
-#@config URN info parameters for large Bayeux logo
+#@config URN info for large Bayeux logo
 
 description : string = "Bayeux logo (large)"
 

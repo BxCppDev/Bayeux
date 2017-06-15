@@ -44,15 +44,27 @@ string.enumerated_7.value : string = "trace"
 
 
 ##################################################
+[name="datatools::basic::empty.VM" type="variant"]
+
+#@config Basic variant model describing an empty variant
+
+#@description The display name of this variant
+display_name      : string = "Empty"
+
+#@description A short description of the variant
+terse_description : string = "Empty use case"
+
+
+##################################################
 [name="datatools::basic::is_on.VM" type="variant"]
 
 #@config Basic variant model describing an activation state
 
-#@description The display name of this parameter
+#@description The display name of this variant
 display_name      : string = "On"
 
-#@description A short description of the parameter
-terse_description : string = "Activation of a boolean parameter"
+#@description A short description of the variant
+terse_description : string = "Enable state"
 
 
 ###################################################
@@ -60,11 +72,11 @@ terse_description : string = "Activation of a boolean parameter"
 
 #@config Basic variant model describing a deactivation state
 
-#@description The display name of this parameter
+#@description The display name of this variant
 display_name      : string = "Off"
 
-#@description A short description of the parameter
-terse_description : string = "Deactivation of a boolean parameter"
+#@description A short description of the variant
+terse_description : string = "Disable state"
 
 
 #####################################################

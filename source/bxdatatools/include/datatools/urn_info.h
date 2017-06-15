@@ -127,8 +127,11 @@ namespace datatools {
     /**
      *  Example:
      *  \code
+     *  #@description Thr URN identifier
+     *  urn : string = "urn:fooexp:analysis:setup:1.0"
+     *
      *  #@description Short description text
-     *  description : string = "Foo experiment analysis 1.0"
+     *  description : string = "Foo experiment data analysis setup 1.0"
      *
      *  #@description List of topics on which URN info relies on
      *  topics : string[2] = "geometry" "input""
@@ -138,9 +141,9 @@ namespace datatools {
      *
      *  #@description Several components associated to the 'input' topic
      *  topic.input.components   : string[3] = \\
-     *    "urn:fooexp:commissioning:dataset:1" \\
-     *    "urn:fooexp:commissioning:dataset:2" \\
-     *    "urn:fooexp:commissioning:dataset:3"
+     *    "urn:fooexp:dataset:1" \\
+     *    "urn:fooexp:dataset:2" \\
+     *    "urn:fooexp:dataset:3"
      *
      * \endcode
      */

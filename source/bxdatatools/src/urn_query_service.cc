@@ -416,6 +416,7 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Adding URN database service '" << name << "'...");
     _pimpl_->dbs[name] = &dbs_;
+    _update_();
     return;
   }
 
@@ -425,6 +426,7 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Removing URN database service '" << name_ << "'...");
     _pimpl_->dbs.erase(name_);
+    _update_();
     return;
   }
 
@@ -436,6 +438,7 @@ namespace datatools {
         DT_LOG_DEBUG(get_logging_priority(),
                      "Removing URN database service '" << db.first << "'...");
         _pimpl_->dbs.erase(db.first);
+        _update_();
         break;
       }
     }
@@ -479,6 +482,7 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Adding URN path resolver service '" << name << "'...");
     _pimpl_->resolvers[name] = &prs_;
+    _update_();
     return;
   }
 
@@ -488,6 +492,7 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Removing URN path resolver service '" << name_ << "'...");
     _pimpl_->resolvers.erase(name_);
+    _update_();
     return;
   }
 
@@ -499,9 +504,15 @@ namespace datatools {
         DT_LOG_DEBUG(get_logging_priority(),
                      "Removing URN path resolver service '" << prs.first << "'...");
         _pimpl_->resolvers.erase(prs.first);
+        _update_();
         break;
       }
     }
+    return;
+  }
+
+  void urn_query_service::_update_()
+  {
     return;
   }
 

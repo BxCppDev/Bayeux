@@ -135,6 +135,7 @@ set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/data/optical/1.0/Organic/Polycarbonate/Polycarbonate.conf
   ${module_resource_dir}/data/optical/1.0/Organic/Polystyrene/Polystyrene.conf
   ${module_resource_dir}/data/optical/1.0/README.rst
+  ${module_resource_dir}/urn/db/basic_materials_infos.def
   ${module_resource_dir}/urn/resolvers/bxmaterials_data_urn_map.conf
 )
 

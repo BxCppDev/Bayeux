@@ -35,6 +35,11 @@
 #include <string>
 #include <map>
 
+// Third party:
+// - Boost:
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+
 // This project:
 #include <datatools/properties.h>
 #include <datatools/base_service.h>
@@ -43,13 +48,15 @@
 
 namespace datatools {
 
+  class dependency_graph;
+
   /// \brief A service with a dictionary of URN informations.
   ///
   /// This service describes not only a collection of objects addresses by their
   /// unique URNs but also the relationships between these objects.
   ///
   /// Objects addresses through their URN are connected via "links".
-  /// A link represent an unidirectional relationship between two nodes
+  /// A link represents an unidirectional relationship between two nodes
   /// conventionaly labelled [from] and [to].
   /// The [from] node can be considered as the client which explicitely depends on
   /// the [to] node, considered as the server.
@@ -62,7 +69,7 @@ namespace datatools {
   /// \endcode
   /// or a composition:
   /// \code
-  ///   [from]    "composition    [to]
+  ///   [from]   "composition"    [to]
   ///      o --------------------> o
   /// "composite"              "element"
   /// \endcode
@@ -77,6 +84,12 @@ namespace datatools {
   ///   [from]  "subscription"    [to]
   ///      o --------------------> o
   /// "subscriber"             "service"
+  /// \endcode
+  /// or a usage:
+  /// \code
+  ///   [from]    "usage"         [to]
+  ///      o --------------------> o
+  /// "application"             "data"
   /// \endcode
   /// A link is always defined on the [from] node's side, i.e. from the object
   /// which explicitly depends on the object pointed by the link (forward link),
@@ -120,6 +133,10 @@ namespace datatools {
   ///            o ------------> o
   ///          urn2             urn3
   /// \endcode
+  ///
+  /// In terms of the Boost Graph Library, URN nodes are "vertices", forward links are "out-edges".
+  /// Backward links are "in-edges".
+  ///
   */
   class urn_db_service
     : public ::datatools::base_service
@@ -154,7 +171,7 @@ namespace datatools {
     private:
       urn_info & _grab_();
     public:
-      urn_info         _uinfo_;
+      urn_info               _uinfo_;
       const urn_db_service * _mounted_db_ref_ = nullptr;
       const urn_info *       _mounted_uinfo_ = nullptr;
       friend urn_db_service;
@@ -352,6 +369,20 @@ namespace datatools {
 
     //! Remove from system
     void kernel_pop();
+
+    //! Populated a dependency graph
+    struct dependency_graph_builder
+    {
+      dependency_graph_builder(const urn_db_service &);
+      void add_topic(const std::string & topic_);
+      void make_deps(dependency_graph & deps_, const std::string & start_urn_) const;
+    private:
+      void _process_node_components_(dependency_graph & deps_, const std::string & urn_) const;
+
+    private:
+      const urn_db_service & _db_;
+      std::set<std::string>  _topics_;
+    };
 
   private:
 

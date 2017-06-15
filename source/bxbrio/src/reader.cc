@@ -3,7 +3,7 @@
 // Ourselves:
 #include <brio/reader.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 
 // Third Party:
@@ -20,7 +20,6 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-
 
 // - Bayeux/datatools:
 #include <datatools/utils.h>

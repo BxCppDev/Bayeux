@@ -20,13 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- *
- *
  * Description:
  *
  *   Automated incremental filenames
- *
- * History:
  *
  */
 #ifndef DATATOOLS_SMART_FILENAME_H
@@ -165,46 +161,46 @@ namespace datatools {
 
     /// Store the list of filenames in a file
     void store_list_of_filenames(const std::string& a_list_filename,
-				 bool append = true) const;
+         bool append = true) const;
 
     /// Make a smart_filename object in single mode
     static void make_single(smart_filename& a_smart_filename,
-			    const std::string& filename,
-			    bool expand_path = true);
+          const std::string& filename,
+          bool expand_path = true);
 
     /// Make a smart_filename object in list mode
     static void make_list(smart_filename& a_smart_filename,
-			  bool allow_duplication = false,
-			  bool expand_path = true);
+        bool allow_duplication = false,
+        bool expand_path = true);
 
     /// Make a smart_filename object in list mode
     static void make_list(smart_filename& a_smart_filename,
-			  const std::string& a_list_file,
-			  bool allow_duplication = false,
-			  bool expand_path = true);
+        const std::string& a_list_file,
+        bool allow_duplication = false,
+        bool expand_path = true);
 
     /// Make a smart_filename object in incremental mode
     static void make_incremental(smart_filename& a_smart_filename,
-				 const std::string& path,
-				 const std::string& prefix,
-				 const std::string& extension,
-				 int stopping_index,
-				 int starting_index = 0,
-				 int increment_index = 1,
-				 const std::string& suffix = "",
-				 int incremental_index_ndigit = 0,
-				 bool expand_path = true);
+         const std::string& path,
+         const std::string& prefix,
+         const std::string& extension,
+         int stopping_index,
+         int starting_index = 0,
+         int increment_index = 1,
+         const std::string& suffix = "",
+         int incremental_index_ndigit = 0,
+         bool expand_path = true);
 
     /// Make a smart_filename object in unranged incremental mode
     static void make_unranged_incremental(smart_filename& smart_filename,
-					  const std::string& path,
-					  const std::string& prefix,
-					  const std::string & a_extension,
-					  int starting_index = 0,
-					  int increment_index = 1,
-					  const std::string& suffix = "",
-					  int incremental_index_ndigit = 0,
-					  bool expand_path = true);
+            const std::string& path,
+            const std::string& prefix,
+            const std::string & a_extension,
+            int starting_index = 0,
+            int increment_index = 1,
+            const std::string& suffix = "",
+            int incremental_index_ndigit = 0,
+            bool expand_path = true);
 
   protected:
 
@@ -223,20 +219,20 @@ namespace datatools {
   private:
 
     datatools::logger::priority logging_;    //!< Logging priority
-    uint32_t    mode_;											 //!< Mode
-		bool				expand_path_;								 //!< Flag to expand the file path name
-		list_type		list_;											 //!< The list of filenames
-		bool				list_allow_duplication_;		 //!< Flag to allow duplication of filenames in the list
-		bool				ranged_;										 //!< Flag to indicate if the list is ranged
-		std::string incremental_path_;					 //!< Path of the incremented filenames
-		std::string incremental_prefix_;				 //!< Prefix of the incremented filenames
-		std::string incremental_suffix_;				 //!< Suffix of the incremented filenames
-		std::string incremental_extension_;			 //!< Extension of the incremented filenames
-		int32_t			incremental_starting_index_; //!< Starting index of the incremented filenames
-		int32_t			incremental_stopping_index_; //!< Stopping index of the incremented filenames
-		int32_t			incremental_increment_;			 //!< Index increment of the incremented filenames
-		uint32_t		incremental_index_ndigit_;	 //!< Number of digits used for the increment part of the filenames
-	};
+    uint32_t    mode_;                       //!< Mode
+    bool        expand_path_;                //!< Flag to expand the file path name
+    list_type   list_;                       //!< The list of filenames
+    bool        list_allow_duplication_;     //!< Flag to allow duplication of filenames in the list
+    bool        ranged_;                     //!< Flag to indicate if the list is ranged
+    std::string incremental_path_;           //!< Path of the incremented filenames
+    std::string incremental_prefix_;         //!< Prefix of the incremented filenames
+    std::string incremental_suffix_;         //!< Suffix of the incremented filenames
+    std::string incremental_extension_;      //!< Extension of the incremented filenames
+    int32_t     incremental_starting_index_; //!< Starting index of the incremented filenames
+    int32_t     incremental_stopping_index_; //!< Stopping index of the incremented filenames
+    int32_t     incremental_increment_;      //!< Index increment of the incremented filenames
+    uint32_t    incremental_index_ndigit_;   //!< Number of digits used for the increment part of the filenames
+  };
 
 }  // end of namespace datatools
 
@@ -248,10 +244,8 @@ DOCD_CLASS_DECLARATION(datatools::smart_filename)
 
 #endif // DATATOOLS_SMART_FILENAME_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

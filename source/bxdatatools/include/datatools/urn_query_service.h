@@ -148,6 +148,10 @@ namespace datatools {
 
   private:
 
+    void _update_();
+
+  private:
+
     // Management:
     bool _initialized_ = false; //!< Initialization flag
 

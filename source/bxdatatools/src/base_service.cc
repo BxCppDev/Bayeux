@@ -22,12 +22,9 @@
 // Ourselves:
 #include <datatools/base_service.h>
 
-// Standard Library:
-
 // This project:
 #include <datatools/service_tools.h>
 #include <datatools/properties.h>
-#include <boost/smart_ptr/scoped_ptr.hpp>  // for scoped_ptr
 #include "datatools/enriched_base.h"       // for enriched_base
 #include "datatools/factory_macros.h"
 #include "datatools/i_tree_dump.h"         // for operator<<, etc
@@ -35,67 +32,68 @@
 
 namespace datatools {
 
-DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
-    base_service,
-    "datatools::base_service/__system__")
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
+                                                   base_service,
+                                                   "datatools::base_service/__system__")
 
-// Constructor
-base_service::base_service()
-{
-}
+  // Constructor
+  base_service::base_service()
+  {
+  }
 
-// Constructor
-base_service::base_service(const std::string& name,
-                           const std::string& display_name,
-                           const std::string& terse_description,
-                           logger::priority lp)
-  : enriched_base(name, display_name, terse_description, lp)
-{
-}
+  // Constructor
+  base_service::base_service(const std::string& name,
+                             const std::string& display_name,
+                             const std::string& terse_description,
+                             logger::priority lp)
+    : enriched_base(name, display_name, terse_description, lp)
+  {
+  }
 
-// Destructor :
-base_service::~base_service() {}
+  // Destructor :
+  base_service::~base_service() {}
 
-void base_service::fetch_dependencies(
-    service_dependency_dict_type& dependencies) const {
-  dependencies.clear();
-}
+  void base_service::fetch_dependencies(
+                                        service_dependency_dict_type& dependencies) const {
+    dependencies.clear();
+  }
 
-int base_service::initialize_simple() {
-  datatools::properties dummy;
-  return this->initialize_standalone(dummy);
-}
+  int base_service::initialize_simple() {
+    datatools::properties dummy;
+    return this->initialize_standalone(dummy);
+  }
 
-int base_service::initialize_with_services(
-    service_dict_type& service_dict) {
-  datatools::properties dummy;
-  return this->initialize(dummy, service_dict);
-}
+  int base_service::initialize_with_services(
+                                             service_dict_type& service_dict) {
+    datatools::properties dummy;
+    return this->initialize(dummy, service_dict);
+  }
 
-int base_service::initialize_standalone(
-    const datatools::properties& config) {
-  service_dict_type dummy;
-  return this->initialize(config, dummy);
-}
+  int base_service::initialize_standalone(
+                                          const datatools::properties& config) {
+    service_dict_type dummy;
+    return this->initialize(config, dummy);
+  }
 
-void base_service::common_initialize(const datatools::properties& config) {
-  this->enriched_base::initialize(config, false);
-}
+  void base_service::common_initialize(const datatools::properties& config) {
+    this->enriched_base::initialize(config, false);
+  }
 
-void base_service::tree_dump(std::ostream& a_out,
-                             const std::string& a_title,
-                             const std::string& a_indent,
-                             bool a_inherit) const {
+  void base_service::tree_dump(std::ostream& a_out,
+                               const std::string& a_title,
+                               const std::string& a_indent,
+                               bool a_inherit) const {
 
-  this->enriched_base::tree_dump(a_out, a_title, a_indent, true);
+    this->enriched_base::tree_dump(a_out, a_title, a_indent, true);
 
-  a_out << a_indent << i_tree_dumpable::inherit_tag(a_inherit)
-        << "Service is initialized  : "
-        << std::boolalpha << this->is_initialized() << std::endl;
-}
+    a_out << a_indent << i_tree_dumpable::inherit_tag(a_inherit)
+          << "Service is initialized  : "
+          << std::boolalpha << this->is_initialized() << std::endl;
+  }
 
-void base_service::common_ocd(datatools::object_configuration_description& ocd) {
-  enriched_base::init_ocd(ocd);
-}
+  void base_service::common_ocd(datatools::object_configuration_description& ocd)
+  {
+    enriched_base::init_ocd(ocd);
+  }
 
 }  // end of namespace datatools

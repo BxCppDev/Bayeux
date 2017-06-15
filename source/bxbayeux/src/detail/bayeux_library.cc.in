@@ -31,30 +31,63 @@
 #include <datatools/version.h>
 #include <datatools/resource.h>
 #include <datatools/datatools_config.h>
+
+#if BAYEUX_WITH_CUTS == 1
 #include <cuts/version.h>
+#endif // BAYEUX_WITH_CUTS
+
+#if BAYEUX_WITH_BRIO == 1
 #include <brio/version.h>
+#endif // BAYEUX_WITH_BRIO
+
+#if BAYEUX_WITH_DPP == 1
 #include <dpp/version.h>
+#endif // BAYEUX_WITH_DPP
+
+#if BAYEUX_WITH_MATERIALS == 1
 #include <materials/version.h>
 #include <materials/resource.h>
 #include <materials/materials_config.h>
+#endif // BAYEUX_WITH_MATERIALS
+
+#if BAYEUX_WITH_MYGSL == 1
 #include <mygsl/version.h>
+#endif // BAYEUX_WITH_MYGSL
+
+#if BAYEUX_WITH_GEOMTOOLS == 1
 #include <geomtools/version.h>
 #include <geomtools/resource.h>
 #include <geomtools/geomtools_config.h>
+#endif // BAYEUX_WITH_GEOMTOOLS
+
+#if BAYEUX_WITH_EMFIELD == 1
 #include <emfield/version.h>
+#endif // BAYEUX_WITH_EMFIELD
+
+#if BAYEUX_WITH_GENBB == 1
 #include <genbb_help/version.h>
 #include <genbb_help/resource.h>
 #include <genbb_help/genbb_help_config.h>
+#endif // BAYEUX_WITH_GENBB
+
+#if BAYEUX_WITH_GENVTX == 1
 #include <genvtx/version.h>
+#endif // BAYEUX_WITH_GENVTX == 1
+
+#if BAYEUX_WITH_MCTOOLS == 1
 #include <mctools/version.h>
+#endif // BAYEUX_WITH_MCTOOLS
+
 #if BAYEUX_WITH_LAHAGUE == 1
 #include <lahague/version.h>
 #include <lahague/resource.h>
 #include <lahague/lahague_config.h>
 #endif // BAYEUX_WITH_LAHAGUE == 1
+
 #include <datatools/kernel.h>
 #include <datatools/library_info.h>
 #include <datatools/urn_to_path_resolver_service.h>
+#include <datatools/urn_db_service.h>
 
 namespace bayeux {
 
@@ -62,6 +95,13 @@ namespace bayeux {
 
     // static
     bayeux_library * bayeux_library::_instance_ = nullptr;
+
+    // static
+    const std::string & bayeux_library::bx_resource_db_name()
+    {
+      static const std::string _n("bxLibraryResourceDb");
+      return _n;
+    }
 
     // static
     const std::string & bayeux_library::bx_resource_resolver_name()
@@ -236,12 +276,15 @@ namespace bayeux {
         lib_info_reg.add_alias("datatools", "bxdatatools");
         DT_LOG_TRACE(_logging_, "Module bxdatatools is registered.");
 
+#if BAYEUX_WITH_CUTS == 1
         // cuts:
         lib_info_reg.registration("bxcuts",
                                   "Generic tools for making arbitrary data selections.",
                                   cuts::version::get_version());
         lib_info_reg.add_alias("cuts", "bxcuts");
+#endif // BAYEUX_WITH_CUTS
 
+#if BAYEUX_WITH_MATERIALS == 1
         // materials:
         datatools::properties & materials_lib_infos
           = lib_info_reg.registration("bxmaterials",
@@ -257,14 +300,18 @@ namespace bayeux {
                                          );
         lib_info_reg.add_alias("materials", "bxmaterials");
         DT_LOG_TRACE(_logging_, "Module bxmaterials is registered.");
+#endif // BAYEUX_WITH_MATERIALS
 
+#if BAYEUX_WITH_MYGSL == 1
         // mygsl:
         lib_info_reg.registration("bxmygsl",
                                   "C++ wrapper and extensions to the GNU Scientific Library.",
                                   mygsl::version::get_version());
         lib_info_reg.add_alias("mygsl", "bxmygsl");
         DT_LOG_TRACE(_logging_, "Module bxmygsl is registered.");
+#endif // BAYEUX_WITH_MYGSL
 
+#if BAYEUX_WITH_GEOMTOOLS == 1
         // geomtools:
         datatools::properties & geomtools_lib_infos
           = lib_info_reg.registration("bxgeomtools",
@@ -280,28 +327,36 @@ namespace bayeux {
                                          );
         lib_info_reg.add_alias("geomtools", "bxgeomtools");
         DT_LOG_TRACE(_logging_, "Module bxgeomtools is registered.");
+#endif // BAYEUX_WITH_GEOMTOOLS
 
+#if BAYEUX_WITH_EMFIELD == 1
         // emfield:
         lib_info_reg.registration("bxemfield",
                                   "Electromagnetic field modelling and management.",
                                   emfield::version::get_version());
         lib_info_reg.add_alias("emfield", "bxemfield");
         DT_LOG_TRACE(_logging_, "Module bxemfield is registered.");
+#endif // BAYEUX_WITH_EMFIELD
 
+#if BAYEUX_WITH_BRIO == 1
         // brio:
         lib_info_reg.registration("bxbrio",
                                   "A Boost over ROOT I/O serialization system (extends datatools).",
                                   brio::version::get_version());
         lib_info_reg.add_alias("brio", "bxbrio");
         DT_LOG_TRACE(_logging_, "Module bxbrio is registered.");
+#endif // BAYEUX_WITH_BRIO
 
+#if BAYEUX_WITH_DPP == 1
         // dpp:
         lib_info_reg.registration("bxdpp",
                                   "A basic data processing pipeline API.",
                                   dpp::version::get_version());
         lib_info_reg.add_alias("dpp", "bxdpp");
         DT_LOG_TRACE(_logging_, "Module bxdpp is registered.");
+#endif // BAYEUX_WITH_DPP
 
+#if BAYEUX_WITH_GENBB == 1
         // genbb_help:
         datatools::properties & genbb_help_lib_infos
           = lib_info_reg.registration("bxgenbb_help",
@@ -318,20 +373,25 @@ namespace bayeux {
         lib_info_reg.add_alias("genbb_help", "bxgenbb_help");
         lib_info_reg.add_alias("genbb", "bxgenbb_help");
         DT_LOG_TRACE(_logging_, "Module bxgenbb_help is registered.");
+#endif // BAYEUX_WITH_GENBB
 
+#if BAYEUX_WITH_GENVTX == 1
         // genvtx:
         lib_info_reg.registration("bxgenvtx",
                                   "Vertex random generator tools for input to simulation applications.",
                                   genvtx::version::get_version());
         lib_info_reg.add_alias("genvtx", "bxgenvtx");
         DT_LOG_TRACE(_logging_, "Module bxgenvtx is registered.");
+#endif // BAYEUX_WITH_GENVTX == 1
 
+#if BAYEUX_WITH_MCTOOLS == 1
         // mctools::
         lib_info_reg.registration("bxmctools",
                                   "Monte-Carlo utilities with a Geant4 interface.",
                                   mctools::version::get_version());
         lib_info_reg.add_alias("mctools", "bxmctools");
         DT_LOG_TRACE(_logging_, "Module bxmctools is registered.");
+#endif // BAYEUX_WITH_MCTOOLS
 
 #if BAYEUX_WITH_LAHAGUE == 1
         // LaHague:
@@ -424,23 +484,41 @@ namespace bayeux {
           if (lib_info_reg.is_library("bxmctools")) lib_info_reg.unregistration("bxmctools");
 #endif // BAYEUX_WITH_MCTOOLS == 1
 
+#if BAYEUX_WITH_GENVTX == 1
           if (lib_info_reg.is_library("bxgenvtx")) lib_info_reg.unregistration("bxgenvtx");
+#endif // BAYEUX_WITH_GENVTX == 1
 
+#if BAYEUX_WITH_GENBB == 1
           if (lib_info_reg.is_library("bxgenbb_help")) lib_info_reg.unregistration("bxgenbb_help");
+#endif // BAYEUX_WITH_GENBB == 1
 
+#if BAYEUX_WITH_DPP == 1
           if (lib_info_reg.is_library("bxdpp")) lib_info_reg.unregistration("bxdpp");
+#endif // BAYEUX_WITH_DPP == 1
 
+#if BAYEUX_WITH_BRIO == 1
           if (lib_info_reg.is_library("bxbrio")) lib_info_reg.unregistration("bxbrio");
+#endif // BAYEUX_WITH_BRIO == 1
 
+#if BAYEUX_WITH_EMFIELD == 1
           if (lib_info_reg.is_library("bxemfield")) lib_info_reg.unregistration("bxemfield");
+#endif // BAYEUX_WITH_EMFIELD == 1
 
+#if BAYEUX_WITH_GEOMTOOLS == 1
           if (lib_info_reg.is_library("bxgeomtools")) lib_info_reg.unregistration("bxgeomtools");
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
 
+#if BAYEUX_WITH_MYGSL == 1
           if (lib_info_reg.is_library("bxmygsl")) lib_info_reg.unregistration("bxmygsl");
+#endif // BAYEUX_WITH_MYGSL == 1
 
+#if BAYEUX_WITH_MATERIALS == 1
           if (lib_info_reg.is_library("bxmaterials")) lib_info_reg.unregistration("bxmaterials");
+#endif // BAYEUX_WITH_MATERIALS == 1
 
+#if BAYEUX_WITH_CUTS == 1
           if (lib_info_reg.is_library("bxcuts")) lib_info_reg.unregistration("bxcuts");
+#endif // BAYEUX_WITH_CUTS == 1
 
           if (lib_info_reg.is_library("bxdatatools")) lib_info_reg.unregistration("bxdatatools");
 
@@ -455,6 +533,43 @@ namespace bayeux {
     {
       DT_LOG_TRACE_ENTERING(_logging_);
       if (_services_.is_initialized()) {
+
+      // Activate an URN info DB service:
+      {
+        datatools::urn_db_service & urnSetupDb =
+          dynamic_cast<datatools::urn_db_service &>(_services_.load_no_init(bx_resource_db_name(),
+                                                                            "datatools::urn_db_service"));
+        urnSetupDb.set_logging_priority(_logging_);
+        urnSetupDb.set_terse_description("URN informations about Bayeux resource files");
+        {
+          std::string fdef = "@bxbayeux:urn/db/bayeux_logos_infos.def";
+          datatools::fetch_path_with_env(fdef);
+          urnSetupDb.load(fdef);
+        }
+#if BAYEUX_WITH_MATERIALS == 1
+        {
+          std::string fdef = "@bxmaterials:urn/db/basic_materials_infos.def";
+          datatools::fetch_path_with_env(fdef);
+          urnSetupDb.load(fdef);
+        }
+#endif // BAYEUX_WITH_MATERIALS == 1
+
+        // {
+        // std::string urn_db_conf_file = "@bxbayeux:urn/db/bayeux_resource_db.conf";
+        // datatools::fetch_path_with_env(urn_db_conf_file);
+        // datatools::properties urn_db_conf;
+        // urn_db_conf.read_configuration(urn_db_conf_file);
+        // urnSetupDb.initialize_standalone(urn_db_conf);
+        // }
+        urnSetupDb.initialize_simple();
+        if (datatools::logger::is_debug(_logging_)) {
+          urnSetupDb.tree_dump(std::cerr, urnSetupDb.get_name() + ": ", "[debug] ");
+        }
+        DT_LOG_TRACE(_logging_, "Publishing the URN info DB '" << urnSetupDb.get_name() << "' to the kernel...");
+        urnSetupDb.kernel_push();
+        DT_LOG_TRACE(_logging_, "URN info DB has been plugged in the kernel.");
+      }
+
         // Activate an URN resolver service:
         {
           datatools::urn_to_path_resolver_service & urnResourceResolver =
@@ -463,12 +578,16 @@ namespace bayeux {
           urnResourceResolver.add_known_category("data");
           urnResourceResolver.add_known_category("graphics");
           urnResourceResolver.add_known_category("configuration");
+
+#if BAYEUX_WITH_MATERIALS == 1
           urnResourceResolver.add_map("@bxmaterials:urn/resolvers/bxmaterials_data_urn_map.conf");
+#endif // BAYEUX_WITH_MATERIALS == 1
           urnResourceResolver.add_map("@bxbayeux:urn/resolvers/bayeux_logos_urn_map.conf");
           urnResourceResolver.initialize_simple();
           DT_LOG_TRACE(_logging_, "Adding the URN path resolver '" << urnResourceResolver.get_name() << "' to the kernel...");
           urnResourceResolver.kernel_push();
         }
+
       }
       DT_LOG_TRACE_EXITING(_logging_);
       return;
@@ -489,6 +608,17 @@ namespace bayeux {
           urnResourceResolver.kernel_pop();
           DT_LOG_TRACE(_logging_, "URN path resolver has been removed from the kernel.");
           urnResourceResolver.reset();
+        }
+
+        // DeActivate the URN info setup DB:
+        {
+          DT_LOG_TRACE(_logging_, "Accessing URN info setup DB...");
+          datatools::urn_db_service & urnSetupDb =
+            _services_.grab<datatools::urn_db_service &>(bx_resource_db_name());
+          DT_LOG_TRACE(_logging_, "Removing URN info setup DB '" << urnSetupDb.get_name() << "' from the kernel...");
+          urnSetupDb.kernel_pop();
+          DT_LOG_TRACE(_logging_, "URN info setup DB has been removed from the kernel.");
+          urnSetupDb.reset();
         }
 
       }

@@ -541,7 +541,8 @@ namespace datatools {
   }
 
 
-  void smart_filename::initialize(const properties& a_config) {
+  void smart_filename::initialize(const properties& a_config)
+  {
     datatools::logger::priority p =
       datatools::logger::extract_logging_configuration(a_config,
                                                        datatools::logger::PRIO_UNDEFINED,

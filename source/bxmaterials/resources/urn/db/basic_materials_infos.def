@@ -1,0 +1,52 @@
+# -*- mode: conf-unix; -*-
+
+#@description Definition list of URNs associated to Bayeux/materiels basic definition
+#@key_label  "urn"
+#@meta_label "category"
+
+
+###############################################################
+[urn="urn:bxmaterials:data:basic:1.0:isotopes" category="data"]
+
+#@config URN registration basic isotopes (version 1.0)
+
+description : string = "basic isotopes (version 1.0)"
+
+
+###############################################################
+[urn="urn:bxmaterials:data:basic:1.0:elements" category="data"]
+
+#@config URN registration basic elements (version 1.0)
+
+description : string = "basic elements (version 1.0)"
+
+topics : string[1] = "madeof"
+
+topic.madeof.component : string = "urn:bxmaterials:data:basic:1.0:isotopes"
+
+
+################################################################
+[urn="urn:bxmaterials:data:basic:1.0:materials" category="data"]
+
+#@config URN registration basic materials (version 1.0)
+
+description : string = "basic materials (version 1.0)"
+
+topics : string[1] = "madeof"
+
+topic.madeof.component : string = "urn:bxmaterials:data:basic:1.0:elements"
+
+
+##############################################################
+[urn="urn:bxmaterials:data:basic:1.0:aliases" category="data"]
+
+#@config URN registration basic material aliases (version 1.0)
+
+description : string = "basic material aliass (version 1.0)"
+
+topics : string[1] = "madeof"
+
+topic.madeof.component : string = "urn:bxmaterials:data:basic:1.0:materials"
+
+
+# end

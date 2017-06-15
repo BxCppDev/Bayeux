@@ -53,11 +53,11 @@ include(LPCCMakeSettings)
 include(LPCSVNUtilities)
 set(Bayeux_VERSION_REVISION 0)
 
-Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
-if(Bayeux_DIRECTORY_IS_WC)
-  Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Bayeux)
-  set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
-endif()
+# Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
+# if(Bayeux_DIRECTORY_IS_WC)
+#   Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Bayeux)
+#   set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
+# endif()
 
 # - Write compiler workaround header for features:
 #    cxx_thread_local           - OS X doesn't currently provide this
@@ -88,30 +88,18 @@ option(BAYEUX_WITH_DEVELOPER_TOOLS "Build/install developer tools" ON)
 mark_as_advanced(BAYEUX_WITH_DEVELOPER_TOOLS)
 
 #-----------------------------------------------------------------------
-# Optional dosimetry module
-#
-option(BAYEUX_WITH_LAHAGUE "Build Bayeux/lahague library module" OFF)
-mark_as_advanced(BAYEUX_WITH_LAHAGUE)
-
-#-----------------------------------------------------------------------
-# Option for enabling Geant4 extension library module
-#
-option(BAYEUX_WITH_GEANT4_MODULE "Build Bayeux/mctools Geant4 Monte-Carlo module" ON)
-mark_as_advanced(BAYEUX_WITH_GEANT4_MODULE)
-
-#-----------------------------------------------------------------------
-# Option for enabling MCNP extension library module
-#
-option(BAYEUX_WITH_MCNP_MODULE "Build Bayeux/mctools MCNP Monte-Carlo module" OFF)
-mark_as_advanced(BAYEUX_WITH_MCNP_MODULE)
+# Options for Bayeux modules
+include(BayeuxModuleOptions)
 
 #-----------------------------------------------------------------------
 # Option for enabling Qt GUI components
 #
 option(BAYEUX_WITH_QT_GUI "Build Qt-based GUI components" OFF)
 mark_as_advanced(BAYEUX_WITH_QT_GUI)
+set(Bayeux_WITH_QT_GUI 0)
 if (BAYEUX_WITH_QT_GUI)
   # Minimal system Qt5 version from Ubuntu 14.04:
+  set(Bayeux_WITH_QT_GUI 1)
   set(BAYEUX_QT5_VERSION "5.2.1")
   # Qt5 version from cadfaelbrew (but conflict with system installation
   # on Ubuntu 14.04 when running examples):

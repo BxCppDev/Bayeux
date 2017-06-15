@@ -1,0 +1,16 @@
+# -*- mode: conf-unix; -*-
+
+#@description Definition list of URNs associated to Bayeux/materiels basic definition
+#@key_label  "urn"
+#@meta_label "category"
+
+[urn="urn:bayeux:logo:small" category="image"]
+description : string = "Bayeux small logo"
+
+[urn="urn:bayeux:logo:medium" category="image"]
+description : string = "Bayeux medium logo"
+
+[urn="urn:bayeux:logo:large" category="image"]
+description : string = "Bayeux large logo"
+
+# end

@@ -9,11 +9,11 @@ endif()
 
 # - Module
 set(module_name datatools)
-set(module_root_dir "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
-set(module_include_dir "${module_root_dir}/include")
-set(module_source_dir  "${module_root_dir}/src")
-set(module_test_dir    "${module_root_dir}/testing")
-set(module_app_dir     "${module_root_dir}/programs")
+set(module_root_dir     "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
+set(module_include_dir  "${module_root_dir}/include")
+set(module_source_dir   "${module_root_dir}/src")
+set(module_test_dir     "${module_root_dir}/testing")
+set(module_app_dir      "${module_root_dir}/programs")
 set(module_resource_dir "${module_root_dir}/resources")
 set(module_examples_dir "${module_root_dir}/examples")
 
@@ -213,6 +213,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/things-reflect.h
   ${module_include_dir}/${module_name}/units-reflect.h
 
+  ${module_include_dir}/${module_name}/dependency_graph.h
+
   ${module_include_dir}/${module_name}/introspection/data_type-reflect.h
   ${module_include_dir}/${module_name}/introspection/unit_support-reflect.h
   ${module_include_dir}/${module_name}/introspection/access_type-reflect.h
@@ -282,6 +284,7 @@ ${module_source_dir}/urn_db_service.cc
 ${module_source_dir}/urn_to_path.cc
 ${module_source_dir}/urn_to_path_resolver_service.cc
 ${module_source_dir}/urn_query_service.cc
+${module_source_dir}/dependency_graph.cc
 # ${module_source_dir}/url.cc
 # ${module_source_dir}/log_record.cc
 # ${module_source_dir}/log_format.cc
@@ -471,6 +474,7 @@ ${module_test_dir}/test_urn_db_service_2.cxx
 ${module_test_dir}/test_urn_to_path.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
 ${module_test_dir}/test_urn_query_service.cxx
+${module_test_dir}/test_dependency_graph.cxx
 # ${module_test_dir}/test_url.cxx
 # ${module_test_dir}/test_log_record.cxx
 # ${module_test_dir}/test_rst_tools.cxx

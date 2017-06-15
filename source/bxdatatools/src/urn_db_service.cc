@@ -34,6 +34,7 @@
 #include <datatools/urn.h>
 #include <datatools/urn_query_service.h>
 #include <datatools/kernel.h>
+#include <datatools/dependency_graph.h>
 
 namespace datatools {
 
@@ -1055,7 +1056,9 @@ namespace datatools {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Cannot register in the library's URN query service if not initialized!");
     if (datatools::kernel::is_instantiated()) {
-      datatools::kernel::instance().grab_urn_query().add_db(*this, name_);
+      if (!datatools::kernel::instance().get_urn_query().has_db(*this)) {
+        datatools::kernel::instance().grab_urn_query().add_db(*this, name_);
+      }
     }
     return;
   }
@@ -1069,6 +1072,60 @@ namespace datatools {
     }
     return;
   }
+
+  urn_db_service::dependency_graph_builder::dependency_graph_builder(const urn_db_service & db_)
+    : _db_(db_)
+  {
+    return;
+  }
+
+  void urn_db_service::dependency_graph_builder::add_topic(const std::string & topic_)
+  {
+    _topics_.insert(topic_);
+    return;
+  }
+
+  void urn_db_service::dependency_graph_builder::_process_node_components_(dependency_graph & deps_,
+                                                                           const std::string & urn_) const
+  {
+    DT_THROW_IF(!_db_.has(urn_), std::logic_error,
+                "URN '" << urn_ << "' does not exist!");
+    const urn_record & urec = _db_._urn_records_.find(urn_)->second;
+    const urn_info & uinfo = urec.get();
+    for (auto topic : _topics_) {
+      std::size_t ncomps = uinfo.get_number_of_components_by_topic(topic);
+      for (std::size_t icomp = 0; icomp < ncomps; icomp++) {
+        std::string comp_urn = uinfo.get_component(topic, icomp);
+        const urn_record & comp_rec = _db_._urn_records_.find(comp_urn)->second;
+        const urn_info & comp = comp_rec.get();
+        if (!deps_.has_vertex(comp_urn)) {
+          deps_.add_vertex(comp_urn, comp.get_category());
+          _process_node_components_(deps_, comp_urn);
+        }
+        deps_.add_out_edge(urn_, comp_urn, topic);
+      }
+    }
+    return;
+  }
+
+  void urn_db_service::dependency_graph_builder::make_deps(dependency_graph & deps_,
+                                                           const std::string & start_urn_) const
+  {
+    if (_topics_.size() == 0) {
+      dependency_graph_builder & dgb = const_cast<dependency_graph_builder & >(*this);
+      dgb._topics_ = _db_.get_allowed_link_topics();
+    }
+    DT_THROW_IF(!_db_.has(start_urn_), std::logic_error,
+                "URN '" << start_urn_ << "' does not exist!");
+    const urn_record & urec = _db_._urn_records_.find(start_urn_)->second;
+    const urn_info & uinfo = urec.get();
+    if (!deps_.has_vertex(start_urn_)) {
+      deps_.add_vertex(start_urn_, uinfo.get_category());
+      _process_node_components_(deps_, start_urn_);
+    }
+    return;
+  }
+
 
 } // end of namespace datatools
 

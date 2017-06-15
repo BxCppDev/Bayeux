@@ -375,7 +375,9 @@ namespace datatools {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Cannot register in the library's URN query service if not initialized!");
     if (datatools::kernel::is_instantiated()) {
-      datatools::kernel::instance().grab_urn_query().add_path_resolver(*this, name_);
+      if (!datatools::kernel::instance().get_urn_query().has_path_resolver(*this)) {
+         datatools::kernel::instance().grab_urn_query().add_path_resolver(*this, name_);
+      }
     }
     DT_LOG_TRACE_EXITING(logging);
     return;

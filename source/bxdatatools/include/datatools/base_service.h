@@ -199,10 +199,8 @@ DR_CLASS_INIT(datatools::base_service)
 
 #endif // DATATOOLS_BASE_SERVICE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

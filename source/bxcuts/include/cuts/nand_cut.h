@@ -8,8 +8,6 @@
  * Description:
  *   NAND binary cut
  *
- * History:
- *
  */
 
 #ifndef CUTS_NAND_CUT_H

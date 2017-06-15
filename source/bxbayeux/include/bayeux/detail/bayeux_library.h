@@ -45,6 +45,9 @@ namespace bayeux {
     {
     public:
 
+      /// Return the name of the Bayeux library's URN database service
+      static const std::string & bx_resource_db_name();
+
       /// Return the name of the Bayeux library's URN to resource path resolver service
       static const std::string & bx_resource_resolver_name();
 
