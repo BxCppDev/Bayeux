@@ -25,9 +25,9 @@
 
 // Third party:
 // - Boost:
-// #include <boost/property_map/property_map.hpp>
-// #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graphviz.hpp>
+#include <boost/graph/graph_utility.hpp>
+#include <boost/graph/depth_first_search.hpp>
 
 // This package:
 #include <datatools/exception.h>
@@ -147,18 +147,80 @@ namespace datatools {
     return;
   }
 
+  bool dependency_graph::find_vertices_in_cycles(std::set<vertex_t> & v_) const
+  {
+    cycle_detector vis(v_);
+    boost::depth_first_search(_g_, boost::visitor(vis));
+    return v_.size() > 0;
+  }
+
   bool dependency_graph::has_cycle() const
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
-    // boost::depth_first_search(_g_, boost::visitor(vis));
+    // vertex_t root_vertex_descriptor = boost::vertices(_g_).first;
+    // boost::depth_first_search(_g_,
+    //                           boost::visitor(vis).root_vertex(root_vertex_descriptor));
+    // graph_t * g = const_cast<graph_t *>(&_g_);
+    // boost::depth_first_search(*g, boost::visitor(vis));
+    boost::depth_first_search(_g_, boost::visitor(vis));
     return has_cycle;
   }
+
+  std::set<std::string>
+  dependency_graph::find_vertices_of_category_from(const std::string & from_id_,
+                                                   const std::string & category_) const
+  {
+    std::set<std::string> svtx;
+    DT_THROW_IF(!has_vertex(from_id_),
+                std::logic_error,
+                "Dependency graph does not have a starting vertex with id '" << from_id_ << "'!");
+    DT_THROW_IF(category_.empty(),
+                std::logic_error,
+                "Missing category!");
+    vertex_t from = _get_vertex_(from_id_);
+    fvocf_visitor fvocf(svtx, _g_, category_);
+    try {
+      boost::depth_first_search(_g_, boost::visitor(fvocf).root_vertex(from));
+    } catch (std::exception &) {
+    }
+    return svtx;
+  }
+
+  // std::set<std::string>
+  // dependency_graph::find_dependers_of_category_from(const std::string & dependee_id_,
+  //                                                   const std::size_t level_) const
+  // {
+  //   std::set<std::string> svtx;
+  //   DT_THROW_IF(!has_vertex(dependee_id_),
+  //               std::logic_error,
+  //               "Dependency graph does not have a dependee vertex with id '" << from_id_ << "'!");
+  //   DT_THROW_IF(category_.empty(),
+  //               std::logic_error,
+  //               "Missing category!");
+  //   return svtx;
+  // }
 
   void dependency_graph::smart_print(std::ostream & out_) const
   {
     out_ << "Dependency graph:" << std::endl;
     return;
+  }
+
+  std::string dependency_graph::get_vertex_id(const vertex_t & v_) const
+  {
+    std::string id;
+    for (std::pair<vertex_iter_t, vertex_iter_t> vertex_pair = boost::vertices(_g_);
+         vertex_pair.first != vertex_pair.second;
+         ++vertex_pair.first) {
+      vertex_t v = *vertex_pair.first;
+      if (v == v_) {
+        const vertex_properties_t & vp = _g_[v];
+        id = vp.id;
+        break;
+      }
+    }
+    return id;
   }
 
   dependency_graph::vertex_t dependency_graph::_get_vertex_(const std::string & id_) const

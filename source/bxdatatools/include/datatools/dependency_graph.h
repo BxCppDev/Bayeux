@@ -1,7 +1,7 @@
 /// \file datatools/dependency_graph.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2017-06-09
- * Last modified: 2017-06-10
+ * Last modified: 2017-06-18
  *
  * License:
  *
@@ -40,6 +40,8 @@
 // Standard Library:
 #include <string>
 #include <iostream>
+#include <set>
+#include <memory>
 
 // Third party:
 // - Boost:
@@ -47,6 +49,10 @@
 #include <boost/utility.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/properties.hpp>
+#include <boost/graph/one_bit_color_map.hpp>
 #include <boost/property_map/property_map.hpp>
 
 // This project:
@@ -61,8 +67,8 @@ namespace datatools {
 
     struct vertex_properties_t
     {
-      std::string id;
-      std::string category;
+      std::string id;       ///< Unique name/identifier of the vertex
+      std::string category; ///< Category of the vertex
       vertex_properties_t()
         : id("")
         , category("") {}
@@ -73,7 +79,7 @@ namespace datatools {
 
     struct edge_properties_t
     {
-      std::string topic;
+      std::string topic; ///< Topic associated to the edge
       edge_properties_t()
         : topic("")  {}
       edge_properties_t(const std::string & topic_)
@@ -82,7 +88,7 @@ namespace datatools {
 
     struct graph_properties_t
     {
-      std::string topic;
+      std::string topic; ///< Topic associated to the graph
       graph_properties_t()
         : topic("") {}
       graph_properties_t(const std::string & topic_)
@@ -132,26 +138,165 @@ namespace datatools {
     /// Reset
     void reset();
 
-    /// \bried Visitor for cycle detection
+    /// \brief Visitor for cycle detection
     struct cycle_detector
-    // : public boost::dfs_visitor<>
+      : public boost::dfs_visitor<>
     {
       cycle_detector(bool & has_cycle)
-        : _has_cycle(has_cycle)
+        : _has_cycle(&has_cycle)
+        , _vertices(nullptr)
       {
+        return;
       }
 
-      template <class Edge, class Graph>
-      void back_edge(Edge, Graph &)
+      cycle_detector(std::set<vertex_t> & vertices_)
+        : _has_cycle(nullptr)
+        , _vertices(&vertices_)
       {
-        _has_cycle = true;
+        if (_vertices->size()) _vertices->clear();
+        return;
       }
+
+      void back_edge(edge_t e_, const graph_t & g_)
+      {
+        // Once a cycle is detected (we pass through a back-edge), tag the cycle:
+        if (_vertices != nullptr) {
+          _vertices->insert(boost::source(e_, g_));
+          _vertices->insert(boost::target(e_, g_));
+        }
+        if (_has_cycle != nullptr) {
+          *_has_cycle = true;
+        }
+        return;
+      }
+
     protected:
-      bool & _has_cycle;
+
+      bool * _has_cycle;
+      std::set<vertex_t> * _vertices = nullptr;
+
+    };
+
+    /// \brief Visitor for finding dependee vertices of given category
+    class fvocf_visitor
+      : public boost::dfs_visitor<>
+    {
+    public:
+
+      struct end_of_algo_exception
+        : public std::exception
+      {
+      };
+
+      typedef boost::one_bit_color_map<boost::identity_property_map> color_map_type;
+
+      fvocf_visitor(std::set<std::string> & ids_,
+                    const graph_t & g_,
+                    const std::string & category_)
+        : _ids(ids_)
+        , _g(g_)
+        , _category(category_)
+      {
+        // _color_map_ptr.reset(new color_map_type(boost::num_vertices(_g)));
+        return;
+      }
+
+      // // Vertex color is set to black
+      // void initialize_vertex(vertex_t v_, const graph_t & /*g_*/)
+      // {
+      //   // boost::put(*_color_map_ptr,
+      //   //            v_,
+      //   //            boost::color_traits<boost::one_bit_color_type>::black());
+      //   // std::cerr << "[devel] Initialize vertex [" << v_<< "]"<< std::endl;
+      //   // if (_start == ) {
+      //   //  _start = v_;
+      //   // }
+      //   // with color " << boost::get(*_color_map_ptr, v_) << std::endl;
+      //   return;
+      // }
+
+      // // Start vertex color is set to white
+      // void start_vertex(vertex_t v_, const graph_t & /*g_*/)
+      // {
+      //   // boost::put(*_color_map_ptr,
+      //   //            v_,
+      //   //            boost::color_traits<boost::one_bit_color_type>::white());
+      //   // std::cerr << "[devel] Start vertex [" << v_ << "]" << std::endl;
+      //   // with color " << boost::get(*_color_map_ptr, v_) << std::endl;
+      //   return;
+      // }
+
+      // void back_edge(edge_t e_, const graph_t & g_)
+      // {
+      //   // std::cerr << "[devel] Back edge [" << boost::source(e_, g_) << "] -> [" << boost::target(e_, g_) << "]" << std::endl;
+      //   // if (boost::source(e_, g_) == _start) {
+      //   //   std::cerr << "[devel] Back to start vertex: STOP!" << std::endl;
+      //   //   throw end_of_algo_exception();
+      //   // }
+      //   return;
+      // }
+
+      // void examine_edge(edge_t e_, const graph_t & g_)
+      // {
+      //   // std::cerr << "[devel] Found edge [" << boost::source(e_, g_) << "] -> [" << boost::target(e_, g_) << "]" << std::endl;
+      //   return;
+      // }
+
+      void discover_vertex(vertex_t v_, const graph_t & g_)
+      {
+        // std::cerr << "[devel] Discover vertex [" << v_<< "]" << std::endl;
+        if (_start == std::numeric_limits<vertex_t>::max()) {
+          // Record the start vertex:
+          _start = v_;
+        }
+        const vertex_properties_t & vp = g_[v_];
+        if (vp.category == _category) {
+          _ids.insert(vp.id);
+          // boost::put(*_color_map_ptr,
+          //            v_,
+          //            boost::color_traits<boost::one_bit_color_type>::white());
+        } else {
+
+        }
+        return;
+      }
+
+      void finish_vertex(vertex_t v_, const graph_t & /*g_*/)
+      {
+        // boost::put(*_color_map_ptr,
+        //            v_,
+        //            boost::color_traits<boost::one_bit_color_type>::black());
+        // std::cerr << "[devel] Finish vertex [" << v_<< "]" << std::endl;
+        if (v_ == _start) {
+          // std::cerr << "[devel] Back to start vertex [" << v_ << "]" << std::endl;
+          throw end_of_algo_exception();
+        }
+       return;
+      }
+
+    protected:
+
+      std::set<std::string> & _ids;
+      const graph_t & _g;
+      std::string _category;
+      vertex_t _start = std::numeric_limits<vertex_t>::max();
+      // std::shared_ptr<color_map_type> _color_map_ptr;
+
     };
 
     /// Check if some dependency cycle is detected
     bool has_cycle() const;
+
+    /// Find vertices belonging to cycles
+    bool find_vertices_in_cycles(std::set<vertex_t> &) const;
+
+    /// Find all vertices of a given category from a starting vertex
+    std::set<std::string> find_vertices_of_category_from(const std::string & from_id_,
+                                                         const std::string & category_) const;
+
+    // /// Find depender vertices of a given category from a dependee vertex
+    // std::set<std::string> find_dependers_of_category_from(const std::string & dependee_id_,
+    //                                                       const std::size_t level_) const;
 
     /// Smart print
     void smart_print(std::ostream & out_) const;
@@ -166,18 +311,17 @@ namespace datatools {
     /// Export graph to Graphviz dot format
     void export_graphviz(std::ostream & out_, const uint32_t flags_ = 0) const;
 
+    std::string get_vertex_id(const vertex_t &) const;
+
   private:
 
     vertex_t _get_vertex_(const std::string & id_) const;
 
   private:
 
-    // std::string _vertex_category_;
-    std::string _edge_topic_;
-    graph_t     _g_;
+    graph_t _g_; ///< BGL embedded model
 
   };
-
 
 } // end of namespace datatools
 

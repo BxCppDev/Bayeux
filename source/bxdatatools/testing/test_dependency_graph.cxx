@@ -13,6 +13,9 @@
 
 void test_dependency_graph_0();
 void test_dependency_graph_1();
+void test_dependency_graph_2();
+void test_dependency_graph_3();
+void test_dependency_graph_4();
 
 int main (int /* argc_ */, char ** /*argv_*/)
 {
@@ -22,6 +25,9 @@ int main (int /* argc_ */, char ** /*argv_*/)
 
     test_dependency_graph_0();
     test_dependency_graph_1();
+    test_dependency_graph_2();
+    test_dependency_graph_3();
+    test_dependency_graph_4();
 
   } catch (std::exception & x) {
     std::clog << "[fatal] " << x.what () << std::endl;
@@ -284,6 +290,177 @@ void test_dependency_graph_1()
   xgv_options |= datatools::dependency_graph::XGV_WITH_VERTEX_CATEGORY;
   // xgv_options |= datatools::dependency_graph::XGV_WITH_EDGE_TOPIC;
   dg.export_graphviz(fexp, xgv_options);
+
+  std::clog << std::endl;
+
+  return;
+}
+
+void test_dependency_graph_2()
+{
+  std::clog << "[info] " << "test_dependency_graph_2..." << std::endl;
+
+  bool cycles = true;
+  // cycles = false;
+  datatools::dependency_graph dg;
+  dg.add_vertex("A", "foo");
+  dg.add_vertex("B", "bar");
+  dg.add_vertex("C", "baz");
+  dg.add_vertex("D", "node");
+  dg.add_vertex("E", "node");
+  dg.add_vertex("F", "node");
+  dg.add_vertex("G", "node");
+  dg.add_vertex("H", "node");
+  dg.add_vertex("I", "node");
+  dg.add_vertex("J", "node");
+  dg.add_vertex("K", "node");
+
+  dg.add_out_edge("B", "A", "dependency");
+  dg.add_out_edge("C", "B", "dependency");
+  dg.add_out_edge("D", "C", "dependency");
+  dg.add_out_edge("E", "C", "dependency");
+  dg.add_out_edge("F", "D", "dependency");
+  dg.add_out_edge("F", "E", "dependency");
+  dg.add_out_edge("G", "F", "dependency");
+  dg.add_out_edge("G", "D", "dependency");
+  dg.add_out_edge("H", "F", "dependency");
+  dg.add_out_edge("I", "A", "dependency");
+  dg.add_out_edge("J", "D", "dependency");
+  dg.add_out_edge("K", "D", "dependency");
+  if (cycles) {
+    dg.add_out_edge("B", "D", "dependency");
+    dg.add_out_edge("C", "F", "dependency");
+  }
+  std::ofstream fexp("test_dependency_graph_2.dot");
+  uint32_t xgv_options = 0;
+  dg.export_graphviz(fexp, xgv_options);
+
+  if (dg.has_cycle()) {
+    std::clog << "[info] Found cycle(s)!" << std::endl;
+  }
+  std::clog << std::endl;
+
+  std::set<datatools::dependency_graph::vertex_t> vtx;
+  if (dg.find_vertices_in_cycles(vtx)) {
+    std::clog << "[info] Found " << vtx.size() << " vertices in cycle(s) : " << std::endl;
+    for (auto v : vtx) {
+      std::clog << "[info]   - vertex: '" << dg.get_vertex_id(v) << "'" << std::endl;
+    }
+  }
+  std::clog << std::endl;
+
+  return;
+}
+
+void test_dependency_graph_3()
+{
+  std::clog << "[info] " << "test_dependency_graph_3..." << std::endl;
+
+  datatools::dependency_graph dg;
+  dg.add_vertex("A", "node");
+  dg.add_vertex("B", "foo");
+  dg.add_vertex("C", "node");
+  dg.add_vertex("D", "node");
+  dg.add_vertex("E", "node");
+  dg.add_vertex("F", "node");
+  dg.add_vertex("G", "foo");
+  dg.add_vertex("H", "node");
+  dg.add_vertex("I", "foo");
+  dg.add_vertex("J", "node");
+  dg.add_vertex("K", "node");
+  dg.add_vertex("L", "foo");
+  dg.add_vertex("M", "node");
+  dg.add_vertex("N", "foo");
+
+  dg.add_out_edge("B", "A", "dependency");
+  dg.add_out_edge("C", "B", "dependency");
+  dg.add_out_edge("D", "C", "dependency");
+  dg.add_out_edge("E", "C", "dependency");
+  dg.add_out_edge("F", "D", "dependency");
+  dg.add_out_edge("F", "E", "dependency");
+  dg.add_out_edge("G", "F", "dependency");
+  dg.add_out_edge("G", "D", "dependency");
+  dg.add_out_edge("H", "F", "dependency");
+  dg.add_out_edge("I", "A", "dependency");
+  dg.add_out_edge("J", "D", "dependency");
+  dg.add_out_edge("K", "D", "dependency");
+  dg.add_out_edge("D", "L", "dependency");
+  dg.add_out_edge("L", "M", "dependency");
+  dg.add_out_edge("J", "N", "dependency");
+  std::ofstream fexp("test_dependency_graph_3.dot");
+  uint32_t xgv_options = 0;
+  xgv_options |= datatools::dependency_graph::XGV_WITH_VERTEX_CATEGORY;
+  // xgv_options |= datatools::dependency_graph::XGV_WITH_EDGE_TOPIC;
+  dg.export_graphviz(fexp, xgv_options);
+
+  if (! dg.has_cycle()) {
+    std::clog << "[info] No cycle!" << std::endl;
+  }
+  std::clog << std::endl;
+
+  std::set<std::string> vtx = dg.find_vertices_of_category_from("F", "foo");
+  std::clog << "[info] Vertices of 'foo' category from 'F':" << std::endl;
+  for (auto v : vtx) {
+    std::clog << "[info]   - vertex: '" << v << "'" << std::endl;
+  }
+
+  std::clog << std::endl;
+
+  return;
+}
+
+void test_dependency_graph_4()
+{
+  std::clog << "[info] " << "test_dependency_graph_4..." << std::endl;
+
+  datatools::dependency_graph dg;
+  dg.add_vertex("A", "foo");
+  dg.add_vertex("B", "node");
+  dg.add_vertex("C", "node");
+  dg.add_vertex("D", "node");
+  dg.add_vertex("E", "node");
+  dg.add_vertex("F", "node");
+  dg.add_vertex("G", "node");
+  dg.add_vertex("H", "node");
+  dg.add_vertex("I", "foo");
+  dg.add_vertex("J", "node");
+  dg.add_vertex("K", "foo");
+  dg.add_vertex("L", "node");
+  dg.add_vertex("M", "node");
+  dg.add_vertex("N", "node");
+
+  dg.add_out_edge("B", "A", "dependency");
+  dg.add_out_edge("C", "A", "dependency");
+  dg.add_out_edge("D", "B", "dependency");
+  dg.add_out_edge("E", "C", "dependency");
+  dg.add_out_edge("F", "D", "dependency");
+  dg.add_out_edge("F", "E", "dependency");
+  dg.add_out_edge("F", "G", "dependency");
+  dg.add_out_edge("G", "H", "dependency");
+  dg.add_out_edge("H", "I", "dependency");
+  dg.add_out_edge("H", "J", "dependency");
+  dg.add_out_edge("K", "F", "dependency");
+  dg.add_out_edge("L", "K", "dependency");
+  dg.add_out_edge("L", "M", "dependency");
+  dg.add_out_edge("M", "N", "dependency");
+  dg.add_out_edge("N", "G", "dependency");
+
+  std::ofstream fexp("test_dependency_graph_4.dot");
+  uint32_t xgv_options = 0;
+  xgv_options |= datatools::dependency_graph::XGV_WITH_VERTEX_CATEGORY;
+  // xgv_options |= datatools::dependency_graph::XGV_WITH_EDGE_TOPIC;
+  dg.export_graphviz(fexp, xgv_options);
+
+  if (! dg.has_cycle()) {
+    std::clog << "[info] No cycle!" << std::endl;
+  }
+  std::clog << std::endl;
+
+  std::set<std::string> vtx = dg.find_vertices_of_category_from("F", "foo");
+  std::clog << "[info] Vertices of 'foo' category from 'F':" << std::endl;
+  for (auto v : vtx) {
+    std::clog << "[info]   - vertex: '" << v << "'" << std::endl;
+  }
 
   std::clog << std::endl;
 
