@@ -168,38 +168,73 @@ namespace datatools {
   }
 
   std::set<std::string>
-  dependency_graph::find_vertices_of_category_from(const std::string & from_id_,
-                                                   const std::string & category_) const
+  dependency_graph::find_dependees_of_category_from(const std::string & depender_id_,
+                                                    const std::string & category_) const
   {
     std::set<std::string> svtx;
-    DT_THROW_IF(!has_vertex(from_id_),
+    DT_THROW_IF(!has_vertex(depender_id_),
                 std::logic_error,
-                "Dependency graph does not have a starting vertex with id '" << from_id_ << "'!");
+                "Dependency graph does not have a starting vertex with id '" << depender_id_ << "'!");
     DT_THROW_IF(category_.empty(),
                 std::logic_error,
                 "Missing category!");
-    vertex_t from = _get_vertex_(from_id_);
+    vertex_t depender = _get_vertex_(depender_id_);
     fvocf_visitor fvocf(svtx, _g_, category_);
     try {
-      boost::depth_first_search(_g_, boost::visitor(fvocf).root_vertex(from));
+      boost::depth_first_search(_g_, boost::visitor(fvocf).root_vertex(depender));
     } catch (std::exception &) {
     }
     return svtx;
   }
 
-  // std::set<std::string>
-  // dependency_graph::find_dependers_of_category_from(const std::string & dependee_id_,
-  //                                                   const std::size_t level_) const
-  // {
-  //   std::set<std::string> svtx;
-  //   DT_THROW_IF(!has_vertex(dependee_id_),
-  //               std::logic_error,
-  //               "Dependency graph does not have a dependee vertex with id '" << from_id_ << "'!");
-  //   DT_THROW_IF(category_.empty(),
-  //               std::logic_error,
-  //               "Missing category!");
-  //   return svtx;
-  // }
+  void dependency_graph::_find_dependers_of_category_from_(const vertex_t dependee_,
+                                                           const std::string & category_,
+                                                           const std::size_t depth_,
+                                                           std::set<vertex_t> & visited_,
+                                                           std::set<std::string> & dependers_) const
+  {
+    if (depth_ == 0) return;
+    std::pair<in_edge_iter_t, in_edge_iter_t> in_edges = boost::in_edges(dependee_, _g_);
+    for (in_edge_iter_t it = in_edges.first; it != in_edges.second; it++) {
+      const edge_t & e = *it;
+      vertex_t source = boost::source(e, _g_);
+      std::clog << "[devel]   source = [" << source << ']' << " -> " << get_vertex_id(source) << std::endl;
+      const vertex_properties_t & vp = _g_[source];
+      bool selected = true;
+      if (!category_.empty()) {
+        if (category_ != vp.category) {
+          selected = false;
+        }
+      }
+      if (selected) {
+        dependers_.insert(vp.id);
+      }
+      if (depth_ > 0 && visited_.count(source) == 0) {
+        _find_dependers_of_category_from_(source, category_, depth_ - 1, visited_, dependers_);
+        visited_.insert(source);
+      }
+    }
+    return;
+  }
+
+  std::set<std::string>
+  dependency_graph::find_dependers_of_category_from(const std::string & dependee_id_,
+                                                    const std::string & category_,
+                                                    const std::size_t depth_) const
+  {
+    std::set<std::string> dependers;
+    std::set<vertex_t> visited;
+    DT_THROW_IF(!has_vertex(dependee_id_),
+                std::logic_error,
+                "Dependency graph does not have a dependee vertex with id '" << dependee_id_ << "'!");
+    vertex_t dependee = _get_vertex_(dependee_id_);
+    std::clog << "[devel] dependee = [" << dependee << ']' << std::endl;
+    std::clog << "[devel] category = '" << category_ << "'" << std::endl;
+    std::clog << "[devel] depth_   = [" << depth_ << ']' << std::endl;
+    std::size_t depth = (depth_ == 0) ? std::numeric_limits<std::size_t>::max() : depth_;
+    _find_dependers_of_category_from_(dependee, category_, depth, visited, dependers);
+    return dependers;
+  }
 
   void dependency_graph::smart_print(std::ostream & out_) const
   {
@@ -207,7 +242,7 @@ namespace datatools {
     return;
   }
 
-  std::string dependency_graph::get_vertex_id(const vertex_t & v_) const
+  std::string dependency_graph::get_vertex_id(const vertex_t v_) const
   {
     std::string id;
     for (std::pair<vertex_iter_t, vertex_iter_t> vertex_pair = boost::vertices(_g_);
@@ -244,9 +279,11 @@ namespace datatools {
   public:
 
     vertex_property_writer(const dependency_graph::graph_t & g_,
-                           const bool with_vertex_category_)
+                           const bool with_vertex_category_,
+                           const bool with_vertex_index_)
       : _g_(g_)
       , _with_vertex_category_(with_vertex_category_)
+      , _with_vertex_index_(with_vertex_index_)
     {
       return;
     }
@@ -259,7 +296,10 @@ namespace datatools {
       out_ << " label=" << '"'
            << vp.id;
       if (_with_vertex_category_) {
-        out_ << "&#92;n" << '[' << vp.category << ']';
+        out_ << "&#92;n" << '(' << vp.category << ')';
+      }
+      if (_with_vertex_index_) {
+        out_ << "&#92;n" << "[#" << v_ << ']';
       }
       out_ << '"';
       out_ << ']';
@@ -270,6 +310,7 @@ namespace datatools {
 
     const dependency_graph::graph_t & _g_;
     bool _with_vertex_category_ = false;
+    bool _with_vertex_index_ = false;
 
   };
 
@@ -323,13 +364,17 @@ namespace datatools {
   {
     bool with_edge_topic = false;
     bool with_vertex_category = false;
+    bool with_vertex_index = false;
     if (flags_ & XGV_WITH_EDGE_TOPIC) {
       with_edge_topic = true;
     }
     if (flags_ & XGV_WITH_VERTEX_CATEGORY) {
       with_vertex_category = true;
     }
-    vertex_property_writer vpw(_g_, with_vertex_category);
+    if (flags_ & XGV_WITH_VERTEX_INDEX) {
+      with_vertex_index = true;
+    }
+    vertex_property_writer vpw(_g_, with_vertex_category, with_vertex_index);
     edge_property_writer   epw(_g_, with_edge_topic);
     graph_property_writer  gpw(_g_);
     boost::write_graphviz(out_, _g_, vpw, epw, gpw);

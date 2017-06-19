@@ -290,13 +290,14 @@ namespace datatools {
     /// Find vertices belonging to cycles
     bool find_vertices_in_cycles(std::set<vertex_t> &) const;
 
-    /// Find all vertices of a given category from a starting vertex
-    std::set<std::string> find_vertices_of_category_from(const std::string & from_id_,
-                                                         const std::string & category_) const;
+    /// Find all dependee vertices of a given category from a starting depender vertex
+    std::set<std::string> find_dependees_of_category_from(const std::string & depender_id_,
+                                                          const std::string & category_) const;
 
-    // /// Find depender vertices of a given category from a dependee vertex
-    // std::set<std::string> find_dependers_of_category_from(const std::string & dependee_id_,
-    //                                                       const std::size_t level_) const;
+    /// Find all depender vertices of a given category from a starting dependee vertex
+    std::set<std::string> find_dependers_of_category_from(const std::string & dependee_id_,
+                                                          const std::string & category_ = "",
+                                                          const std::size_t depth_ = 0) const;
 
     /// Smart print
     void smart_print(std::ostream & out_) const;
@@ -305,17 +306,25 @@ namespace datatools {
     enum xgv_flags {
       XGV_NONE                 = 0,               ///< No flags
       XGV_WITH_EDGE_TOPIC      = bit_mask::bit00, ///< Print edge topic
-      XGV_WITH_VERTEX_CATEGORY = bit_mask::bit01  ///< Print vertex category
+      XGV_WITH_VERTEX_CATEGORY = bit_mask::bit01, ///< Print vertex category
+      XGV_WITH_VERTEX_INDEX    = bit_mask::bit02  ///< Print vertex index (debug)
     };
 
     /// Export graph to Graphviz dot format
     void export_graphviz(std::ostream & out_, const uint32_t flags_ = 0) const;
 
-    std::string get_vertex_id(const vertex_t &) const;
+    std::string get_vertex_id(const vertex_t) const;
 
   private:
 
     vertex_t _get_vertex_(const std::string & id_) const;
+
+    /// Find all depender vertices of a given category from a starting dependee vertex
+    void _find_dependers_of_category_from_(const vertex_t dependee_,
+                                           const std::string & category_,
+                                           const std::size_t depth_,
+                                           std::set<vertex_t> & visited_,
+                                           std::set<std::string> & dependers_) const;
 
   private:
 

@@ -398,10 +398,10 @@ void test_dependency_graph_3()
   }
   std::clog << std::endl;
 
-  std::set<std::string> vtx = dg.find_vertices_of_category_from("F", "foo");
-  std::clog << "[info] Vertices of 'foo' category from 'F':" << std::endl;
+  std::set<std::string> vtx = dg.find_dependees_of_category_from("F", "foo");
+  std::clog << "[info] Dependees of 'foo' category from 'F':" << std::endl;
   for (auto v : vtx) {
-    std::clog << "[info]   - vertex: '" << v << "'" << std::endl;
+    std::clog << "[info]   - dependee: '" << v << "'" << std::endl;
   }
 
   std::clog << std::endl;
@@ -415,18 +415,18 @@ void test_dependency_graph_4()
 
   datatools::dependency_graph dg;
   dg.add_vertex("A", "foo");
-  dg.add_vertex("B", "node");
+  dg.add_vertex("B", "bar");
   dg.add_vertex("C", "node");
   dg.add_vertex("D", "node");
-  dg.add_vertex("E", "node");
-  dg.add_vertex("F", "node");
+  dg.add_vertex("E", "bar");
+  dg.add_vertex("F", "bar");
   dg.add_vertex("G", "node");
-  dg.add_vertex("H", "node");
+  dg.add_vertex("H", "bar");
   dg.add_vertex("I", "foo");
   dg.add_vertex("J", "node");
   dg.add_vertex("K", "foo");
   dg.add_vertex("L", "node");
-  dg.add_vertex("M", "node");
+  dg.add_vertex("M", "bar");
   dg.add_vertex("N", "node");
 
   dg.add_out_edge("B", "A", "dependency");
@@ -440,6 +440,7 @@ void test_dependency_graph_4()
   dg.add_out_edge("H", "I", "dependency");
   dg.add_out_edge("H", "J", "dependency");
   dg.add_out_edge("K", "F", "dependency");
+  dg.add_out_edge("K", "N", "dependency");
   dg.add_out_edge("L", "K", "dependency");
   dg.add_out_edge("L", "M", "dependency");
   dg.add_out_edge("M", "N", "dependency");
@@ -448,6 +449,7 @@ void test_dependency_graph_4()
   std::ofstream fexp("test_dependency_graph_4.dot");
   uint32_t xgv_options = 0;
   xgv_options |= datatools::dependency_graph::XGV_WITH_VERTEX_CATEGORY;
+  xgv_options |= datatools::dependency_graph::XGV_WITH_VERTEX_INDEX;
   // xgv_options |= datatools::dependency_graph::XGV_WITH_EDGE_TOPIC;
   dg.export_graphviz(fexp, xgv_options);
 
@@ -456,10 +458,40 @@ void test_dependency_graph_4()
   }
   std::clog << std::endl;
 
-  std::set<std::string> vtx = dg.find_vertices_of_category_from("F", "foo");
-  std::clog << "[info] Vertices of 'foo' category from 'F':" << std::endl;
-  for (auto v : vtx) {
-    std::clog << "[info]   - vertex: '" << v << "'" << std::endl;
+  {
+    std::set<std::string> depees = dg.find_dependees_of_category_from("F", "foo");
+    std::clog << "[info] Dependees of 'foo' category from 'F':" << std::endl;
+    for (auto d : depees) {
+      std::clog << "[info]   - dependee: '" << d << "'" << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+  {
+    std::set<std::string> depers = dg.find_dependers_of_category_from("I", "bar");
+    std::clog << "[info] Dependers of 'bar' category from 'F':" << std::endl;
+    for (auto d : depers) {
+      std::clog << "[info]   - depender: '" << d << "'" << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+  {
+    std::set<std::string> depers = dg.find_dependers_of_category_from("H", "", 0);
+    std::clog << "[info] Dependers from 'H':" << std::endl;
+    for (auto d : depers) {
+      std::clog << "[info]   - depender: '" << d << "'" << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+  {
+    std::set<std::string> depers = dg.find_dependers_of_category_from("A", "node");
+    std::clog << "[info] Dependers of 'node' category from 'A':" << std::endl;
+    for (auto d : depers) {
+      std::clog << "[info]   - depender: '" << d << "'" << std::endl;
+    }
+    std::clog << std::endl;
   }
 
   std::clog << std::endl;
