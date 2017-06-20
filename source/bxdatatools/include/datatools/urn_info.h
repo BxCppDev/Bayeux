@@ -133,7 +133,7 @@ namespace datatools {
      *  #@description Short description text
      *  description : string = "Foo experiment data analysis setup 1.0"
      *
-     *  #@description List of topics on which URN info relies on
+     *  #@description List of topics on which URN info relies/depends on
      *  topics : string[2] = "geometry" "input""
      *
      *  #@description Unique component associated to the 'geometry' topic

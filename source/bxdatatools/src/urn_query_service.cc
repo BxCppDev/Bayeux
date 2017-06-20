@@ -30,6 +30,7 @@
 #include <datatools/urn_db_service.h>
 #include <datatools/urn_to_path_resolver_service.h>
 #include <datatools/urn_to_path.h>
+#include <datatools/dependency_graph.h>
 
 namespace datatools {
 
@@ -416,7 +417,6 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Adding URN database service '" << name << "'...");
     _pimpl_->dbs[name] = &dbs_;
-    _update_();
     return;
   }
 
@@ -426,7 +426,6 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Removing URN database service '" << name_ << "'...");
     _pimpl_->dbs.erase(name_);
-    _update_();
     return;
   }
 
@@ -438,7 +437,6 @@ namespace datatools {
         DT_LOG_DEBUG(get_logging_priority(),
                      "Removing URN database service '" << db.first << "'...");
         _pimpl_->dbs.erase(db.first);
-        _update_();
         break;
       }
     }
@@ -482,7 +480,6 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Adding URN path resolver service '" << name << "'...");
     _pimpl_->resolvers[name] = &prs_;
-    _update_();
     return;
   }
 
@@ -492,7 +489,6 @@ namespace datatools {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Removing URN path resolver service '" << name_ << "'...");
     _pimpl_->resolvers.erase(name_);
-    _update_();
     return;
   }
 
@@ -504,15 +500,75 @@ namespace datatools {
         DT_LOG_DEBUG(get_logging_priority(),
                      "Removing URN path resolver service '" << prs.first << "'...");
         _pimpl_->resolvers.erase(prs.first);
-        _update_();
         break;
       }
     }
     return;
   }
 
-  void urn_query_service::_update_()
+  const dependency_graph & urn_query_service::get_dependency_graph() const
   {
+    DT_LOG_DEBUG(get_logging_priority(), "Access to the dependency graph...");
+    if (_dg_ptr_.get() == nullptr) {
+      urn_query_service * mutable_this = const_cast<urn_query_service *>(this);
+      mutable_this->_dg_ptr_.reset(new dependency_graph);
+      DT_LOG_DEBUG(get_logging_priority(), "Building the dependency graph...");
+      mutable_this->_build_dependency_graph_();
+    }
+    return *_dg_ptr_;
+  }
+
+  void urn_query_service::update_dependency_graph()
+  {
+    _build_dependency_graph_();
+    return;
+  }
+
+  void urn_query_service::_dependency_graph_process_db(const urn_db_service * db_,
+                                                       std::set<const urn_db_service*> & processed_dbs_)
+  {
+    DT_LOG_DEBUG(get_logging_priority(), "Processing DB '" << db_->get_name() << "'...");
+    if (db_->has_dependees()) {
+      std::set<std::string> depees = db_->get_dependees();
+      for (std::set<std::string>::const_iterator idepee = depees.begin();
+           idepee != depees.end();
+           idepee++) {
+        const std::string & depee_name = *idepee;
+        DT_LOG_DEBUG(get_logging_priority(), "Processing dependee DB '" << depee_name << "'...");
+        DT_THROW_IF(!has_db(depee_name), std::logic_error, "No dependee DB service named '" << depee_name << "'!");
+        const urn_db_service * depee_p = _pimpl_->dbs.find(depee_name)->second;
+        if (processed_dbs_.count(depee_p)) {
+          DT_LOG_DEBUG(get_logging_priority(),
+                       "Dependee DB '" << depee_name << "' has already been processed.");
+          continue;
+        }
+        DT_LOG_DEBUG(get_logging_priority(), "Processing dependee DB '" << depee_name << "'...");
+        _dependency_graph_process_db(depee_p, processed_dbs_);
+        processed_dbs_.insert(depee_p);
+      }
+    }
+    // Now process the URNs...
+    urn_db_service::dependency_graph_builder dg_builder(*db_, get_logging_priority());
+    dg_builder.make_deps(*_dg_ptr_);
+    return;
+  }
+
+  void urn_query_service::_build_dependency_graph_()
+  {
+    DT_LOG_DEBUG(get_logging_priority(), "Dependency graph is building...");
+    _dg_ptr_->reset();
+    std::set<const urn_db_service*> processed_dbs;
+    for (dbs_dict_type::const_iterator idb = _pimpl_->dbs.begin();
+         idb != _pimpl_->dbs.end();
+         idb++) {
+      const urn_db_service * db = idb->second;
+      if (processed_dbs.count(db)) continue;
+      DT_LOG_DEBUG(get_logging_priority(), "Processing DB '" << db->get_name() << "'...");
+      _dependency_graph_process_db(db, processed_dbs);
+      processed_dbs.insert(db);
+    }
+    DT_THROW_IF(_dg_ptr_->has_cycle(), std::logic_error, "Found cycles in the dependency graph!");
+    DT_LOG_DEBUG(get_logging_priority(), "Dependency graph is built.");
     return;
   }
 

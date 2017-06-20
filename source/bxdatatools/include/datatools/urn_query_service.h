@@ -34,6 +34,7 @@
 // Standard Library:
 #include <string>
 #include <map>
+#include <set>
 
 // Third party:
 #include <boost/noncopyable.hpp>
@@ -46,6 +47,7 @@ namespace datatools {
 
   class urn_db_service;
   class urn_to_path_resolver_service;
+  class dependency_graph;
 
   /// \brief A service which allows queries about URNs thanks to embedded
   ///        specialized dictionaries of URN informations and URN/path resolver tables
@@ -146,9 +148,18 @@ namespace datatools {
     /// Unregister an URN path resolver with given name
     void remove_path_resolver(const std::string & name_);
 
+    //! Return the auto-build dependency graph associated to the service
+    const dependency_graph & get_dependency_graph() const;
+
+    //! Return the auto-build dependency graph associated to the service
+    void update_dependency_graph();
+
   private:
 
-    void _update_();
+    void _build_dependency_graph_();
+
+    void _dependency_graph_process_db(const urn_db_service * db_,
+                                      std::set<const urn_db_service*> & processed_dbs_);
 
   private:
 
@@ -157,7 +168,8 @@ namespace datatools {
 
     // Private implementation:
     struct pimpl_type;
-    std::unique_ptr<pimpl_type> _pimpl_; //!< Private implementation
+    std::unique_ptr<pimpl_type> _pimpl_;    //!< Private implementation
+    std::unique_ptr<dependency_graph> _dg_ptr_; //!< Private implementation
 
     // Service registration
     DATATOOLS_SERVICE_REGISTRATION_INTERFACE(urn_query_service)

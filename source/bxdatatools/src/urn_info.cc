@@ -247,7 +247,7 @@ namespace datatools {
 
   void urn_info::remove_all_components()
   {
-    DT_THROW_IF(is_locked(), std::logic_error, "URN record is component-locked!");
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     _components_.clear();
     return;
   }
@@ -330,6 +330,9 @@ namespace datatools {
                                const std::string & comp_topic_)
   {
     DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
+    DT_THROW_IF(comp_urn_ == _urn_,
+                std::logic_error,
+                "URN '" << _urn_ << "' cannot be its own component!");
     DT_THROW_IF(! validate_urn(comp_urn_),
                 std::logic_error,
                 "Invalid component's URN representation '" << comp_urn_ << "'!");

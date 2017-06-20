@@ -206,8 +206,8 @@ namespace datatools {
                 "Service is already initialized!");
     DT_THROW_IF(!has_allowed_category(category_), std::logic_error,
                 "No allowed category '" << category_ << "'!");
-     _allowed_categories_.erase(category_);
-     return;
+    _allowed_categories_.erase(category_);
+    return;
   }
 
   const std::set<std::string> & urn_db_service::get_allowed_categories() const
@@ -248,13 +248,30 @@ namespace datatools {
                 "Service is already initialized!");
     DT_THROW_IF(!has_allowed_link_topic(link_topic_), std::logic_error,
                 "No allowed link topic '" << link_topic_ << "'!");
-     _allowed_link_topics_.erase(link_topic_);
-     return;
+    _allowed_link_topics_.erase(link_topic_);
+    return;
   }
 
   const std::set<std::string> & urn_db_service::get_allowed_link_topics() const
   {
     return _allowed_link_topics_;
+  }
+
+  bool urn_db_service::has_dependees() const
+  {
+    if (_dependee_dbs_.size()) return true;
+    return false;
+  }
+
+  std::set<std::string> urn_db_service::get_dependees() const
+  {
+    std::set<std::string> depees;
+    for (dependee_db_dict_type::const_iterator it = _dependee_dbs_.begin();
+         it != _dependee_dbs_.end();
+         it++) {
+      depees.insert(it->second.get_db().get_name());
+    }
+    return depees;
   }
 
   void urn_db_service::connect_db(const urn_db_service & db_)
@@ -510,7 +527,7 @@ namespace datatools {
         indent2 << i_tree_dumpable::skip_tag;
       }
       out_ << "Linked from URN '" << i->first << "'";
-      if (i->second.is_mounted()) out_ << " [mounted]";
+      if (i->second.is_mounted()) out_ << " [mounted from '" << i->second._mounted_db_ref_->get_name()  << "']";
       out_ << " : " << std::endl;
       std::ostringstream buf;
       i->second.get().tree_dump(buf, "", indent2.str());
@@ -705,7 +722,7 @@ namespace datatools {
     DT_THROW_IF(!db.has(mounted_urn_), std::logic_error,
                 "Attempt to mount non existing URN='" << mounted_urn_ << "'"
                 << " from URN database '" << external_db_ << "'!");
-    std::string urn =  mounted_urn_;
+    std::string urn = mounted_urn_;
     DT_THROW_IF(has(urn), std::logic_error, "Mount URN='" << urn << "' already exists!");
     urn_record ur;
     ur.make_mounted(db, mounted_urn_);
@@ -875,7 +892,7 @@ namespace datatools {
     std::string errmsg;
     if (!remove_link(urn_from_, urn_to_, errmsg)) {
       DT_THROW(std::logic_error, errmsg)
-    }
+        }
     return;
   }
 
@@ -1073,59 +1090,83 @@ namespace datatools {
     return;
   }
 
-  urn_db_service::dependency_graph_builder::dependency_graph_builder(const urn_db_service & db_)
+  urn_db_service::dependency_graph_builder::dependency_graph_builder(const urn_db_service & db_,
+                                                                     const logger::priority & logging_)
     : _db_(db_)
+    , _logging_(logging_)
   {
     return;
   }
 
   void urn_db_service::dependency_graph_builder::add_topic(const std::string & topic_)
   {
+    DT_LOG_DEBUG(_logging_, "Using topic '" << topic_ << "'...");
     _topics_.insert(topic_);
     return;
   }
 
-  void urn_db_service::dependency_graph_builder::_process_node_components_(dependency_graph & deps_,
-                                                                           const std::string & urn_) const
+  void urn_db_service::dependency_graph_builder::_process_node_components_(const urn_record & urec_,
+                                                                           dependency_graph & deps_,
+                                                                           std::set<std::string> & processed_) const
   {
-    DT_THROW_IF(!_db_.has(urn_), std::logic_error,
-                "URN '" << urn_ << "' does not exist!");
-    const urn_record & urec = _db_._urn_records_.find(urn_)->second;
-    const urn_info & uinfo = urec.get();
-    for (auto topic : _topics_) {
+    const urn_info & uinfo = urec_.get();
+    DT_LOG_DEBUG(_logging_, "Processing node '" << uinfo.get_urn() << "'...");
+    std::vector<std::string> topics;
+    uinfo.build_topics(topics);
+    for (auto topic : topics) {
+      if (_topics_.size() && _topics_.count(topic) == 0) {
+        DT_LOG_DEBUG(_logging_, "Skip components with topic '" << topic << "'...");
+        continue;
+      }
       std::size_t ncomps = uinfo.get_number_of_components_by_topic(topic);
       for (std::size_t icomp = 0; icomp < ncomps; icomp++) {
         std::string comp_urn = uinfo.get_component(topic, icomp);
+        DT_LOG_DEBUG(_logging_, "Processing dependee node '" << comp_urn << "'...");
         const urn_record & comp_rec = _db_._urn_records_.find(comp_urn)->second;
         const urn_info & comp = comp_rec.get();
         if (!deps_.has_vertex(comp_urn)) {
+          DT_LOG_DEBUG(_logging_, "Adding vertex for dependee node '" << comp_urn << "'...");
           deps_.add_vertex(comp_urn, comp.get_category());
-          _process_node_components_(deps_, comp_urn);
+          _process_node_components_(comp_rec, deps_, processed_);
+        } else {
+          DT_LOG_DEBUG(_logging_, "Dependee node '" << comp_urn << "' has been already processed.");
         }
-        deps_.add_out_edge(urn_, comp_urn, topic);
+        DT_LOG_DEBUG(_logging_, "Adding dependency out-edge from '" << uinfo.get_urn() << "' to '" << comp_urn << "' has been already processed.");
+        deps_.add_out_edge(uinfo.get_urn(), comp_urn, topic);
       }
     }
     return;
   }
 
-  void urn_db_service::dependency_graph_builder::make_deps(dependency_graph & deps_,
-                                                           const std::string & start_urn_) const
+  void urn_db_service::dependency_graph_builder::make_deps(dependency_graph & deps_) const
   {
     if (_topics_.size() == 0) {
-      dependency_graph_builder & dgb = const_cast<dependency_graph_builder & >(*this);
-      dgb._topics_ = _db_.get_allowed_link_topics();
+      DT_LOG_DEBUG(_logging_, "Import topics from '" << _db_.get_name() << "'...");
+      dependency_graph_builder * mutable_this = const_cast<dependency_graph_builder *>(this);
+      for (auto t : _db_.get_allowed_link_topics()) {
+        DT_LOG_DEBUG(_logging_, " - topic '" << t << "'");
+      }
+      mutable_this->_topics_ = _db_.get_allowed_link_topics();
     }
-    DT_THROW_IF(!_db_.has(start_urn_), std::logic_error,
-                "URN '" << start_urn_ << "' does not exist!");
-    const urn_record & urec = _db_._urn_records_.find(start_urn_)->second;
-    const urn_info & uinfo = urec.get();
-    if (!deps_.has_vertex(start_urn_)) {
-      deps_.add_vertex(start_urn_, uinfo.get_category());
-      _process_node_components_(deps_, start_urn_);
+    std::set<std::string> processed_records;
+    for (urn_record_dict_type::const_iterator it = _db_._urn_records_.begin();
+         it != _db_._urn_records_.end();
+         it++) {
+      const std::string & urn = it->first;
+      const urn_record & urec = it->second;
+      const urn_info & uinfo = urec.get();
+      if (!deps_.has_vertex(urn)) {
+        if (urec.is_local()) {
+          deps_.add_vertex(urn, uinfo.get_category());
+          if (processed_records.count(urn) == 0) {
+            _process_node_components_(urec, deps_, processed_records);
+          }
+        }
+      }
+      processed_records.insert(urn);
     }
     return;
   }
-
 
 } // end of namespace datatools
 
@@ -1270,12 +1311,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::urn_db_service, ocd_)
                             "                                                                 \n"
                             )
       .add_example("Use an explicit list of URNs definition files::                            \n"
-                            "                                                                  \n"
-                            "    urn_infos.definitions : string[2] as path = \\                \n"
-                            "      \"${DATA_REPOSITORY_DIR}/fooexp/config/simulation.defs\" \\ \n"
-                            "      \"${DATA_REPOSITORY_DIR}/fooexp/config/calibration.defs\"   \n"
-                            "                                                                  \n")
-                            ;
+                   "                                                                  \n"
+                   "    urn_infos.definitions : string[2] as path = \\                \n"
+                   "      \"${DATA_REPOSITORY_DIR}/fooexp/config/simulation.defs\" \\ \n"
+                   "      \"${DATA_REPOSITORY_DIR}/fooexp/config/calibration.defs\"   \n"
+                   "                                                                  \n")
+      ;
   }
 
   ocd_.set_configuration_hints("A geometry manager is configured through a configuration file that  \n"
@@ -1292,7 +1333,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::urn_db_service, ocd_)
                                "  urn_infos.defintions : string[2] as path = \\                     \n"
                                "      \"${DATA_REPOSITORY_DIR}/fooexp/config/simulation.defs\" \\   \n"
                                "      \"${DATA_REPOSITORY_DIR}/fooexp/config/calibration.defs\"     \n"
-                             );
+                               );
 
   ocd_.set_validation_support(true);
   ocd_.lock();

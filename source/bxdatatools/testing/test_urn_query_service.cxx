@@ -4,6 +4,9 @@
 // Ourselves:
 #include <datatools/urn_query_service.h>
 
+// Standard Library:
+#include <fstream>
+
 // Third party:
 #include <boost/lexical_cast.hpp>
 #include <bayeux/bayeux.h>
@@ -12,6 +15,7 @@
 #include <datatools/urn_db_service.h>
 #include <datatools/urn_to_path_resolver_service.h>
 #include <datatools/kernel.h>
+#include <datatools/dependency_graph.h>
 
 void test_urn_query_service_0();
 
@@ -45,21 +49,45 @@ void test_urn_query_service_0()
   urnDbService1.set_terse_description("URN Database Service #1");
 
   // Populate service with URN infos:
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 3; i++) {
     urnDbService1.add("urn:datatools:testing:data:" + boost::lexical_cast<std::string>(i),
                       "data");
   }
+  urnDbService1.initialize_simple();
+  {
+    std::string urn = "urn:datatools:testing:params:1.0";
+    urnDbService1.add(urn, "configuration");
+    urnDbService1.add_link(urn, "urn:datatools:testing:data:2", "dependency");
+  }
+  urnDbService1.lock();
+  urnDbService1.tree_dump(std::clog, "urndb1:", "[info] ");
 
   datatools::urn_db_service urnDbService2;
   urnDbService2.set_name("urndb2");
   urnDbService2.set_display_name("UrnDb2");
   urnDbService2.set_terse_description("URN Database Service #2");
+  urnDbService2.set_allow_mounted(true);
+  urnDbService2.connect_db(urnDbService1);
+  urnDbService2.initialize_simple();
 
   // Populate service with URN infos:
-  for (int i = 0; i < 3; i++) {
-    urnDbService2.add("urn:datatools:testing:config:" + boost::lexical_cast<std::string>(i),
-                      "configuration");
+  std::string urn0 = "urn:datatools:testing:config:0";
+  urnDbService2.add(urn0, "configuration");
+  for (int i = 1; i < 3; i++) {
+    std::string urn = "urn:datatools:testing:config:" + boost::lexical_cast<std::string>(i);
+    urnDbService2.add(urn, "configuration");
+    urnDbService2.add_link(urn, urn0, "dependency");
   }
+  std::string urn3 = "urn:datatools:testing:config:3";
+  urnDbService2.add(urn3, "configuration");
+  urnDbService2.add_mounted("urndb1", "urn:datatools:testing:data:1");
+  urnDbService2.add_mounted("urndb1", "urn:datatools:testing:params:1.0");
+  urnDbService2.add_link(urn3, "urn:datatools:testing:config:1", "dependency");
+  urnDbService2.add_link(urn3, "urn:datatools:testing:config:2", "dependency");
+  urnDbService2.add_link("urn:datatools:testing:config:2", "urn:datatools:testing:data:1", "dependency");
+  urnDbService2.add_link("urn:datatools:testing:config:3", "urn:datatools:testing:params:1.0", "dependency");
+  urnDbService2.lock();
+  urnDbService2.tree_dump(std::clog, "urndb2:", "[info] ");
 
   datatools::urn_to_path_resolver_service urnResolverService1;
   urnResolverService1.set_name("urnresolv1");
@@ -107,6 +135,16 @@ void test_urn_query_service_0()
   urnQuery.add_path_resolver(urnResolverService1);
   urnQuery.tree_dump(std::clog, urnQuery.get_name(), "[info] ");
   urnQuery.initialize_simple();
+  {
+    std::clog << "\nBuild the dependency graph:" << std::endl;
+    const datatools::dependency_graph & dg = urnQuery.get_dependency_graph();
+    std::ofstream fexp("test_urn_query_service.dot");
+    uint32_t xgv_options = 0;
+    xgv_options |= datatools::dependency_graph::XGV_WITH_VERTEX_CATEGORY;
+    xgv_options |= datatools::dependency_graph::XGV_WITH_VERTEX_INDEX;
+    // xgv_options |= datatools::dependency_graph::XGV_WITH_EDGE_TOPIC;
+    dg.export_graphviz(fexp, xgv_options);
+  }
   std::clog << std::endl;
 
   // Queries:

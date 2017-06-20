@@ -34,6 +34,7 @@
 // Standard Library:
 #include <string>
 #include <map>
+#include <set>
 
 // Third party:
 // - Boost:
@@ -87,7 +88,7 @@ namespace datatools {
   /// \endcode
   /// or a usage:
   /// \code
-  ///   [from]    "usage"         [to]
+  ///   [from]      "usage"       [to]
   ///      o --------------------> o
   /// "application"             "data"
   /// \endcode
@@ -134,8 +135,8 @@ namespace datatools {
   ///          urn2             urn3
   /// \endcode
   ///
-  /// In terms of the Boost Graph Library, URN nodes are "vertices", forward links are "out-edges".
-  /// Backward links are "in-edges".
+  /// In terms of the Boost Graph Library, URN nodes are "vertices",
+  /// forward links are "out-edges". Backward links are "in-edges".
   ///
   */
   class urn_db_service
@@ -144,7 +145,8 @@ namespace datatools {
   public:
 
     /// \brief External dependee URN database service
-    struct dependee_db_entry {
+    struct dependee_db_entry
+    {
       dependee_db_entry();
       explicit dependee_db_entry(const urn_db_service & db_);
       void make(const urn_db_service & db_);
@@ -246,6 +248,12 @@ namespace datatools {
 
     //! Connect to an external URN database dependee service
     void connect_db(const urn_db_service & db_);
+
+    //! Check if the db has dependees
+    bool has_dependees() const;
+
+    //! Return the list of dependees
+    std::set<std::string> get_dependees() const;
 
     //! Check initialization status
     virtual bool is_initialized() const;
@@ -373,15 +381,19 @@ namespace datatools {
     //! Populated a dependency graph
     struct dependency_graph_builder
     {
-      dependency_graph_builder(const urn_db_service &);
+      dependency_graph_builder(const urn_db_service &, const logger::priority & = logger::PRIO_FATAL);
       void add_topic(const std::string & topic_);
-      void make_deps(dependency_graph & deps_, const std::string & start_urn_) const;
+      void make_deps(dependency_graph & deps_) const;
     private:
-      void _process_node_components_(dependency_graph & deps_, const std::string & urn_) const;
+      void _process_node_components_(const urn_record & urec_,
+                                     dependency_graph & deps_,
+                                     std::set<std::string> & processed_) const;
 
     private:
-      const urn_db_service & _db_;
-      std::set<std::string>  _topics_;
+
+      const urn_db_service & _db_;      ///< Source DB service
+      logger::priority       _logging_; ///< Logging priority threshold
+      std::set<std::string>  _topics_;  ///< Link topics to be taken into account for creating dependency edges
     };
 
   private:
