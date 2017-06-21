@@ -86,10 +86,13 @@ int main(int argc_, char ** argv_)
       if (params.variant.config_filename.empty()) {
         params.variant.config_filename = "${DATATOOLS_TESTING_DIR}/config/variants/repository.conf";
       }
+      params.variant.profile_load = "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_service_2.profile";
       params.variant.print(std::clog, "Variant parameters: ");
       dtc::variant_service app_var_serv;
       if (params.variant.is_active()) {
+        std::clog << "Configuring variant service..." << std::endl;
         app_var_serv.configure(params.variant);
+        std::clog << "Starting variant service..." << std::endl;
         app_var_serv.start();
       }
 
@@ -119,13 +122,16 @@ int main(int argc_, char ** argv_)
       // }
 
       // Terminate variant service:
-      app_var_serv.stop();
+      if (app_var_serv.is_started()) {
+        std::clog << "Stopping variant service..." << std::endl;
+        app_var_serv.stop();
+      }
 
     } catch (std::exception& e) {
       std::cerr << "[error] " << e.what()
                 << std::endl;
       error_code = EXIT_FAILURE;
-      throw std::logic_error(e.what());
+      // throw std::logic_error(e.what());
     }
 
   }

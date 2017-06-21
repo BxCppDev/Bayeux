@@ -178,55 +178,55 @@ namespace datatools {
           DT_LOG_TRACE(_logging_, "About to process line = '" << line << "'");
           if (line.empty()) {
             return 1;
-          } else {
-            {
-              std::istringstream iss(line);
-              std::string check;
-              iss >> check;
-              if (check[0] == '[') {
-                DT_LOG_FATAL(_logging_, "Detected a start block tag '[' in line '" << line << "'!");
-                return 1;
-              }
-            }
-            size_t equal_pos = line.find('=');
-            if (equal_pos == std::string::npos) {
-              DT_LOG_FATAL(_logging_, "Cannot find '=' separator in line '" << line << "'!");
+          }
+
+          {
+            std::istringstream iss(line);
+            std::string check;
+            iss >> check;
+            if (check[0] == '[') {
+              DT_LOG_FATAL(_logging_, "Detected a start block tag '[' in line '" << line << "'!");
               return 1;
             }
-            std::string path_str = line.substr(0, equal_pos);
-            std::istringstream path_iss(path_str);
-            std::string path;
-            path_iss >> path;
-            // line_iss >> path >> std::ws >> equal >> std::ws;
-            // DT_THROW_IF(equal != '=', std::logic_error,
-            //             "Invalid parameter format in line '" << line << "'!");
-            std::string value_str = line.substr(equal_pos + 1);
-            // std::getline(line_iss, value_str);
-            boost::trim(path);
-            boost::trim(value_str);
-            DT_LOG_TRACE(_logging_, "path = '" << path << "'");
-            DT_LOG_TRACE(_logging_, "value_str = '" << value_str << "'");
-            command::returned_info cri;
-            if (value_str == unset_label()) {
-              cri = vrec_.unset_value();
-            } else {
-              cri = vrec_.string_to_value(value_str);
-              DT_THROW_IF (! cri.is_success(),
-                           std::logic_error,
-                           "Failed to convert variant parameter '" << vrec_.get_path()
-                           << "' from '" << value_str << "' : "
-                           << cri.get_error_message());
-            }
-            if (cri.is_success()) {
-              for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
-                   i != vrec_.grab_daughters().end();
-                   i++) {
-                variant_record & dvrec = i->second.grab_record();
-                int error = load_record(in_, dvrec);
-                if (error) {
-                  DT_LOG_FATAL(_logging_, "Failed to load variant record '" << dvrec.get_path() << "'!");
-                  return 1;
-                }
+          }
+          size_t equal_pos = line.find('=');
+          if (equal_pos == std::string::npos) {
+            DT_LOG_FATAL(_logging_, "Cannot find '=' separator in line '" << line << "'!");
+            return 1;
+          }
+          std::string path_str = line.substr(0, equal_pos);
+          std::istringstream path_iss(path_str);
+          std::string path;
+          path_iss >> path;
+          std::string value_str = line.substr(equal_pos + 1);
+          boost::trim(path);
+          DT_LOG_TRACE(_logging_, "path = '" << path << "'");
+          DT_THROW_IF(path != vrec_.get_path(),
+                      std::logic_error,
+                      "Variant parameter path '" << path << "' is different from the expected one '" << vrec_.get_path()
+                      << "'!");
+          boost::trim(value_str);
+          DT_LOG_TRACE(_logging_, "value_str = '" << value_str << "'");
+          command::returned_info cri;
+          if (value_str == unset_label()) {
+            cri = vrec_.unset_value();
+          } else {
+            cri = vrec_.string_to_value(value_str);
+            DT_THROW_IF(! cri.is_success(),
+                        std::logic_error,
+                        "Failed to convert variant parameter '" << vrec_.get_path()
+                        << "' from '" << value_str << "' : "
+                        << cri.get_error_message());
+          }
+          if (cri.is_success()) {
+            for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
+                 i != vrec_.grab_daughters().end();
+                 i++) {
+              variant_record & dvrec = i->second.grab_record();
+              int error = load_record(in_, dvrec);
+              if (error) {
+                DT_LOG_FATAL(_logging_, "Failed to load variant record '" << dvrec.get_path() << "'!");
+                return 1;
               }
             }
           }
@@ -262,16 +262,6 @@ namespace datatools {
         const variant_record & rec = vreg_.get_parameter_record(param_name);
         top_records.push_back(&rec);
       }
-      /*
-      for (variant_registry::record_dict_type::const_iterator i = vreg_.get_records().begin();
-           i != vreg_.get_records().end();
-           i++) {
-        const variant_record & rec = i->second;
-        if (!rec.has_parent()) {
-          top_records.push_back(&rec);
-        }
-      }
-      */
       for (size_t i = 0; i < top_records.size(); i++) {
         DT_LOG_TRACE(_logging_, "Top record = '" << top_records[i]->get_path() << "'");
         store_record(out_, *top_records[i]);
@@ -291,29 +281,12 @@ namespace datatools {
         variant_record & rec = vreg_.grab_parameter_record(param_name);
         top_records.push_back(&rec);
       }
-      /*
-      std::vector<variant_record *> top_records;
-      for (variant_registry::record_dict_type::iterator i = vreg_.grab_records().begin();
-           i != vreg_.grab_records().end();
-           i++) {
-        variant_record & rec = i->second;
-        if (!rec.has_parent()) {
-          top_records.push_back(&rec);
-        }
-      }
-      */
       for (size_t i = 0; i < top_records.size(); i++) {
         DT_LOG_TRACE(_logging_, "Top record = '" << top_records[i]->get_path() << "'");
         int error = load_record(in_, *top_records[i]);
         if (error) {
           return 1;
         }
-        // char c = 0;
-        // in_.get(c);
-        // in_.putback(c);
-        // if (c == '[') {
-        //   break;
-        // }
       }
       DT_LOG_TRACE(_logging_, "Exiting.");
       return 0;
@@ -356,6 +329,8 @@ namespace datatools {
       datatools::version_id in_format_version;
       bool started_sections = false;
       bool skip_section = false;
+      variant_registry * current_registry_ptr = nullptr;
+      std::string last_processed_registry;
       while (in_) {
         int line_count = 0;
         std::getline(in_, line);
@@ -453,7 +428,7 @@ namespace datatools {
             DT_LOG_TRACE(_logging_, "current_registry_name = '" << current_registry_name << "'");
             if (!vrep_.has_registry(current_registry_name)) {
               if (_dont_ignore_unknown_registries_) {
-                DT_THROW (std::logic_error,
+                DT_THROW(std::logic_error,
                           "Variant repository has no known registry named '" << current_registry_name << "'!");
               }
               DT_LOG_WARNING(_logging_,
@@ -465,8 +440,11 @@ namespace datatools {
             }
             started_sections = true;
             if (!skip_section) {
-              variant_registry * current_registry_ptr = &vrep_.grab_registry(current_registry_name);
+              current_registry_ptr = &vrep_.grab_registry(current_registry_name);
               int error = load_registry(in_, *current_registry_ptr);
+              last_processed_registry = current_registry_name;
+              current_registry_ptr = nullptr;
+              DT_LOG_DEBUG(_logging_, "Registry '" << current_registry_name << "' has been processed.");
               if (error) {
                 return 1;
               }
@@ -475,6 +453,9 @@ namespace datatools {
             // Not a start section line:
             if (started_sections && skip_section) {
               continue;
+            }
+            if (current_registry_ptr == nullptr) {
+              DT_THROW(std::logic_error, "Unexpected line '" << line << "'!");
             }
           }
         }
