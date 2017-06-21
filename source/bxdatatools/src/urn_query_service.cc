@@ -37,8 +37,8 @@ namespace datatools {
   /** Auto-registration of this service class in a central service Db */
   DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(urn_query_service, "datatools::urn_query_service")
 
-  typedef std::map<std::string, const urn_db_service*> dbs_dict_type;
-  typedef std::map<std::string, const urn_to_path_resolver_service*> resolvers_dict_type;
+  typedef std::map<std::string, const urn_db_service *>               dbs_dict_type;
+  typedef std::map<std::string, const urn_to_path_resolver_service *> resolvers_dict_type;
 
   struct urn_query_service::pimpl_type
   {
@@ -50,18 +50,20 @@ namespace datatools {
 
   urn_query_service::pimpl_type::pimpl_type()
   {
-    // std::cerr << "urn_query_service::pimpl_type::pimpl_type: Hello PIMPL!" << std::endl;
+    return;
   }
 
   urn_query_service::urn_query_service()
   {
     _pimpl_.reset(new pimpl_type);
+    return;
   }
 
   urn_query_service::~urn_query_service()
   {
     if (this->is_initialized()) this->urn_query_service::reset();
     _pimpl_.reset();
+    return;
   }
 
   bool urn_query_service::is_initialized() const
@@ -381,6 +383,15 @@ namespace datatools {
     return false;
   }
 
+  void urn_query_service::build_list_of_dbs(std::set<std::string> & dbs_) const
+  {
+    dbs_.clear();
+    for (auto dbsp : _pimpl_->dbs) {
+      dbs_.insert(dbsp.first);
+    }
+    return;
+  }
+
   bool urn_query_service::has_db(const std::string & name_) const
   {
     return _pimpl_->dbs.count(name_) > 0;
@@ -394,6 +405,26 @@ namespace datatools {
       }
     }
     return false;
+  }
+
+  void urn_query_service::add_db(const urn_db_service & dbs_)
+  {
+    std::lock_guard<std::mutex> lck(_pimpl_->mtx);
+    std::string name = dbs_.get_name();
+    if (has_db(name)) {
+      DT_LOG_ERROR(get_logging_priority(),
+                   "An URN database service with name '" << name << "' already exists!");
+      return;
+    }
+    if (has_db(dbs_)) {
+      DT_LOG_WARNING(get_logging_priority(),
+                     "URN database service '" << name << "' already exists!");
+      return;
+    }
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Adding URN database service '" << name << "'...");
+    _pimpl_->dbs[name] = &dbs_;
+    return;
   }
 
   void urn_query_service::add_db(const urn_db_service & dbs_,
@@ -448,6 +479,15 @@ namespace datatools {
     return _pimpl_->resolvers.count(name_) > 0;
   }
 
+  void urn_query_service::build_list_of_path_resolvers(std::set<std::string> & prs_) const
+  {
+    prs_.clear();
+    for (const auto & prsp : _pimpl_->resolvers) {
+      prs_.insert(prsp.first);
+    }
+    return;
+  }
+
   bool urn_query_service::has_path_resolver(const urn_to_path_resolver_service & prs_) const
   {
     for (const auto & prsp : _pimpl_->resolvers) {
@@ -457,6 +497,26 @@ namespace datatools {
       }
     }
     return false;
+  }
+
+  void urn_query_service::add_path_resolver(const urn_to_path_resolver_service & prs_)
+  {
+    std::lock_guard<std::mutex> lck(_pimpl_->mtx);
+    std::string name = prs_.get_name();
+    if (has_path_resolver(name)) {
+      DT_LOG_WARNING(get_logging_priority(),
+                     "An URN path resolver service with name '" << name << "' already exists!");
+      return;
+    }
+    if (has_path_resolver(prs_)) {
+      DT_LOG_WARNING(get_logging_priority(),
+                     "URN path resolver service '" << name << "' already exists!");
+      return;
+    }
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Adding URN path resolver service '" << name << "'...");
+    _pimpl_->resolvers[name] = &prs_;
+    return;
   }
 
   void urn_query_service::add_path_resolver(const urn_to_path_resolver_service & prs_,

@@ -93,7 +93,7 @@ namespace datatools {
     /// Return a registered URN info
     const urn_info & get_urn_info(const std::string & urn_) const;
 
-    /// Build a list of URN associated to path with requested URN and category patterns
+    /// Build a list of URNs associated to path with requested URN and category patterns
     bool find_urn_to_path(std::vector<std::string> & urn_path_list_,
                           const std::string & urn_resolver_regex_ = "",
                           const std::string & urn_regex_ = "",
@@ -123,8 +123,14 @@ namespace datatools {
     /// Check if an URN database is registered
     bool has_db(const urn_db_service &) const;
 
+    /// Build the list of URN databases
+    void build_list_of_dbs(std::set<std::string> & dbs_) const;
+
+    /// Register an URN database
+    void add_db(const urn_db_service &);
+
     /// Register an URN database with given name
-    void add_db(const urn_db_service &, const std::string & name_ = "");
+    void add_db(const urn_db_service &, const std::string & name_);
 
     /// Unregister an URN database
     void remove_db(const urn_db_service &);
@@ -135,12 +141,18 @@ namespace datatools {
     /// Check if an URN path resolver with given name is registered
     bool has_path_resolver(const std::string & name_) const;
 
+    /// Build the list of URN path resolvers
+    void build_list_of_path_resolvers(std::set<std::string> & prs_) const;
+
     /// Check if an URN path resolver is registered
     bool has_path_resolver(const urn_to_path_resolver_service &) const;
 
+    /// Register an URN path resolver
+    void add_path_resolver(const urn_to_path_resolver_service &);
+
     /// Register an URN path resolver with given name
     void add_path_resolver(const urn_to_path_resolver_service &,
-                           const std::string & name_ = "");
+                           const std::string & name_);
 
     /// Unregister an URN path resolver
     void remove_path_resolver(const urn_to_path_resolver_service &);
