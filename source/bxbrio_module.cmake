@@ -75,7 +75,6 @@ root_generate_dictionary(brio_dict
   LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
   OPTIONS "-I${module_include_dir}"
   )
-# OPTIONS "-noIncludePaths"
 list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
   set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
