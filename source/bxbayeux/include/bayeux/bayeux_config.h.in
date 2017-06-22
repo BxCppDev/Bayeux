@@ -67,6 +67,9 @@
 //! Evaluates to true if Bayeux was built with Qt-based GUI components
 #define BAYEUX_WITH_QT_GUI @Bayeux_WITH_QT_GUI@
 
+//! Evaluates to true if Bayeux was built with some ROOT dictionary generation
+#define BAYEUX_WITH_ROOTDICT @Bayeux_WITH_ROOTDICT@
+
 //! The base directory of Bayeux resource files
 #define BAYEUX_ENV_RESOURCE_DIR "BAYEUX_RESOURCE_DIR"
 

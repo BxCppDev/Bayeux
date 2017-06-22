@@ -169,6 +169,12 @@ if(Bayeux_WITH_LAHAGUE)
   list(APPEND BAYEUX_SUBMODULES lahague)
 endif()
 
+# - Check if some ROOT dictionary is generated
+set(Bayeux_WITH_ROOTDICT 0)
+if(Bayeux_WITH_BRIO)
+  set(Bayeux_WITH_ROOTDICT 1)
+endif()
+
 # - Base build dir for resource and example files
 set(MODULE_RESOURCE_ROOT_BASE "${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_RESOURCE_DIR}")
 set(MODULE_EXAMPLE_ROOT_BASE "${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_EXAMPLE_DIR}")
@@ -396,6 +402,13 @@ install(TARGETS Bayeux ${Bayeux_ADDON_TARGETS}
 install(DIRECTORY ${BAYEUX_BUILD_INCLUDEDIR}/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   )
+
+if(Bayeux_WITH_ROOTDICT)
+  # Special install of some brio header files used by ROOT dictionary:
+  install(DIRECTORY ${BAYEUX_BUILD_LIBDIR}/bayeux
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/
+    )
+endif()
 
 #-----------------------------------------------------------------------
 # Configure/Install support files

@@ -121,8 +121,6 @@ namespace bayeux {
         if (prio != ::datatools::logger::PRIO_UNDEFINED) {
           logging = prio;
         } else {
-          // DT_LOG_WARNING(::datatools::logger::PRIO_WARNING,
-          //                "Ignoring invalid BAYEUX_SYS_LOGGING=\"" << getenv("BAYEUX_SYS_LOGGING") << "\" environment!");
           logging = ::datatools::logger::PRIO_FATAL;
         }
       }
@@ -210,6 +208,23 @@ namespace bayeux {
       _services_.set_description("Bayeux Library System Singleton Services");
       _services_.set_allow_dynamic_services(true);
       _services_.initialize();
+
+#if BAYEUX_WITH_ROOTDICT == 1
+      {
+        // Hack to get the include path for the dictionary known to ROOT.
+        // Extracted from: https://github.com/SuperNEMO-DBD/Falaise/pull/12
+        char* root_include_path = getenv("ROOT_INCLUDE_PATH");
+        std::string bx_rootdict_inc_path = bayeux::get_library_dir() + "/bayeux";
+        DT_LOG_TRACE(_logging_, "Adding '" << bx_rootdict_inc_path << "' directory to the ROOT_INCLUDE_PATH env...");
+        if(root_include_path) {
+          std::string old_path(root_include_path);
+          std::string new_path = bx_rootdict_inc_path + ":" + old_path;
+          setenv("ROOT_INCLUDE_PATH", new_path.c_str(), 1);
+        } else {
+          setenv("ROOT_INCLUDE_PATH", bx_rootdict_inc_path.c_str(), 1);
+        }
+      }
+#endif // BAYEUX_WITH_ROOTDICT == 1
 
       // Start URN services:
       _initialize_urn_services_();
