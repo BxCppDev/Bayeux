@@ -40,7 +40,6 @@
 // This project (Bayeux/datatools):
 #include <datatools/configuration/utils.h>
 #include <datatools/enriched_base.h>
-// #include <datatools/command_utils.h>
 #include <datatools/bit_mask.h>
 #include <datatools/configuration/variant_dependency.h>
 #include <datatools/configuration/variant_dependency_model.h>
