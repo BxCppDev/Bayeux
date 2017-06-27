@@ -170,7 +170,8 @@ namespace datatools {
         LIST_NO_UNSET      = datatools::bit_mask::bit02,
         LIST_CLEAR         = datatools::bit_mask::bit03,
         LIST_NO_PARAMETERS = datatools::bit_mask::bit04,
-        LIST_NO_VARIANTS   = datatools::bit_mask::bit05
+        LIST_NO_VARIANTS   = datatools::bit_mask::bit05,
+        LIST_RANKED        = datatools::bit_mask::bit06
       };
 
       /// Compute the ranked list of parameters

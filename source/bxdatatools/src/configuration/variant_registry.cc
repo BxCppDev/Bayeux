@@ -478,10 +478,8 @@ namespace datatools {
           }
           path_prefix_ss << ranked_param_records[ipar];
           std::string path_prefix = path_prefix_ss.str();
-          // std::cerr << "DEVEL: Ranked parameter record path = '" << path_prefix << "'" << std::endl;
           ranked_.push_back(path_prefix);
           const variant_record & par_record = record_.get_parent_registry().get_parameter_record(path_prefix);
-          // std::cerr << "DEVEL: Push ranked parameter record '" << path_prefix << "'" << std::endl;
           build_recursive_list_of_ranked_records(par_record, ranked_);
         }
       } else {
@@ -493,11 +491,8 @@ namespace datatools {
           }
           path_prefix_ss << var_daughter.first;
           std::string path_prefix = path_prefix_ss.str();
-          // std::cerr << "DEVEL: Variant record path = '" << path_prefix << "'" << std::endl;
-          // std::string path = var_daughter.second.get_record().get_path();
           ranked_.push_back(path_prefix);
           const variant_record & var_record = record_.get_parent_registry().get_variant_record(path_prefix);
-          // std::cerr << "DEVEL: Push variant record '" << path_prefix << "'" << std::endl;
           build_recursive_list_of_ranked_records(var_record, ranked_);
         }
       }
@@ -521,7 +516,6 @@ namespace datatools {
       std::vector<std::string> paths;
       build_recursive_list_of_ranked_records(var_rec, paths);
       for (const auto & path : paths) {
-        // std::cerr << "********** DEVEL: path = '" << path << "'" << std::endl;
         const variant_record & rec = _records_.find(path)->second;
         if (rec.is_parameter() && !with_parameters) continue;
         if (rec.is_variant() && !with_variants) continue;
@@ -536,30 +530,29 @@ namespace datatools {
       if (flags_ & LIST_CLEAR) {
         paths_.clear();
       }
-      for (record_dict_type::const_iterator i = _records_.begin();
-           i != _records_.end();
-           i++) {
-        const variant_record & rec = i->second;
-        if (rec.is_parameter()) {
-          bool add_it = true;
-          if (flags_ & LIST_ACTIVE_ONLY) {
-            if (!rec.is_active()) {
-              add_it = false;
-            }
+      std::vector<std::string> paths;
+      list_of_ranked_parameters(paths);
+      for (std::size_t i = 0; i < paths.size(); i++) {
+        const std::string & record_path = paths[i];
+        const variant_record & rec = _records_.find(record_path)->second;
+        bool add_it = true;
+        if (flags_ & LIST_ACTIVE_ONLY) {
+          if (!rec.is_active()) {
+            add_it = false;
           }
-          if (flags_ & LIST_NO_SET) {
-            if (rec.value_is_set()) {
-              add_it = false;
-            }
+        }
+        if (flags_ & LIST_NO_SET) {
+          if (rec.value_is_set()) {
+            add_it = false;
           }
-          if (flags_ & LIST_NO_UNSET) {
-            if (!rec.value_is_set()) {
-              add_it = false;
-            }
+        }
+        if (flags_ & LIST_NO_UNSET) {
+          if (!rec.value_is_set()) {
+            add_it = false;
           }
-          if (add_it) {
-            paths_.push_back(rec.get_path());
-          }
+        }
+        if (add_it) {
+          paths_.push_back(record_path);
         }
       }
       return;
