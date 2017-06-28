@@ -64,8 +64,26 @@
 //! Evaluates to true if Bayeux was built with the lahague module
 #define BAYEUX_WITH_LAHAGUE @Bayeux_WITH_LAHAGUE@
 
+//! Evaluates to true if Bayeux was built with Qt
+#define BAYEUX_WITH_QT @Bayeux_WITH_QT@
+
+#if BAYEUX_WITH_QT == 1
 //! Evaluates to true if Bayeux was built with Qt-based GUI components
 #define BAYEUX_WITH_QT_GUI @Bayeux_WITH_QT_GUI@
+#else
+#define BAYEUX_WITH_QT_GUI 0
+#endif // BAYEUX_WITH_QT == 1
+
+//! Evaluates to true if Bayeux was built with ROOT
+#define BAYEUX_WITH_ROOT @Bayeux_WITH_ROOT@
+
+#if BAYEUX_WITH_ROOT == 1
+//! Set the ROOT version used within Bayeux
+#define BAYEUX_ROOT_VERSION @ROOT_VERSION@
+
+//! Evaluates to true if Bayeux was built with some ROOT dictionary generation
+#define BAYEUX_WITH_ROOTDICT @Bayeux_WITH_ROOTDICT@
+#endif // BAYEUX_WITH_ROOT == 1
 
 //! The base directory of Bayeux resource files
 #define BAYEUX_ENV_RESOURCE_DIR "BAYEUX_RESOURCE_DIR"

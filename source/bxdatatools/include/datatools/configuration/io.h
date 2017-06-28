@@ -171,7 +171,7 @@ namespace datatools {
 
       logger::priority _logging_; //!< Logging priority
       const variant_repository * _repository_ = nullptr; //!< Variant configuration repository handle
-      statistics_type _stats_; ///< Processing counters associated to variant parameters
+      statistics_type _parameter_stats_; ///< Processing counters associated to variant parameters
 
     };
 

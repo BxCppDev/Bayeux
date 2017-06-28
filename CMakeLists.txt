@@ -91,19 +91,29 @@ mark_as_advanced(BAYEUX_WITH_DEVELOPER_TOOLS)
 # Options for Bayeux modules
 include(BayeuxModuleOptions)
 
+# - Check if some ROOT dictionary is generated
+set(Bayeux_WITH_ROOT 0)
+set(Bayeux_WITH_ROOTDICT 0)
+if(Bayeux_WITH_BRIO)
+  set(Bayeux_WITH_ROOT 1)
+  set(BAYEUX_ROOT_MIN_VERSION "5.34.00")
+  set(Bayeux_WITH_ROOTDICT 1)
+endif()
+
 #-----------------------------------------------------------------------
 # Option for enabling Qt GUI components
 #
+set(Bayeux_WITH_QT 0)
 option(BAYEUX_WITH_QT_GUI "Build Qt-based GUI components" OFF)
 mark_as_advanced(BAYEUX_WITH_QT_GUI)
 set(Bayeux_WITH_QT_GUI 0)
 if (BAYEUX_WITH_QT_GUI)
-  # Minimal system Qt5 version from Ubuntu 14.04:
+  set(Bayeux_WITH_QT 1)
+  # Minimal system Qt5 version from Ubuntu 14.04: 5.2.1
+  # version for Ubuntu 16.04: 5.5.1
+  # version for Linuxbrew 5.8.0 (June 2017)
+  set(BAYEUX_QT5_MIN_VERSION "5.2.1")
   set(Bayeux_WITH_QT_GUI 1)
-  set(BAYEUX_QT5_VERSION "5.2.1")
-  # Qt5 version from cadfaelbrew (but conflict with system installation
-  # on Ubuntu 14.04 when running examples):
-  # set(BAYEUX_QT5_VERSION "5.6.0")
 endif()
 
 #-----------------------------------------------------------------------

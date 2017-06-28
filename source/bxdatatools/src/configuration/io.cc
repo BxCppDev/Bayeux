@@ -24,6 +24,7 @@
 
 // Standard library:
 #include <memory>
+#include <deque>
 
 // Third party:
 // - Boost:
@@ -330,6 +331,15 @@ namespace datatools {
       bool started_sections = false;
       bool skip_section = false;
       variant_registry * current_registry_ptr = nullptr;
+      std::vector<std::string> registries;
+      vrep_.build_ordered_registry_keys(registries);
+      // Not correct: the list of remaining registries should be dynamic in case
+      // of registries depending on parameters in other registries
+      // std::deque<std::string> remaining_registries;
+      // for (auto r : registries) {
+      //   remaining_registries.push_back(r);
+      // }
+      std::deque<std::string> processed_registries;
       std::string last_processed_registry;
       while (in_) {
         int line_count = 0;
@@ -436,6 +446,10 @@ namespace datatools {
                              << "' (unknown registry) while loading variant repository...");
               skip_section = true;
             } else {
+              // if (current_registry_name != remaining_registries.front()) {
+              //   DT_THROW(std::logic_error,
+              //            "Variant repository does not expect registry with name '" << current_registry_name << "' at this rank (expected: '" << remaining_registries.front() << "')!");
+              // }
               skip_section = false;
             }
             started_sections = true;
@@ -443,9 +457,14 @@ namespace datatools {
               current_registry_ptr = &vrep_.grab_registry(current_registry_name);
               int error = load_registry(in_, *current_registry_ptr);
               last_processed_registry = current_registry_name;
+              processed_registries.push_back(last_processed_registry);
+              // remaining_registries.pop_front();
               current_registry_ptr = nullptr;
-              DT_LOG_DEBUG(_logging_, "Registry '" << current_registry_name << "' has been processed.");
+              DT_LOG_DEBUG(_logging_, "Registry '" << processed_registries.back() << "' has been processed.");
+              // DT_LOG_DEBUG(_logging_, "Next registry to be processed '" << remaining_registries.front() << "'.");
               if (error) {
+                DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                             "Error while loading the '" << current_registry_name << "' variant registry!");
                 return 1;
               }
             }
@@ -463,6 +482,11 @@ namespace datatools {
           break;
         }
       }
+      // if (remaining_registries.size()) {
+      //   DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+      //                "There are remaining registries to be processed while loading variant repository (next expected: '" << remaining_registries.front() << "')!");
+      //   return 1;
+      // }
       DT_LOG_TRACE_EXITING(_logging_);
       return 0;
     }
@@ -485,7 +509,7 @@ namespace datatools {
     {
       out_ << "variant_reporting::dump: \n";
       out_ << "|-- " << "Repository : " << _repository_ << "\n";
-      out_ << "`-- " << "Counters   : " << _stats_.size() << "\n";
+      out_ << "`-- " << "Counters   : " << _parameter_stats_.size() << "\n";
       return;
     }
 
@@ -530,7 +554,7 @@ namespace datatools {
 
     void variant_reporting::reset_repository()
     {
-      _stats_.clear();
+      _parameter_stats_.clear();
       _repository_ = nullptr;
       return;
     }
@@ -549,7 +573,7 @@ namespace datatools {
         for (std::size_t ipar = 0; ipar < setpars.size(); ipar++) {
           const std::string & parname = setpars[ipar];
           std::string fullparpath = regname + ":" + parname;
-          _stats_[fullparpath] = 0;
+          _parameter_stats_[fullparpath] = 0;
         }
       }
       DT_LOG_TRACE_EXITING(_logging_);
@@ -564,7 +588,7 @@ namespace datatools {
 
     void variant_reporting::reset()
     {
-      _stats_.clear();
+      _parameter_stats_.clear();
       return;
     }
 
@@ -574,7 +598,7 @@ namespace datatools {
       out_ << "# datatools::configuration::variant_reporting::print_report:\n";
       out_ << "[counters]\n";
       out_ << "# List of usage counters associated to set variant parameters:\n";
-      for (auto stat : _stats_) {
+      for (auto stat : _parameter_stats_) {
         out_ << stat.first << " = " << stat.second;
         out_ << std::endl;
         if (stat.second == 0) unused_params.push_back(stat.first);
@@ -593,9 +617,9 @@ namespace datatools {
 
     void variant_reporting::add(const std::string & path_, std::size_t increment_)
     {
-      statistics_type::iterator found = _stats_.find(path_);
-      if (found == _stats_.end()) {
-        _stats_[path_] = increment_;
+      statistics_type::iterator found = _parameter_stats_.find(path_);
+      if (found == _parameter_stats_.end()) {
+        _parameter_stats_[path_] = increment_;
       } else {
         found->second += increment_;
       }

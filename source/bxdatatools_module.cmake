@@ -392,7 +392,6 @@ if (BAYEUX_WITH_QT_GUI)
     )
 endif()
 
-
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")

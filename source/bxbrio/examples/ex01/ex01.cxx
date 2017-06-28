@@ -17,15 +17,19 @@
 int main(int argc_, char ** argv_)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+  bool load_only = false;
+  bool store_only = false;
   try {
 
     if (argc_>1) {
       std::string opt = argv_[1];
       if (opt == "--debug") logging = datatools::logger::PRIO_DEBUG;
       else if (opt == "--warning") logging = datatools::logger::PRIO_WARNING;
+      else if (opt == "--load-only") load_only = true;
+      else if (opt == "--store-only") store_only = true;
     }
 
-    {
+    if (! load_only) {
       DT_LOG_NOTICE(logging,"Serializing objects...");
       long seed = 12345;
       srand48(seed);
@@ -44,7 +48,7 @@ int main(int argc_, char ** argv_)
       my_writer.close(); // not mandatory (automatic at destruction)
     }
 
-    {
+    if (! store_only) {
       DT_LOG_NOTICE(logging,"Deserializing objects...");
       /* Load foo objects sequentially from a BRIO file
        * (using the default automatic store) :
