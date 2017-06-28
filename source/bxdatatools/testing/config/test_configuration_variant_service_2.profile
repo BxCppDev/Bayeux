@@ -15,7 +15,7 @@ logging = "debug"
 
 [registry="foo"]
 bar = "abc"
-baz = 42
+# baz = 42
 
 [registry="geometry"]
 layout = "Unshielded"

@@ -333,10 +333,12 @@ namespace datatools {
       variant_registry * current_registry_ptr = nullptr;
       std::vector<std::string> registries;
       vrep_.build_ordered_registry_keys(registries);
-      std::deque<std::string> remaining_registries;
-      for (auto r : registries) {
-        remaining_registries.push_back(r);
-      }
+      // Not correct: the list of remaining registries should be dynamic in case
+      // of registries depending on parameters in other registries
+      // std::deque<std::string> remaining_registries;
+      // for (auto r : registries) {
+      //   remaining_registries.push_back(r);
+      // }
       std::deque<std::string> processed_registries;
       std::string last_processed_registry;
       while (in_) {
@@ -444,10 +446,10 @@ namespace datatools {
                              << "' (unknown registry) while loading variant repository...");
               skip_section = true;
             } else {
-              if (current_registry_name != remaining_registries.front()) {
-                DT_THROW(std::logic_error,
-                         "Variant repository does not expect registry with name '" << current_registry_name << "' at this rank (expected: '" << remaining_registries.front() << "')!");
-              }
+              // if (current_registry_name != remaining_registries.front()) {
+              //   DT_THROW(std::logic_error,
+              //            "Variant repository does not expect registry with name '" << current_registry_name << "' at this rank (expected: '" << remaining_registries.front() << "')!");
+              // }
               skip_section = false;
             }
             started_sections = true;
@@ -456,11 +458,13 @@ namespace datatools {
               int error = load_registry(in_, *current_registry_ptr);
               last_processed_registry = current_registry_name;
               processed_registries.push_back(last_processed_registry);
-              remaining_registries.pop_front();
+              // remaining_registries.pop_front();
               current_registry_ptr = nullptr;
               DT_LOG_DEBUG(_logging_, "Registry '" << processed_registries.back() << "' has been processed.");
-              DT_LOG_DEBUG(_logging_, "Next registry to be processed '" << remaining_registries.front() << "'.");
+              // DT_LOG_DEBUG(_logging_, "Next registry to be processed '" << remaining_registries.front() << "'.");
               if (error) {
+                DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                             "Error while loading the '" << current_registry_name << "' variant registry!");
                 return 1;
               }
             }
@@ -478,11 +482,11 @@ namespace datatools {
           break;
         }
       }
-      if (remaining_registries.size()) {
-        DT_LOG_WARNING(_logging_,
-                       "There are remaining registries to be processed while loading variant repository.");
-        return 1;
-      }
+      // if (remaining_registries.size()) {
+      //   DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+      //                "There are remaining registries to be processed while loading variant repository (next expected: '" << remaining_registries.front() << "')!");
+      //   return 1;
+      // }
       DT_LOG_TRACE_EXITING(_logging_);
       return 0;
     }

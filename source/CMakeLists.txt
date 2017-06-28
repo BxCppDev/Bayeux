@@ -54,33 +54,41 @@ get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 set(BAYEUX_CAMP_MIN_VERSION "0.7.1")
 find_package(CAMP ${BAYEUX_CAMP_MIN_VERSION} REQUIRED NO_MODULE)
 
+# - CLHEP
+# Find this at the end because ROOT/Geant4 may depend on it
+# and thus refind it for us. We don't want to override their
+# found version for compatibility reasons.
+set(BAYEUX_CLHEP_MIN_VERSION "2.1.3.1")
+find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
+
 # - GSL
 set(BAYEUX_GSL_MIN_VERSION "1.15")
 find_package(GSL ${BAYEUX_GSL_MIN_VERSION} REQUIRED)
 
 # - ROOT
-set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
-set(BAYEUX_ROOT_MIN_VERSION "5.34.00")
-find_package(ROOT ${BAYEUX_ROOT_MIN_VERSION} REQUIRED Core Hist RIO Tree)
-if(ROOT_VERSION VERSION_LESS 6)
-  include(RootNewMacros)
-else()
-  include(${ROOT_DIR}/modules/RootNewMacros.cmake)
+if(Bayeux_WITH_ROOT)
+  set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
+  find_package(ROOT ${BAYEUX_ROOT_MIN_VERSION} REQUIRED Core Hist RIO Tree)
+  if(ROOT_VERSION VERSION_LESS 6)
+    include(RootNewMacros)
+  else()
+    include(${ROOT_DIR}/modules/RootNewMacros.cmake)
+  endif()
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 endif()
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
-if(Bayeux_WITH_QT_GUI)
-  find_package(Qt5Core    ${BAYEUX_QT5_VERSION} REQUIRED)
-  find_package(Qt5Gui     ${BAYEUX_QT5_VERSION} REQUIRED)
-  find_package(Qt5Widgets ${BAYEUX_QT5_VERSION} REQUIRED)
-  find_package(Qt5Svg     ${BAYEUX_QT5_VERSION} REQUIRED)
+if(Bayeux_WITH_QT)
+  find_package(Qt5Core    ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
+  find_package(Qt5Gui     ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
+  find_package(Qt5Widgets ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
+  find_package(Qt5Svg     ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
 endif()
 
 # - Geant4 if building the MCTools extension library
 # We do this here because we may need to configure files in MCTools
 # using the results of the search
 if(Bayeux_WITH_GEANT4_MODULE)
-set(BAYEUX_GEANT4_VERSION "9.6.0")
+  set(BAYEUX_GEANT4_VERSION "9.6.0")
   find_package(Geant4 ${BAYEUX_GEANT4_VERSION} REQUIRED ui_all vis_all gdml NO_MODULE)
   if(Geant4_DATASETS)
     set(MCTOOLS_G4_DATA_ASSIGNMENTS)
@@ -93,13 +101,6 @@ set(BAYEUX_GEANT4_VERSION "9.6.0")
   # message(STATUS "Geant4_INCLUDE_DIRS = '${Geant4_INCLUDE_DIRS}'")
   # message(STATUS "Geant4_LIBRARIES    = '${Geant4_LIBRARIES}'")
 endif()
-
-# - CLHEP
-# Find this at the end because ROOT/Geant4 may depend on it
-# and thus refind it for us. We don't want to override their
-# found version for compatibility reasons.
-set(BAYEUX_CLHEP_MIN_VERSION "2.1.3.1")
-find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
 
 # - Core Includes for Bayeux + Third Party
 #include_directories(SYSTEM ${CLHEP_INCLUDE_DIRS})
@@ -169,12 +170,7 @@ if(Bayeux_WITH_LAHAGUE)
   list(APPEND BAYEUX_SUBMODULES lahague)
 endif()
 
-# - Check if some ROOT dictionary is generated
-set(Bayeux_WITH_ROOTDICT 0)
-if(Bayeux_WITH_BRIO)
-  set(Bayeux_WITH_ROOTDICT 1)
-endif()
-
+#-----------------------------------------------------------------------
 # - Base build dir for resource and example files
 set(MODULE_RESOURCE_ROOT_BASE "${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_RESOURCE_DIR}")
 set(MODULE_EXAMPLE_ROOT_BASE "${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_EXAMPLE_DIR}")
@@ -216,39 +212,6 @@ list(APPEND Bayeux_SOURCES ${bayeux_ENDING_MODULE_SOURCES})
 
 #-----------------------------------------------------------------------
 # Build/Link the library
-#
-# message(STATUS "***** Bayeux_HEADERS = ${Bayeux_HEADERS}")
-# add_library(BayeuxTest SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
-# target_compile_features(BayeuxTest PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
-# target_include_directories(BayeuxTest
-#   PUBLIC
-#   $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}>
-#   $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}/bayeux>
-#   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-#   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
-#   PRIVATE
-#   ${CMAKE_CURRENT_BINARY_DIR}
-#   ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
-#   )
-# target_include_directories(BayeuxTest SYSTEM
-#   PUBLIC
-#   ${ROOT_INCLUDE_DIRS}
-#   ${CLHEP_INCLUDE_DIRS}
-#   )
-# target_link_libraries(BayeuxTest
-#   PUBLIC
-#     ${Bayeux_Boost_LIBRARIES}
-#     camp::camp
-#     GSL::gsl
-#     ${CLHEP_LIBRARIES}
-#     ${ROOT_LIBRARIES}
-#   PRIVATE
-#     ${CMAKE_DL_LIBS}
-#   )
-# if(Bayeux_WITH_QT_GUI)
-#   target_link_libraries(BayeuxTest PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui Qt5::Svg)
-# endif()
-# return()
 
 add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
 target_compile_features(Bayeux PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
@@ -461,8 +424,9 @@ install(
 # - We also output the executables to a dedicated directory
 if(BAYEUX_ENABLE_TESTING)
   # Configure precompiled Catch main
-  # Use a STATIC lib for convenience (could use OBJECT library, but that doesn't
-  # transmit usage requirements like include paths to clients)
+  # Use a STATIC lib for convenience (could use OBJECT library,
+  # but that doesn't transmit usage requirements like include paths
+  # to clients)
   add_library(BXCatch STATIC bxcatch/catch.hpp bxcatch/bxcatch-main.cpp)
   target_include_directories(BXCatch PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bxcatch)
 
