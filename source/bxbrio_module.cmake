@@ -96,6 +96,17 @@ root_generate_dictionary(brio_dict
   LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
   OPTIONS "-I${CMAKE_CURRENT_BINARY_DIR}/inc" ${__BRIO_ROOT_GEN_DICT_OPTS}
   )
+
+# if(ROOT_VERSION VERSION_GREATER 5.99)
+#   execute_process(
+#     COMMAND sed -e "s@\"${CMAKE_CURRENT_BINARY_DIR}/\",@/* */@g" ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
+#     OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/brio_dict-temp.cxx
+#     )
+#   execute_process(
+#     COMMAND mv ${CMAKE_CURRENT_BINARY_DIR}/brio_dict-temp.cxx ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
+#     )
+# endif()
+
 list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
   set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
