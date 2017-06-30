@@ -4,6 +4,8 @@
 #include <iostream>
 
 // Third party:
+// - Bayeux:
+#include <bayeux.h>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 // - Bayeux/brio:
@@ -16,6 +18,12 @@
 
 int main(int argc_, char ** argv_)
 {
+  DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Initializing Bayeux...");
+  bayeux::initialize();
+  char * rip = getenv("ROOT_INCLUDE_PATH");
+  if (rip != nullptr) {
+    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "ROOT_INCLUDE_PATH = '" << rip << "'");
+  }
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   bool load_only = false;
   bool store_only = false;
@@ -86,5 +94,6 @@ int main(int argc_, char ** argv_)
   } catch(...) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL,"Unexpected error !");
   }
+  bayeux::terminate();
   return 0;
 }
