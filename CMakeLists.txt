@@ -39,7 +39,7 @@ endif()
 # CMake/project requirements and configuration
 #
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(Bayeux VERSION "3.0.0")
+project(Bayeux VERSION "3.1.0")
 
 # - Load Custom Modules
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
