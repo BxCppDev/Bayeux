@@ -157,7 +157,8 @@ environment on your system.
 Releases
 --------
 
-Latest release: Bayeux-3.1.0
+* Upcoming release: Bayeux-3.1.0
+* Latest release: Bayeux-3.0.0
 
 
 
