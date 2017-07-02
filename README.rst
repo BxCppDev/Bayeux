@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2017-05-18
+:Date:    2017-07-03
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -183,12 +183,12 @@ For example, to download Bayeux version 3.0.0, you may use:
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
    $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.0.0.tar.gz
-   $ tar xvzf Bayeux-3.0.0.tar.gz
-   $ cd Bayeux-Bayeux-3.0.0/
+   $ mkdir Bayeux-3.0.0 && tar xvzf Bayeux-3.0.0.tar.gz -C Bayeux-3.0.0 --strip-components 1
+   $ cd Bayeux-3.0.0/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-Bayeux-3.0.0/`` source  directory
+The  ``${HOME}/BxCppDev/Bayeux-3.0.0/`` source  directory
 is thus created.
 
 You can  now create a  dedicated directory  to build Bayeux  3.0.0
