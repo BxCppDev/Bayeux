@@ -154,6 +154,13 @@ Using  the `bxcppdev/bxtap`_  Linuxbrew tap  provided by  the
 BxCppDev_  group  should help  you  to  guarantee a  suitable  working
 environment on your system.
 
+Releases
+--------
+
+Latest release: Bayeux-3.1.0
+
+
+
 .. raw:: pdf
 
    PageBreak oneColumn
