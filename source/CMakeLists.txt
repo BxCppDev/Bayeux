@@ -4,6 +4,8 @@
 #-----------------------------------------------------------------------
 # Copyright 2012,2013 Ben Morgan <bmorgan.warwick@gmail.com>
 # Copyright 2012,2013 University of Warwick
+# Copyright 2017 François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright 2017 Université Caen Normandie
 #
 # This file is part of Bayeux.
 #
@@ -25,7 +27,7 @@
 # Configure build of Bayeux library
 # - Packages
 # - Boost
-set(BAYEUX_BOOST_MIN_VERSION "1.60.0")
+set(BAYEUX_BOOST_MIN_VERSION "1.63.0")
 set(BAYEUX_BOOST_COMPONENTS
   filesystem
   system
@@ -51,7 +53,7 @@ endforeach()
 get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 
 # - Camp
-set(BAYEUX_CAMP_MIN_VERSION "0.7.1")
+set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
 find_package(CAMP ${BAYEUX_CAMP_MIN_VERSION} REQUIRED NO_MODULE)
 
 # - CLHEP
@@ -62,7 +64,7 @@ set(BAYEUX_CLHEP_MIN_VERSION "2.1.3.1")
 find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
 
 # - GSL
-set(BAYEUX_GSL_MIN_VERSION "1.15")
+set(BAYEUX_GSL_MIN_VERSION "2.4")
 find_package(GSL ${BAYEUX_GSL_MIN_VERSION} REQUIRED)
 
 # - ROOT
