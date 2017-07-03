@@ -148,8 +148,8 @@ namespace bayeux {
     // static
     bayeux_library & bayeux_library::instantiate()
     {
+      static std::unique_ptr<bayeux_library> _bxlib_handler;
       if (! bayeux_library::is_instantiated()) {
-        static std::unique_ptr<bayeux_library> _bxlib_handler;
         if (! _bxlib_handler) {
           // Allocate the Bayeux library singleton and initialize it:
           _bxlib_handler.reset(new bayeux_library);
@@ -625,8 +625,8 @@ namespace bayeux {
           urnResourceResolver.reset();
         }
 
-        // DeActivate the URN info setup DB:
-        {
+        // Deactivate the URN info setup DB:
+        if (_services_.has(bx_resource_db_name())) {
           DT_LOG_TRACE(_logging_, "Accessing URN info setup DB...");
           datatools::urn_db_service & urnSetupDb =
             _services_.grab<datatools::urn_db_service &>(bx_resource_db_name());

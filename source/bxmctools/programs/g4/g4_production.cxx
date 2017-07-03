@@ -104,6 +104,7 @@ int main(int argc_, char ** argv_)
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   bayeux::initialize(argc_, argv_, app_kernel_init_flags());
   try {
+    bool run = true;
 
     // Configuration parameters for the G4 manager:
     mctools::g4::manager_parameters params;
@@ -173,7 +174,7 @@ int main(int argc_, char ** argv_)
     // Collect all other options & args for the driver session:
     std::vector<std::string> unrecognized_opts;
     unrecognized_opts = po::collect_unrecognized(parsed.options,
-                                                 po::include_positional);
+    po::include_positional);
     */
 
     // Parse specific options:
@@ -201,71 +202,73 @@ int main(int argc_, char ** argv_)
     if (vm.count("help")) {
       if (vm["help"].as<bool>()) {
         ui::print_usage(optPublic, std::cout);
-        return(0);
+        run = false;
       }
     }
 
-    // Fill the configuration data structure from program options:
-    ui::process_opts(vm, optPublic, params);
+    if (run) {
+      // Fill the configuration data structure from program options:
+      ui::process_opts(vm, optPublic, params);
 
-    // DLL loading:
-    datatools::library_loader dll_loader(params.dll_loader_config);
-    if (params.g4_visu) {
-      std::string g4_vis_dll = "G4visXXX";
-      if (std::find(params.dlls.begin(), params.dlls.end(), g4_vis_dll) == params.dlls.end()) {
-        DT_LOG_NOTICE(logging, "Force the loading of the DLL '" << g4_vis_dll << "' DLL...");
-        params.dlls.push_back(g4_vis_dll);
+      // DLL loading:
+      datatools::library_loader dll_loader(params.dll_loader_config);
+      if (params.g4_visu) {
+        std::string g4_vis_dll = "G4visXXX";
+        if (std::find(params.dlls.begin(), params.dlls.end(), g4_vis_dll) == params.dlls.end()) {
+          DT_LOG_NOTICE(logging, "Force the loading of the DLL '" << g4_vis_dll << "' DLL...");
+          params.dlls.push_back(g4_vis_dll);
+        }
+        std::string g4_opengl_dll = "G4OpenGL";
+        if (std::find(params.dlls.begin(), params.dlls.end(), g4_opengl_dll) == params.dlls.end()) {
+          DT_LOG_NOTICE(logging, "Force the loading of the DLL '" << g4_opengl_dll << "' DLL...");
+          params.dlls.push_back(g4_opengl_dll);
+        }
       }
-      std::string g4_opengl_dll = "G4OpenGL";
-      if (std::find(params.dlls.begin(), params.dlls.end(), g4_opengl_dll) == params.dlls.end()) {
-        DT_LOG_NOTICE(logging, "Force the loading of the DLL '" << g4_opengl_dll << "' DLL...");
-        params.dlls.push_back(g4_opengl_dll);
-      }
-    }
-    for (const std::string & dll_name :  params.dlls) {
-      DT_LOG_NOTICE(logging, "Loading DLL '" << dll_name << "'...");
-      DT_THROW_IF (dll_loader.load (dll_name) != EXIT_SUCCESS,
-                   std::logic_error,
-                   "Loading DLL '" << dll_name << "' failed !");
-    }
-
-    // Variant service:
-    std::unique_ptr<dtc::variant_service> vserv;
-    if (variants_params.is_active()) {
-      // Create and start the variant service:
-      vserv.reset(new dtc::variant_service);
-      vserv->configure(variants_params);
-      vserv->start();
-      // vserv->get_repository().tree_dump(std::cerr, "Repository:");
-    }
-
-    {
-      // Declare the simulation manager:
-      DT_LOG_NOTICE(logging, "Instantiate the simulation manager...");
-      mctools::g4::manager sim_manager;
-
-      // Configure the simulation manager:
-      DT_LOG_NOTICE(logging, "Setup the simulation manager...");
-      mctools::g4::manager_parameters::setup(params, sim_manager);
-
-      // Run the simulation session :
-      DT_LOG_NOTICE(logging, "Simulation session starts...");
-      sim_manager.run_simulation();
-      DT_LOG_NOTICE(logging, "Simulation session is stopped.");
-
-      // Explicitely terminate the simulation manager:
-      DT_LOG_NOTICE(logging, "Terminate the simulation manager...");
-      if (sim_manager.is_initialized()) {
-        sim_manager.reset();
+      for (const std::string & dll_name :  params.dlls) {
+        DT_LOG_NOTICE(logging, "Loading DLL '" << dll_name << "'...");
+        DT_THROW_IF (dll_loader.load (dll_name) != EXIT_SUCCESS,
+                     std::logic_error,
+                     "Loading DLL '" << dll_name << "' failed !");
       }
 
-      DT_LOG_NOTICE(logging, "Simulation manager is terminated.");
-    } // Destructor is invoked here.
+      // Variant service:
+      std::unique_ptr<dtc::variant_service> vserv;
+      if (variants_params.is_active()) {
+        // Create and start the variant service:
+        vserv.reset(new dtc::variant_service);
+        vserv->configure(variants_params);
+        vserv->start();
+        // vserv->get_repository().tree_dump(std::cerr, "Repository:");
+      }
 
-    if (vserv) {
-      // Stop the variant service:
-      vserv->stop();
-      vserv.reset();
+      {
+        // Declare the simulation manager:
+        DT_LOG_NOTICE(logging, "Instantiate the simulation manager...");
+        mctools::g4::manager sim_manager;
+
+        // Configure the simulation manager:
+        DT_LOG_NOTICE(logging, "Setup the simulation manager...");
+        mctools::g4::manager_parameters::setup(params, sim_manager);
+
+        // Run the simulation session :
+        DT_LOG_NOTICE(logging, "Simulation session starts...");
+        sim_manager.run_simulation();
+        DT_LOG_NOTICE(logging, "Simulation session is stopped.");
+
+        // Explicitely terminate the simulation manager:
+        DT_LOG_NOTICE(logging, "Terminate the simulation manager...");
+        if (sim_manager.is_initialized()) {
+          sim_manager.reset();
+        }
+
+        DT_LOG_NOTICE(logging, "Simulation manager is terminated.");
+      } // Destructor is invoked here.
+
+      if (vserv) {
+        // Stop the variant service:
+        vserv->stop();
+        vserv.reset();
+      }
     }
 
     DT_LOG_TRACE(logging, "The end.");
