@@ -112,7 +112,7 @@ if (BAYEUX_WITH_QT_GUI)
   # Minimal system Qt5 version from Ubuntu 14.04: 5.2.1
   # version for Ubuntu 16.04: 5.5.1
   # version for Linuxbrew 5.8.0 (June 2017)
-  set(BAYEUX_QT5_MIN_VERSION "5.8.0")
+  set(BAYEUX_QT5_MIN_VERSION "5.2.1")
   set(Bayeux_WITH_QT_GUI 1)
 endif()
 

@@ -276,15 +276,15 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 Core Libraries Required
 .......................
 
-* Boost 1.60.0 or higher: http://www.boost.org
+* Boost 1.63.0 or higher: http://www.boost.org
   with filesystem, system, serialization, iostreams, program_options, regex
   and thread libraries.
 * Camp 0.8.0 : https://github.com/tegesoft/camp
-* GSL 1.15 or higher: http://www.gnu.org/s/gsl
+* GSL 2.4 or higher: http://www.gnu.org/s/gsl
 * CLHEP 2.1.3.1 or higher: http://proj-clhep.web.cern.ch
 * Geant4 9.6.0 or higher: http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
-* ROOT 5.34.0 or higher (6.X): http://root.cern.ch
+* ROOT 6.08: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
 
   * minimal X11,
