@@ -39,7 +39,7 @@ set(Bayeux_VERSION_REVISION "@Bayeux_VERSION_REVISION@")
 set(Bayeux_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 # Component Availability
-set(Bayeux_qt_FOUND     "@BAYEUX_WITH_QT_GUI@")
+set(Bayeux_qt_FOUND     "@Bayeux_WITH_QT@")
 set(Bayeux_geant4_FOUND "@BAYEUX_WITH_GEANT4_MODULE@")
 set(Bayeux_mcnp_FOUND   "@BAYEUX_WITH_MCNP_MODULE@")
 set(Bayeux_lahague_FOUND "@BAYEUX_WITH_LAHAGUE@")
@@ -72,7 +72,13 @@ find_package(Boost ${BAYEUX_BOOST_VERSION} EXACT REQUIRED
   COMPONENTS @BAYEUX_BOOST_COMPONENTS@
   )
 
+# - CAMP
+set(BAYEUX_CAMP_VERSION @CAMP_VERSION@)
+set(CAMP_DIR @CAMP_DIR@)
+find_package(CAMP ${BAYEUX_CAMP_VERSION} EXACT REQUIRED)
+
 # - CLHEP
+set(CLHEP_DIR @CLHEP_DIR@)
 set(BAYEUX_CLHEP_VERSION @CLHEP_VERSION@)
 find_package(CLHEP ${BAYEUX_CLHEP_VERSION} EXACT REQUIRED
   NO_MODULE
@@ -83,19 +89,19 @@ set(BAYEUX_GSL_VERSION @GSL_VERSION@)
 find_package(GSL ${BAYEUX_GSL_VERSION} EXACT REQUIRED)
 
 # - ROOT
-# ROOT can F-up the module path and insert it's own
-# modules. Prevent it doing this.
-set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
-set(BAYEUX_ROOT_VERSION @ROOT_VERSION@)
-set(BAYEUX_ROOT_COMPONENTS RIO Tree)
-find_package(ROOT ${BAYEUX_ROOT_VERSION} EXACT REQUIRED
-  COMPONENTS ${BAYEUX_ROOT_COMPONENTS}
-  )
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
-
-# - CAMP
-set(BAYEUX_CAMP_VERSION @CAMP_VERSION@)
-find_package(CAMP ${BAYEUX_CAMP_VERSION} EXACT REQUIRED)
+set(BAYEUX_WITH_ROOT @Bayeux_WITH_ROOT@)
+if(BAYEUX_WITH_ROOT)
+  # ROOT can F-up the module path and insert it's own
+  # modules. Prevent it doing this.
+  set(ROOT_DIR @ROOT_DIR@)
+  set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
+  set(BAYEUX_ROOT_VERSION @ROOT_VERSION@)
+  set(BAYEUX_ROOT_COMPONENTS RIO Tree)
+  find_package(ROOT ${BAYEUX_ROOT_VERSION} EXACT REQUIRED
+    COMPONENTS ${BAYEUX_ROOT_COMPONENTS}
+    )
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
+endif()
 
 # - Geant4 is NOT here because we don't expose it to clients
 
@@ -103,6 +109,10 @@ find_package(CAMP ${BAYEUX_CAMP_VERSION} EXACT REQUIRED)
 if(Bayeux_qt_FOUND)
   # Make sure targets like "Qt5::Core", ... "Qt5::Svg"
   # are recognized in client package
+  set(Qt5Core_DIR    @Qt5Core_DIR@)
+  set(Qt5Widgets_DIR @Qt5Widgets_DIR@)
+  set(Qt5Gui_DIR     @Qt5Gui_DIR@)
+  set(Qt5Svg_DIR     @Qt5Svg_DIR@)
   find_package(Qt5Core    @Qt5Core_VERSION@     EXACT REQUIRED)
   find_package(Qt5Widgets @Qt5Widgets_VERSION@     EXACT REQUIRED)
   find_package(Qt5Gui     @Qt5Gui_VERSION@     EXACT REQUIRED)
