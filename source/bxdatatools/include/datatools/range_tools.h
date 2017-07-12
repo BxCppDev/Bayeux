@@ -49,7 +49,9 @@ namespace datatools {
     static const char token_open_included  = '[';
     static const char token_close_included = ']';
     static const char token_open_excluded  = '(';
+    static const char token_open_excluded_alt  = ']';
     static const char token_close_excluded = ')';
+    static const char token_close_excluded_alt = '[';
     static const char token_separator      = ','; // Should not be favored
     static const char token_separator2     = ';'; // Favored separator
     static const char token_invalid        = '!';
