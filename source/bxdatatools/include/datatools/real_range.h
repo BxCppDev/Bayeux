@@ -116,7 +116,7 @@ namespace datatools {
     /// Return the singleton value
     double singleton(double tolerance = -1.0) const;
 
-    // Collections of 'make-methods' :
+    // Collections of 'make' methods :
 
     /// Build a singleton
     // "[2;2]"
@@ -192,11 +192,11 @@ namespace datatools {
     /// Reset the preferred unit symbol
     const std::string & get_preferred_unit() const;
 
-    /// Print operator
+    /// Print operator using the ISO_31-11 standard
     friend std::ostream& operator<<(std::ostream& a_out,
                                     const real_range& a_range);
 
-    /// Input operator
+    /// Input operator using the ISO_31-11 standard
     friend std::istream& operator>>(std::istream& a_in,
                                     real_range& a_range);
 
