@@ -213,6 +213,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/things-reflect.h
   ${module_include_dir}/${module_name}/units-reflect.h
 
+  ## ${module_include_dir}/${module_name}/observer_design_pattern.h
   ${module_include_dir}/${module_name}/dependency_graph.h
 
   ${module_include_dir}/${module_name}/introspection/data_type-reflect.h
@@ -474,6 +475,7 @@ ${module_test_dir}/test_urn_to_path.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
 ${module_test_dir}/test_urn_query_service.cxx
 ${module_test_dir}/test_dependency_graph.cxx
+# ${module_test_dir}/test_observer_design_pattern.cxx
 # ${module_test_dir}/test_url.cxx
 # ${module_test_dir}/test_log_record.cxx
 # ${module_test_dir}/test_rst_tools.cxx
@@ -502,13 +504,13 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     ${module_test_dir}/test_introspection_data_description.cxx
     ${module_test_dir}/test_introspection_argument.cxx
     ${module_test_dir}/test_introspection_method.cxx
+    ${module_test_dir}/test_event_id.cxx
     )
 endif()
 
 # List new Catch based tests in this one
 set(${module_name}_MODULE_TESTS_CATCH
   ${module_test_dir}/test_datatools.cxx
-  ${module_test_dir}/test_event_id.cxx
   )
 
 # - Applications
