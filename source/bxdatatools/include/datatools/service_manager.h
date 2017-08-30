@@ -1,9 +1,9 @@
 /// \file datatools/service_manager.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2015-12-03
+ * Last modified : 2017-07-13
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Copyright (C) 2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,9 +26,8 @@
  *
  *   A service manager.
  *
- * History:
- *
  */
+
 #ifndef DATATOOLS_SERVICE_MANAGER_H
 #define DATATOOLS_SERVICE_MANAGER_H
 
@@ -55,8 +54,11 @@ namespace datatools {
   class multi_properties;
 
   //! \brief Service management class
-  class service_manager : public datatools::i_tree_dumpable {
+  class service_manager
+    : public datatools::i_tree_dumpable
+  {
   public:
+
     enum flag_type {
       BLANK                        = 0,                          ///< No special configuration flags
       NO_PRELOAD                   = datatools::bit_mask::bit00, ///< Do not preload service types from the system register
@@ -65,9 +67,30 @@ namespace datatools {
       ALLOW_DYNAMIC_SERVICES       = datatools::bit_mask::bit03  ///< Allow dynamic services
     };
 
-  public:
+    /*
+    struct dependee_manager_handle
+    {
+      dependee_manager_handle();
+      ~dependee_manager_handle();
+      void initialize(const service_manager &);
+      void initialize(const datatools::properties & config_,
+                      const std::string & name_ = "",
+                      const std::string & description_ = "",
+                      const uint32_t flags_ = 0);
+      void reset();
+      bool is_initialized() const;
+      bool is_owned() const;
+      const service_manager & get_manager() const;
+    private:
+      const service_manager * _manager_ = nullptr; //!< Handle to the dependee manager
+      bool                    _owned_   = false;   //!< Dependee manager is managed by the handle itself
+    };
+    */
+
+    // typedef std::map<std::string, dependee_manager_handle> mgr_dict_type;
+
     //! Constructor
-    service_manager(const std::string& name = "",
+    service_manager(const std::string & name = "",
                     const std::string & description = "",
                     uint32_t flag = BLANK);
 
@@ -116,6 +139,18 @@ namespace datatools {
     //! Reset the manager
     void reset();
 
+    // //! Check if external dependee managers are mounted
+    // bool has_mounted_dependee_managers() const;
+
+    // //! Check if external dependee manager can be mounted
+    // bool can_mount_dependee_manager() const;
+
+    // //! Mount an external dependee manager
+    // void mount_dependee_manager(const service_manager &);
+
+    // //! Unmount an external dependee managers
+    // void unmount_dependee_managers();
+
     //! Check if a service identifier/type is supported
     bool has_service_type(const std::string& id) const;
 
@@ -131,7 +166,8 @@ namespace datatools {
        FILTER_NONE             = 0,                          ///< No special filter flags
        FILTER_NO_INITIALIZED   = datatools::bit_mask::bit00, ///< Flag to skip initialized services
        FILTER_NO_UNINITIALIZED = datatools::bit_mask::bit01, ///< Flag to skip uninitialized services
-       FILTER_NO_CLEAR         = datatools::bit_mask::bit02  ///< Flag to skip clear the list
+       FILTER_NO_CLEAR         = datatools::bit_mask::bit02, ///< Flag to skip clear the list
+       FILTER_FROM_BUS         = datatools::bit_mask::bit03  ///< Flag to take into account services from the bus
     };
 
     //! Build the list of services names
@@ -204,11 +240,8 @@ namespace datatools {
     //! Load a set of services from a multi-service configuration
     void load(const datatools::multi_properties& config);
 
-    //! Return a reference to the non mutable dictionary of services
-    const service_dict_type& get_services() const;
-
-    //! Return a reference to the mutable dictionary of services
-    service_dict_type& grab_services();
+    //! Return the bus of services known in the context of this manager
+    const service_dict_type& get_bus_of_services() const;
 
     //! Basic print of embedded services
     void dump_services(std::ostream& out = std::clog,
@@ -271,19 +304,29 @@ namespace datatools {
     //! Set the factory preload flag
     void set_preload(bool preload);
 
+    //! Update the bus of services
+    void update_service_bus();
+
+    //! Synchronize internal data
+    void sync();
+
   private:
 
     datatools::logger::priority _logging_priority = datatools::logger::PRIO_FATAL; //!< Logging priority threshold
     bool         initialized_ = false; //!< Initialization flag
-    std::string  name_; //!< Manager's name
-    std::string  description_; //!< Manager's description
-    bool         preload_ = false; //!< Factory preload flag
-    bool         force_initialization_at_load_ = false; //!< Flag for triggering service  initialization at load (rather than first use)
-    bool         allow_dynamic_services_ = false; //!< Flag to allow dynamix services
+    std::string  name_;                //!< Manager's name
+    std::string  description_;         //!< Manager's description
+    bool         preload_ = false;     //!< Factory preload flag
+    bool         force_initialization_at_load_ = false; //!< Flag for triggering service initialization at load (rather than first use)
+    bool         allow_dynamic_services_ = false;       //!< Flag to allow dynamic services
 
     // 2012-04-09 FM : support for datatools::factory system :
     base_service::factory_register_type  factory_register_;
-    service_dict_type                    services_; //!< Dictionary of services
+    // mgr_dict_type                        dependee_managers_; //!< Dictionary of dependee managers
+
+    service_dict_type                    local_services_; //!< Dictionary of services managed locally
+
+    service_dict_type                    service_bus_; //!< Bus of all services known from this manager
 
     friend class service_entry;
   };

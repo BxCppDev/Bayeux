@@ -1,6 +1,6 @@
 /* service_manager.cc
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 // Standard Library:
 #include <stdexcept>
 #include <sstream>
+#include <memory>
 
 // This Project:
 #include <datatools/base_service.h>
@@ -41,7 +42,82 @@ namespace datatools {
   // Public Interface Definitions
   //
 
-  // Default logger interface
+  /*
+  service_manager::dependee_manager_handle::dependee_manager_handle()
+  {
+    return;
+  }
+
+  service_manager::dependee_manager_handle::~dependee_manager_handle()
+  {
+    if (is_initialized()) {
+      reset();
+    }
+    return;
+  }
+
+  void service_manager::dependee_manager_handle::initialize(const service_manager & dependee_mgr_)
+  {
+    DT_THROW_IF(dependee_mgr_.is_initialized(),
+                std::logic_error, "Dependee manager is not initialized!");
+    _manager_ = &dependee_mgr_;
+    _owned_   = false;
+    return;
+  }
+
+  void service_manager::dependee_manager_handle::initialize(const datatools::properties & config_,
+                                                            const std::string & name_,
+                                                            const std::string & description_,
+                                                            const uint32_t flags_)
+  {
+    service_manager * depmgr = nullptr;
+    try {
+      depmgr = new service_manager(name_, description_, flags_);
+      depmgr->initialize(config_);
+      _manager_ = depmgr;
+      _owned_   = true;
+    } catch (std::exception & error) {
+      if (depmgr != nullptr) {
+        delete depmgr;
+        depmgr = nullptr;
+      }
+      throw error;
+    }
+    return;
+  }
+
+  bool service_manager::dependee_manager_handle::is_initialized() const
+  {
+    return _manager_ != nullptr;
+  }
+
+  const service_manager & service_manager::dependee_manager_handle::get_manager() const
+  {
+    DT_THROW_IF(is_initialized(),
+                std::logic_error, "Dependee manager handle is not initialized!");
+    return *_manager_;
+  }
+
+  bool service_manager::dependee_manager_handle::is_owned() const
+  {
+    return _owned_;
+  }
+
+  void service_manager::dependee_manager_handle::reset()
+  {
+    DT_THROW_IF(is_initialized(),
+                std::logic_error, "Dependee manager handle is not initialized!");
+    if (_owned_) {
+      if (_manager_->is_initialized()) {
+        service_manager * mutable_mgr = const_cast<service_manager *>(_manager_);
+        mutable_mgr->reset();
+      }
+      delete _manager_;
+    }
+    _manager_ = nullptr;
+    return;
+  }
+  */
 
   // Logging features:
   void service_manager::set_logging_priority(::datatools::logger::priority p)
@@ -78,7 +154,6 @@ namespace datatools {
     return get_logging_priority() >= datatools::logger::PRIO_DEBUG;
   }
 
-
   void service_manager::set_debug(bool debug) {
     if (debug) {
       set_logging_priority(datatools::logger::PRIO_DEBUG);
@@ -87,11 +162,38 @@ namespace datatools {
     }
   }
 
-
   bool service_manager::is_initialized() const {
     return initialized_;
   }
 
+  // bool service_manager::has_mounted_dependee_managers() const
+  // {
+  //   return dependee_managers_.size();
+  // }
+
+  // bool service_manager::can_mount_dependee_manager() const
+  // {
+  //   return local_services_.size() == 0;
+  // }
+
+  // void service_manager::mount_dependee_manager(const service_manager & mgr_)
+  // {
+  //   DT_THROW_IF(local_services_.size(), std::logic_error, "Cannot mount external dependee manager!");
+  //   {
+  //     dependee_manager_handle new_dmh;
+  //     dependee_managers_[mgr_.get_name()] = new_dmh;
+  //   }
+  //   dependee_manager_handle & dmh = dependee_managers_.find(mgr_.get_name())->second;
+  //   dmh.initialize(mgr_);
+  //   return;
+  // }
+
+  // void service_manager::unmount_dependee_managers()
+  // {
+  //   DT_THROW_IF(local_services_.size(), std::logic_error, "Cannot unmount external dependee managers!");
+  //   dependee_managers_.clear();
+  //   return;
+  // }
 
   void service_manager::load(const std::string& name,
                              const std::string& id,
@@ -101,17 +203,16 @@ namespace datatools {
     this->load_service(name, id, config);
   }
 
-
   base_service & service_manager::load_no_init(const std::string& name,
                                                const std::string& id) {
     DT_THROW_IF(!is_allow_dynamic_services() && this->is_initialized(),
                 std::logic_error, "Service manager is already initialized and does not allow service '" << name << "' to be loaded dynamically !");
     this->load_service(name, id, nullptr);
-    service_dict_type::iterator found = services_.find(name);
-    DT_THROW_IF (found == services_.end(),
+    service_dict_type::iterator found = local_services_.find(name);
+    DT_THROW_IF (found == local_services_.end(),
                  std::logic_error,
                  "No service named '" << name << "' !");
-    service_entry& sentry = found->second;
+    service_entry& sentry = *found->second.get();
     return sentry.grab_service_handle().grab();
   }
 
@@ -119,11 +220,11 @@ namespace datatools {
   {
     DT_THROW_IF(!is_allow_dynamic_services() && this->is_initialized(),
                 std::logic_error, "Service manager is already initialized and does not allow service '" << name << "' to be configured dynamically !");
-    service_dict_type::iterator found = services_.find(name);
-    DT_THROW_IF (found == services_.end(),
+    service_dict_type::iterator found = local_services_.find(name);
+    DT_THROW_IF (found == local_services_.end(),
                  std::logic_error,
                  "No service named '" << name << "' !");
-    service_entry& sentry = found->second;
+    service_entry& sentry = *found->second.get();
     // Copy the config container in the uninitialized service entry for further initialization:
     sentry.set_service_config(config);
     return;
@@ -157,11 +258,11 @@ namespace datatools {
   base_service & service_manager::grab_service(const std::string& name)
   {
     DT_LOG_DEBUG(get_logging_priority(), "name='" << name << "'");
-    service_dict_type::iterator found = services_.find(name);
-    DT_THROW_IF (found == services_.end(),
+    service_dict_type::iterator found = local_services_.find(name);
+    DT_THROW_IF (found == local_services_.end(),
                  std::logic_error,
                  "No service named '" << name << "' !");
-    service_entry& sentry = found->second;
+    service_entry& sentry = *found->second.get();
     if (!sentry.is_initialized()) {
       this->initialize_service(sentry);
     }
@@ -203,6 +304,29 @@ namespace datatools {
       }
     }
 
+    /*
+    // Import services from another manager configuration :
+    {
+      typedef std::vector<std::string> ImportList;
+      typedef ImportList::iterator ImportListIterator;
+      std::string import_file_key("services.import");
+
+      ImportList import_file_list;
+      if (config.has_key(import_file_key)) {
+        config.fetch(import_file_key, import_file_list);
+      }
+
+      for (ImportListIterator i = import_file_list.begin();
+           i < import_file_list.end();
+           ++i) {
+        datatools::fetch_path_with_env(*i);
+        datatools::multi_properties mconfig;
+        mconfig.read(*i);
+        this->load(mconfig);
+      }
+    }
+    */
+
     // services :
     {
       typedef std::vector<std::string> CFList;
@@ -225,6 +349,7 @@ namespace datatools {
       }
     }
 
+    sync();
     initialized_ = true;
   }
 
@@ -239,13 +364,14 @@ namespace datatools {
     DT_LOG_TRACE(get_logging_priority(),"Entering...");
     DT_THROW_IF(!initialized_,std::logic_error,"Manager is not initialized !");
     initialized_ = false;
-    size_t count = services_.size();
-    size_t initial_size = services_.size();
-    while (services_.size() > 0) {
-      for (service_dict_type::iterator it = services_.begin();
-           it != services_.end();
+    service_bus_.clear();
+    size_t count = local_services_.size();
+    size_t initial_size = local_services_.size();
+    while (local_services_.size() > 0) {
+      for (service_dict_type::iterator it = local_services_.begin();
+           it != local_services_.end();
            ++it) {
-        service_entry& entry = it->second;
+        service_entry& entry = *it->second.get();
         if (entry.can_be_dropped()) {
           DT_LOG_DEBUG(get_logging_priority(), "Removing service '" << entry.get_service_name ()  << "'...");
           this->destroy_service(entry);
@@ -257,10 +383,10 @@ namespace datatools {
         break;
       }
     }
-    if (services_.size() > 0) {
+    if (local_services_.size() > 0) {
       DT_LOG_WARNING(get_logging_priority(),"There are some left services !");
     }
-    services_.clear();
+    local_services_.clear();
     factory_register_.reset();
     allow_dynamic_services_ = false;
     force_initialization_at_load_ = false;
@@ -309,6 +435,28 @@ namespace datatools {
     if (initialized_) this->reset();
   }
 
+  void service_manager::sync()
+  {
+    update_service_bus();
+    return;
+  }
+
+  void service_manager::update_service_bus()
+  {
+    service_bus_.clear();
+    // Imported services:
+    // not supported yet
+
+    // Add locally managed services:
+    for (service_dict_type::iterator iservice = local_services_.begin();
+         iservice != local_services_.end();
+         iservice++) {
+      const std::string & service_name = iservice->first;
+      service_bus_[service_name] = iservice->second;
+    }
+    return;
+  }
+
 
   /****************
    *   SERVICES   *
@@ -319,6 +467,7 @@ namespace datatools {
     bool clear = true;
     bool select_initialized = true;
     bool select_uninitialized = true;
+    bool select_bus = false;
     if (flags_ & FILTER_NO_CLEAR) {
       clear = false;
     }
@@ -328,13 +477,20 @@ namespace datatools {
     if (flags_ & FILTER_NO_UNINITIALIZED) {
       select_uninitialized = false;
     }
+    if (flags_ & FILTER_FROM_BUS) {
+      select_bus = true;
+    }
     if (clear) {
       list_.clear();
     }
-    for (service_dict_type::const_iterator iserv = services_.begin();
-         iserv != services_.end();
+    const service_dict_type * service_coll = &local_services_;
+    if (select_bus) {
+      service_coll = &service_bus_;
+    }
+    for (service_dict_type::const_iterator iserv = service_coll->begin();
+         iserv != service_coll->end();
          iserv++) {
-      const service_entry & serventry = iserv->second;
+      const service_entry & serventry = *iserv->second.get();
       bool selected = true;
       if (serventry.is_initialized()) {
         if (!select_initialized) selected = false;
@@ -348,48 +504,51 @@ namespace datatools {
   }
 
   bool service_manager::has(const std::string& name) const {
-    // DT_LOG_DEBUG(get_logging_priority(), "name='" << name << "'");
-    return services_.find(name) != services_.end();
+    return local_services_.find(name) != local_services_.end();
   }
 
   bool service_manager::is_initialized(const std::string& name) const {
-    service_dict_type::const_iterator found = services_.find(name);
-    return found != services_.end() && found->second.is_initialized();
+    service_dict_type::const_iterator found = local_services_.find(name);
+    return found != local_services_.end() && found->second->is_initialized();
   }
 
-  // Who needs this (services is an implementation detail....)
-  const service_dict_type& service_manager::get_services() const {
-    return services_;
-  }
-
-  // service_dict_type& service_manager::get_services() {
-  //   return services_;
+  // // Who needs this (services is an implementation detail....)
+  // const service_dict_type& service_manager::get_services() const {
+  //   return local_services_;
   // }
 
-  service_dict_type& service_manager::grab_services() {
-    return services_;
+  // service_dict_type& service_manager::grab_services() {
+  //   return local_services_;
+  // }
+
+  const service_dict_type& service_manager::get_bus_of_services() const {
+    return service_bus_;
   }
+
+  // service_dict_type& service_manager::grab_bus_of_services() {
+  //   return service_bus_;
+  // }
 
   bool service_manager::can_drop(const std::string& name) const {
     if (!is_allow_dynamic_services() && this->is_initialized()) {
       return false;
     }
-    service_dict_type::const_iterator found = services_.find(name);
-    DT_THROW_IF (found == services_.end(),
+    service_dict_type::const_iterator found = local_services_.find(name);
+    DT_THROW_IF (found == local_services_.end(),
                  std::logic_error,
                  "Service '" << name << "' does not exist !");
-    return found->second.can_be_dropped();
+    return found->second->can_be_dropped();
   }
 
   void service_manager::drop(const std::string& name) {
     DT_THROW_IF(!is_allow_dynamic_services() && this->is_initialized(),
                 std::logic_error, "Service manager is already initialized and does not allow service '" << name << "' to be dropped dynamically!");
-    service_dict_type::iterator found = services_.find(name);
-    DT_THROW_IF (found == services_.end(),
+    service_dict_type::iterator found = local_services_.find(name);
+    DT_THROW_IF (found == local_services_.end(),
                  std::logic_error,
                  "Service '" << name << "' does not exist !");
-    service_entry& entry = found->second;
-    DT_THROW_IF (!found->second.can_be_dropped(),
+    service_entry& entry = *found->second.get();
+    DT_THROW_IF (!found->second->can_be_dropped(),
                  std::logic_error,
                  "Service '" << name << "' cannot be dropped because of existing dependent services !");
     DT_LOG_DEBUG(get_logging_priority(), "Reset & remove service '" << name << "' !");
@@ -407,10 +566,10 @@ namespace datatools {
 
     // Services:
     {
-      size_t sz = services_.size();
+      size_t sz = local_services_.size();
       size_t count = 0;
-      for (service_dict_type::const_iterator it = services_.begin();
-           it != services_.end();
+      for (service_dict_type::const_iterator it = local_services_.begin();
+           it != local_services_.end();
            ++it) {
         count++;
         out << indent;
@@ -420,7 +579,7 @@ namespace datatools {
           out << "|-- ";
         }
         const std::string& service_name = it->first;
-        const service_entry& service_record = it->second;
+        const service_entry& service_record = *it->second.get();
 
         out << "Name : '" << service_name << "' "
             << "Type : '" << service_record.get_service_id () << "' ";
@@ -526,24 +685,24 @@ namespace datatools {
     {
       out << indent << i_tree_dumpable::tag
           << "Services       : ";
-      size_t sz = services_.size();
+      size_t sz = local_services_.size();
       if (sz == 0) {
         out << "<none>";
       }
 
       out << std::endl;
-      for (service_dict_type::const_iterator i = services_.begin();
-           i != services_.end();
+      for (service_dict_type::const_iterator i = local_services_.begin();
+           i != local_services_.end();
            ++i) {
         const std::string& service_name = i->first;
-        const service_entry& service_entry = i->second;
+        const service_entry& service_entry = *i->second.get();
         out << indent << i_tree_dumpable::skip_tag;
 
         std::ostringstream indent_oss;
         indent_oss << indent << i_tree_dumpable::skip_tag;
         service_dict_type::const_iterator j = i;
         j++;
-        if (j == services_.end()) {
+        if (j == local_services_.end()) {
           out << i_tree_dumpable::last_tag;
           indent_oss << i_tree_dumpable::last_skip_tag;
         } else {
@@ -603,12 +762,13 @@ namespace datatools {
                  "Service '" << name << "' already exists !");
     {
       // Add a new entry :
-      service_entry tmp_entry(name, *this);
+      service_entry_ptr p(new service_entry(name, *this));
+      // service_entry & tmp_entry = *p.get();
       DT_LOG_DEBUG(get_logging_priority(), "Add an entry for service '" << name << "'...");
-      services_[name] = tmp_entry;
+      local_services_[name] = p;
     }
     // Fetch a reference on it and update :
-    service_entry& new_entry = services_.find(name)->second;
+    service_entry& new_entry = *local_services_.find(name)->second.get();
     new_entry.set_service_id(id);
     if (config_ptr != nullptr) {
       new_entry.set_service_config(*config_ptr);
@@ -695,7 +855,7 @@ namespace datatools {
                    << "'...");
       base_service& the_service = entry.grab_service_handle().grab();
       // the_service.set_name(entry.get_service_name());
-      the_service.initialize(entry.get_service_config(), services_);
+      the_service.initialize(entry.get_service_config(), local_services_);
       entry.update_service_status(service_entry::STATUS_INITIALIZED);
     }
   }
@@ -710,16 +870,16 @@ namespace datatools {
            i != entry.service_masters.end();
            ++i) {
         const std::string& master_name = i->first;
-        service_dict_type::iterator found = services_.find(master_name);
-        if (found != services_.end()) {
-          service_entry& the_master_entry = found->second;
-          the_master_entry.remove_slave(entry.get_service_name());
-          DT_LOG_DEBUG(get_logging_priority(),
-                       "Remove slave '"
-                       << entry.get_service_name()
-                       << "' from master '"
-                       << the_master_entry.get_service_name()
-                       << "' !");
+        service_dict_type::iterator found = local_services_.find(master_name);
+        if (found != local_services_.end()) {
+          // service_entry& the_master_entry = found->second;
+          // the_master_entry.remove_slave(entry.get_service_name());
+          // DT_LOG_DEBUG(get_logging_priority(),
+          //              "Remove slave '"
+          //              << entry.get_service_name()
+          //              << "' from master '"
+          //              << the_master_entry.get_service_name()
+          //              << "' !");
         }
       }
     }
@@ -733,8 +893,8 @@ namespace datatools {
       entry.reset_service_status(service_entry::STATUS_CREATED);
       entry.grab_service_handle().reset();
     }
-    service_dict_type::iterator found = services_.find(entry.get_service_name());
-    services_.erase(found);
+    service_dict_type::iterator found = local_services_.find(entry.get_service_name());
+    local_services_.erase(found);
   }
 
   //----------------------------------------------------------------------
