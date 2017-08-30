@@ -74,6 +74,8 @@ namespace datatools {
 
     //! Separator character used in to_string and from_string methods.
     static const char IO_FORMAT_SEP = '_';
+    static const char IO_FORMAT_ANY = '*';
+    static const char IO_FORMAT_INVALID = '!';
 
   public:
     //! The default constructor.
@@ -127,6 +129,9 @@ namespace datatools {
 
     //! Check whether the ID is valid.
     bool is_valid() const;
+
+    //! Check whether the ID is complete (run number and event number are set).
+    bool is_complete() const;
 
     //! Check if the instance has specific run and event numbers.
     /** @param r the run number.

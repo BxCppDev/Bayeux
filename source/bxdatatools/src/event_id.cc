@@ -24,6 +24,8 @@ namespace datatools {
   const int  event_id::INVALID_EVENT_NUMBER;
   const int  event_id::ANY_EVENT_NUMBER;
   const char event_id::IO_FORMAT_SEP;
+  const char event_id::IO_FORMAT_ANY;
+  const char event_id::IO_FORMAT_INVALID;
 
   event_id::event_id()
     : run_number_(INVALID_RUN_NUMBER),
@@ -32,12 +34,14 @@ namespace datatools {
 
   event_id::event_id(int a_event_number)
     : run_number_(INVALID_RUN_NUMBER),
-      event_number_(a_event_number) {}
+      event_number_(INVALID_EVENT_NUMBER) {
+    this->set_event_number(a_event_number);
+  }
 
 
-  event_id::event_id(int a_run_number, int a_event_number)
-    : run_number_(a_run_number),
-      event_number_(a_event_number) {}
+  event_id::event_id(int a_run_number, int a_event_number) {
+    this->set(a_run_number, a_event_number);
+  }
 
 
   event_id::~event_id() {}
@@ -47,6 +51,7 @@ namespace datatools {
     this->set_run_number(INVALID_RUN_NUMBER);
     this->set_event_number(INVALID_EVENT_NUMBER);
   }
+
 
   void event_id::clear() {
     reset ();
@@ -64,12 +69,20 @@ namespace datatools {
 
 
   void event_id::set_run_number(int a_run_number) {
-    run_number_ = (a_run_number < 0) ? INVALID_RUN_NUMBER : a_run_number;
+    if (a_run_number == ANY_RUN_NUMBER || a_run_number > INVALID_RUN_NUMBER) {
+      run_number_ = a_run_number;
+    } else {
+      run_number_ = INVALID_RUN_NUMBER;
+    }
   }
 
 
   void event_id::set_event_number(int a_event_number) {
-    event_number_ = (a_event_number < 0) ? INVALID_EVENT_NUMBER : a_event_number;
+    if (a_event_number == ANY_EVENT_NUMBER || a_event_number > INVALID_EVENT_NUMBER) {
+      event_number_ = a_event_number;
+    } else {
+      event_number_ = INVALID_EVENT_NUMBER;
+    }
   }
 
 
@@ -80,15 +93,13 @@ namespace datatools {
 
 
   bool event_id::has(int a_run_number, int a_event_number) const {
-    if (! is_valid ()) return false;// XXX
-    if (a_run_number != ANY_RUN_NUMBER)
-      {
-        if (run_number_ != a_run_number) return false;
-      }
-    if (a_event_number != ANY_EVENT_NUMBER)
-      {
-        if (event_number_ != a_event_number) return false;
-      }
+    if (! is_valid ()) return false;
+    if (a_run_number != ANY_RUN_NUMBER) {
+      if (run_number_ != a_run_number) return false;
+    }
+    if (a_event_number != ANY_EVENT_NUMBER) {
+      if (event_number_ != a_event_number) return false;
+    }
     return true;
   }
 
@@ -100,30 +111,40 @@ namespace datatools {
     return (run_number_ != INVALID_RUN_NUMBER) && (event_number_ != INVALID_EVENT_NUMBER);
   }
 
+  bool event_id::is_complete() const
+  {
+    if (run_number_ <= INVALID_RUN_NUMBER) return false;
+    if (event_number_ <= INVALID_EVENT_NUMBER) return false;
+    return true;
+  }
 
   bool event_id::operator==(const event_id& a_id) const {
-    return this->has(a_id.get_run_number(), a_id.get_event_number());
+    if (!is_valid()) return false;
+    if (!a_id.is_valid()) return false;
+    if (run_number_ != a_id.run_number_) return false;
+    if (event_number_ != a_id.event_number_) return false;
+    return true;
   }
 
 
   bool event_id::operator<(const event_id& a_id) const {
-    if (this->get_run_number() < a_id.get_run_number()) return true;
-
+    if (!is_valid()) return false;
+    if (!a_id.is_valid()) return false;
+    if (run_number_ < a_id.run_number_) return true;
     if (run_number_ == a_id.run_number_) {
       if (event_number_ < a_id.event_number_) return true;
     }
-
     return false;
   }
 
 
   bool event_id::operator>(const event_id & a_id) const {
-    if (run_number_ > a_id.run_number_) return true;
-
+    if (!is_valid()) return false;
+    if (!a_id.is_valid()) return false;
+    if (run_number_ > a_id.get_run_number()) return true;
     if (run_number_ == a_id.run_number_) {
       if (event_number_ > a_id.event_number_) return true;
     }
-
     return false;
   }
 
@@ -145,34 +166,83 @@ namespace datatools {
 
 
   std::ostream& operator<<(std::ostream & a_out, const event_id & a_id) {
-    a_out << a_id.get_run_number()
-          << event_id::IO_FORMAT_SEP
-          << a_id.get_event_number();
+    if (a_id.run_number_ == event_id::ANY_RUN_NUMBER) {
+      a_out << event_id::IO_FORMAT_ANY;
+    } else if (a_id.run_number_ == event_id::INVALID_RUN_NUMBER) {
+      a_out << event_id::IO_FORMAT_INVALID;
+    } else {
+      a_out << a_id.run_number_;
+    }
+    a_out << event_id::IO_FORMAT_SEP;
+    if (a_id.event_number_ == event_id::ANY_EVENT_NUMBER) {
+      a_out << event_id::IO_FORMAT_ANY;
+    } else if (a_id.event_number_ == event_id::INVALID_EVENT_NUMBER) {
+      a_out << event_id::IO_FORMAT_INVALID;
+    } else {
+      a_out << a_id.event_number_;
+    }
     return a_out;
   }
 
 
   std::istream& operator>>(std::istream& a_in, event_id & a_id) {
+    a_id.reset();
     int r, e;
     char c = 0;
-    a_in >> r;
 
-    if (!a_in) return a_in;
+    c = a_in.get();
+    if (!a_in) {
+      return a_in;
+    }
+    if (c == event_id::IO_FORMAT_ANY) {
+      r = event_id::ANY_RUN_NUMBER;
+    } else if (c == event_id::IO_FORMAT_INVALID) {
+      r = event_id::INVALID_RUN_NUMBER;
+    } else {
+      a_in.putback(c);
+      a_in >> r;
+      if (!a_in) {
+        a_in.setstate(std::ios_base::failbit);
+        return a_in;
+      }
+      if (r < 0) {
+        a_in.setstate(std::ios_base::failbit);
+        return a_in;
+      }
+    }
 
-    a_in >> c;
-
-    if (!a_in) return a_in;
-
+    c = a_in.get();
+    if (!a_in) {
+      return a_in;
+    }
     if (c != event_id::IO_FORMAT_SEP) {
-      a_in.setstate (std::ios_base::failbit);
+      a_in.setstate(std::ios_base::failbit);
       return a_in;
     }
 
-    a_in >> e;
-    if (a_in) {
-      a_id.set (r, e);
+    c = a_in.get();
+    if (!a_in) {
+      return a_in;
     }
-
+    if (c == event_id::IO_FORMAT_ANY) {
+      e = event_id::ANY_EVENT_NUMBER;
+    } else if (c == event_id::IO_FORMAT_INVALID) {
+      e = event_id::INVALID_EVENT_NUMBER;
+    } else {
+      a_in.putback(c);
+      a_in >> e;
+      if (!a_in) {
+        a_in.setstate(std::ios_base::failbit);
+        return a_in;
+      }
+      if (e < 0) {
+        a_in.setstate(std::ios_base::failbit);
+        return a_in;
+      }
+    }
+    if (a_in) {
+      a_id.set(r, e);
+    }
     return a_in;
   }
 
@@ -200,7 +270,7 @@ namespace datatools {
                              const std::string& title,
                              const std::string& indent) const
   {
-    tree_dump (out, title, indent, false);
+    tree_dump(out, title, indent, false);
     return;
   }
 
@@ -209,7 +279,7 @@ namespace datatools {
   {
     std::ostringstream oss;
     this->smart_print(oss,title,indent);
-    return oss.str ();
+    return oss.str();
   }
 
   void event_id::dump() const {

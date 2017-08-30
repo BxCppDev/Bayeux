@@ -1,7 +1,7 @@
 // test_event_id.cxx
 
-// The Catch API:
-#include "catch.hpp"
+// // The Catch API:
+// #include "catch.hpp"
 
 // Ourselves:
 #include <datatools/event_id.h>
@@ -12,6 +12,7 @@
 #include <string>
 #include <stdexcept>
 #include <list>
+#include <vector>
 
 // Third party:
 // - Boost:
@@ -22,26 +23,26 @@
 
 void test_1();
 
-TEST_CASE("Test Bayeux/datatools::event_id class", "[bxdatatools][event_id]")
-{
-  test_1();
-}
-
-// int main(int /* argc_ */, char ** /* argv_ */)
+// TEST_CASE("Test Bayeux/datatools::event_id class", "[bxdatatools][event_id]")
 // {
-//   int error_code = EXIT_SUCCESS;
-//   try {
-//     std::clog << "Hello, this is a test program for class 'datatools::event_id'!" << std::endl;
-//     test_1();
-//   } catch(std::exception & x) {
-//     std::cerr << "error: " << x.what() << std::endl;
-//     error_code = EXIT_FAILURE;
-//   } catch(...) {
-//     std::cerr << "error: " << "unexpected error!" << std::endl;
-//     error_code = EXIT_FAILURE;
-//   }
-//   return error_code;
+//   test_1();
 // }
+
+int main(int /* argc_ */, char ** /* argv_ */)
+{
+  int error_code = EXIT_SUCCESS;
+  try {
+    std::clog << "Hello, this is a test program for class 'datatools::event_id'!" << std::endl;
+    test_1();
+  } catch(std::exception & x) {
+    std::cerr << "error: " << x.what() << std::endl;
+    error_code = EXIT_FAILURE;
+  } catch(...) {
+    std::cerr << "error: " << "unexpected error!" << std::endl;
+    error_code = EXIT_FAILURE;
+  }
+  return error_code;
+}
 
 void test_1()
 {
@@ -52,17 +53,27 @@ void test_1()
 
   clog << "Event id = " << my_id << endl;
 
-  try {
-    std::istringstream ins("666_7635");
-    clog << "Enter event id [format=XXX_YYY] ? ";
-    ins >> my_id;
-    if(! ins) {
-      throw runtime_error("Format error!");
+  std::vector<std::string> tokens = {
+    "666_7635",
+    "*_*",
+    "!_!",
+    "!_*",
+    "*_!"
+  };
+  for (auto tok : tokens) {
+    try {
+      std::istringstream ins(tok);
+      clog << "Enter event id [format=XXX_YYY] ? ";
+      ins >> my_id;
+      if(! ins) {
+        throw runtime_error("Format error!");
+      }
+      clog << "Token : '" << tok << "'" << std::endl;
+      clog << "Event id = " << my_id << endl;
+      my_id.tree_dump(clog, "datatools::event_id:");
+    } catch(exception & x) {
+      cerr << "Format error !" << endl;
     }
-    clog << "Event id = " << my_id << endl;
-    my_id.tree_dump(clog, "datatools::event_id:");
-  } catch(exception & x) {
-    cerr << "Format error !" << endl;
   }
 
   string filename = "test_event_id.xml";
