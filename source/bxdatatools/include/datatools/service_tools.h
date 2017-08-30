@@ -192,7 +192,7 @@ namespace datatools {
   typedef std::shared_ptr<service_entry> service_entry_ptr;
 
   //! \brief Type alias for a flat dictionary of service entries
-  // typedef std::map<std::string, service_entry> service_dict_type;
+  // was: typedef std::map<std::string, service_entry> service_dict_type;
   typedef std::map<std::string, service_entry_ptr> service_dict_type;
 
   //! Check if a service with given name exists
