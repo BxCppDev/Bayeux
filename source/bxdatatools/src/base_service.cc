@@ -1,6 +1,6 @@
 // datatools/base_service.cc
 /*
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,14 @@
 // This project:
 #include <datatools/service_tools.h>
 #include <datatools/properties.h>
-#include "datatools/enriched_base.h"       // for enriched_base
+#include "datatools/enriched_base.h"
 #include "datatools/factory_macros.h"
-#include "datatools/i_tree_dump.h"         // for operator<<, etc
-#include "datatools/logger.h"              // for logger, logger::priority
+#include "datatools/i_tree_dump.h"
+#include "datatools/logger.h"
 
 namespace datatools {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
-                                                   base_service,
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_service,
                                                    "datatools::base_service/__system__")
 
   // Constructor
@@ -51,39 +50,43 @@ namespace datatools {
   }
 
   // Destructor :
-  base_service::~base_service() {}
+  base_service::~base_service()
+  {
+  }
 
-  void base_service::fetch_dependencies(
-                                        service_dependency_dict_type& dependencies) const {
+  void base_service::fetch_dependencies(service_dependency_dict_type& dependencies) const
+  {
     dependencies.clear();
   }
 
-  int base_service::initialize_simple() {
+  int base_service::initialize_simple()
+  {
     datatools::properties dummy;
     return this->initialize_standalone(dummy);
   }
 
-  int base_service::initialize_with_services(
-                                             service_dict_type& service_dict) {
+  int base_service::initialize_with_services(service_dict_type& service_dict)
+  {
     datatools::properties dummy;
     return this->initialize(dummy, service_dict);
   }
 
-  int base_service::initialize_standalone(
-                                          const datatools::properties& config) {
+  int base_service::initialize_standalone(const datatools::properties& config)
+  {
     service_dict_type dummy;
     return this->initialize(config, dummy);
   }
 
-  void base_service::common_initialize(const datatools::properties& config) {
+  void base_service::common_initialize(const datatools::properties& config)
+  {
     this->enriched_base::initialize(config, false);
   }
 
-  void base_service::tree_dump(std::ostream& a_out,
-                               const std::string& a_title,
-                               const std::string& a_indent,
-                               bool a_inherit) const {
-
+  void base_service::tree_dump(std::ostream & a_out,
+                               const std::string & a_title,
+                               const std::string & a_indent,
+                               bool a_inherit) const
+  {
     this->enriched_base::tree_dump(a_out, a_title, a_indent, true);
 
     a_out << a_indent << i_tree_dumpable::inherit_tag(a_inherit)
@@ -91,7 +94,7 @@ namespace datatools {
           << std::boolalpha << this->is_initialized() << std::endl;
   }
 
-  void base_service::common_ocd(datatools::object_configuration_description& ocd)
+  void base_service::common_ocd(datatools::object_configuration_description & ocd)
   {
     enriched_base::init_ocd(ocd);
   }

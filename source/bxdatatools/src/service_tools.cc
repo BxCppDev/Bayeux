@@ -176,26 +176,26 @@ namespace datatools {
     return (found != service_masters.end());
   }
 
-  bool service_entry::has_slave(const std::string& name) const {
-    dependency_level_dict_type::const_iterator found = service_slaves.find(name);
-    return (found != service_slaves.end()) && (found->second == DEPENDENCY_STRICT);
-  }
+  // bool service_entry::has_slave(const std::string& name) const {
+  //   dependency_level_dict_type::const_iterator found = service_slaves.find(name);
+  //   return (found != service_slaves.end()) && (found->second == DEPENDENCY_STRICT);
+  // }
 
-  void service_entry::remove_slave(const std::string& name) {
-    dependency_level_dict_type::iterator found = service_slaves.find(name);
-    if (found != service_slaves.end()) {
-      service_slaves.erase(found);
-    }
-  }
+  // void service_entry::remove_slave(const std::string& name) {
+  //   dependency_level_dict_type::iterator found = service_slaves.find(name);
+  //   if (found != service_slaves.end()) {
+  //     service_slaves.erase(found);
+  //   }
+  // }
 
   bool service_entry::can_be_dropped() const {
-    for (dependency_level_dict_type::const_iterator i = service_slaves.begin();
-         i != service_slaves.end();
-         ++i) {
-      if (i->second == DEPENDENCY_STRICT) {
-        return false;
-      }
-    }
+    // for (dependency_level_dict_type::const_iterator i = service_slaves.begin();
+    //      i != service_slaves.end();
+    //      ++i) {
+    //   if (i->second == DEPENDENCY_STRICT) {
+    //     return false;
+    //   }
+    // }
     return true;
   }
 
@@ -302,39 +302,38 @@ namespace datatools {
             << std::endl;
       }
     }
-    {
-      out << indent << i_tree_dumpable::tag
-          << "Slave services   : ";
-      if (service_slaves.size() == 0) {
-        out << "<none>";
-      }
-      out << std::endl;
-      for (dependency_level_dict_type::const_iterator i =
-             service_slaves.begin();
-           i != service_slaves.end();
-           ++i) {
-        const std::string& slave_service_name = i->first;
-        int slave_level = i->second;
-        out << indent << i_tree_dumpable::skip_tag;
-
-        std::ostringstream indent_oss;
-        indent_oss << indent << i_tree_dumpable::skip_tag;
-        dependency_level_dict_type::const_iterator j = i;
-        j++;
-        if (j == service_slaves.end()) {
-          out << i_tree_dumpable::last_tag;
-          indent_oss << i_tree_dumpable::last_skip_tag;
-        } else  {
-          out << i_tree_dumpable::tag;
-          indent_oss << i_tree_dumpable::skip_tag;
-        }
-        out << "Slave '" << slave_service_name << "' ";
-        out << ": "
-            << ""
-            << "level="    << slave_level << ""
-            << std::endl;
-      }
-    }
+    // {
+    //   out << indent << i_tree_dumpable::tag
+    //       << "Slave services   : ";
+    //   if (service_slaves.size() == 0) {
+    //     out << "<none>";
+    //   }
+    //   out << std::endl;
+    //   for (dependency_level_dict_type::const_iterator i =
+    //          service_slaves.begin();
+    //        i != service_slaves.end();
+    //        ++i) {
+    //     const std::string& slave_service_name = i->first;
+    //     int slave_level = i->second;
+    //     out << indent << i_tree_dumpable::skip_tag;
+    //     std::ostringstream indent_oss;
+    //     indent_oss << indent << i_tree_dumpable::skip_tag;
+    //     dependency_level_dict_type::const_iterator j = i;
+    //     j++;
+    //     if (j == service_slaves.end()) {
+    //       out << i_tree_dumpable::last_tag;
+    //       indent_oss << i_tree_dumpable::last_skip_tag;
+    //     } else  {
+    //       out << i_tree_dumpable::tag;
+    //       indent_oss << i_tree_dumpable::skip_tag;
+    //     }
+    //     out << "Slave '" << slave_service_name << "' ";
+    //     out << ": "
+    //         << ""
+    //         << "level="    << slave_level << ""
+    //         << std::endl;
+    //   }
+    // }
 
     out << indent << i_tree_dumpable::tag
         << "Service status   : "
@@ -365,6 +364,29 @@ namespace datatools {
         << std::boolalpha << this->can_be_dropped() << std::endl;
  }
 
+  bool service_exists(const service_dict_type & services_, const std::string & service_name_)
+  {
+    if (services_.count(service_name_) == 0) return false;
+    return true;
+  }
+
+  void merge_services(service_dict_type & services_, service_dict_type & merged_, bool duplicate_throw_)
+  {
+    for (service_dict_type::iterator iserv = merged_.begin();
+         iserv != merged_.end();
+         iserv++) {
+      if (services_.count(iserv->first)) {
+        if (duplicate_throw_) {
+          DT_THROW(std::logic_error,
+                   "Attempt to merge a service dictionary with duplicate service named '" << iserv->first << "'!");
+        }
+      } else {
+        services_[iserv->first] = iserv->second;
+      }
+    }
+    return;
+  }
+
   bool find_service_name_with_id(const service_dict_type & services_,
                                  const std::string & service_id_,
                                  std::string & service_name_)
@@ -374,7 +396,7 @@ namespace datatools {
          iserv != services_.end();
          iserv++) {
       const std::string & service_name = iserv->first;
-      const ::datatools::service_entry & sentry = iserv->second;
+      const ::datatools::service_entry & sentry = *iserv->second.get();
       if (sentry.get_service_id() == service_id_) {
         service_name_ = service_name;
         break;
@@ -392,7 +414,7 @@ namespace datatools {
          iserv != services_.end();
          iserv++) {
       const std::string & service_name = iserv->first;
-      const ::datatools::service_entry & sentry = iserv->second;
+      const ::datatools::service_entry & sentry = *iserv->second.get();
       if (sentry.get_service_id() == service_id_) {
         service_names_.push_back(service_name);
       }
@@ -406,7 +428,7 @@ namespace datatools {
     ::datatools::service_dict_type::iterator found = services_.find(service_name_);
     DT_THROW_IF(found == services_.end(), std::logic_error,
                 "Cannot find service named '" << service_name_ << "'!");
-    ::datatools::service_entry & sentry = found->second;
+    ::datatools::service_entry & sentry = *found->second.get();
     service_manager & smgr = sentry.grab_service_manager();
     return smgr.grab_service(service_name_);
   }

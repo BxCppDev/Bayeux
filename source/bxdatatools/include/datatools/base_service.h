@@ -1,9 +1,9 @@
 /// \file datatools/base_service.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2016-02-18
+ * Last modified : 2017-08-30
  *
- * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,8 @@
  *
  *   Base service.
  *
- * History:
- *
  */
+
 #ifndef DATATOOLS_BASE_SERVICE_H
 #define DATATOOLS_BASE_SERVICE_H
 
@@ -66,7 +65,9 @@ namespace datatools {
    *  The base_service class provides the interface of all
    *  datatools service objects.
    */
-  class base_service : public datatools::enriched_base {
+  class base_service
+    : public datatools::enriched_base
+  {
   public:
 
     /// Default constructor
@@ -130,55 +131,7 @@ namespace datatools {
 
   };
 
-  //! Find the service name with given service identifier from a dictionary of services
-  bool find_service_name_with_id(const service_dict_type & services_,
-                                 const std::string & service_id_,
-                                 std::string & service_name_);
-
-  //! Find all service names with given service identifier from a dictionary of services
-  bool find_service_names_with_id(const service_dict_type & services_,
-                                  const std::string & service_id_,
-                                  std::vector<std::string> & service_names_);
-
-  //! Return the mutable reference to a service given its name
-  base_service & grab_service(service_dict_type & services_,
-                              const std::string & service_name_);
-
-  //! Return the const reference to a service given its name
-  const base_service & get_service(const service_dict_type & services_,
-                                   const std::string & service_name_);
-
-  /** Return a mutable reference to a typed service object with given name from a dictionary of services
-   *   @param services_ The dictionary of service entries
-   *   @param service_name_ The name of the service to be checked
-   *   @return a mutable reference to the service instance requested by name and type
-   */
-  template<class T>
-  T& grab(service_dict_type & services_, const std::string& service_name_)
-  {
-    base_service & srvc = grab_service(services_, service_name_);
-    const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(srvc);
-    DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
-    return dynamic_cast<T&>(srvc);
-  }
-
-  /** Return a non mutable reference to a typed service object with given name from a dictionary of services
-   *   @param services_ The dictionary of service entries
-   *   @param service_name_ The name of the service to be checked
-   *   @return a const reference to the service instance requested by name and type
-   */
-  template<class T>
-  const T& get(const service_dict_type & services_, const std::string& service_name_)
-  {
-    const base_service & srvc = get_service(services_, service_name_);
-    const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(srvc);
-    DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
-    return dynamic_cast<const T&>(srvc);
-  }
-
-}  // end of namespace datatools
+} // end of namespace datatools
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer:
