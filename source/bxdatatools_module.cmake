@@ -475,7 +475,6 @@ ${module_test_dir}/test_urn_to_path.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
 ${module_test_dir}/test_urn_query_service.cxx
 ${module_test_dir}/test_dependency_graph.cxx
-# ${module_test_dir}/test_observer_design_pattern.cxx
 # ${module_test_dir}/test_url.cxx
 # ${module_test_dir}/test_log_record.cxx
 # ${module_test_dir}/test_rst_tools.cxx
