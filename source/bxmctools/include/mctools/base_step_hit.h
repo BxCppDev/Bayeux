@@ -3,18 +3,16 @@
  * Creation date: 2010-05-26
  * Last modified: 2013-06-02
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *
  *   Base step hit within a sensitive detector
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_BASE_STEP_HIT_H
-#define MCTOOLS_BASE_STEP_HIT_H 1
+#define MCTOOLS_BASE_STEP_HIT_H
 
 // Standard library:
 #include <iostream>
@@ -43,7 +41,8 @@ namespace mctools {
    *          stop
    *
    */
-  class base_step_hit : public geomtools::base_hit
+  class base_step_hit
+    : public geomtools::base_hit
   {
 
   public:
@@ -231,10 +230,8 @@ BOOST_CLASS_VERSION(mctools::base_step_hit, 1)
 
 #endif // MCTOOLS_BASE_STEP_HIT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

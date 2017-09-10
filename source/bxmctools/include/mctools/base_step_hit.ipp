@@ -74,10 +74,8 @@ namespace mctools {
 
 #endif // MCTOOLS_BASE_STEP_HIT_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
