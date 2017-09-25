@@ -87,6 +87,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/digitization/simple_linear_adc.h
   ${module_include_dir}/${module_name}/digitization/sampled_signal.h
   ${module_include_dir}/${module_name}/digitization/sampled_signal.ipp
+  ${module_include_dir}/${module_name}/random_event_sequence_model.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -112,6 +113,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/signal/signal_data.cc
   ${module_source_dir}/digitization/simple_linear_adc.cc
   ${module_source_dir}/digitization/sampled_signal.cc
+  ${module_source_dir}/random_event_sequence_model.cc
   )
 
 # - Published headers
@@ -141,6 +143,8 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_signal_signal_data.cxx
   ${module_test_dir}/test_digitization_simple_linear_adc.cxx
   ${module_test_dir}/test_digitization_sampled_signal.cxx
+  ${module_test_dir}/test_random_event_sequence_model.cxx
+
   )
 
 #-----------------------------------------------------------------------
