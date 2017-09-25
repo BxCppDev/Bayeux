@@ -160,6 +160,10 @@ if(Bayeux_WITH_GEOMTOOLS)
   list(APPEND BAYEUX_SUBMODULES geomtools)
 endif()
 
+if(Bayeux_WITH_EVENTS)
+  list(APPEND BAYEUX_SUBMODULES events)
+endif()
+
 if(Bayeux_WITH_EMFIELD)
   list(APPEND BAYEUX_SUBMODULES emfield)
 endif()

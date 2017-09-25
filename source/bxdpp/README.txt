@@ -1,6 +1,3 @@
-Development of dpp has migrated to Git
-
-
 Bayeux/dpp (Data  Processing Pipeline) is  a C++ program  library that
 implements   a    data   processing    pipeline   model    using   the
 ``datatools::things`` generic  container as  the main data  model from
@@ -9,7 +6,7 @@ library.
 
 Bayeux/dpp  depends  on  Bayeux/cuts,  Bayeux/brio,  Bayeux/mygsl  and
 Bayeux/datatools from  the Bayeux software collection  and third party
-software from the Cadfaelbrew package manager.
+software from the Linuxbrew package manager.
 
 Bayeux/dpp is a component library of the Bayeux software suite.
 

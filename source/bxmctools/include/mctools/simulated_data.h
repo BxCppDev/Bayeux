@@ -250,10 +250,8 @@ BOOST_CLASS_VERSION(mctools::simulated_data, 3)
 
 #endif // MCTOOLS_SIMULATED_DATA_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

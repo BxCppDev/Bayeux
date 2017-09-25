@@ -3,13 +3,11 @@
  * Creation date: 2010-03-16
  * Last modified: 2013-03-08
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *
- *   Base hit.
- *
- * History:
+ *   Base hit (geometry part).
  *
  */
 
@@ -173,7 +171,7 @@ namespace geomtools {
     /// Predicate that checks if the auxiliaries container stores some specific flag
     class has_flag_predicate : public datatools::i_predicate<base_hit>
     {
-      std::string flag_; /// The flag to be checked
+      std::string flag_; ///< The flag to be checked
 
     public:
 
@@ -195,7 +193,7 @@ namespace geomtools {
     /// Predicate that checks if the auxiliaries container stores some property with a specific key
     class has_key_predicate : public datatools::i_predicate<base_hit>
     {
-      std::string key_; /// The property key to be checked
+      std::string key_; ///< The property key to be checked
 
     public:
 
@@ -273,7 +271,7 @@ namespace geomtools {
 
     private:
 
-      int hid_; /// The hit ID to be checked
+      int hid_; ///< The hit ID to be checked
 
     };
 
@@ -373,10 +371,8 @@ BOOST_CLASS_VERSION(geomtools::base_hit, 1)
 
 #endif // GEOMTOOLS_BASE_HIT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

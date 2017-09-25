@@ -41,6 +41,9 @@ mark_as_advanced(BAYEUX_WITH_DPP)
 option(BAYEUX_WITH_GEOMTOOLS  "Build Bayeux/geomtools module" ON)
 mark_as_advanced(BAYEUX_WITH_GEOMTOOLS)
 
+option(BAYEUX_WITH_EVENTS     "Build Bayeux/events module" ON)
+mark_as_advanced(BAYEUX_WITH_EVENTS)
+
 option(BAYEUX_WITH_EMFIELD    "Build Bayeux/emfield module" ON)
 mark_as_advanced(BAYEUX_WITH_EMFIELD)
 
@@ -104,6 +107,13 @@ endif()
 set(Bayeux_WITH_GEOMTOOLS 0)
 if(BAYEUX_WITH_GEOMTOOLS)
   set(Bayeux_WITH_GEOMTOOLS 1)
+endif()
+
+#-----------------------------------------------------------------------
+# events module
+set(Bayeux_WITH_EVENTS 0)
+if(BAYEUX_WITH_EVENTS)
+  set(Bayeux_WITH_EVENTS 1)
 endif()
 
 #-----------------------------------------------------------------------
@@ -174,6 +184,16 @@ if(Bayeux_WITH_GENVTX)
   set(Bayeux_WITH_GEOMTOOLS 1)
 endif()
 
+if(Bayeux_WITH_DPP)
+  set(Bayeux_WITH_BRIO 1)
+  set(Bayeux_WITH_CUTS 1)
+  set(Bayeux_WITH_MYGSL 1)
+endif()
+
+if(Bayeux_WITH_EVENTS)
+  set(Bayeux_WITH_GEOMTOOLS 1)
+endif()
+
 if(Bayeux_WITH_EMFIELD)
   set(Bayeux_WITH_GEOMTOOLS 1)
 endif()
@@ -181,12 +201,6 @@ endif()
 if(Bayeux_WITH_GEOMTOOLS)
   set(Bayeux_WITH_MYGSL 1)
   set(Bayeux_WITH_MATERIALS 1)
-endif()
-
-if(Bayeux_WITH_DPP)
-  set(Bayeux_WITH_BRIO 1)
-  set(Bayeux_WITH_CUTS 1)
-  set(Bayeux_WITH_MYGSL 1)
 endif()
 
 # end
