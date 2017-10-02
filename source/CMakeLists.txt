@@ -392,6 +392,7 @@ include(CMakePackageConfigHelpers)
 # - Versioning file is the same for the build and install trees
 write_basic_package_version_file(
   ${BAYEUX_BUILD_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfigVersion.cmake
+  VERSION ${Bayeux_VERSION}
   COMPATIBILITY SameMajorVersion
   )
 
