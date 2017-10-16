@@ -755,7 +755,7 @@ namespace mctools {
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Private shapes : ";
-      if (_private_shapes_config_.size()) {
+      if (_private_shapes_config_.size() == 0) {
         out_ << "<none>";
       } else {
         out_ << _private_shapes_config_.size();
