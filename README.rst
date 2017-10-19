@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2017-07-03
+:Date:    2017-10-20
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -84,19 +84,21 @@ Bayeux's roots
 --------------
 
 Original work on Bayeux was  initiated at the `Laboratoire de Physique
-Corpusculaire  de Caen`_  in the  framework of  the NEMO3  double-beta
-decay  experiment  and  the  R&D  for  its  successor:  the  SuperNEMO
-experiment. Bayeux is  developped by a group of  physicists working in
-Nuclear and  Particle Physics. It  provides generic classes  and tools
-that  can  be  used  in  many  different  contexts.   It  is  now  the
+Corpusculaire de  Caen`_ (CNRS/IN2P3)  in the  framework of  the NEMO3
+double-beta  decay  experiment and  the  R&D  for its  successor:  the
+SuperNEMO experiment.  Bayeux  is developped by a  group of physicists
+working in Nuclear  and Particle Physics. It  provides generic classes
+and tools that can be used in  many different contexts.  It is now the
 cornerstone of the SuperNEMO_  experiment's production software chain.
 As a  generic toolbox,  it is  also used by  several projects  for the
-simulation of  particle transport through matter,  detector design for
-nuclear physics, detection efficiency calculation, data serialization,
-data  processing  and  analysis, radiation  protection  and  dosimetry
-studies.
+simulation of  particle transport  through matter (through  its Geant4
+extension  module), detector  design  for  nuclear physics,  detection
+efficiency  calculation,  data   serialization,  data  processing  and
+analysis,  radiation  protection   and  dosimetry  studies  (including
+industrial projects).
 
 .. _SuperNEMO: https://github.com/SuperNEMO-DBD
+.. _Linuxbrew: https://github.com/topics/linuxbrew
 
 Naming and logo
 ---------------
@@ -135,7 +137,7 @@ GPL 3 within Bayeux.
 Some parts of code or  management/build scripts are released under the
 MIT License.
 
-Most of Bayeux's source code is  released under the GNU General Public
+Most of Bayeux's C++ source code is  released under the GNU General Public
 License 3.0.
 
 
@@ -150,15 +152,14 @@ with some work of adapting.
 Bayeux now uses the C++11 standard  by default so this implies the use
 of a modern C++ compiler.
 
-Using  the `bxcppdev/bxtap`_  Linuxbrew tap  provided by  the
+Using  the `bxcppdev/bxtap`_  `Linuxbrew`_ *tap*  provided by  the
 BxCppDev_  group  should help  you  to  guarantee a  suitable  working
 environment on your system.
 
 Releases
 --------
 
-* Upcoming release: Bayeux-3.1.0
-* Latest release: Bayeux-3.0.0
+* Latest release: Bayeux-3.1.0
 
 
 
@@ -183,31 +184,32 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.0.0, you may use:
+For example, to download Bayeux version 3.1.0, you may use, assuming a
+Linux system:
 
 .. code:: sh
 
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.0.0.tar.gz
-   $ mkdir Bayeux-3.0.0 && tar xvzf Bayeux-3.0.0.tar.gz -C Bayeux-3.0.0 --strip-components 1
-   $ cd Bayeux-3.0.0/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.1.0.tar.gz
+   $ mkdir Bayeux-3.1.0 && tar xvzf Bayeux-3.1.0.tar.gz -C Bayeux-3.1.0 --strip-components 1
+   $ cd Bayeux-3.1.0/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.0.0/`` source  directory
-is thus created.
+The  ``${HOME}/BxCppDev/Bayeux-3.1.0/``   source  directory   is  thus
+created.
 
-You can  now create a  dedicated directory  to build Bayeux  3.0.0
-following  the guidelines in the  *Installing Bayeux* section
-below.   Note that  different  versions of  Bayeux  may have  slightly
-different build/installation procedures, so  you should read carefully
-the ``README.rst`` file supplied with the source code.
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.1.0
+following  the guidelines  in the  *Installing Bayeux*  section below.
+Note that  different versions  of Bayeux  may have  slightly different
+build/installation  procedures,  so  you  should  read  carefully  the
+``README.rst`` file supplied with the source code.
 
 
-If you want  to use the development  version (possibly unstable),
-use Git:
+If you  want to use  the development version (possibly  unstable), use
+Git:
 
 .. code:: sh
 
@@ -398,8 +400,8 @@ To configure Bayeux, simply do, from the source directory of Bayeux:
 	   ..
 ..
 
-You  may also  use  an  arbitrary build  directory  somewhere in  your
-filesystem:
+You may also  use an arbitrary temporary build  directory somewhere in
+your filesystem:
 
 .. code:: sh
 
@@ -425,6 +427,12 @@ to deal with the following three in most cases:
 ``CMAKE_PREFIX_PATH``
   Path under which  Linuxbrew is installed and where  some of the
   third party software (dependencies) should be searched for.
+  You can use the following to automatically locate Linuxbrew on your system:
+
+  .. code:: sh
+
+     $ cmake -DCMAKE_PREFIX_PATH=$(brew --prefix)
+
 
 ``CMAKE_BUILD_TYPE``
   Build type, e.g. ``Release``, ``Debug``. You will want this to be
@@ -568,9 +576,9 @@ A note on RPATHs
 You should not use  the ``(DY)LD_LIBRARY_PATH`` variables because they
 are  intended  for testing,  not  production  (see  the man  pages  of
 ld/dyld).   Bayeux uses  **rpaths**  to provide  a  simple setup  that
-allows   apps   to   be   run   directly   with   guaranteed   library
+allows  applications  to  be  run  directly  with  guaranteed  library
 lookup. Morever, relative rpaths are  used that generally allow Bayeux
-to be relocatable (not tested).
+to be relocatable (albeit not tested).
 
 However, these settings are platform dependent and CMake has only added
 support for this gradually. In particular, see these references:
@@ -616,7 +624,7 @@ Current development staff:
 
 Other contributors:
 
-* Arnaud Chapon ((LPC Caen, Cerap): geometry, validation.
+* Arnaud Chapon (LPC Caen, Cerap): geometry, validation.
 * Benoit Guillon (LPC Caen, ENSICAEN): original implementation of the ``Bayeux/materials`` module.
 * Ben Morgan (University of Warwick): CMake support, logging features in datatools,
   other management and integration tools, Doxygen based documentation support,
