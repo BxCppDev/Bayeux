@@ -79,7 +79,7 @@ namespace mctools {
       //! Set the logging priority
       void set_logging_priority(const datatools::logger::priority);
 
-      //! Check is a category of signal is set
+      //! Check if a category of signal is set
       bool has_category() const;
 
       //! Set the category of signals
@@ -133,7 +133,7 @@ namespace mctools {
       //! Return a const reference to a reference functor
       const mygsl::i_unary_function & get_reference_functor(const std::string & key_) const;
 
-      //! Load definition file for referecen functors
+      //! Load definition file for reference functors
       void load_reference_functors_from_file(const std::string & filename_);
 
       //! Create a new reference functor
