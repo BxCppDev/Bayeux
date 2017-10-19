@@ -397,7 +397,7 @@ namespace mctools {
       DT_THROW_IF(key_.empty() ||
                   boost::algorithm::starts_with(key_, reference_functor_prefix()),
                   std::logic_error,
-                  "Invalid siganl shape key '" << key_ << "'!");
+                  "Invalid signal shape key '" << key_ << "'!");
       DT_THROW_IF(has_functor(key_), std::logic_error,
                   "A functor with key '" << key_ << "' already exists!");
       mygsl::unary_function_handle_type fh;
