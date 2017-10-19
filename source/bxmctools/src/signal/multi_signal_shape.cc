@@ -260,7 +260,7 @@ namespace mctools {
                     "No component signal shape functor with key '"
                     << comp_key << "' is available from the pool of functors!");
         mygsl::const_unary_function_handle_type ch = functors_.find(comp_key)->second.to_const();
-        add(comp_key, ch /*functors_.find(comp_key)->second*/, comp_timeshift, comp_scaling);
+        add(comp_key, ch, comp_timeshift, comp_scaling);
       }
 
       _init_();
