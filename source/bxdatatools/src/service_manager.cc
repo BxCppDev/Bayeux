@@ -512,22 +512,17 @@ namespace datatools {
     return found != local_services_.end() && found->second->is_initialized();
   }
 
-  // // Who needs this (services is an implementation detail....)
-  // const service_dict_type& service_manager::get_services() const {
-  //   return local_services_;
-  // }
-
-  // service_dict_type& service_manager::grab_services() {
-  //   return local_services_;
-  // }
-
-  const service_dict_type& service_manager::get_bus_of_services() const {
-    return service_bus_;
+  const service_dict_type& service_manager::get_local_services() const {
+    return local_services_;
   }
 
-  // service_dict_type& service_manager::grab_bus_of_services() {
-  //   return service_bus_;
-  // }
+  const service_dict_type& service_manager::get_bus_of_services(const bool update_) const {
+    if (update_) {
+      service_manager * mutable_this = const_cast<service_manager*>(this);
+      mutable_this->update_service_bus();
+    }
+    return service_bus_;
+  }
 
   bool service_manager::can_drop(const std::string& name) const {
     if (!is_allow_dynamic_services() && this->is_initialized()) {
@@ -885,7 +880,8 @@ namespace datatools {
     }
   }
 
-  void service_manager::destroy_service(service_entry& entry) {
+  void service_manager::destroy_service(service_entry& entry)
+  {
     if (entry.is_created()) {
       if (entry.is_initialized()) {
         reset_service(entry);
@@ -895,6 +891,7 @@ namespace datatools {
     }
     service_dict_type::iterator found = local_services_.find(entry.get_service_name());
     local_services_.erase(found);
+    return;
   }
 
   //----------------------------------------------------------------------

@@ -1,7 +1,7 @@
 /// \file datatools/service_manager.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2017-07-13
+ * Last modified : 2017-11-02
  *
  * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Copyright (C) 2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
@@ -240,8 +240,11 @@ namespace datatools {
     //! Load a set of services from a multi-service configuration
     void load(const datatools::multi_properties& config);
 
+    //! Return the list of services locally hosted by this manager
+    const service_dict_type& get_local_services() const;
+
     //! Return the bus of services known in the context of this manager
-    const service_dict_type& get_bus_of_services() const;
+    const service_dict_type& get_bus_of_services(const bool update_ = false) const;
 
     //! Basic print of embedded services
     void dump_services(std::ostream& out = std::clog,
@@ -259,6 +262,12 @@ namespace datatools {
 
     //! Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
+
+    //! Update the bus of services (expert only)
+    void update_service_bus();
+
+    //! Synchronize internal data (expert only)
+    void sync();
 
   protected:
 
@@ -303,12 +312,6 @@ namespace datatools {
 
     //! Set the factory preload flag
     void set_preload(bool preload);
-
-    //! Update the bus of services
-    void update_service_bus();
-
-    //! Synchronize internal data
-    void sync();
 
   private:
 
