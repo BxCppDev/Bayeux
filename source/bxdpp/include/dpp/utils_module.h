@@ -9,8 +9,6 @@
  *
  *   Utility processing module
  *
- * History:
- *
  */
 
 #ifndef DPP_UTILS_MODULE_H
@@ -32,7 +30,8 @@
 namespace dpp {
 
   /// \brief A data processing module for automated utility operations (bank removal)
-  class utils_module : public base_module
+  class utils_module
+    : public base_module
   {
   public:
 
@@ -64,19 +63,19 @@ namespace dpp {
   protected:
 
     /// Set default values for attributes
-    void _set_defaults ();
+    void _set_defaults();
 
     /// Special method to clear all banks
-    void _process_clear (datatools::things & a_event_record);
+    void _process_clear(datatools::things & a_event_record_);
 
     /// Special method to remove one single bank by label and type (optional)
-    void _process_remove_one_typed_bank (datatools::things & a_event_record);
+    void _process_remove_one_typed_bank(datatools::things & a_event_record_);
 
     /// Special method to remove several banks by label (name)
-    void _process_remove_banks (datatools::things & a_event_record);
+    void _process_remove_banks(datatools::things & a_event_record_);
 
     /// Special method to add some property in a 'datatools::properties' bank
-    void _process_add_property (datatools::things & a_event_record);
+    void _process_add_property (datatools::things & a_event_record_);
 
   private:
 
@@ -99,10 +98,8 @@ namespace dpp {
 
 #endif // DPP_UTILS_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

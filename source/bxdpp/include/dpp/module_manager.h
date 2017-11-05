@@ -24,8 +24,6 @@
  *
  *   A manager/factory class for data (event record?) processing modules.
  *
- * History:
- *
  */
 
 #ifndef DPP_MODULE_MANAGER_H
@@ -48,7 +46,8 @@
 namespace dpp {
 
   /// \brief A manager for data processing modules
-  class module_manager : public datatools::i_tree_dumpable
+  class module_manager
+    : public datatools::i_tree_dumpable
   {
   public:
 
@@ -58,67 +57,67 @@ namespace dpp {
       FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01
     };
 
-    bool is_no_preload () const;
+    bool is_no_preload() const;
 
-    bool is_initialization_at_load () const;
+    bool is_initialization_at_load() const;
 
-    bool has (const std::string & module_name_) const;
+    bool has(const std::string & module_name_) const;
 
-    void remove (const std::string & module_name_);
+    void remove(const std::string & module_name_);
 
-    base_module & grab (const std::string & module_name_);
+    base_module & grab(const std::string & module_name_);
 
-    const base_module & get (const std::string & module_name_) const;
+    const base_module & get(const std::string & module_name_) const;
 
-    module_handle_dict_type & grab_modules ();
+    module_handle_dict_type & grab_modules();
 
     // DEPRECATED
-    module_handle_dict_type & get_modules ();
+    module_handle_dict_type & get_modules();
 
-    const module_handle_dict_type & get_modules () const ;
+    const module_handle_dict_type & get_modules() const ;
 
     /// Return an array of pairs describing the name and
     /// class registration ID for each managed modules
     void build_modules_infos(std::vector<std::pair<std::string,std::string> > & infos_) const;
 
-    bool is_initialized () const;
+    bool is_initialized() const;
 
-    void initialize (const datatools::properties & setup_);
+    void initialize(const datatools::properties & setup_);
 
-    void initialize_simple ();
+    void initialize_simple();
 
-    void reset ();
+    void reset();
 
-    module_manager (uint32_t flags_ = BLANK);
+    module_manager(uint32_t flags_ = BLANK);
 
-    virtual ~module_manager ();
+    virtual ~module_manager();
 
-    bool has_service_manager () const;
+    bool has_service_manager() const;
 
-    const datatools::service_manager & get_service_manager () const;
+    const datatools::service_manager & get_service_manager() const;
 
-    datatools::service_manager & grab_service_manager ();
+    datatools::service_manager & grab_service_manager();
 
-    void set_service_manager (datatools::service_manager & service_manager_);
+    void set_service_manager(datatools::service_manager & service_manager_);
 
-    void install_service_manager (const datatools::properties & service_manager_configuration_);
+    void install_service_manager(const datatools::properties & service_manager_configuration_);
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
-    void load_module (const std::string & module_name_,
-                      const std::string & module_id_,
-                      const datatools::properties & module_config_);
+    void load_module(const std::string & module_name_,
+                     const std::string & module_id_,
+                     const datatools::properties & module_config_);
 
-    void create_module (module_entry_type & module_entry_);
+    void create_module(module_entry_type & module_entry_);
 
-    void initialize_module (module_entry_type & module_entry_);
+    void initialize_module(module_entry_type & module_entry_);
 
-    void load_modules (const datatools::multi_properties & modules_config_);
+    void load_modules(const datatools::multi_properties & modules_config_);
 
-    void load_modules (const std::string & modules_defs_);
+    void load_modules(const std::string & modules_defs_);
 
     datatools::logger::priority get_logging_priority() const;
 
@@ -126,40 +125,40 @@ namespace dpp {
 
   protected:
 
-    void _load_module (const std::string & module_name_,
-                       const std::string & module_id_,
-                       const datatools::properties & module_config_);
+    void _load_module(const std::string & module_name_,
+                      const std::string & module_id_,
+                      const datatools::properties & module_config_);
 
-    void _load_modules (const datatools::multi_properties & modules_config_);
+    void _load_modules(const datatools::multi_properties & modules_config_);
 
-    void _create_module (module_entry_type & module_entry_);
+    void _create_module(module_entry_type & module_entry_);
 
-    void _initialize_module (module_entry_type & module_entry_);
+    void _initialize_module(module_entry_type & module_entry_);
 
-    void _reset_module (module_entry_type & module_entry_);
+    void _reset_module(module_entry_type & module_entry_);
 
   public:
 
     /// Check if a module factory given by ID is registered
-    bool has_module_type (const std::string & module_id_) const;
+    bool has_module_type(const std::string & module_id_) const;
 
     /// Register a factory for a given module class given a (unique) ID
     template <class ModuleClass>
-    void register_module_type (const std::string & module_id_)
+    void register_module_type(const std::string & module_id_)
     {
-      _factory_register_.registration (module_id_, boost::factory<ModuleClass*>());
+      _factory_register_.registration(module_id_, boost::factory<ModuleClass*>());
       return;
     }
 
     /// Unregister a module factory
-    void unregister_module_type (const std::string & module_id_);
+    void unregister_module_type(const std::string & module_id_);
 
     /// Copy registered module factories IDs in the supplied vector
     void build_registered_module_types(std::vector<std::string> & ids_) const;
 
   protected:
 
-    void _preload_global_dict ();
+    void _preload_global_dict();
 
   private:
 
@@ -183,10 +182,8 @@ DOCD_CLASS_DECLARATION(dpp::module_manager)
 
 #endif // DPP_MODULE_MANAGER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

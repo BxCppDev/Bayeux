@@ -24,8 +24,6 @@
  *
  *   Typedefs for the event record processing module factory.
  *
- * History:
- *
  */
 
 #ifndef DPP_MODULE_TOOLS_H
@@ -72,70 +70,70 @@ namespace dpp {
 
   public:
 
-    const datatools::properties & get_module_config () const;
+    const datatools::properties & get_module_config() const;
 
-    datatools::properties & grab_module_config ();
+    datatools::properties & grab_module_config();
 
-    void set_module_config (const datatools::properties &);
+    void set_module_config(const datatools::properties &);
 
-    const std::string & get_module_name () const;
+    const std::string & get_module_name() const;
 
-    void set_module_name (const std::string &);
+    void set_module_name(const std::string &);
 
-    const std::string & get_module_id () const;
+    const std::string & get_module_id() const;
 
-    void set_ptr (base_module *);
+    void set_ptr(base_module *);
 
-    void set_module_id (const std::string &);
+    void set_module_id(const std::string &);
 
-    bool has_manager () const;
+    bool has_manager() const;
 
-    void set_manager (module_manager &);
+    void set_manager(module_manager &);
 
-    void set_blank ();
+    void set_blank();
 
-    void set_created ();
+    void set_created();
 
-    void set_initialized ();
+    void set_initialized();
 
-    void set_uninitialized ();
+    void set_uninitialized();
 
-    bool is_created () const;
+    bool is_created() const;
 
-    bool is_initialized () const;
+    bool is_initialized() const;
 
     /// Constructor
-    module_entry_type ();
+    module_entry_type();
 
     /// Destructor
-    virtual ~module_entry_type ();
+    virtual ~module_entry_type();
 
     /// Check is the module is referenced in the embedded handle
-    bool has_module () const;
+    bool has_module() const;
 
-    const base_module & get_module () const;
+    const base_module & get_module() const;
 
-    base_module & grab_module ();
+    base_module & grab_module();
 
-    const module_handle_type & get_module_handle () const;
+    const module_handle_type & get_module_handle() const;
 
-    module_handle_type & grab_module_handle ();
+    module_handle_type & grab_module_handle();
 
-    module_handle_type & grab_initialized_module_handle ();
+    module_handle_type & grab_initialized_module_handle();
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
   private:
 
-    std::string        _module_name_;   /// Module name
-    std::string        _module_id_;     /// Module class registration ID
-    datatools::properties _module_config_; /// The configuration of the module
-    uint32_t           _module_status_; /// The status of the module
-    module_handle_type _module_handle_; /// The handle for the allocated service
-    module_manager *   _manager_;       /// Handle to the module manager
+    std::string           _module_name_;      ///< Module name
+    std::string           _module_id_;        ///< Module class registration ID
+    datatools::properties _module_config_;    ///< The configuration of the module
+    uint32_t              _module_status_;    ///< The status of the module
+    module_handle_type    _module_handle_;    ///< The handle for the allocated service
+    module_manager *      _manager_;          ///< Handle to the module manager
 
     friend class module_manager;
   };
@@ -146,10 +144,8 @@ namespace dpp {
 
 #endif // DPP_MODULE_TOOLS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

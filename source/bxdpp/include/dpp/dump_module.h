@@ -24,8 +24,6 @@
  *
  *   A dump data processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_DUMP_MODULE_H
@@ -41,30 +39,31 @@
 namespace dpp {
 
   /// \brief A data processing module to dump data records
-  class dump_module : public base_module
+  class dump_module
+    : public base_module
   {
   public:
 
     enum output_type
-    {
-      OUTPUT_INVALID = 0,
-      OUTPUT_COUT,
-      OUTPUT_CLOG,
-      OUTPUT_FILE,
-      OUTPUT_DEFAULT = OUTPUT_COUT
-    };
+      {
+        OUTPUT_INVALID = 0,
+        OUTPUT_COUT,
+        OUTPUT_CLOG,
+        OUTPUT_FILE,
+        OUTPUT_DEFAULT = OUTPUT_COUT
+      };
 
   public:
 
     /// Set the title:
-    void set_title(const std::string & a_title);
+    void set_title(const std::string & title_);
 
     /// Set the indenting string:
-    void set_indent(const std::string & a_indent);
+    void set_indent(const std::string & indent_);
 
     // Set the output:
-    void set_output(const std::string & a_output,
-                    const std::string & a_file = "");
+    void set_output(const std::string & output_,
+                    const std::string & file_ = "");
 
     /// Constructor
     dump_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
@@ -84,10 +83,10 @@ namespace dpp {
     virtual process_status process(::datatools::things & /* data_ */);
 
     /// Smart print :
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit               = false) const;
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_               = false) const;
 
   protected:
 
@@ -115,10 +114,8 @@ namespace dpp {
 
 #endif // DPP_DUMP_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

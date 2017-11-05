@@ -20,13 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- *
- *
  * Description:
  *
  *   Utility cut.
- *
- * History:
  *
  */
 
@@ -48,7 +44,8 @@ namespace datatools {
 
 namespace dpp {
 
-  class utils_cut : public cuts::i_cut
+  class utils_cut
+    : public cuts::i_cut
   {
   public:
 
@@ -89,10 +86,10 @@ namespace dpp {
     virtual void reset();
 
 
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit               = false) const;
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_               = false) const;
 
   protected:
     virtual int _accept();
@@ -114,9 +111,7 @@ namespace dpp {
 
 #endif //DPP_UTILS_CUT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// End: --

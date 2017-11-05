@@ -24,8 +24,6 @@
  *
  *   A skip data record processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_SKIP_MODULE_H
@@ -37,17 +35,18 @@
 namespace dpp {
 
   /// \brief A data processing module to skip some data records
-  class skip_module : public base_module
+  class skip_module
+    : public base_module
   {
   public:
 
     /// Skip mode
     enum mode_type
-    {
-      SKIP_MODE_INVALID  = 0,
-      SKIP_MODE_INTERVAL = 1,
-      MODE_DEFAULT = SKIP_MODE_INTERVAL
-    };
+      {
+        SKIP_MODE_INVALID  = 0,
+        SKIP_MODE_INTERVAL = 1,
+        MODE_DEFAULT = SKIP_MODE_INTERVAL
+      };
 
     /// Constructor
     skip_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
@@ -73,24 +72,24 @@ namespace dpp {
       module_handle_type handle;
     };
 
-    int get_first () const;
+    int get_first() const;
 
-    int get_last () const;
+    int get_last() const;
 
-    bool is_inverted () const;
+    bool is_inverted() const;
 
-    void set_first_last (int a_first,
-                         int a_last,
-                         bool a_inverted = false);
+    void set_first_last(int first_,
+                        int last_,
+                        bool inverted_ = false);
 
-    void set_first_number (int a_first,
-                           int a_number,
-                           bool a_inverted = false);
+    void set_first_number(int first_,
+                          int number_,
+                          bool inverted_ = false);
 
   protected:
 
     /// Set default values before explicit settings and initialization
-    void _set_defaults ();
+    void _set_defaults();
 
   private:
 
@@ -109,10 +108,8 @@ namespace dpp {
 
 #endif // DPP_SKIP_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

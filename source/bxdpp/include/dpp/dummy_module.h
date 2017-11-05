@@ -25,8 +25,6 @@
  *
  *   A dummy data processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_DUMMY_MODULE_H
@@ -44,7 +42,8 @@ namespace dpp {
   /** The 'dummy_module' class inherits the interface of the
    * 'dpp::base_module' abstract class.
    */
-  class dummy_module : public base_module
+  class dummy_module
+    : public base_module
   {
   public:
 
@@ -52,13 +51,13 @@ namespace dpp {
     static const std::string & default_flag_name();
 
     /// Set the flag name
-    void set_flag_name(const std::string & a_flag_name);
+    void set_flag_name(const std::string & flag_name_);
 
     /// Get the flag name
     const std::string & get_flag_name() const;
 
     /// Set the "GP" bank label
-    void set_GP_label(const std::string & a_gp_label);
+    void set_GP_label(const std::string & gp_label_);
 
     /// Get the "GP" bank label
     const std::string & get_GP_label() const;
@@ -71,25 +70,25 @@ namespace dpp {
 
     /** Initialization method :
      *
-     * \param a_properties is a const reference to some container of
+     * \param properties is a const reference to some container of
      * various property configuration parameters
-     * \param a_srv_mgr a reference to a service manager(provided by some
+     * \param srv_mgr a reference to a service manager(provided by some
      * external agent)
-     * \param a_mod_dict a reference to a dictionnary of pre-existing modules
+     * \param mod_dict a reference to a dictionnary of pre-existing modules
      * (provided by some external agent)
      */
-    virtual void initialize(const datatools::properties & a_properties,
-                            datatools::service_manager & a_srv_mgr,
-                            module_handle_dict_type & a_mod_dict);
+    virtual void initialize(const datatools::properties & properties_,
+                            datatools::service_manager & srv_mgr_,
+                            module_handle_dict_type & mod_dict_);
 
     /// Termination method
     virtual void reset();
 
     /** Event processing method :
-     *  \param a_data_record is a mutable reference to the data model instance to be processed.
+     *  \param data_record is a mutable reference to the data model instance to be processed.
      *  \return the error status of the data record processing
      */
-    virtual process_status process(datatools::things & a_data_record);
+    virtual process_status process(datatools::things & data_record_);
 
   private:
 
@@ -105,10 +104,8 @@ namespace dpp {
 
 #endif // DPP_DUMMY_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

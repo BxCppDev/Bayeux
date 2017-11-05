@@ -26,8 +26,6 @@
  *  as the repository for transcient and sharable data during the
  *  lifetime of a data processing chain.
  *
- * History:
- *
  */
 
 #ifndef DPP_CONTEXT_SERVICE_H
@@ -52,7 +50,8 @@ namespace datatools {
 namespace dpp {
 
   /// \brief A service that handles a context object store implemented as a datatools::multi_properties container
-  class context_service : public datatools::base_service
+  class context_service
+    : public datatools::base_service
   {
   public:
 
@@ -72,8 +71,8 @@ namespace dpp {
     virtual bool is_initialized() const;
 
     /// Initialize
-    virtual int initialize(const datatools::properties & a_config,
-                            datatools::service_dict_type & a_service_dict);
+    virtual int initialize(const datatools::properties & config_,
+                           datatools::service_dict_type & service_dict_);
 
     /// Reset
     virtual int reset();
@@ -85,23 +84,23 @@ namespace dpp {
     virtual ~context_service();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit               = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
   private:
 
     // Management:
-    bool initialized_; //!< Initialization flag
+    bool _initialized_; //!< Initialization flag
 
     // Configuration:
-    std::string load_filename_; //!< Name of the file from which the store is loaded
-    std::string store_filename_; //!< Name of the file to which the store is saved
-    std::string backup_filename_; //!< name of the backup file
+    std::string _load_filename_;   //!< Name of the file from which the store is loaded
+    std::string _store_filename_;  //!< Name of the file to which the store is saved
+    std::string _backup_filename_; //!< name of the backup file
 
     // Internal data:
-    datatools::multi_properties * store_; //!< Internal store
+    datatools::multi_properties * _store_; //!< Internal store
 
     // Registration :
     DATATOOLS_SERVICE_REGISTRATION_INTERFACE(context_service)
@@ -112,10 +111,8 @@ namespace dpp {
 
 #endif // DPP_CONTEXT_SERVICE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

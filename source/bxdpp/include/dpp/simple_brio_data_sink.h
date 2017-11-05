@@ -25,8 +25,6 @@
  *
  *   Generic data sink
  *
- * History:
- *
  */
 
 #ifndef DPP_SIMPLE_BRIO_DATA_SINK_H
@@ -51,43 +49,44 @@ namespace brio {
 namespace dpp {
 
   /// \brief A brio-based I/O data sink/writer
-  class simple_brio_data_sink : public i_data_sink
+  class simple_brio_data_sink
+    : public i_data_sink
   {
 
   protected:
 
-    void _open_file_sink ();
+    void _open_file_sink();
 
-    void _close_file_sink ();
+    void _close_file_sink();
 
   public:
 
-    virtual bool is_random () const;
+    virtual bool is_random() const;
 
-    virtual void open ();
+    virtual void open();
 
-    virtual bool store_next_record (const datatools::things & a_event_record);
+    virtual bool store_next_record(const datatools::things & a_event_record);
 
-    virtual bool can_store_meta_data () const;
+    virtual bool can_store_meta_data() const;
 
-    virtual bool store_metadata (const datatools::properties & a_meta_data);
+    virtual bool store_metadata(const datatools::properties & a_meta_data);
 
-    virtual void close ();
+    virtual void close();
 
-    virtual void reset ();
+    virtual void reset();
 
   public:
 
     /// Constructor
-    simple_brio_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    simple_brio_data_sink(datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
 
     /// Constructor
-    simple_brio_data_sink (const std::string & a_sink_label = "",
-                           datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    simple_brio_data_sink(const std::string & a_sink_label = "",
+                          datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     /// Destructor
-    virtual ~simple_brio_data_sink ();
+    virtual ~simple_brio_data_sink();
 
   private:
 
@@ -99,10 +98,8 @@ namespace dpp {
 
 #endif // DPP_SIMPLE_BRIO_DATA_SINK_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -25,8 +25,6 @@
  *
  *    Common resources for BRIO I/O
  *
- * History:
- *
  */
 
 /**
@@ -64,10 +62,8 @@ namespace dpp {
 
 #endif // DPP_BRIO_COMMON_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

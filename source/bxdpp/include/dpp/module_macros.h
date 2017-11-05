@@ -24,8 +24,6 @@
  *
  *   Macros to help build module classes.
  *
- * History:
- *
  */
 
 /*! \file module_macros.h
@@ -70,9 +68,9 @@
   virtual dpp::base_module::process_status process(::datatools::things &); \
   /**/
 
-#define DPP_MODULE_PROCESS_IMPLEMENT_HEAD(T,DataRecord)     \
-  dpp::base_module::process_status                          \
-  T::process(::datatools::things & DataRecord)              \
+#define DPP_MODULE_PROCESS_IMPLEMENT_HEAD(T,DataRecord) \
+  dpp::base_module::process_status                      \
+  T::process(::datatools::things & DataRecord)          \
   /**/
 
 #define DPP_MODULE_CONSTRUCTOR_DECLARE(T)                             \
@@ -131,10 +129,8 @@
 
 #endif // DPP_MODULE_MACROS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

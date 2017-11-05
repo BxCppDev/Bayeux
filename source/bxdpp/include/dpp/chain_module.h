@@ -26,8 +26,6 @@
  *
  *   Chain processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_CHAIN_MODULE_H
@@ -43,7 +41,8 @@
 namespace dpp {
 
   /// \brief A data processing module to chain children data processing modules
-  class chain_module : public base_module
+  class chain_module
+    : public base_module
   {
   public:
 
@@ -99,10 +98,8 @@ namespace dpp {
 
 #endif // DPP_CHAIN_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -24,8 +24,6 @@
  *
  *   Base data processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_BASE_MODULE_H
@@ -58,7 +56,8 @@ namespace datatools {
 namespace dpp {
 
   /// \brief Base processing module (abstract interface)
-  class base_module : public datatools::i_tree_dumpable
+  class base_module
+    : public datatools::i_tree_dumpable
   {
   public:
 
@@ -93,7 +92,7 @@ namespace dpp {
     };
 
     /// Default constructor :
-    base_module(datatools::logger::priority p = datatools::logger::PRIO_FATAL);
+    base_module(datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     /// Destructor :
     virtual ~base_module();
@@ -114,7 +113,7 @@ namespace dpp {
     const std::string & get_description() const;
 
     /// Set the module description
-    void set_description(const std::string & a_description);
+    void set_description(const std::string & description_);
 
     /// Check the module last error message
     bool has_last_error_message() const;
@@ -138,49 +137,49 @@ namespace dpp {
     virtual void initialize_simple();
 
     /// Initialize the module with a service manager only
-    virtual void initialize_simple_with_service(datatools::service_manager & a_service_manager);
+    virtual void initialize_simple_with_service(datatools::service_manager & service_manager_);
 
     /// Initialize the module only using a set of parameters
-    virtual void initialize_standalone(const datatools::properties & a_config);
+    virtual void initialize_standalone(const datatools::properties & config_);
 
     /// Initialize the module using a set of parameters and a service manager
-    virtual void initialize_with_service(const datatools::properties & a_config,
-                                         datatools::service_manager & a_service_manager);
+    virtual void initialize_with_service(const datatools::properties & config_,
+                                         datatools::service_manager & service_manager_);
 
     /// Initialize the module using a set of parameters and a map of modules
-    virtual void initialize_without_service(const datatools::properties & a_config,
-                                            module_handle_dict_type & a_module_dictionnary);
+    virtual void initialize_without_service(const datatools::properties & config,
+                                            module_handle_dict_type & module_dictionnary_);
 
     /** The main initialization method (post-construction):
-     * @param a_config the container of configuration parameters
-     * @param a_module_dictionnary a dictionnary of existing 'modules' which can be used
+     * @param config the container of configuration parameters
+     * @param module_dictionnary a dictionnary of existing 'modules' which can be used
      *        to build the current module (used in the framework of a factory)
-     * @param a_service_manager a manager for external services
+     * @param service_manager a manager for external services
      */
-    virtual void initialize(const datatools::properties & a_config,
-                            datatools::service_manager & a_service_manager,
-                            module_handle_dict_type & a_module_dictionnary) = 0;
+    virtual void initialize(const datatools::properties & config_,
+                            datatools::service_manager & service_manager_,
+                            module_handle_dict_type & module_dictionnary_) = 0;
 
     /** The main data model processing method
-     * @param a_data_model the data model to be processed
+     * @param data_model the data model to be processed
      * @return the status code (0=ok)
      */
-    virtual process_status process(datatools::things & a_data_model) = 0;
+    virtual process_status process(datatools::things & data_model_) = 0;
 
     /// The main termination method
     virtual void reset() = 0;
 
     /// Smart print
-    virtual void tree_dump(std::ostream &      a_out = std::clog,
-                           const std::string & a_title  = "",
-                           const std::string & a_indent = "",
-                           bool                a_inherit = false) const;
+    virtual void tree_dump(std::ostream &      out_ = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool                inherit_ = false) const;
 
     /// Default print
-    void print(std::ostream & a_out = std::clog) const;
+    void print(std::ostream & out_ = std::clog) const;
 
     /// Set logging priority
-    void set_logging_priority(datatools::logger::priority p);
+    void set_logging_priority(datatools::logger::priority p_);
 
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
@@ -191,13 +190,13 @@ namespace dpp {
   protected:
 
     /// Set the name of the module
-    void _set_name(const std::string & a_name);
+    void _set_name(const std::string & name_);
 
     /// Set the initialization flag of the module
-    void _set_initialized(bool a_initialized);
+    void _set_initialized(bool initialized_);
 
     /// Basic initialization shared by all inherited modules
-    void _common_initialize(const datatools::properties & a_config);
+    void _common_initialize(const datatools::properties & config_);
 
   protected:
 
@@ -248,10 +247,8 @@ namespace dpp {
 
 #endif // DPP_BASE_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

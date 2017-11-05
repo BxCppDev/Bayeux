@@ -25,8 +25,6 @@
  *
  *   Base class for I/O modules.
  *
- * History:
- *
  */
 
 #ifndef DPP_IO_COMMON_H
@@ -112,8 +110,8 @@ namespace dpp {
 
     const std::string & get_context_label() const;
 
-    void set_context_service (dpp::context_service & a_context_service,
-                              const std::string & a_ctx_label = "Ctx");
+    void set_context_service (dpp::context_service & context_service_,
+                              const std::string & ctx_label_ = "Ctx");
 
     bool has_context_service() const;
 
@@ -127,19 +125,19 @@ namespace dpp {
 
     void clear_context_metadata();
 
-    void set_max_files (int a_max_files);
+    void set_max_files (int max_files_);
 
     int get_max_files() const;
 
-    void set_max_record_total (int a_max_record_total);
+    void set_max_record_total (int max_record_total_);
 
     int get_max_record_total() const;
 
-    void set_max_record_per_file (int a_max_record_per_file);
+    void set_max_record_per_file (int max_record_per_file_);
 
     int get_max_record_per_file() const;
 
-    void init_filenames (const datatools::properties & a_setup);
+    void init_filenames (const datatools::properties & setup_);
 
     const datatools::smart_filename & get_filenames() const;
 
@@ -161,8 +159,8 @@ namespace dpp {
 
     void set_file_index(int);
 
-    void initialize(const datatools::properties & a_config,
-                    datatools::service_manager & a_service_manager);
+    void initialize(const datatools::properties & config_,
+                    datatools::service_manager & service_manager_);
 
     void reset();
 
@@ -181,10 +179,10 @@ namespace dpp {
     /// Check if all context metadata are accepted
     bool is_context_all() const;
 
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_          = false) const;
 
   protected:
 

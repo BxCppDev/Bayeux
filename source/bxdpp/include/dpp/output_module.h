@@ -46,7 +46,8 @@ namespace dpp {
   class io_common;
 
   /// \brief A output data processing module for automated I/O operations
-  class output_module : public base_module
+  class output_module
+    : public base_module
   {
   public:
 
@@ -88,7 +89,7 @@ namespace dpp {
                                       int increment_ = 1);
 
     /// Set the flag for preserving existing output file (prevent from file overwriting)
-    void set_preserve_existing_output(bool a_preserve_existing_output);
+    void set_preserve_existing_output(bool preserve_existing_output);
 
     /// Check if an embedded metadata store exists
     bool has_metadata_store() const;
@@ -103,10 +104,10 @@ namespace dpp {
     void clear_metadata_store();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
-                           const std::string & a_title  = "",
-                           const std::string & a_indent = "",
-                           bool a_inherit          = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_          = false) const;
 
     /// Check output termination
     bool is_terminated() const;
@@ -126,7 +127,7 @@ namespace dpp {
   protected:
 
     /// Store a data record
-    process_status _store(const datatools::things & a_data_record);
+    process_status _store(const datatools::things & data_record_);
 
     /// Set default values before explicit settings and initialization
     void _set_defaults();
@@ -137,7 +138,7 @@ namespace dpp {
   private:
 
     /// Open output file
-    base_module::process_status _open_sink();
+    base_module::process_status _open_sink_();
 
     /// Process metadata, if any
     void _store_metadata_();

@@ -24,8 +24,6 @@
  *
  *   Histogram service.
  *
- * History:
- *
  */
 
 #ifndef DPP_HISTOGRAM_SERVICE_H
@@ -55,7 +53,8 @@ namespace datatools {
 namespace dpp {
 
   /// \brief A service for managing 1D and 2D histograms
-  class histogram_service : public datatools::base_service
+  class histogram_service
+    : public datatools::base_service
   {
   public:
 
@@ -132,10 +131,8 @@ DOCD_CLASS_DECLARATION(dpp::histogram_service)
 
 #endif // DPP_HISTOGRAM_SERVICE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

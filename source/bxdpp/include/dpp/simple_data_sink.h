@@ -25,8 +25,6 @@
  *
  *   Generic data sink
  *
- * History:
- *
  */
 
 #ifndef DPP_SIMPLE_DATA_SINK_H
@@ -51,45 +49,46 @@ namespace datatools {
 namespace dpp {
 
   /// \brief A Boost/Serialization-based I/O data sink/writer
-  class simple_data_sink : public i_data_sink
+  class simple_data_sink
+    : public i_data_sink
   {
 
   public:
 
-    virtual void open ();
+    virtual void open();
 
-    virtual bool store_next_record (const datatools::things & a_event_record);
+    virtual bool store_next_record(const datatools::things & event_record_);
 
-    virtual bool can_store_meta_data () const;
+    virtual bool can_store_meta_data() const;
 
-    virtual bool store_metadata (const datatools::properties & a_meta_data);
+    virtual bool store_metadata(const datatools::properties & meta_data_);
 
-    virtual void close ();
+    virtual void close();
 
-    virtual void reset ();
-
-    /// Constructor
-    simple_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
-
+    virtual void reset();
 
     /// Constructor
-    simple_data_sink (const std::string & a_sink_label = "",
-                      datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    simple_data_sink(datatools::logger::priority priority_ = datatools::logger::PRIO_NOTICE);
+
+
+    /// Constructor
+    simple_data_sink(const std::string & sink_label_ = "",
+                      datatools::logger::priority priority_ = datatools::logger::PRIO_NOTICE);
 
     /// Destructor
-    virtual ~simple_data_sink ();
+    virtual ~simple_data_sink();
 
   protected:
 
-    void open_file_sink_ ();
+    void _open_file_sink();
 
-    void close_file_sink_ ();
+    void _close_file_sink();
 
   private:
 
     unsigned int _record_counter_;
     unsigned int _metadata_counter_;
-    datatools::data_writer * _boost_io_file_writer_;
+    datatools::data_writer * _boost_io_file_writer_ = nullptr;
 
   };
 
@@ -97,10 +96,8 @@ namespace dpp {
 
 #endif // DPP_SIMPLE_SIMPLE_DATA_SINK_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

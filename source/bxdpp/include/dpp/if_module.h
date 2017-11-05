@@ -24,8 +24,6 @@
  *
  *   A skip data processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_IF_MODULE_H
@@ -44,7 +42,8 @@
 namespace dpp {
 
   /// \brief A data processing module to be apply only if some cut is fulfilled
-  class if_module : public base_module
+  class if_module
+    : public base_module
   {
   public:
 
@@ -134,10 +133,8 @@ namespace dpp {
 
 #endif // DPP_IF_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

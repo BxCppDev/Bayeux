@@ -34,12 +34,10 @@ namespace dpp {
 
 } // end of namespace dpp
 
-#endif // DPP_UTILS_H=
+#endif // DPP_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

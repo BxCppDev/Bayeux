@@ -25,9 +25,8 @@
  *
  *   Generic sequential data source reader.
  *
- * History:
- *
  */
+
 /**
  *
  * Standard BOOST I/O file format for SuperNEMO data is :
@@ -68,42 +67,40 @@ namespace datatools {
 namespace dpp {
 
   /// \brief A Boost/Serialization-based I/O data source/reader
-  class simple_data_source : public i_data_source
+  class simple_data_source
+    : public i_data_source
   {
 
   public:
 
-    virtual void open ();
+    virtual void open();
 
-    virtual bool has_next_record ();
+    virtual bool has_next_record();
 
-    virtual bool load_next_record (datatools::things & a_event_record);
+    virtual bool load_next_record(datatools::things & a_event_record_);
 
-    virtual int64_t get_number_of_metadata () const;
+    virtual int64_t get_number_of_metadata() const;
 
-    virtual bool load_metadata (datatools::properties & a_metadata, int64_t a_entry);
+    virtual bool load_metadata(datatools::properties & a_metadata_, int64_t a_entry_);
 
-    virtual void close ();
+    virtual void close();
 
-    virtual void reset ();
+    virtual void reset();
 
-    // ctor:
-    simple_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    simple_data_source(datatools::logger::priority a_priority_ = datatools::logger::PRIO_NOTICE);
 
-    // ctor:
-    simple_data_source (const std::string & a_source_label,
-                        datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    simple_data_source(const std::string & a_source_label_,
+                       datatools::logger::priority a_priority_ = datatools::logger::PRIO_NOTICE);
 
-    // dtor:
-    virtual ~simple_data_source ();
+    virtual ~simple_data_source();
 
   protected:
 
-    virtual void _open_file_source ();
+    virtual void _open_file_source();
 
-    virtual void _close_file_source ();
+    virtual void _close_file_source();
 
-    virtual void _check_next_record ();
+    virtual void _check_next_record();
 
   private:
 
@@ -116,10 +113,8 @@ namespace dpp {
 
 #endif // DPP_SIMPLE_DATA_SOURCE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -25,8 +25,6 @@
  *
  *   An input data processing module.
  *
- * History:
- *
  */
 
 #ifndef DPP_INPUT_MODULE_H
@@ -49,7 +47,8 @@ namespace dpp {
   class io_common;
 
   /// \brief An input data processing module for automated I/O operations
-  class input_module : public base_module
+  class input_module
+    : public base_module
   {
   public:
 
@@ -166,7 +165,6 @@ namespace dpp {
     boost::scoped_ptr<io_common> _common_; //!< Common data structure
     i_data_source              * _source_ = nullptr; //!< Abstract data reader
     bool                         _metadata_updated_ = false; //!< Flag for possible metadata update
-    // bool                         _metadata_preload_; //!< Preload metadata before processing data records
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(input_module)

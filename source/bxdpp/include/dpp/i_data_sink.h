@@ -59,25 +59,19 @@ namespace dpp {
       std::string effective_label;
       int         status;
 
-      sink_record(const std::string & a_label = "");
+      sink_record(const std::string & label_ = "");
       void reset();
     };
 
     /// Set logging priority
-    void set_logging_priority(datatools::logger::priority p);
+    void set_logging_priority(datatools::logger::priority p_);
 
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
 
-    void set_preserve_existing_sink(bool a_value);
+    void set_preserve_existing_sink(bool value_);
 
     bool is_preserve_existing_sink() const;
-
-  protected:
-
-    void set_defaults_(datatools::logger::priority a_priority);
-
-  public:
 
     virtual bool is_open() const;
 
@@ -85,28 +79,30 @@ namespace dpp {
 
     virtual bool is_random() const;
 
-    virtual void set(const std::string & a_sink_label);
+    virtual void set(const std::string & sink_label_);
 
     virtual void open() = 0;
 
-    virtual bool store_next_record(const datatools::things & a_event_record) = 0;
+    virtual bool store_next_record(const datatools::things & event_record_) = 0;
 
     virtual bool can_store_meta_data() const = 0;
 
-    virtual bool store_metadata(const datatools::properties & a_meta_data) = 0;
+    virtual bool store_metadata(const datatools::properties & meta_data_) = 0;
 
     virtual void close() = 0;
 
     virtual void reset() = 0;
 
-  public:
+    i_data_sink(datatools::logger::priority priority_ = datatools::logger::PRIO_ERROR);
 
-    i_data_sink(datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
-
-    i_data_sink(const std::string & a_sink_label,
-                 datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
+    i_data_sink(const std::string & sink_label_,
+                datatools::logger::priority priority_ = datatools::logger::PRIO_ERROR);
 
     virtual ~i_data_sink();
+
+  protected:
+
+    void _set_defaults(datatools::logger::priority priority_);
 
   protected:
 
@@ -120,10 +116,8 @@ namespace dpp {
 
 #endif // DPP_I_DATA_SINK_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

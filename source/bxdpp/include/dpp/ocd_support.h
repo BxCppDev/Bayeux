@@ -30,9 +30,7 @@ DOCD_CLASS_DECLARATION(dpp::skip_module)
 
 #endif // DPP_OCD_SUPPORT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// End: --

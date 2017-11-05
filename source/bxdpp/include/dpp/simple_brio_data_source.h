@@ -30,8 +30,6 @@
  *   the 'things' (snemo::core::model::event_record) as
  *   the basis of the data model.
  *
- * History:
- *
  */
 
 #ifndef DPP_SIMPLE_BRIO_DATA_SOURCE_H
@@ -56,51 +54,49 @@ namespace brio {
 namespace dpp {
 
   /// \brief A brio-based I/O data source/reader
-  class simple_brio_data_source : public i_data_source
+  class simple_brio_data_source
+    : public i_data_source
   {
   public:
 
-    virtual bool is_random () const;
+    virtual bool is_random() const;
 
-    virtual void open ();
+    virtual void open();
 
-    virtual bool has_next_record ();
+    virtual bool has_next_record();
 
-    virtual bool load_next_record (datatools::things & a_event_record);
+    virtual bool load_next_record(datatools::things & event_record_);
 
-    virtual int64_t get_number_of_metadata () const;
+    virtual int64_t get_number_of_metadata() const;
 
-    virtual bool load_metadata (datatools::properties & a_metadata, int64_t a_entry);
+    virtual bool load_metadata(datatools::properties & metadata_, int64_t entry_);
 
-    virtual void close ();
+    virtual void close();
 
-    virtual void reset ();
+    virtual void reset();
 
-    // ctor:
-    simple_brio_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    simple_brio_data_source(datatools::logger::priority priority = datatools::logger::PRIO_NOTICE);
 
-    // ctor:
-    simple_brio_data_source (const std::string & a_source_label,
-                             datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
+    simple_brio_data_source(const std::string & source_label_,
+                            datatools::logger::priority priority_ = datatools::logger::PRIO_NOTICE);
 
-    // dtor:
-    virtual ~simple_brio_data_source ();
+    virtual ~simple_brio_data_source();
 
   protected:
 
-    virtual void _open_file_source ();
+    virtual void _open_file_source();
 
-    virtual void _close_file_source ();
+    virtual void _close_file_source();
 
-    virtual void _check_next_record ();
+    virtual void _check_next_record();
 
-    virtual int64_t _get_number_of_entries () const;
+    virtual int64_t _get_number_of_entries() const;
 
-    virtual bool _load_record (datatools::things & a_event_record, int64_t a_entry);
+    virtual bool _load_record(datatools::things & event_record_, int64_t entry_);
 
   private:
 
-    brio::reader * _brio_file_reader_;
+    brio::reader * _brio_file_reader_ = nullptr;
 
   };
 
@@ -108,10 +104,8 @@ namespace dpp {
 
 #endif // DPP_SIMPLE_BRIO_DATA_SOURCE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

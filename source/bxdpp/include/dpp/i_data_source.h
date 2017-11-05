@@ -25,8 +25,6 @@
  *
  *   Abstract data source reader class.
  *
- * History:
- *
  */
 
 #ifndef DPP_I_DATA_SOURCE_H
@@ -65,12 +63,12 @@ namespace dpp {
       int         status;
       bool        processed;
 
-      source_record(const std::string & a_label = "");
+      source_record(const std::string & label_ = "");
       void reset();
     };
 
     /// Set logging priority
-    void set_logging_priority(datatools::logger::priority p);
+    void set_logging_priority(datatools::logger::priority p_);
 
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
@@ -81,50 +79,50 @@ namespace dpp {
 
     virtual bool is_random() const;
 
-    virtual void set(const std::string & a_source_label);
+    virtual void set(const std::string & source_label_);
 
     virtual void open() = 0;
 
-    virtual bool can_load_record(int64_t a_entry);
+    virtual bool can_load_record(int64_t entry_);
 
     virtual bool has_next_record() = 0;
 
-    virtual bool load_next_record(datatools::things & a_event_record) = 0;
+    virtual bool load_next_record(datatools::things & event_record_) = 0;
 
     // Default failing load method :
     virtual bool has_number_of_entries() const;
 
     virtual int64_t get_number_of_entries() const;
 
-    virtual bool load_record(datatools::things & a_event_record, int64_t a_entry);
+    virtual bool load_record(datatools::things & event_record_, int64_t entry_);
 
     virtual int64_t get_number_of_metadata() const = 0;
 
-    virtual bool load_metadata(datatools::properties & a_metadata, int64_t a_entry) = 0;
+    virtual bool load_metadata(datatools::properties & metadata_, int64_t entry_) = 0;
 
     virtual void close() = 0;
 
     virtual void reset() = 0;
 
     /// Constructor
-    i_data_source(datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
+    i_data_source(datatools::logger::priority priority_ = datatools::logger::PRIO_ERROR);
 
     /// Constructor
-    i_data_source(const std::string & a_source_label,
-                   datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
+    i_data_source(const std::string & source_label_,
+                  datatools::logger::priority priority_ = datatools::logger::PRIO_ERROR);
 
     /// Destructor:
     virtual ~i_data_source();
 
   protected:
 
-    void _set_defaults(datatools::logger::priority a_priority);
+    void _set_defaults(datatools::logger::priority priority_);
 
     virtual void _check_next_record() = 0;
 
     // Default failing load method :
-    virtual bool _load_record(datatools::things & a_event_record,
-                               int64_t a_entry);
+    virtual bool _load_record(datatools::things & event_record_,
+                              int64_t entry_);
 
     // Default failing getter method :
     virtual int64_t _get_number_of_entries() const;
@@ -141,10 +139,8 @@ namespace dpp {
 
 #endif // DPP_I_DATA_SOURCE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
