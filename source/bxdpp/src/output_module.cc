@@ -239,7 +239,7 @@ namespace dpp {
     }
     _common_.get()->initialize(a_config, a_service_manager);
 
-    this->_open_sink();
+    this->_open_sink_();
 
     /*************************************
      *  end of the initialization step   *
@@ -365,7 +365,7 @@ namespace dpp {
     return;
   }
 
-  base_module::process_status output_module::_open_sink()
+  base_module::process_status output_module::_open_sink_()
   {
     if (_sink_ == nullptr) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
@@ -397,7 +397,7 @@ namespace dpp {
     process_status store_status = PROCESS_OK;
     if (_sink_ == 0) {
       // attempt to open a sink of event records :
-      store_status = _open_sink();
+      store_status = _open_sink_();
       if (store_status != PROCESS_OK) {
         return store_status;
       }

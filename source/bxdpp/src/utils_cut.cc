@@ -212,10 +212,3 @@ namespace dpp {
   }
 
 }  // end of namespace dpp
-
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** End: --
-*/

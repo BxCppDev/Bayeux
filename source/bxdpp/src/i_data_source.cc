@@ -38,10 +38,10 @@ namespace dpp {
   const int i_data_source::source_record::STATUS_CLOSED;
   const int i_data_source::source_record::STATUS_OPENED;
 
-  i_data_source::source_record::source_record(const std::string & a_label)
+  i_data_source::source_record::source_record(const std::string & label_)
   {
     reset();
-    label = a_label;
+    label = label_;
     return;
   }
 
@@ -54,9 +54,9 @@ namespace dpp {
     return;
   }
 
-  void i_data_source::set_logging_priority(datatools::logger::priority a_priority)
+  void i_data_source::set_logging_priority(datatools::logger::priority priority_)
   {
-    _logging = a_priority;
+    _logging = priority_;
     return;
   }
 
@@ -70,14 +70,14 @@ namespace dpp {
     return _source_record.status == source_record::STATUS_OPENED;
   }
 
-  void i_data_source::set(const std::string & a_source_label)
+  void i_data_source::set(const std::string & source_label_)
   {
     DT_THROW_IF(! _source_record.label.empty(),
                  std::logic_error,
                  "A source labelled '" << _source_record.label
                  << "' is already in use !");
-    _source_record.label           = a_source_label;
-    std::string effective_label         = a_source_label;
+    _source_record.label           = source_label_;
+    std::string effective_label         = source_label_;
     datatools::fetch_path_with_env(effective_label);
     _source_record.effective_label = effective_label;
     _source_record.status          = source_record::STATUS_CLOSED;
@@ -140,9 +140,9 @@ namespace dpp {
     return _load_record(a_event_record, a_entry);
   }
 
-  void i_data_source::_set_defaults(datatools::logger::priority a_priority)
+  void i_data_source::_set_defaults(datatools::logger::priority priority_)
   {
-    _logging = a_priority;
+    _logging = priority_;
     _has_next_record = false;
     return;
   }
@@ -157,17 +157,17 @@ namespace dpp {
     return false;
   }
 
-  i_data_source::i_data_source(datatools::logger::priority a_priority)
+  i_data_source::i_data_source(datatools::logger::priority priority_)
   {
-    this->_set_defaults(a_priority);
+    this->_set_defaults(priority_);
     return;
   }
 
-  i_data_source::i_data_source(const std::string & a_source_label,
-                                datatools::logger::priority a_priority)
+  i_data_source::i_data_source(const std::string & source_label_,
+                                datatools::logger::priority priority_)
   {
-    this->_set_defaults(a_priority);
-    this->set(a_source_label);
+    this->_set_defaults(priority_);
+    this->set(source_label_);
     return;
   }
 
@@ -177,11 +177,3 @@ namespace dpp {
   }
 
 }  // end of namespace dpp
-
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

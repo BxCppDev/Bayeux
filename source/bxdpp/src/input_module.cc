@@ -629,11 +629,3 @@ namespace dpp {
   }
 
 } // namespace dpp
-
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

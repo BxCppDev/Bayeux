@@ -771,11 +771,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::module_manager,ocd_)
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
 DOCD_CLASS_SYSTEM_REGISTRATION(dpp::module_manager,"dpp::module_manager")
-
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

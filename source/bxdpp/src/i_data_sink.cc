@@ -40,10 +40,10 @@ namespace dpp {
   const int i_data_sink::sink_record::STATUS_CLOSED;
   const int i_data_sink::sink_record::STATUS_OPENED;
 
-  i_data_sink::sink_record::sink_record(const std::string & a_label)
+  i_data_sink::sink_record::sink_record(const std::string & label_)
   {
     reset();
-    label = a_label;
+    label = label_;
     return;
   }
 
@@ -55,9 +55,9 @@ namespace dpp {
     return;
   }
 
-  void i_data_sink::set_logging_priority(datatools::logger::priority a_priority)
+  void i_data_sink::set_logging_priority(datatools::logger::priority priority_)
   {
-    _logging = a_priority;
+    _logging = priority_;
     return;
   }
 
@@ -66,9 +66,9 @@ namespace dpp {
     return _logging;
   }
 
-  void i_data_sink::set_preserve_existing_sink(bool a_value)
+  void i_data_sink::set_preserve_existing_sink(bool value_)
   {
-    _preserve_existing_sink = a_value;
+    _preserve_existing_sink = value_;
     return;
   }
 
@@ -82,22 +82,22 @@ namespace dpp {
     return _sink_record.status == sink_record::STATUS_OPENED;
   }
 
-  void i_data_sink::set(const std::string & a_sink_label)
+  void i_data_sink::set(const std::string & sink_label_)
   {
     DT_THROW_IF(! _sink_record.label.empty(),
                 std::logic_error,
                 "A sink labelled '" << _sink_record.label << "' is already in use !");
-    _sink_record.label           = a_sink_label;
-    std::string effective_label  = a_sink_label;
+    _sink_record.label           = sink_label_;
+    std::string effective_label  = sink_label_;
     datatools::fetch_path_with_env(effective_label);
     _sink_record.effective_label = effective_label;
     _sink_record.status          = sink_record::STATUS_CLOSED;
     return;
   }
 
-  void i_data_sink::set_defaults_(datatools::logger::priority a_priority)
+  void i_data_sink::_set_defaults(datatools::logger::priority priority_)
   {
-    _logging = a_priority;
+    _logging = priority_;
     _preserve_existing_sink = false;
     return;
   }
@@ -112,16 +112,16 @@ namespace dpp {
     return false;
   }
 
-  i_data_sink::i_data_sink(datatools::logger::priority a_priority)
+  i_data_sink::i_data_sink(datatools::logger::priority priority_)
   {
-    this->set_defaults_(a_priority);
+    this->_set_defaults(priority_);
     return;
   }
 
-  i_data_sink::i_data_sink(const std::string & a_sink_label, datatools::logger::priority a_priority)
+  i_data_sink::i_data_sink(const std::string & sink_label_, datatools::logger::priority priority_)
   {
-    this->set_defaults_(a_priority);
-    this->set(a_sink_label);
+    this->_set_defaults(priority_);
+    this->set(sink_label_);
     return;
   }
 
@@ -131,11 +131,3 @@ namespace dpp {
   }
 
 }  // end of namespace dpp
-
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

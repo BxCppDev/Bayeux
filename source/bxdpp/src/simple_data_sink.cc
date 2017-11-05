@@ -46,27 +46,27 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 
 namespace dpp {
 
-  void simple_data_sink::reset ()
+  void simple_data_sink::reset()
   {
     if (is_open ()) {
-      this->simple_data_sink::close ();
+      this->simple_data_sink::close();
     }
     _sink_record.reset ();
     return;
   }
 
-  void simple_data_sink::close ()
+  void simple_data_sink::close()
   {
     if (_sink_record.status == sink_record::STATUS_CLOSED) {
       return;
     }
     if (_boost_io_file_writer_ != nullptr) {
-      this->simple_data_sink::close_file_sink_ ();
+      this->simple_data_sink::_close_file_sink();
     }
     return;
   }
 
-  void simple_data_sink::open ()
+  void simple_data_sink::open()
   {
     if (_sink_record.status == sink_record::STATUS_OPENED) {
       return;
@@ -113,13 +113,13 @@ namespace dpp {
     DT_THROW_IF (upload_mode, std::runtime_error,
                  "Sink file upload mode is not implemented yet !");
     if (file_mode) {
-      this->simple_data_sink::open_file_sink_ ();
+      this->simple_data_sink::_open_file_sink();
     }
 
     return;
   }
 
-  void simple_data_sink::close_file_sink_ ()
+  void simple_data_sink::_close_file_sink()
   {
     if (_boost_io_file_writer_ != nullptr) {
       if (_boost_io_file_writer_->is_initialized()) {
@@ -135,11 +135,9 @@ namespace dpp {
     return;
   }
 
-  void simple_data_sink::open_file_sink_ ()
+  void simple_data_sink::_open_file_sink()
   {
     namespace ds = datatools;
-
-    // std::cerr << "DEVEL ******** " << is_preserve_existing_sink() << std::endl;
     if (boost::filesystem::exists (_sink_record.effective_label)) {
       DT_THROW_IF (is_preserve_existing_sink (),
                    std::runtime_error,
@@ -164,7 +162,7 @@ namespace dpp {
     return;
   }
 
-  bool simple_data_sink::store_next_record (const datatools::things & a_event_record)
+  bool simple_data_sink::store_next_record(const datatools::things & a_event_record)
   {
     bool done = false;
     if (_boost_io_file_writer_ != nullptr) {
@@ -183,7 +181,7 @@ namespace dpp {
     return _record_counter_ == 0;
   }
 
-  bool simple_data_sink::store_metadata (const datatools::properties & a_metadata)
+  bool simple_data_sink::store_metadata(const datatools::properties & a_metadata)
   {
     bool done = false;
     if (_boost_io_file_writer_ != nullptr) {
@@ -202,17 +200,17 @@ namespace dpp {
     return done;
   }
 
-  simple_data_sink::simple_data_sink (datatools::logger::priority a_priority)
+  simple_data_sink::simple_data_sink(datatools::logger::priority a_priority)
     : i_data_sink (a_priority)
   {
     _record_counter_ = 0;
     _metadata_counter_ = 0;
-    this->simple_data_sink::set_defaults_(a_priority);
+    this->simple_data_sink::_set_defaults(a_priority);
     return;
   }
 
-  simple_data_sink::simple_data_sink (const std::string & a_sink_label,
-                                      datatools::logger::priority a_priority)
+  simple_data_sink::simple_data_sink(const std::string & a_sink_label,
+                                     datatools::logger::priority a_priority)
     : i_data_sink (a_sink_label, a_priority)
   {
     _boost_io_file_writer_ = nullptr;
@@ -222,17 +220,10 @@ namespace dpp {
     return;
   }
 
-  simple_data_sink::~simple_data_sink ()
+  simple_data_sink::~simple_data_sink()
   {
     this->simple_data_sink::reset ();
     return;
   }
 
 }  // end of namespace dpp
-
-// Local Variables: --
-// mode: c++ --
-// indent-tabs-mode: nil --
-// c-file-style: "gnu" --
-// tab-width: 2 --
-// End: --
