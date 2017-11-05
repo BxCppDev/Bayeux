@@ -31,7 +31,8 @@ namespace datatools {
   namespace ui {
 
     //! \brief Shell exit command
-    struct shell_exit_command : public target_command<basic_shell>
+    struct shell_exit_command
+      : public target_command<basic_shell>
     {
       shell_exit_command(basic_shell &);
       virtual ~shell_exit_command();
@@ -45,10 +46,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_SHELL_EXIT_COMMAND_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -46,7 +46,8 @@ namespace datatools {
   namespace ui {
 
     //! \brief Interface Hierarchy System
-    class ihs : public enriched_base
+    class ihs
+      : public enriched_base
     {
     public:
 
@@ -85,7 +86,8 @@ namespace datatools {
       // static bool path_validation(const std::string & path_);
 
       //! \brief A node in the IHS
-      class node : public i_tree_dumpable
+      class node
+        : public i_tree_dumpable
       {
       public:
 

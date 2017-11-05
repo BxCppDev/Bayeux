@@ -64,10 +64,8 @@
 #warning "No DATATOOLS_DEPRECATION available - check your use of the datatools API"
 #endif
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

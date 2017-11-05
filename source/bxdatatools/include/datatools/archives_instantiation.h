@@ -23,6 +23,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef DATATOOLS_ARCHIVES_INSTANTIATION_H
 #define DATATOOLS_ARCHIVES_INSTANTIATION_H
 
@@ -33,8 +34,8 @@
 /** T is the class name
  *  A is the archive name
  */
-#define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,A)        \
-  template void T::serialize(A& ar, const unsigned int version);        \
+#define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,A)  \
+  template void T::serialize(A& ar, const unsigned int version);  \
   /**/
 
 /// Macro to generate the instantiation declarations of the intrusive serialization methods for all supported input archives
@@ -60,9 +61,9 @@
 /// Macro to generate the instantiation declarations of the intrusive serialization methods for all supported intput and output archives
 /** T is the class name
  */
-#define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(T)      \
-  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T)         \
-  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_OUT(T)        \
+#define DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(T)  \
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T)     \
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_OUT(T)    \
   /**/
 
 /// Macro to generate the instantiation declaration of the non intrusive serialization function for a given archive
@@ -97,16 +98,14 @@
 /** T is the class name
  */
 #define DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL(T) \
-    DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T) \
-    DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_OUT(T) \
-    /**/
+  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(T) \
+  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL_OUT(T) \
+  /**/
 
 #endif // DATATOOLS_ARCHIVES_INSTANTIATION_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

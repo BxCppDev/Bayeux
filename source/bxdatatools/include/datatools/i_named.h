@@ -36,7 +36,8 @@ namespace datatools {
   //!   std::size_t _index_;
   //! };
   //! \endcode
-  class i_named {
+  class i_named
+  {
   public:
 
     /// Return the explicit anonymous label

@@ -72,11 +72,11 @@ namespace datatools {
   }
 
   int urn_query_service::initialize(const datatools::properties & config_,
-                                    datatools::service_dict_type& /*services_*/)
+                                    datatools::service_dict_type & /*services_*/)
   {
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "URN service is already initialized!");
-    base_service::common_initialize(config_);
+    base_service::_common_initialize(config_);
     _initialized_ = true;
     return datatools::SUCCESS;
   }

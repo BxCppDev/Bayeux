@@ -25,6 +25,7 @@
  *  Command utilities.
  *
  */
+
 #ifndef DATATOOLS_COMMAND_UTILS_H
 #define DATATOOLS_COMMAND_UTILS_H
 
@@ -178,10 +179,8 @@ DR_TYPE_INIT(::datatools::command::returned_info)
 
 #endif // DATATOOLS_COMMAND_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

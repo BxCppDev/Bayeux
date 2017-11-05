@@ -199,10 +199,8 @@ DR_TYPE_INIT(::datatools::introspection::unit_support_type)
 
 #endif // DATATOOLS_INTROSPECTION_UNIT_SUPPORT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

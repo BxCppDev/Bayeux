@@ -33,44 +33,44 @@ namespace datatools {
 
   /// Invalidate a float (set at NaN):
   /// @arg value the real number to be invalidated
-  void invalidate(float& value);
+  void invalidate(float& value_);
 
   /// Return invalid single precision float (set at NaN):
   float invalid_real_single();
 
   /// Check if a float is valid (not a NaN):
   /// @arg value the real number to be checked
-  bool is_valid(float value);
+  bool is_valid(float value_);
 
   /// Check if a float is infinity (+/-inf):
   /// @arg value the real number to be checked
-  bool is_infinity(float value);
+  bool is_infinity(float value_);
 
   /// Check if a float is plus infinity (+inf):
   /// @arg value the real number to be checked
-  bool is_plus_infinity(float value);
+  bool is_plus_infinity(float value_);
 
   /// Check if a float is minus infinity (-inf):
   /// @arg value the real number to be checked
-  bool is_minus_infinity(float value);
+  bool is_minus_infinity(float value_);
 
   /// Set a float to +infinity:
   /// @arg value the real number to be set
-  void plus_infinity(float& value);
+  void plus_infinity(float& value_);
 
   /// Set a float to -infinity:
   /// @arg value the real number to be set
-  void minus_infinity(float& value);
+  void minus_infinity(float& value_);
 
   /// Set a float to +infinity:
   /// @arg value the real number to be set
-  void infinity(float& value);
+  void infinity(float& value_);
 
   /* Double precision utility functions */
 
   /// Invalidate a double (set at NaN):
   /// @arg value the real number to be invalidated
-  void invalidate(double& value);
+  void invalidate(double& value_);
 
   /// Return invalid double precision real (set at NaN):
   double invalid_real_double();
@@ -80,35 +80,35 @@ namespace datatools {
 
   /// Check if a double is valid (not a NaN):
   /// @arg value the real number to be checked
-  bool is_valid(double value);
+  bool is_valid(double value_);
 
   /// Check if a double is infinity (+/-inf):
   /// @arg value the real number to be checked
-  bool is_infinity(double value);
+  bool is_infinity(double value_);
 
   /// Check if a double is plus infinity (+inf):
   /// @arg value the real number to be checked
-  bool is_plus_infinity(double value);
+  bool is_plus_infinity(double value_);
 
   /// Check if a double is minus infinity (-inf):
   /// @arg value the real number to be checked
-  bool is_minus_infinity(double value);
+  bool is_minus_infinity(double value_);
 
   /// Check if a double is normal (not a NaN and not inf):
   /// @arg value the real number to be checked
-  bool is_normal(double value);
+  bool is_normal(double value_);
 
   /// Set a double to +infinity:
   /// @arg value the real number to be set
-  void plus_infinity(double& value);
+  void plus_infinity(double& value_);
 
   /// Set a double to -infinity:
   /// @arg value the real number to be set
-  void minus_infinity(double& value);
+  void minus_infinity(double& value_);
 
   /// Set a double to +infinity:
   /// @arg value the real number to be set
-  void infinity(double& value);
+  void infinity(double& value_);
 
   /// Compare two real numbers given explicit absolute and/or relative tolerances
   /// @arg x1_ the first value to be compared
@@ -116,7 +116,8 @@ namespace datatools {
   /// @arg abs_eps_ the absolute precision for the comparison
   /// @arg rel_eps_ the relative precision for the comparison
   /// @return the comparison result code
-  compare_result_type compare_real(double x1_, double x2_, double abs_eps_ = 0.0, double rel_eps_ = 0.0);
+  compare_result_type compare_real(double x1_, double x2_,
+                                   double abs_eps_ = 0.0, double rel_eps_ = 0.0);
 
   /* String utility functions */
 
@@ -165,10 +166,10 @@ namespace datatools {
   /// Fetch the expanded path computed from a string.
   /// @arg path_str the string representing the path to be processed
   /// @return the processed string with resolved environment variable and registered library path
-  std::string fetch_path(const std::string& path_str);
+  std::string fetch_path(const std::string & path_str_);
 
   //! Extract the expanded path computed from the 'word' string.
-  bool fetch_path(std::string& word, std::string & errmsg_);
+  bool fetch_path(std::string & word_, std::string & errmsg_);
 
   //! Extract the expanded path computed from the 'word' string.
   //! Internally uses the getenv function and the datatools::library_info
@@ -210,10 +211,10 @@ namespace datatools {
   ///     "urn:snemo:analysis:logo:small@image"
   ///     "urn:snemo:analysis:run:1234@data"
   ///
-  bool fetch_path_with_env(std::string& word);
+  bool fetch_path_with_env(std::string& word_);
 
   //! Extract the expanded path computed from the 'word' string.
-  bool fetch_path_with_env(std::string& word, std::string & errmsg_);
+  bool fetch_path_with_env(std::string& word_, std::string & errmsg_);
 
   /** Extract the expanded path computed from a string.
    * Internally uses the datatools::library_info
@@ -222,26 +223,26 @@ namespace datatools {
    * @return true if the processing was successful (successfully resolved
    *         registered library path)
    */
-  bool fetch_path_without_env(std::string& word);
+  bool fetch_path_without_env(std::string& word_);
 
   /** Extract the expanded path computed from a string.
    *  Internally uses the getenv function and the datatools::library_info
    *  register.
    */
-  bool fetch_path_with_env_p(std::string& word,
+  bool fetch_path_with_env_p(std::string& word_,
                              const std::string & parent_path_);
 
   /** Extract the expanded path computed from a string.
    * Internally uses the getenv function and the datatools::library_info
    * register.
    */
-  bool fetch_path_with_env_g(std::string& word);
+  bool fetch_path_with_env_g(std::string& word_);
 
   /** Extract the expanded path computed from a string.
    * Internally uses the getenv function and the datatools::library_info
    * register.
    */
-  bool fetch_path_with_env_pg(std::string& word,
+  bool fetch_path_with_env_pg(std::string& word_,
                               const std::string & parent_path_);
 
   /** Check if datatools has its global path activated */
@@ -267,7 +268,7 @@ namespace datatools {
   //!
   //! Example: '$HOME/foo.dat' is expanded to '/home/&gt;login&lt;/foo.dat'
   //! @deprecated Use the fetch_path or fetch_path_with_env functions.
-  std::string expand_path(const std::string& path_str);
+  std::string expand_path(const std::string& path_str_);
 
   /** The function splits a string using separators
    *   and provides a list of tokens.
@@ -276,8 +277,9 @@ namespace datatools {
    * the tokenizer class and split string algorithms.
    * @deprecated Use the Boost string split function or tokenizer class
    */
-  void split_string(const std::string& word, const std::string& separators,
-                    std::list<std::string>& words);
+  void split_string(const std::string& word_,
+                    const std::string& separators_,
+                    std::list<std::string>& words_);
 
   /* Bit manipulation utility template functions */
 
@@ -285,23 +287,26 @@ namespace datatools {
   /// @arg number the integral number
   /// @arg pos the bit index
   template<typename Integral>
-  void set_bit(Integral& number, int pos) {
-    DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
+  void set_bit(Integral & number_, int pos_)
+  {
+    DT_THROW_IF(pos_ < 0 || pos_ >= (int) sizeof(Integral) * 8,
                 std::range_error,
-                "Invalid bit position [pos = " << pos << "]");
-    number |= 1 << pos;
+                "Invalid bit position [pos = " << pos_ << "]");
+    number_ |= 1 << pos_;
+    return;
   }
-
 
   /// Unset the bit at a given position in an integral number
   /// @arg number the integral number
   /// @arg pos the bit index
   template<typename Integral>
-  void unset_bit(Integral& number, int pos) {
-    DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
+  void unset_bit(Integral & number_, int pos_)
+  {
+    DT_THROW_IF(pos_ < 0 || pos_ >= (int) sizeof(Integral) * 8,
                 std::range_error,
-                "Invalid bit position [pos = " << pos << "]");
-    number &= ~(1 << pos);
+                "Invalid bit position [pos = " << pos_ << "]");
+    number_ &= ~(1 << pos_);
+    return;
   }
 
 
@@ -309,11 +314,13 @@ namespace datatools {
   /// @arg number the integral number
   /// @arg pos the bit index
   template<typename Integral>
-  void toggle_bit(Integral& number, int pos) {
-    DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
+  void toggle_bit(Integral & number_, int pos_)
+  {
+    DT_THROW_IF(pos_ < 0 || pos_ >= (int) sizeof(Integral) * 8,
                 std::range_error,
-                "Invalid bit position [pos = " << pos << "]");
-    number ^= 1 << pos;
+                "Invalid bit position [pos = " << pos_ << "]");
+    number_ ^= 1 << pos_;
+    return;
   }
 
 
@@ -321,12 +328,13 @@ namespace datatools {
   /// @arg number the integral number
   /// @arg pos the bit index
   template<typename Integral>
-  bool check_bit(Integral& number, int pos) {
-    DT_THROW_IF(pos < 0 || pos >= (int) sizeof(Integral) * 8,
+  bool check_bit(Integral& number_, int pos_)
+  {
+    DT_THROW_IF(pos_ < 0 || pos_ >= (int) sizeof(Integral) * 8,
                 std::range_error,
-                "Invalid bit position [pos = " << pos << "]");
+                "Invalid bit position [pos = " << pos_ << "]");
 
-    if (number & (1 << pos)) return false;
+    if (number_ & (1 << pos_)) return false;
     return true;
   }
 
@@ -334,10 +342,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

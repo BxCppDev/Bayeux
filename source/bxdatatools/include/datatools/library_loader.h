@@ -26,6 +26,7 @@
  *  A shared library loader facility (based on kwsys).
  *
  */
+
 #ifndef DATATOOLS_LIBRARY_LOADER_H
 #define DATATOOLS_LIBRARY_LOADER_H
 
@@ -46,79 +47,88 @@
 #include <datatools/multi_properties.h>
 
 namespace datatools {
-//! \brief A DLL loader class
-class library_loader
-  : boost::noncopyable
-{
- public:
-  typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
 
- public:
-  //! Default constructor
-  library_loader();
+  //! \brief A DLL loader class
+  class library_loader
+    : boost::noncopyable
+  {
+  public:
+    typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
 
-  //! Construct with path to config file
-  explicit library_loader(const std::string& config_file);
+    //! Default constructor
+    library_loader();
 
-  //! Construct and instance with default flags and multi_properties
-  library_loader(const datatools::multi_properties& config);
+    //! Construct with path to config file
+    explicit library_loader(const std::string & config_file_);
 
-  /// Destructor
-  virtual ~library_loader();
+    //! Construct and instance with default flags and multi_properties
+    library_loader(const datatools::multi_properties & config_);
 
-  //! Return true if the DLL with name is setup
-  bool has(const std::string& name) const;
+    /// Destructor
+    virtual ~library_loader();
 
-  //! Return true if the DLL with name is loaded
-  bool is_loaded(const std::string& name) const;
+    //! Return true if the DLL with name is setup
+    bool has(const std::string & name_) const;
 
-  //! Register a DLL
-  int registration(const std::string& name,
-                   const std::string& directory = "",
-                   const std::string& filename  = "",
-                   const std::string& full_path = "",
-                   const std::string& version   = "",
-                   bool autoload = false);
+    //! Return true if the DLL with name is loaded
+    bool is_loaded(const std::string & name_) const;
 
-  //! Load a DLL
-  /** @arg name the name of the library
-   *       if the directory is empty, then the name
-   *       can use the following format:
-   *         name\@directory
-   *  @arg directory the directory where the shared library file is stored
-   *  @arg filename the name of the shared library file
-   *  @arg full_path the full path of the shared library file
-   *  @arg version the version of the shared library
-   */
-  int load(const std::string& name,
-           const std::string& directory = "",
-           const std::string& filename  = "",
-           const std::string& full_path = "",
-           const std::string& version   = "");
+    //! Register a DLL
+    int registration(const std::string & name_,
+                     const std::string & directory_ = "",
+                     const std::string & filename_  = "",
+                     const std::string & full_path_ = "",
+                     const std::string & version_   = "",
+                     bool autoload_ = false);
 
-  //! Close a DLL
-  int close(const std::string& name);
+    //! Load a DLL
+    /** @arg name the name of the library
+     *       if the directory is empty, then the name
+     *       can use the following format:
+     *         name\@directory
+     *  @arg directory the directory where the shared library file is stored
+     *  @arg filename the name of the shared library file
+     *  @arg full_path the full path of the shared library file
+     *  @arg version the version of the shared library
+     */
+    int load(const std::string & name_,
+             const std::string & directory_ = "",
+             const std::string & filename_  = "",
+             const std::string & full_path_ = "",
+             const std::string & version_   = "");
 
-  //! Close all DLLs
-  int close_all();
+    //! Close a DLL
+    int close(const std::string & name_);
 
-  //! Smart print libraries configured/loaded to supplied stream
-  void print(std::ostream& out = std::clog) const;
+    //! Close all DLLs
+    int close_all();
 
-  //! Return pointer to symbol in named library
-  symbol_ptr get_symbol_address(const std::string& name,
-                                const std::string& symbol);
+    //! Smart print libraries configured/loaded to supplied stream
+    void print(std::ostream & out_ = std::clog) const;
 
- protected:
-  /// Protected initialization
-  void init();
+    //! Return pointer to symbol in named library
+    symbol_ptr get_symbol_address(const std::string & name_,
+                                  const std::string & symbol_);
 
- private:
-  datatools::multi_properties config_; //!< Configuration
-  class LibraryCollection;
-  boost::scoped_ptr<LibraryCollection> libEntries_;
-};
+  protected:
+
+    /// Protected initialization
+    void _init();
+
+  private:
+
+    datatools::multi_properties _config_; //!< Configuration
+    class LibraryCollection;
+    boost::scoped_ptr<LibraryCollection> _lib_entries_;
+
+  };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_LIBRARY_LOADER_H
+
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

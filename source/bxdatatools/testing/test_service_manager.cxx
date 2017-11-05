@@ -131,7 +131,7 @@ int test_service::initialize(const datatools::properties& a_config,
                              datatools::service_dict_type& /*a_dictionnary*/)
 {
   DT_THROW_IF(is_initialized(), std::logic_error, "Service is already initialized!");
-  common_initialize(a_config);
+  _common_initialize(a_config);
 
   DT_LOG_DEBUG(get_logging_priority(), "Initializing service '" << get_name() << "'...");
 

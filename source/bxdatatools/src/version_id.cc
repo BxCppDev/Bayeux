@@ -45,37 +45,46 @@ namespace datatools {
     return tag;
   }
 
-  version_id::version_id() {
-    major_ = INVALID_NUMBER;
-    minor_ = INVALID_NUMBER;
-    revision_ = INVALID_NUMBER;
-    tag_number_ = INVALID_NUMBER;
+  version_id::version_id()
+  {
+    _major_ = INVALID_NUMBER;
+    _minor_ = INVALID_NUMBER;
+    _revision_ = INVALID_NUMBER;
+    _tag_number_ = INVALID_NUMBER;
+    return;
   }
 
 
-  version_id::version_id(const std::string& tag) {
-    major_ = INVALID_NUMBER;
-    minor_ = INVALID_NUMBER;
-    revision_ = INVALID_NUMBER;
-    tag_number_ = INVALID_NUMBER;
+  version_id::version_id(const std::string& tag)
+  {
+    _major_ = INVALID_NUMBER;
+    _minor_ = INVALID_NUMBER;
+    _revision_ = INVALID_NUMBER;
+    _tag_number_ = INVALID_NUMBER;
     this->set_tag(tag);
+    return;
   }
 
 
-  version_id::version_id(int major, int minor, int revision,
-                         const std::string& tag) {
-    major_ = INVALID_NUMBER;
-    minor_ = INVALID_NUMBER;
-    revision_ = INVALID_NUMBER;
-    tag_number_ = INVALID_NUMBER;
+  version_id::version_id(int major,
+                         int minor,
+                         int revision,
+                         const std::string& tag)
+  {
+    _major_ = INVALID_NUMBER;
+    _minor_ = INVALID_NUMBER;
+    _revision_ = INVALID_NUMBER;
+    _tag_number_ = INVALID_NUMBER;
     this->set_major(major);
     this->set_minor(minor);
     this->set_revision(revision);
     this->set_tag(tag);
+    return;
   }
 
 
-  bool version_id::is_valid() const {
+  bool version_id::is_valid() const
+  {
     if (!this->has_major()) {
       // no major implies a single valid tag : format = "tag"
       return this->has_tag();
@@ -92,17 +101,20 @@ namespace datatools {
   }
 
 
-  bool version_id::has_numbers_only() const {
+  bool version_id::has_numbers_only() const
+  {
     return this->has_major() && !this->has_tag();
   }
 
 
-  bool version_id::has_major() const {
-    return major_ != INVALID_NUMBER;
+  bool version_id::has_major() const
+  {
+    return _major_ != INVALID_NUMBER;
   }
 
 
-  bool version_id::has_major_only() const {
+  bool version_id::has_major_only() const
+  {
     return this->has_major()
       && !this->has_minor()
       && !this->has_revision()
@@ -110,68 +122,83 @@ namespace datatools {
   }
 
 
-  int version_id::get_major() const {
-    return major_;
+  int version_id::get_major() const
+  {
+    return _major_;
   }
 
 
-  void version_id::set_major(int major) {
-    major_ = major < 0 ? INVALID_NUMBER : major;
+  void version_id::set_major(int major)
+  {
+    _major_ = major < 0 ? INVALID_NUMBER : major;
+    return;
   }
 
 
-  bool version_id::has_minor() const {
-    return minor_ != INVALID_NUMBER;
+  bool version_id::has_minor() const
+  {
+    return _minor_ != INVALID_NUMBER;
   }
 
 
-  int version_id::get_minor() const {
-    return minor_;
+  int version_id::get_minor() const
+  {
+    return _minor_;
   }
 
 
-  void version_id::set_minor(int minor) {
-    minor_ = minor < 0 ? INVALID_NUMBER : minor;
+  void version_id::set_minor(int minor)
+  {
+    _minor_ = minor < 0 ? INVALID_NUMBER : minor;
+    return;
   }
 
 
-  bool version_id::has_revision() const {
-    return revision_ != INVALID_NUMBER;
+  bool version_id::has_revision() const
+  {
+    return _revision_ != INVALID_NUMBER;
   }
 
 
-  int version_id::get_revision() const {
-    return revision_;
+  int version_id::get_revision() const
+  {
+    return _revision_;
   }
 
 
-  void version_id::set_revision(int revision) {
-    revision_ = revision < 0 ? INVALID_NUMBER : revision;
+  void version_id::set_revision(int revision)
+  {
+    _revision_ = revision < 0 ? INVALID_NUMBER : revision;
+    return;
   }
 
 
-  bool version_id::has_tag_only() const {
+  bool version_id::has_tag_only() const
+  {
     return this->has_tag() && !this->has_major();
   }
 
 
-  bool version_id::has_tag() const {
-    return ! tag_.empty();
+  bool version_id::has_tag() const
+  {
+    return ! _tag_.empty();
   }
 
 
-  bool version_id::has_special_tag() const {
-    if (tag_.empty()) return false;
-    return tag_number_ < INVALID_NUMBER;
+  bool version_id::has_special_tag() const
+  {
+    if (_tag_.empty()) return false;
+    return _tag_number_ < INVALID_NUMBER;
   }
 
 
-  bool version_id::has_numeric_tag() const {
-    if (tag_.empty()) return false;
+  bool version_id::has_numeric_tag() const
+  {
+    if (_tag_.empty()) return false;
 
     // Specific test :
     {
-      std::istringstream dummy(tag_);
+      std::istringstream dummy(_tag_);
       int val;
       dummy >> val;
       if (!dummy) return false;
@@ -184,27 +211,31 @@ namespace datatools {
   }
 
 
-  const std::string & version_id::get_tag() const {
-    return tag_;
+  const std::string & version_id::get_tag() const
+  {
+    return _tag_;
   }
 
 
-  bool version_id::has_tag_number() const {
-    return tag_number_ != INVALID_NUMBER;
+  bool version_id::has_tag_number() const
+  {
+    return _tag_number_ != INVALID_NUMBER;
   }
 
 
-  int version_id::get_tag_number() const {
-    return tag_number_;
+  int version_id::get_tag_number() const
+  {
+    return _tag_number_;
   }
 
 
-  void version_id::set_tag(const std::string& tag) {
+  void version_id::set_tag(const std::string& tag)
+  {
     std::istringstream tag_iss(tag);
     std::string trimed_tag;
     tag_iss >> std::ws >> trimed_tag >> std::ws;
     if (trimed_tag.empty()) {
-      tag_.clear();
+      _tag_.clear();
       return;
     }
     char first_char = trimed_tag[0];
@@ -225,24 +256,24 @@ namespace datatools {
                  std::logic_error,
                  "Version ID's tag '"
                  << trimed_tag << "' is not allowed !");
-    tag_ = trimed_tag;
-    if (isdigit(tag_[0])) {
+    _tag_ = trimed_tag;
+    if (isdigit(_tag_[0])) {
       // check numerical tags :
-      std::istringstream num_tag_iss(tag_);
+      std::istringstream num_tag_iss(_tag_);
       int num_tag;
       num_tag_iss >> num_tag;
       if (num_tag_iss && num_tag > 0) {
-        tag_number_ = num_tag;
+        _tag_number_ = num_tag;
       }
     } else {
       // check special orderable tags :
-      if (tag_ == tags::alpha()) {
-        tag_number_ = ALPHA_NUM;
-      } else if (tag_ == tags::beta()) {
-        tag_number_ = BETA_NUM;
-      } else if (tag_.length() > 2
-                 && tag_.substr(0,2) == tags::release_candidate_prefix()) {
-        std::string rc_tag_tail = tag_.substr(2);
+      if (_tag_ == tags::alpha()) {
+        _tag_number_ = ALPHA_NUM;
+      } else if (_tag_ == tags::beta()) {
+        _tag_number_ = BETA_NUM;
+      } else if (_tag_.length() > 2
+                 && _tag_.substr(0,2) == tags::release_candidate_prefix()) {
+        std::string rc_tag_tail = _tag_.substr(2);
         if (!rc_tag_tail.empty()) {
           std::istringstream rc_tag_iss(rc_tag_tail);
           int rc_num;
@@ -254,17 +285,20 @@ namespace datatools {
                            "Version ID's special RC tag '"
                            << trimed_tag
                            << "' is not allowed (RC number is too large) !");
-              tag_number_ = RC_BASE_NUM + rc_num;
+              _tag_number_ = RC_BASE_NUM + rc_num;
             }
           }
         }
       } // RC
     }
+    return;
   }
 
 
-  void version_id::dump(std::ostream& out, const std::string& title,
-                        const std::string& indent) const {
+  void version_id::dump(std::ostream& out,
+                        const std::string& title,
+                        const std::string& indent) const
+  {
     const std::string tag = "|-- ";
     const std::string last_tag = "`-- ";
     if (!title.empty()) out << indent << title << std::endl;
@@ -272,26 +306,26 @@ namespace datatools {
     out << indent << tag << "Has major    : " << this->has_major();
 
     if (this->has_major()) {
-      out << " => Major = " << major_;
+      out << " => Major = " << _major_;
     }
 
     out << std::endl;
     out << indent << tag << "Has minor    : " << this->has_minor();
 
-    if (this->has_minor()) out << " => Minor = " << minor_;
+    if (this->has_minor()) out << " => Minor = " << _minor_;
 
     out << std::endl;
     out << indent << tag << "Has revision : " << this->has_revision();
 
-    if (this->has_revision()) out << " => Revision = " << revision_;
+    if (this->has_revision()) out << " => Revision = " << _revision_;
 
     out << std::endl;
     out << indent << tag << "Has tag      : " << this->has_tag();
 
-    if (this->has_tag()) out << " => Tag = '" << tag_ << "'";
+    if (this->has_tag()) out << " => Tag = '" << _tag_ << "'";
 
     if (this->has_tag_number()) {
-      out << " with number='" << tag_number_ << "'";
+      out << " with number='" << _tag_number_ << "'";
       if (this->has_special_tag()) {
         out << " (special)";
       }
@@ -300,55 +334,63 @@ namespace datatools {
     out << std::endl;
     out << indent << tag      << "Valid        : " << this->is_valid() << std::endl;
     out << indent << last_tag << "Format       : '" << *this << "'" << std::endl;
+    return;
   }
 
 
-  void version_id::reset() {
-    major_ = INVALID_NUMBER;
-    minor_ = INVALID_NUMBER;
-    revision_ = INVALID_NUMBER;
-    tag_number_ = INVALID_NUMBER;
-    tag_.clear();
+  void version_id::reset()
+  {
+    _major_ = INVALID_NUMBER;
+    _minor_ = INVALID_NUMBER;
+    _revision_ = INVALID_NUMBER;
+    _tag_number_ = INVALID_NUMBER;
+    _tag_.clear();
+    return;
   }
 
 
-  bool version_id::equals(const version_id& vid, bool ignore_tag) const {
+  bool version_id::equals(const version_id& vid, bool ignore_tag) const
+  {
     bool res = false;
-    if (vid.major_ == major_
-        && vid.minor_ == minor_
-        && vid.revision_ == revision_) {
+    if (vid._major_ == _major_
+        && vid._minor_ == _minor_
+        && vid._revision_ == _revision_) {
       res = true;
     }
-
-    if (res && ! ignore_tag) res = (vid.tag_ == tag_);
-
+    if (res && ! ignore_tag) res = (vid._tag_ == _tag_);
     return res;
   }
 
 
-  bool version_id::operator==(const version_id& vid) const {
+  bool version_id::operator==(const version_id& vid) const
+  {
     return this->equals(vid, false);
   }
 
 
-  int version_id::compare(const version_id& vid, bool major_only) const {
+  int version_id::compare(const version_id& vid, bool major_only) const
+  {
     return compare(*this, vid, major_only);
   }
 
-  void version_id::to_string(std::string& format) const {
+  void version_id::to_string(std::string& format) const
+  {
     std::ostringstream out;
     out << *this;
     format = out.str();
+    return;
   }
 
-  std::string version_id::to_string() const {
+  std::string version_id::to_string() const
+  {
     std::string repr;
     to_string(repr);
     return repr;
   }
 
 
-  std::ostream & operator<<(std::ostream& out, const version_id& vid) {
+  std::ostream & operator<<(std::ostream& out, const version_id& vid)
+  {
     if (!vid.is_valid()) {
       out << vid.INVALID_SYMBOL;
     } else {
@@ -375,7 +417,8 @@ namespace datatools {
   }
 
 
-  bool version_id::from_string(const std::string& s) {
+  bool version_id::from_string(const std::string& s)
+  {
     bool devel = false;
     //devel = true;
     this->reset();
@@ -518,7 +561,8 @@ namespace datatools {
   }
 
 
-  std::istream& operator>>(std::istream& in, version_id& vid) {
+  std::istream& operator>>(std::istream& in, version_id& vid)
+  {
     std::string word;
     in >> word;
     if (!vid.from_string(word)) {
@@ -530,7 +574,8 @@ namespace datatools {
 
 
   bool version_id::matches(const std::string& version_rule,
-                           bool major_only) const {
+                           bool major_only) const
+  {
     std::istringstream vr_iss(version_rule);
     std::string word;
     vr_iss >> word;
@@ -635,7 +680,8 @@ namespace datatools {
   // static
   int version_id::compare(const version_id& vid0,
                           const version_id& vid1,
-                          bool major_only) {
+                          bool major_only)
+  {
     if (vid0 == vid1) return 0;
     const version_id& v1 = vid0;
     const version_id& v2 = vid1;
@@ -645,14 +691,14 @@ namespace datatools {
     DT_THROW_IF (!v2.is_valid(),
                  std::logic_error,
                  "Version ID '" << v2 << "' is not valid !");
-    int maj_num_1 = v1.major_;
-    int maj_num_2 = v2.major_;
-    int min_num_1 = v1.minor_;
-    int min_num_2 = v2.minor_;
-    int rev_num_1 = v1.revision_;
-    int rev_num_2 = v2.revision_;
-    int tag_num_1 = v1.tag_number_;
-    int tag_num_2 = v2.tag_number_;
+    int maj_num_1 = v1._major_;
+    int maj_num_2 = v2._major_;
+    int min_num_1 = v1._minor_;
+    int min_num_2 = v2._minor_;
+    int rev_num_1 = v1._revision_;
+    int rev_num_2 = v2._revision_;
+    int tag_num_1 = v1._tag_number_;
+    int tag_num_2 = v2._tag_number_;
 
     DT_THROW_IF (maj_num_1 == INVALID_NUMBER,
                  std::logic_error,
@@ -757,7 +803,8 @@ namespace datatools {
   // static
   bool version_id::are_orderable(const version_id& vid0,
                                  const version_id& vid1,
-                                 bool major_only) {
+                                 bool major_only)
+  {
     const version_id& v1 = vid0;
     const version_id& v2 = vid1;
     if (!v1.is_valid()) return false;

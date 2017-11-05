@@ -24,42 +24,41 @@ namespace datatools {
 
   /// Boost serialization template method
   template<class Archive>
-  void multi_properties::entry::serialize(Archive & archive,
-                                          const unsigned int version __attribute__((unused)) )
+  void multi_properties::entry::serialize(Archive & archive_,
+                                          const unsigned int version_ __attribute__((unused)) )
   {
-    archive & boost::serialization::make_nvp("key", key_);
-    archive & boost::serialization::make_nvp("meta", meta_);
-    archive & boost::serialization::make_nvp("properties", properties_);
+    archive_ & boost::serialization::make_nvp("key", _key_);
+    archive_ & boost::serialization::make_nvp("meta", _meta_);
+    archive_ & boost::serialization::make_nvp("properties", _properties_);
+    return;
   }
-
 
   /// Boost serialization template method
   template<class Archive>
-  void multi_properties::serialize(Archive & archive,
-                                          const unsigned int version __attribute__((unused)) )
+  void multi_properties::serialize(Archive & archive_,
+                                   const unsigned int version_ __attribute__((unused)) )
   {
-    if (version == 1) {
+    if (version_ == 1) {
       // from version 1 we inherit explicitely from the
       // 'datatools::i_serializable' abstract class
-      archive & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    } else if (version >= 2) {
-      archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+      archive_ & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    } else if (version_ >= 2) {
+      archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     }
-    archive & boost::serialization::make_nvp("description", description_);
-    archive & boost::serialization::make_nvp("key_label", key_label_);
-    archive & boost::serialization::make_nvp("meta_label", meta_label_);
-    archive & boost::serialization::make_nvp("entries", entries_);
-    archive & boost::serialization::make_nvp("ordered_entries", ordered_entries_);
+    archive_ & boost::serialization::make_nvp("description", _description_);
+    archive_ & boost::serialization::make_nvp("key_label", _key_label_);
+    archive_ & boost::serialization::make_nvp("meta_label", _meta_label_);
+    archive_ & boost::serialization::make_nvp("entries", _entries_);
+    archive_ & boost::serialization::make_nvp("ordered_entries", _ordered_entries_);
+    return;
   }
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_MULTI_PROPERTIES_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -95,27 +95,27 @@ namespace datatools {
     return value;
   }
 
-  void io::write_boolean(std::ostream& a_out,
-                         bool a_bool, bool as_alpha)
+  void io::write_boolean(std::ostream & out_,
+                         bool b_, bool as_alpha_)
   {
-    if (a_bool) {
-      if (as_alpha) {
-        a_out << "true";
+    if (b_) {
+      if (as_alpha_) {
+        out_ << "true";
       } else {
-        a_out << "1";
+        out_ << "1";
       }
     } else {
-      if (as_alpha) {
-        a_out << "false";
+      if (as_alpha_) {
+        out_ << "false";
       } else {
-        a_out << "0";
+        out_ << "0";
       }
     }
     return;
   }
 
-  bool io::read_boolean(std::istream& a_in,
-                        bool& a_bool,
+  bool io::read_boolean(std::istream& in_,
+                        bool & b_,
                         uint32_t flags)
   {
     bool ok = false;
@@ -129,8 +129,8 @@ namespace datatools {
       logging = datatools::logger::PRIO_DEBUG;
     }
     std::string repr;
-    a_in >> repr;
-    if (!a_in) {
+    in_ >> repr;
+    if (!in_) {
       return false;
     }
     DT_LOG_DEBUG(logging, "boolean representation = '" << repr << "'");
@@ -148,10 +148,10 @@ namespace datatools {
         value = true;
         ok = true;
       }
-      a_in >> std::ws;
-      if (ok && !a_in.eof()) {
+      in_ >> std::ws;
+      if (ok && !in_.eof()) {
         char trailing = 0;
-        trailing = a_in.peek();
+        trailing = in_.peek();
         if (trailing != 0) {
           DT_LOG_DEBUG(logging, "Found trailing character = '" << trailing << "' !");
           if (! allow_trailing_characters) {
@@ -167,7 +167,7 @@ namespace datatools {
       //   DT_LOG_DEBUG(logging, "Trailing characters are not allowed.");
       //   // Check invalid trailing characters:
       //   repr.clear();
-      //   a_in >> repr;
+      //   in_ >> repr;
       //   if (!repr.empty()) {
       //     DT_LOG_DEBUG(logging, "Ooops! Found trailing characters '" << repr << "'!");
       //     ok = false;
@@ -175,36 +175,36 @@ namespace datatools {
       // }
     } // end parsing
     if (ok) {
-      a_bool = value;
+      b_ = value;
     }
     return ok;
   }
 
-  bool io::read_boolean(const std::string & a_word,
-                        bool& a_bool,
-                        uint32_t flags)
+  bool io::read_boolean(const std::string & word_,
+                        bool& b_,
+                        uint32_t flags_)
   {
-    std::istringstream in(a_word);
-    return read_boolean(in, a_bool, flags);
+    std::istringstream in(word_);
+    return read_boolean(in, b_, flags_);
   }
 
-  bool io::read_integer(std::istream& a_in,
-                        int& a_integer,
-                        uint32_t flags)
+  bool io::read_integer(std::istream& in_,
+                        int& intval_,
+                        uint32_t flags_)
   {
     bool ok = false;
     int value = 0;
     datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
     bool allow_trailing_characters = false;
-    if (flags & reader_allow_trailing_characters) {
+    if (flags_ & reader_allow_trailing_characters) {
       allow_trailing_characters = true;
     }
-    if (flags & reader_debug) {
+    if (flags_ & reader_debug) {
       logging = datatools::logger::PRIO_DEBUG;
     }
     std::string repr;
-    a_in >> repr;
-    if (!a_in) {
+    in_ >> repr;
+    if (!in_) {
       return false;
     }
     DT_LOG_DEBUG(logging, "Integer representation = '" << repr << "'");
@@ -222,10 +222,10 @@ namespace datatools {
         DT_LOG_DEBUG(logging, "Cast failed!");
         ok = false;
       }
-      a_in >> std::ws;
-      if (ok && !a_in.eof()) {
+      in_ >> std::ws;
+      if (ok && !in_.eof()) {
         char trailing = 0;
-        trailing = a_in.peek();
+        trailing = in_.peek();
         if (trailing != 0) {
           DT_LOG_DEBUG(logging, "Found trailing character = '" << trailing << "' !");
           if (! allow_trailing_characters) {
@@ -239,7 +239,7 @@ namespace datatools {
       }
       // if (ok) {
       //   std::string trailing;
-      //   a_in >> trailing;
+      //   in_ >> trailing;
       //   if (! allow_trailing_characters) {
       //     DT_LOG_DEBUG(logging, "Trailing characters are not allowed.");
       //     // Check invalid trailing characters:
@@ -251,67 +251,67 @@ namespace datatools {
       // }
     } // end parsing
     if (ok) {
-      a_integer = value;
+      intval_ = value;
     }
     return ok;
   }
 
-  bool io::read_integer(const std::string & a_word,
-                        int& a_int,
-                        uint32_t flags)
+  bool io::read_integer(const std::string & word_,
+                        int & val_,
+                        uint32_t flags_)
   {
-    std::istringstream in(a_word);
-    return read_integer(in, a_int, flags);
+    std::istringstream in(word_);
+    return read_integer(in, val_, flags_);
   }
 
-  void io::write_integer(std::ostream& a_out, int a_integer)
+  void io::write_integer(std::ostream & out_, int val_)
   {
-    a_out << std::dec << a_integer;
+    out_ << std::dec << val_;
     return;
   }
 
-  void io::write_quoted_string(std::ostream& a_out, const std::string& a_str)
+  void io::write_quoted_string(std::ostream & out_, const std::string & str_)
   {
-    a_out << '"' << a_str << '"';
+    out_ << '"' << str_ << '"';
     return;
   }
 
-  bool io::read_quoted_string(const std::string & a_word,
-                              std::string& a_str,
-                              uint32_t flags)
+  bool io::read_quoted_string(const std::string & word_,
+                              std::string & str_,
+                              uint32_t flags_)
   {
     datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-    if (flags & reader_debug) {
+    if (flags_ & reader_debug) {
       logging = datatools::logger::PRIO_DEBUG;
     }
     logging = datatools::logger::PRIO_DEBUG;
-    DT_LOG_DEBUG(logging, "a_word=[" << a_word << "]");
-    std::istringstream in(a_word);
-    return read_quoted_string(in, a_str, flags);
+    DT_LOG_DEBUG(logging, "word_=[" << word_ << "]");
+    std::istringstream in(word_);
+    return read_quoted_string(in, str_, flags_);
   }
 
-  bool io::read_quoted_string(std::istream& a_in,
-                              std::string& a_str,
-                              uint32_t flags)
+  bool io::read_quoted_string(std::istream& in_,
+                              std::string & str_,
+                              uint32_t flags_)
   {
     bool ok = false;
     std::string chain = "";
     datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-    if (flags & reader_debug) {
+    if (flags_ & reader_debug) {
       logging = datatools::logger::PRIO_DEBUG;
     }
     // logging = datatools::logger::PRIO_DEBUG;
     bool allow_trailing_characters = false;
-    if (flags & reader_allow_trailing_characters) {
+    if (flags_ & reader_allow_trailing_characters) {
       allow_trailing_characters = true;
     }
     bool strict_quoting = false;
-    if (flags & reader_strict_quoting) {
+    if (flags_ & reader_strict_quoting) {
       strict_quoting = true;
     }
-    a_in >> std::ws;
-    if (!a_in) {
-      a_str = chain;
+    in_ >> std::ws;
+    if (!in_) {
+      str_ = chain;
       return true;
     }
     bool quoted = false;
@@ -319,8 +319,8 @@ namespace datatools {
     char lastc = 0;
     do {
       char c = 0;
-      a_in.get(c);
-      if (! a_in) break;
+      in_.get(c);
+      if (! in_) break;
       if (c == '"') {
         if (quoted) {
           quoted=false;
@@ -338,14 +338,14 @@ namespace datatools {
       } else {
        if (isspace(c)) {
           if (!quoted) {
-            a_in.putback(c);
+            in_.putback(c);
             break;
           }
         }
         chain += c;
         lastc = c;
       }
-    } while(a_in);
+    } while(in_);
 
     if (quoted) {
       DT_LOG_DEBUG(logging, "Ooops! Unterminated quoted string!");
@@ -357,10 +357,10 @@ namespace datatools {
       DT_LOG_DEBUG(logging, "Ooops! Found an unquoted character string!");
       ok = false;
     }
-    a_in >> std::ws;
-    if (ok && !a_in.eof()) {
+    in_ >> std::ws;
+    if (ok && !in_.eof()) {
       char trailing = 0;
-      trailing = a_in.peek();
+      trailing = in_.peek();
       if (trailing != 0) {
         DT_LOG_DEBUG(logging, "Found trailing character = '" << trailing << "' !");
         if (! allow_trailing_characters) {
@@ -373,7 +373,7 @@ namespace datatools {
       }
     }
     if (ok) {
-      a_str = chain;
+      str_ = chain;
     }
     return ok;
   }
@@ -465,27 +465,27 @@ namespace datatools {
     return;
   }
 
-  bool io::read_real_number(const std::string & a_word,
+  bool io::read_real_number(const std::string & word_,
                             double & val,
                             bool & normal,
-                            uint32_t flags)
+                            uint32_t flags_)
   {
-    std::istringstream in(a_word);
-    return read_real_number(in, val, normal, flags);
+    std::istringstream in(word_);
+    return read_real_number(in, val, normal, flags_);
   }
 
   // static
-  bool io::read_real_number(std::istream & in_, double & val_, bool & normal_, uint32_t flags)
+  bool io::read_real_number(std::istream & in_, double & val_, bool & normal_, uint32_t flags_)
   {
     bool ok = false;
     bool normal = false;
     double value = datatools::invalid_real();
     datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
     bool allow_trailing_characters = false;
-    if (flags & reader_allow_trailing_characters) {
+    if (flags_ & reader_allow_trailing_characters) {
       allow_trailing_characters = true;
     }
-    if (flags & reader_debug) {
+    if (flags_ & reader_debug) {
       logging = datatools::logger::PRIO_DEBUG;
     }
     std::string repr;
@@ -560,72 +560,87 @@ namespace datatools {
     return ok;
   }
 
-  size_t io::indenter::get_width() const {
-    return width_;
+  size_t io::indenter::get_width() const
+  {
+    return _width_;
   }
 
-  size_t io::indenter::get_level() const {
-    return level_;
+  size_t io::indenter::get_level() const
+  {
+    return _level_;
   }
 
-  io::indenter::indenter() {
-    width_ = 4;
-    level_ = 0;
+  io::indenter::indenter()
+  {
+    _width_ = 4;
+    _level_ = 0;
+    return;
   }
 
-  io::indenter& io::indenter::operator()(size_t l) {
-    this->level_ = l;
+  io::indenter& io::indenter::operator()(size_t l_)
+  {
+    this->_level_ = l_;
     return *this;
   }
 
-  std::ostream& io::indenter::operator()(std::ostream& out) const {
-    out << *this;
-    return out;
+  std::ostream & io::indenter::operator()(std::ostream & out_) const
+  {
+    out_ << *this;
+    return out_;
   }
 
-  io::indenter& io::indenter::operator++(int) {
-    level_++;
+  io::indenter& io::indenter::operator++(int)
+  {
+    _level_++;
     return *this;
   }
 
-  io::indenter & io::indenter::operator--(int) {
-    if (level_ > 0) level_--;
+  io::indenter & io::indenter::operator--(int)
+  {
+    if (_level_ > 0) _level_--;
     return *this;
   }
 
-  std::ostream& operator<<(std::ostream& out, const io::indenter& indent) {
-    for (size_t i = 0; i < (indent.width_ * indent.level_); ++i) {
-      out << ' ';
+  std::ostream & operator<<(std::ostream & out_, const io::indenter & indent_)
+  {
+    for (size_t i = 0; i < (indent_._width_ * indent_._level_); ++i) {
+      out_ << ' ';
     }
-    return out;
+    return out_;
   }
 
-  std::ostream& io::ostream_width(std::ostream& os, const int& n) {
-    os.width((int)n);
-    return os;
+  std::ostream & io::ostream_width(std::ostream & os_, const int& n_)
+  {
+    os_.width((int)n_);
+    return os_;
   }
 
-  ostream_manipulator<int> io::width(const int& n) {
-    return ostream_manipulator<int>(&io::ostream_width, n);
+  ostream_manipulator<int> io::width(const int & n_)
+  {
+    return ostream_manipulator<int>(&io::ostream_width, n_);
   }
 
-  std::ostream& io::ostream_precision(std::ostream& os, const int& n) {
-    os.precision((int)n);
-    return os;
+  std::ostream & io::ostream_precision(std::ostream & os_, const int & n_)
+  {
+    os_.precision((int)n_);
+    return os_;
   }
 
-  ostream_manipulator<int> io::precision(const int& n) {
-    return ostream_manipulator<int>(&io::ostream_precision, n);
+  ostream_manipulator<int> io::precision(const int & n_)
+  {
+    return ostream_manipulator<int>(&io::ostream_precision, n_);
   }
 
-  bool io::is_colored() const {
+  bool io::is_colored() const
+  {
     return _colored_stream_;
   }
 
-  void io::set_colored(bool c) {
-    if (_colored_stream_ && c) return;
-    if (!_colored_stream_ && !c) return;
-    if (c) {
+  void io::set_colored(bool c_)
+  {
+    if (_colored_stream_ && c_) return;
+    if (!_colored_stream_ && !c_) return;
+    if (c_) {
       _colored_stream_ = true;
     } else {
       _colored_stream_ = false;
@@ -647,130 +662,151 @@ namespace datatools {
     return;
   }
 
-  std::ostream& io::normal(std::ostream& out) {
+  std::ostream & io::normal(std::ostream & out_)
+  {
     if (io::instance().is_colored()) {
     }
-    return out;
+    return out_;
   }
 
-  std::ostream& io::reverse(std::ostream& out) {
+  std::ostream & io::reverse(std::ostream & out_)
+  {
     if (io::instance().is_colored()) {
     }
-    return out;
+    return out_;
   }
 
-  std::ostream& io::bold(std::ostream& out) {
+  std::ostream & io::bold(std::ostream & out_)
+  {
     if (io::instance().is_colored()) {
     }
-    return out;
+    return out_;
   }
 
-  std::ostream& io::underline(std::ostream& out) {
+  std::ostream & io::underline(std::ostream & out_)
+  {
     if (io::instance().is_colored()) {
     }
-    return out;
+    return out_;
   }
 
-  std::ostream& io::red(std::ostream& out) {
+  std::ostream & io::red(std::ostream & out_)
+  {
     if (io::instance().is_colored()) {
     }
-    return out;
+    return out_;
   }
 
-  std::ostream& io::green(std::ostream& out) {
+  std::ostream & io::green(std::ostream & out_)
+  {
     if (io::instance().is_colored()) {
     }
-    return out;
+    return out_;
   }
 
-  std::ostream& io::debug(std::ostream& out) {
-    out << "DEBUG: ";
-    return out;
+  std::ostream & io::debug(std::ostream & out_)
+  {
+    out_ << "[debug] ";
+    return out_;
   }
 
-  std::ostream& io::devel(std::ostream& out) {
-    out << "DEVEL: ";
-    return out;
+  std::ostream & io::devel(std::ostream & out_)
+  {
+    out_ << "[devel] ";
+    return out_;
   }
 
-  std::ostream& io::notice(std::ostream& out) {
-    out << "NOTICE: ";
-    return out;
+  std::ostream & io::notice(std::ostream & out_)
+  {
+    out_ << "[notice] ";
+    return out_;
   }
 
-  std::ostream& io::warning(std::ostream& out) {
-    out << "WARNING: ";
-    return out;
+  std::ostream & io::warning(std::ostream & out_)
+  {
+    out_ << "[warning] ";
+    return out_;
   }
 
-  std::ostream& io::error(std::ostream& out) {
-    out << "ERROR: ";
-    return out;
+  std::ostream & io::error(std::ostream & out_)
+  {
+    out_ << "[error] ";
+    return out_;
   }
 
-  std::ostream& io::verbose(std::ostream& out) {
-    out << "VERBOSE: ";
-    return out;
+  std::ostream & io::verbose(std::ostream & out_)
+  {
+    out_ << "[verbose] ";
+    return out_;
   }
 
-  std::ostream& io::tab(std::ostream& out) {
-    out << '\t';
-    return out;
+  std::ostream & io::tab(std::ostream & out_)
+  {
+    out_ << '\t';
+    return out_;
   }
 
-  std::ostream& io::vtab(std::ostream& out) {
-    out << '\v';
-    return out;
+  std::ostream & io::vtab(std::ostream & out_)
+  {
+    out_ << '\v';
+    return out_;
   }
 
-  std::ostream& io::page_break(std::ostream& out) {
-    out << '\f';
-    return out;
+  std::ostream & io::page_break(std::ostream & out_)
+  {
+    out_ << '\f';
+    return out_;
   }
 
-  std::ostream& io::left(std::ostream& out) {
-    out.setf(std::ios::left, std::ios::adjustfield);
-    return out;
+  std::ostream & io::left(std::ostream & out_)
+  {
+    out_.setf(std::ios::left, std::ios::adjustfield);
+    return out_;
   }
 
-  std::ostream& io::right(std::ostream& out) {
-    out.setf(std::ios::right, std::ios::adjustfield);
-    return out;
+  std::ostream & io::right(std::ostream & out_)
+  {
+    out_.setf(std::ios::right, std::ios::adjustfield);
+    return out_;
   }
 
-  std::ostream& io::internal(std::ostream& out) {
-    out.setf(std::ios::internal, std::ios::adjustfield);
-    return out;
+  std::ostream & io::internal(std::ostream & out_)
+  {
+    out_.setf(std::ios::internal, std::ios::adjustfield);
+    return out_;
   }
 
-  std::ostream& io::showbase(std::ostream& out) {
-    out.setf(std::ios::showbase);
-    return out;
+  std::ostream & io::showbase(std::ostream & out_)
+  {
+    out_.setf(std::ios::showbase);
+    return out_;
   }
 
-  std::string io::to_binary(const uint32_t& val, bool show_all) {
+  std::string io::to_binary(const uint32_t & val_, bool show_all_)
+  {
     std::ostringstream oss;
-    size_t nbits = sizeof(val) * 8;
+    size_t nbits = sizeof(val_) * 8;
     oss << '(';
     bool start = false;
     for (int i = (nbits - 1); i >= 0; i--) {
       bool abit;
-      abit = (val >> i) & 0x1;
+      abit = (val_ >> i) & 0x1;
       if (!start & abit) start = true;
-      if (!show_all && !abit && !start) continue;
+      if (!show_all_ && !abit && !start) continue;
       oss << abit;
     }
     oss << ')';
     return oss.str();
   }
 
-  std::string io::to_binary_2(const uint32_t& val) {
+  std::string io::to_binary_2(const uint32_t & val_)
+  {
     std::ostringstream oss;
-    size_t nbits = sizeof(val) * 8;
+    size_t nbits = sizeof(val_) * 8;
     bool start = false;
     for (int i = (nbits - 1); i >= 0; i--) {
       bool abit;
-      abit = (val >> i) & 0x1;
+      abit = (val_ >> i) & 0x1;
       if (!start & abit) start = true;
       if (!abit && !start) continue;
       oss << abit;

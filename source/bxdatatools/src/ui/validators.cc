@@ -34,15 +34,15 @@ namespace datatools {
 
   namespace ui {
 
-    void validate(boost::any & v,
-                  const std::vector<std::string>& values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string> & values_,
                   datatools::ui::wrapped_boolean *, int)
     {
       using namespace boost::program_options;
-      // Make sure no previous assignment to 'v' was made.
-      validators::check_first_occurrence(v);
+      // Make sure no previous assignment to 'v_' was made.
+      validators::check_first_occurrence(v_);
 
-      const std::string & value_token = validators::get_single_string(values);
+      const std::string & value_token = validators::get_single_string(values_);
       uint32_t read_flags = 0;
       bool value = false;
       if (!datatools::io::read_boolean(value_token, value, read_flags)) {
@@ -50,19 +50,19 @@ namespace datatools {
       }
       datatools::ui::wrapped_boolean wb;
       wb.value = value;
-      v = boost::any(wb);
+      v_ = boost::any(wb);
       return;
     }
 
-    void validate(boost::any & v,
-                  const std::vector<std::string> & values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string> & values_,
                   datatools::ui::wrapped_integer *, int)
     {
       using namespace boost::program_options;
-      // Make sure no previous assignment to 'v' was made.
-      validators::check_first_occurrence(v);
+      // Make sure no previous assignment to 'v_' was made.
+      validators::check_first_occurrence(v_);
 
-      const std::string & value_token = validators::get_single_string(values);
+      const std::string & value_token = validators::get_single_string(values_);
       uint32_t read_flags = 0;
       int value = 0;
       if (!datatools::io::read_integer(value_token, value, read_flags)) {
@@ -70,19 +70,19 @@ namespace datatools {
       }
       datatools::ui::wrapped_integer wi;
       wi.value = value;
-      v = boost::any(wi);
+      v_ = boost::any(wi);
       return;
     }
 
-    void validate(boost::any & v,
-                  const std::vector<std::string> & values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string> & values_,
                   datatools::ui::wrapped_real_without_unit *, int)
     {
       using namespace boost::program_options;
-      // Make sure no previous assignment to 'v' was made.
-      validators::check_first_occurrence(v);
+      // Make sure no previous assignment to 'v_' was made.
+      validators::check_first_occurrence(v_);
 
-      const std::string & value_token = validators::get_single_string(values);
+      const std::string & value_token = validators::get_single_string(values_);
       uint32_t read_flags = 0;
       double value = datatools::invalid_real();
       bool normal = false;
@@ -92,12 +92,12 @@ namespace datatools {
       datatools::ui::wrapped_real_without_unit rwou;
       rwou.value = value;
       rwou.normal = normal;
-      v = boost::any(rwou);
+      v_ = boost::any(rwou);
       return;
     }
 
-    void validate(boost::any & v,
-                  const std::vector<std::string>& values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string>& values_,
                   datatools::ui::wrapped_real_with_unit *, int)
     {
       using namespace boost::program_options;
@@ -105,10 +105,10 @@ namespace datatools {
       // for (auto token : values) {
       //   DT_LOG_DEBUG(logging, "Token is '" << token << "'");
       // }
-      // Make sure no previous assignment to 'v' was made.
-      validators::check_first_occurrence(v);
+      // Make sure no previous assignment to 'v_' was made.
+      validators::check_first_occurrence(v_);
       // Extract the token to be parsed:
-      const std::string & unique_token = validators::get_single_string(values);
+      const std::string & unique_token = validators::get_single_string(values_);
       // Split the value and unit fields:
       typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
       boost::char_separator<char> sep(" ~_");
@@ -146,7 +146,7 @@ namespace datatools {
         rwu.normal = false;
         rwu.unit_symbol.clear();
         rwu.unit_label.clear();
-        v = boost::any(rwu);
+        v_ = boost::any(rwu);
       } else if (count == 2) {
         std::string token = value_token + " " + unit_token;
         double value = datatools::invalid_real();
@@ -160,7 +160,7 @@ namespace datatools {
         rwu.normal = true;
         rwu.unit_symbol = unit_symbol;
         rwu.unit_label = unit_label;
-        v = boost::any(rwu);
+        v_ = boost::any(rwu);
       } else {
         throw validation_error(validation_error::invalid_option_value);
       }

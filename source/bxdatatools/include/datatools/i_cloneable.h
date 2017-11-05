@@ -72,7 +72,8 @@ namespace datatools {
    * default copy constructor provided by the compiler).
    *
    */
-  class i_cloneable {
+  class i_cloneable
+  {
   public:
     /**
      * A pure virtual member.
@@ -82,23 +83,27 @@ namespace datatools {
 
     /** The virtual destructor
      */
-    virtual ~i_cloneable() {};
+    virtual ~i_cloneable()
+    {
+      return;
+    };
 
-  public:
     /** Templatized static method for cloning copyable objects.
      */
     template<class Copyable>
-    static Copyable* clone_it(const Copyable& a_copyable) {
+    static Copyable* clone_it(const Copyable& a_copyable)
+    {
       return new Copyable(a_copyable);
     }
+
     template<class CandidateType>
     bool is_cloneable(const CandidateType & candidate_)
     {
       const datatools::i_cloneable * tc = dynamic_cast<const datatools::i_cloneable *>(&candidate_);
       return tc != nullptr;
     }
-  };
 
+  };
 
 } // end of namespace datatools
 

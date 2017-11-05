@@ -24,20 +24,27 @@ namespace datatools {
   /*! \brief ostream_manipulator class
    */
   template <class T>
-  class ostream_manipulator {
+  class ostream_manipulator
+  {
   public:
-    ostream_manipulator(std::ostream& (*function)(std::ostream&, const T&),
-                        const T& value)
-      : function_(function), value_(value) {}
+    ostream_manipulator(std::ostream& (*function_)(std::ostream &, const T &),
+                        const T & value_)
+      : _function_(function_), _value_(value_)
+    {
+      return;
+    }
 
-    friend std::ostream& operator<<(std::ostream& os,
-                                    const ostream_manipulator& manip) {
-      return manip.function_(os, manip.value_);
+    friend std::ostream& operator<<(std::ostream & os_,
+                                    const ostream_manipulator & manip_)
+    {
+      return manip_._function_(os_, manip_._value_);
     }
 
   private:
-    std::ostream& (*function_)(std::ostream&, const T&);
-    T value_;
+
+    std::ostream & (*_function_)(std::ostream &, const T &);
+    T _value_;
+
   };
 
 
@@ -45,20 +52,27 @@ namespace datatools {
   /*! \brief ostream_manipulator_ref class
    */
   template <class T>
-  class ostream_manipulator_ref {
+  class ostream_manipulator_ref
+  {
   public:
-    ostream_manipulator_ref(std::ostream& (*function)(std::ostream&, T&),
-                            T& value)
-      : function_(function), value_(value) {}
+    ostream_manipulator_ref(std::ostream & (*function_)(std::ostream &, T &),
+                            T & value_)
+      : _function_(function_), _value_(value_)
+    {
+      return;
+    }
 
-    friend std::ostream& operator<<(std::ostream& os,
-                                    const ostream_manipulator_ref& manip) {
-      return manip.function_(os, manip.value_);
+    friend std::ostream & operator<<(std::ostream & os_,
+                                     const ostream_manipulator_ref & manip_)
+    {
+      return manip_._function_(os_, manip_._value_);
     }
 
   private:
-    std::ostream& (*function_)(std::ostream&, T&);
-    T& value_;
+
+    std::ostream & (*_function_)(std::ostream &, T &);
+    T & _value_;
+
   };
 
 
@@ -126,8 +140,8 @@ namespace datatools {
 
     private:
 
-      size_t width_; //!< Width of each indentation level
-      size_t level_; //!< Current indentation level
+      size_t _width_; //!< Width of each indentation level
+      size_t _level_; //!< Current indentation level
 
     };
 
@@ -261,10 +275,8 @@ namespace datatools {
 
 #endif // DATATOOLS_IOUTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

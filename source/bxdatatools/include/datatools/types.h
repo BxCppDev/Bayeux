@@ -25,24 +25,22 @@ namespace datatools {
   // Any change would imply some modification of the datatools::properties
   // serialization method and version.
   // We do not change it for now.
-  enum basic_type
-    {
-      TYPE_NONE    = 0x0, //!< Not defined
-      TYPE_BOOLEAN = 0x1, //!< Boolean data
-      TYPE_INTEGER = 0x2, //!< Integer data
-      TYPE_REAL    = 0x3, //!< Real data (should be 0x4 to use it as a mask)
-      TYPE_STRING  = 0x4, //!< Character string data (should be 0x8 to use it as a mask)
-      TYPE_ANY     = 0xFFFFFFFF //!< Any type
-    };
+  enum basic_type {
+    TYPE_NONE    = 0x0, //!< Not defined
+    TYPE_BOOLEAN = 0x1, //!< Boolean data
+    TYPE_INTEGER = 0x2, //!< Integer data
+    TYPE_REAL    = 0x3, //!< Real data (should be 0x4 to use it as a mask)
+    TYPE_STRING  = 0x4, //!< Character string data (should be 0x8 to use it as a mask)
+    TYPE_ANY     = 0xFFFFFFFF //!< Any type
+  };
 
   //! \brief Data type
-  enum data_type
-    {
-      DATA_NONE    = 0x0, //!< Not defined
-      DATA_SCALAR  = 0x1, //!< Data is a scalar
-      DATA_ARRAY   = 0x2, //!< Data is an array (or vector)
-      DATA_ANY     = DATA_SCALAR | DATA_ARRAY //!< Data can be both
-    };
+  enum data_type {
+    DATA_NONE    = 0x0, //!< Not defined
+    DATA_SCALAR  = 0x1, //!< Data is a scalar
+    DATA_ARRAY   = 0x2, //!< Data is an array (or vector)
+    DATA_ANY     = DATA_SCALAR | DATA_ARRAY //!< Data can be both
+  };
 
   //! Return the label associated to a data type
   const std::string get_label_from_type(int type_);
@@ -54,10 +52,8 @@ namespace datatools {
 
 #endif // DATATOOLS_TYPES_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

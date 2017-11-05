@@ -12,8 +12,10 @@ namespace datatools {
 
   // Add a new bank of given type, name, description and constness
   template<class T>
-  T& things::add(const std::string& a_name, const std::string& a_desc,
-                 bool a_const) {
+  T& things::add(const std::string& a_name,
+                 const std::string& a_desc,
+                 bool a_const)
+  {
     T* new_obj = 0;
     new_obj = new T;
     DT_THROW_IF (new_obj == 0,
@@ -39,9 +41,10 @@ namespace datatools {
 
 
   template<class T>
-  T* things::pop(const std::string& a_name) {
-    dict_type::iterator found = things_.find(a_name);
-    DT_THROW_IF (found == things_.end(),
+  T* things::pop(const std::string& a_name)
+  {
+    dict_type::iterator found = _things_.find(a_name);
+    DT_THROW_IF (found == _things_.end(),
                  std::logic_error,
                  "No stored object has name '"  << a_name << "' !");
     const std::type_info& ti = typeid(T);
@@ -55,15 +58,16 @@ namespace datatools {
                  << a_name << "' ('" << found->second.handle->get_serial_tag() << "') !");
     T* ptr = dynamic_cast<T*>(found->second.handle);
     found->second.handle = 0;
-    things_.erase(found);
+    _things_.erase(found);
     return ptr;
   }
 
 
   template<class T>
-  T& things::grab(const std::string& a_name) {
-    dict_type::iterator found = things_.find(a_name);
-    DT_THROW_IF (found == things_.end(),
+  T& things::grab(const std::string& a_name)
+  {
+    dict_type::iterator found = _things_.find(a_name);
+    DT_THROW_IF (found == _things_.end(),
                  std::logic_error,
                  "No stored object has name '" << a_name << "' !");
     const std::type_info& ti = typeid(T);
@@ -84,8 +88,8 @@ namespace datatools {
 
   template<class T>
   bool things::is_a(const std::string& a_name) const {
-    dict_type::const_iterator found = things_.find(a_name);
-    DT_THROW_IF (found == things_.end(),
+    dict_type::const_iterator found = _things_.find(a_name);
+    DT_THROW_IF (found == _things_.end(),
                  std::logic_error,
                  "No object named '" << a_name << "' !");
     const std::type_info& ti = typeid(T);
@@ -96,9 +100,10 @@ namespace datatools {
 
 
   template<class T>
-  const T& things::get(const std::string& a_name) const {
-    dict_type::const_iterator found = things_.find(a_name);
-    DT_THROW_IF (found == things_.end(),
+  const T& things::get(const std::string& a_name) const
+  {
+    dict_type::const_iterator found = _things_.find(a_name);
+    DT_THROW_IF (found == _things_.end(),
                  std::logic_error,
                  "No object named '" << a_name << "' !");
     const std::type_info& ti = typeid(T);
@@ -117,10 +122,8 @@ namespace datatools {
 
 #endif // DATATOOLS_THINGS_INL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

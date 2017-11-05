@@ -3,14 +3,10 @@
  * Creation date: 2011-03-27
  * Last modified: 2013-04-22
  *
- * License:
- *
  * Description:
  *   Include CLHEP units header
- *
- * History:
- *
  */
+
 #ifndef DATATOOLS_CLHEP_UNITS_H
 #define DATATOOLS_CLHEP_UNITS_H
 
@@ -21,10 +17,8 @@
 
 #endif // DATATOOLS_CLHEP_UNITS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

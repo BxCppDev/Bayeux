@@ -28,20 +28,19 @@
 #include <camp/detail/typeid.hpp>
 #include <camp/camptype.hpp>
 
-
 /// \def DR_CLASS_RTTI()
 /// \brief Declare Camp RTTI within class declaration
 ///
 /** Example:
     @code{.cpp}
-namespace foo {
-  class bar {
+    namespace foo {
+    class bar {
     ...
-#ifndef Q_MOC_RUN // Special guard to avoid clash with Qt MOC interpreter
+    #ifndef Q_MOC_RUN // Special guard to avoid clash with Qt MOC interpreter
     DR_CLASS_RTTI();
-#endif // Q_MOC_RUN
-  };
-}
+    #endif // Q_MOC_RUN
+    };
+    }
     @endcode
 */
 #define DR_CLASS_RTTI()                         \
@@ -55,16 +54,16 @@ namespace foo {
 ///
 /** Example:
     @code{.cpp}
-namespace foo {
-  class bar {
+    namespace foo {
+    class bar {
     ...
-  };
-}
-DR_CLASS_REGISTER(foo::bar);
+    };
+    }
+    DR_CLASS_REGISTER(foo::bar);
     @endcode
 */
-#define DR_CLASS_REGISTER(Class)                 \
-  CAMP_TYPE( Class )                             \
+#define DR_CLASS_REGISTER(Class)                \
+  CAMP_TYPE( Class )                            \
   /**/
 
 /// \def DR_TYPE_REGISTER(Type)
@@ -83,16 +82,16 @@ DR_CLASS_REGISTER(foo::bar);
 ///
 /** Example:
     @code{.cpp}
-namespace foo {
-  class bar : private boost::noncopyable {
+    namespace foo {
+    class bar : private boost::noncopyable {
     ...
-  };
-}
-DR_CLASS_NONCOPYABLE_REGISTER(foo::bar);
+    };
+    }
+    DR_CLASS_NONCOPYABLE_REGISTER(foo::bar);
     @endcode
 */
-#define DR_CLASS_NONCOPYABLE_REGISTER(Class)     \
-  CAMP_TYPE_NONCOPYABLE( Class )                 \
+#define DR_CLASS_NONCOPYABLE_REGISTER(Class)    \
+  CAMP_TYPE_NONCOPYABLE( Class )                \
   /**/
 
 /// \def DR_TYPE_NONCOPYABLE_REGISTER(Type)
@@ -115,19 +114,19 @@ namespace datatools{
 
 /// \def DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)
 /// \brief Declare the reflection template function associated to class \a Introspectable
-#define DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)       \
-  namespace datatools{                                                  \
-    namespace detail {                                                  \
-      namespace reflection {                                            \
-        template<>                                                      \
-        void implement_reflection< Introspectable > (unsigned int);     \
-      }}}                                                               \
+#define DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)   \
+  namespace datatools{                                              \
+    namespace detail {                                              \
+      namespace reflection {                                        \
+        template<>                                                  \
+        void implement_reflection< Introspectable > (unsigned int); \
+      }}}                                                           \
   /**/
 
 /// \def DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)
 /// \see DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION
-#define DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)        \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)             \
+#define DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)  \
+  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)       \
   /**/
 
 /// \def DR_CLASS_INIT(Introspectable)
@@ -139,26 +138,26 @@ namespace datatools{
 ///
 /** Example:
     @code{.cpp}
-namespace foo {
-  class bar {
+    namespace foo {
+    class bar {
     ...
-  };
-}
-DR_CLASS_INIT(foo::bar);
+    };
+    }
+    DR_CLASS_INIT(foo::bar);
     @endcode
 */
-#define DR_CLASS_INIT(Introspectable)                           \
-  DR_CLASS_REGISTER(Introspectable)                            \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)    \
+#define DR_CLASS_INIT(Introspectable)                       \
+  DR_CLASS_REGISTER(Introspectable)                         \
+  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable) \
   /**/
 
 /// \def DR_CLASS_NONCOPYABLE_INIT(Introspectable)
 /// \brief Inform Camp that non copyable class \a Introspectable exists and trigger the automatic registration
 ///        of dedicated introspection feature.
 /// @see DR_CLASS_INIT
-#define DR_CLASS_NONCOPYABLE_INIT(Introspectable)               \
-  DR_CLASS_NONCOPYABLE_REGISTER(Introspectable)                \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)    \
+#define DR_CLASS_NONCOPYABLE_INIT(Introspectable)           \
+  DR_CLASS_NONCOPYABLE_REGISTER(Introspectable)             \
+  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable) \
   /**/
 
 /// \def DR_TYPE_INIT(Introspectable)
@@ -169,16 +168,14 @@ DR_CLASS_INIT(foo::bar);
 
 /// \def DR_TYPE_NONCOPYABLE_INIT(Introspectable)
 /// @see DR_CLASS_NONCOPYABLE_INIT
-#define DR_TYPE_NONCOPYABLE_INIT(Introspectable)        \
-  DR_CLASS_NONCOPYABLE_INIT(Introspectable)             \
+#define DR_TYPE_NONCOPYABLE_INIT(Introspectable)  \
+  DR_CLASS_NONCOPYABLE_INIT(Introspectable)       \
   /**/
 
 #endif // DATATOOLS_REFLECTION_INTERFACE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

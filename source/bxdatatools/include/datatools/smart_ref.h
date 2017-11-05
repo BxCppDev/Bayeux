@@ -9,8 +9,6 @@
  *   Smart reference to an existing instance
  *   The referenced type must have a default constructor.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_SMART_REF_H
@@ -36,7 +34,8 @@ namespace datatools {
 
   //! \brief A template class that stores a reference to an object and additional associated meta-data
   template <class T>
-  class smart_ref {
+  class smart_ref
+  {
   public:
     typedef T                        instance_type;
     typedef instance_type&           reference_type;
@@ -46,84 +45,116 @@ namespace datatools {
     typedef std::list<instance_type> col_type;
     typedef smart_ref<instance_type> smart_ref_type;
 
-  public:
-
     /// Default constructor
-    smart_ref() : ref_(0), properties_() {}
+    smart_ref()
+      : _ref_(nullptr)
+      , _properties_()
+    {
+      return;
+    }
 
     /// Constructor
-    smart_ref(const_reference_type obj) {
+    smart_ref(const_reference_type obj)
+    {
       this->set(obj);
+      return;
     }
 
     /// Destructor
-    virtual ~smart_ref() {}
+    virtual ~smart_ref()
+    {
+      return;
+    }
 
     /// Set the internal reference to the target object
-    void set(const_reference_type obj) {
-      ref_ = const_cast<pointer_type>(&obj);
+    void set(const_reference_type obj)
+    {
+      _ref_ = const_cast<pointer_type>(&obj);
+      return;
     }
 
     /// Return the reference to the target object
-    const_reference_type get() const {
-      return *ref_;
+    const_reference_type get() const
+    {
+      return *_ref_;
     }
 
     /// Return a non mutable reference to the container of properties
-    const datatools::properties& get_properties() const {
-      return properties_;
+    const datatools::properties& get_properties() const
+    {
+      return _properties_;
     }
 
     /// Return a mutable reference to the container of properties
-    datatools::properties& grab_properties() {
-      return properties_;
+    datatools::properties& grab_properties()
+    {
+      return _properties_;
     }
 
     /// \deprecated Return a mutable reference to the container of properties
-    datatools::properties& get_properties() {
-      return properties_;
+    datatools::properties& get_properties()
+    {
+      return _properties_;
     }
 
     /// Set the container of properties
-    void set_properties(const datatools::properties& props) {
-      properties_ = props;
+    void set_properties(const datatools::properties & props)
+    {
+      _properties_ = props;
+      return;
     }
 
     /// Reset the internal reference
-    void reset() {
-      ref_ = 0;
+    void reset()
+    {
+      _ref_ = 0;
+      return;
     }
 
     /// Check the validity of the smart reference
-    bool is_valid() const {
-      return ref_ != 0;
+    bool is_valid() const
+    {
+      return _ref_ != 0;
     }
 
     //! \brief Predicate used by the smart_ref template class
-    class has_flag : public std::unary_function<smart_ref_type, bool> {
+    class has_flag
+      : public std::unary_function<smart_ref_type, bool>
+    {
     public:
-      explicit has_flag(const std::string& flag) : flag_(flag) {}
 
-      bool operator()(const smart_ref_type& s) const {
-        if (!s.is_valid()) return false;
-        return (s.get_properties().has_flag(flag_));
+      explicit has_flag(const std::string & flag_)
+        : _flag_(flag_)
+      {
+        return;
       }
+
+      bool operator()(const smart_ref_type & s_) const
+      {
+        if (!s_.is_valid()) return false;
+        return (s_.get_properties().has_flag(_flag_));
+      }
+
     private:
-      std::string flag_;
+
+      std::string _flag_;
+
     };
 
   private:
 
-    pointer_type          ref_; //!< Handle to the target object
-    datatools::properties properties_; //!< Container of auxiliary properties
+    pointer_type          _ref_;        //!< Handle to the target object
+    datatools::properties _properties_; //!< Container of auxiliary properties
 
     friend class boost::serialization::access;
 
     /// Boost serialization method
     template<class Archive>
-    void serialize(Archive& ar, const unsigned int /*version*/) {
-      ar & boost::serialization::make_nvp("properties", properties_);
-      ar & boost::serialization::make_nvp("ref", ref_);
+    void serialize(Archive& ar_, const unsigned int /*version*/)
+    {
+      ar_ & boost::serialization::make_nvp("properties", _properties_);
+      ar_ & boost::serialization::make_nvp("ref", _ref_);
+      return;
     }
 
   };
@@ -132,10 +163,8 @@ namespace datatools {
 
 #endif // DATATOOLS_SMART_REF_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

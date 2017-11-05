@@ -73,10 +73,8 @@ DR_TYPE_INIT(::datatools::introspection::data_layout)
 
 #endif // DATATOOLS_INTROSPECTION_DATA_LAYOUT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

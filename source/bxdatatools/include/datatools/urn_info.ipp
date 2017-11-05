@@ -22,6 +22,7 @@ namespace datatools {
     archive_ & boost::serialization::make_nvp("category", _category_);
     archive_ & boost::serialization::make_nvp("description", _description_);
     archive_ & boost::serialization::make_nvp("components", _components_);
+    return;
   }
 
 } // end of namespace datatools

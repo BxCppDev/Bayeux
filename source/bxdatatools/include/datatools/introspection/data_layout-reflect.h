@@ -53,10 +53,8 @@ namespace datatools {
 
 #endif // DATATOOLS_INTROSPECTION_DATA_LAYOUT_REFLECT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

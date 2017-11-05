@@ -34,7 +34,8 @@ namespace datatools {
     //! cannot be set after the command interface object
     //! has been initialized.
     template <typename Type>
-    class target_command_interface : public base_command_interface
+    class target_command_interface
+      : public base_command_interface
     {
     public:
 

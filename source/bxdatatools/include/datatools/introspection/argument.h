@@ -44,7 +44,8 @@ namespace datatools {
     class method;
 
     //! \brief Description of a method argument
-    class argument : public datatools::i_tree_dumpable
+    class argument
+      : public datatools::i_tree_dumpable
     {
     public:
 
@@ -229,10 +230,8 @@ namespace datatools {
 
 #endif // DATATOOLS_INTROSPECTION_ARGUMENT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

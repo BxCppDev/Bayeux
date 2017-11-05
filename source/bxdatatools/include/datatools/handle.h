@@ -84,24 +84,13 @@ namespace datatools {
    *
    */
   template <typename T>
-  class handle {
+  class handle
+  {
   public:
     typedef T value_type;
     typedef value_type & reference_type;
-    // typedef const reference_type const_reference_type;
-
-  public:
     typedef handle_predicate<T> predicate_type;
 
-    //! The default constructor.
-    /*!
-     * The default constructor automatically allocate an object
-     * handled by the internal shared pointer.
-     */
-    //handle() : sp_ (new T)
-    /*
-      handle() : sp_ (nullptr) {}
-    */
 
     //! A constructor from a pointer to some on-the-fly allocated instance.
     /*!
@@ -125,7 +114,11 @@ namespace datatools {
      * \endcode
      *
      */
-    handle(T* held = nullptr) : sp_(held) {}
+    handle(T * held_ = nullptr)
+      : _sp_(held_)
+    {
+      return;
+    }
 
     //! A constructor from a pointer to some on-the-fly allocated instance.
     /*!
@@ -144,46 +137,62 @@ namespace datatools {
                std::is_same<const Q, T>::value &&
                std::is_const<T>::value &&
                !std::is_const<Q>::value>>
-      handle(Q* held = nullptr) : sp_(const_cast<Q*>(held)) {}
+      handle(Q* held = nullptr)
+      : _sp_(const_cast<Q*>(held))
+    {
+      return;
+    }
 
     //! Constructor on a boost shared_ptr
-    handle(const boost::shared_ptr<T> & sp) : sp_(sp) {}
+    handle(const boost::shared_ptr<T> & sp_)
+      : _sp_(sp_)
+    {
+      return;
+    }
 
     //! Destructor
-    virtual ~handle() {
-      sp_.reset();
+    virtual ~handle()
+    {
+      _sp_.reset();
+      return;
     }
 
     //! Check if the current handle holds an uniquely referenced object
-    bool unique() const {
-      return sp_.unique();
+    bool unique() const
+    {
+      return _sp_.unique();
     }
 
     //! Return true if the internal shared pointer holds something.
     // 2013-05-12 FM : Preserved until all client code use the corresponding 'operator bool'.
-    bool has_data() const {
-      return sp_.get() != nullptr;
+    bool has_data() const
+    {
+      return _sp_.get() != nullptr;
     }
 
     //! Return true if the internal shared pointer holds something.
-    operator bool() const {
-      return sp_.get() != nullptr;
+    operator bool() const
+    {
+      return _sp_.get() != nullptr;
     }
 
-    void swap(handle<T>& other) {
-      sp_.swap(other.sp_);
+    void swap(handle<T> & other_)
+    {
+      _sp_.swap(other_._sp_);
+      return;
     }
 
     //! Return a const reference to the hosted instance.
-    const T& get() const {
-      if (sp_) return *sp_;
-      DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
+    const T & get() const
+    {
+      DT_THROW_IF(_sp_.get() == nullptr, std::logic_error, "Handle holds no data!");
+      return *_sp_;
     }
 
     // 2016-12-01, FM: original version is inhibited when T is const:
     // //! Return a non-const reference to the hosted instance.
     // T& grab() {
-    //   if (sp_) return *sp_;
+    //   if (_sp_) return *_sp_;
     //   DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
     // }
 
@@ -193,14 +202,17 @@ namespace datatools {
       std::is_same<Q, T>::value &&
       !std::is_const<Q>::value &&
       !std::is_const<T>::value,
-      Q&>::type grab() {
-      if (sp_) return *sp_;
-      DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
+      Q&>::type grab()
+    {
+      DT_THROW_IF(_sp_.get() == nullptr, std::logic_error, "Handle holds no data!");
+      return *_sp_;
     }
 
     //! Reset the internal shared pointer with a new instance.
-    void reset(T* elem = nullptr) {
-      sp_.reset(elem);
+    void reset(T * elem_ = nullptr)
+    {
+      _sp_.reset(elem_);
+      return;
     }
 
     //! Return a handle instance that hosts the const instance
@@ -211,19 +223,24 @@ namespace datatools {
       !std::is_const<T>::value,
       handle<const Q> >::type to_const() const
     {
-      boost::shared_ptr<const T> csp = boost::const_pointer_cast<const T, T>(sp_);
+      boost::shared_ptr<const T> csp = boost::const_pointer_cast<const T, T>(_sp_);
       return handle<const T>(csp);
     }
 
   private:
+
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, int /*version*/) {
-      ar & boost::serialization::make_nvp("sp", sp_);
+    void serialize(Archive & ar_, int /*version*/)
+    {
+      ar_ & boost::serialization::make_nvp("sp", _sp_);
+      return;
     }
 
   private:
-    boost::shared_ptr<T> sp_; /*!< The embedded shared pointer. */
+
+    boost::shared_ptr<T> _sp_; //!< The embedded shared pointer.
+
   };
 
   /*! \brief Templatized predicate class associated to handle instance.
@@ -267,28 +284,33 @@ namespace datatools {
    *
    */
   template <typename T>
-  struct handle_predicate : public i_predicate<handle<T> > {
+  struct handle_predicate
+    : public i_predicate<handle<T> >
+  {
   public:
     //! The default constructor.
-    handle_predicate(const i_predicate<T>& predicate,
-                     bool no_data_means_false = true)
-      : predicate_(predicate),
-        no_data_means_false_(no_data_means_false) {}
+    handle_predicate(const i_predicate<T> & predicate_,
+                     bool no_data_means_false_ = true)
+      : _predicate_(predicate_)
+      , _no_data_means_false_(no_data_means_false_)
+    {
+      return;
+    }
 
 
     //! Call operator taking handle as input
-    bool operator()(const handle<T>& handle) const {
-      if (! handle) {
-        if (no_data_means_false_) return false;
-        DT_THROW_IF(true,std::logic_error,"Handle has no data !");
+    bool operator()(const handle<T> & handle_) const
+    {
+      if (! handle_) {
+        if (_no_data_means_false_) return false;
+        DT_THROW(std::logic_error, "Handle has no data !");
       }
-
-      return predicate_(handle.get());
+      return _predicate_(handle_.get());
     }
 
   private:
-    const i_predicate<T>& predicate_; /*!< The embedded predicate. */
-    bool no_data_means_false_; /*!< A flag to indicate the behaviour in case of NULL pointer : predicate returns false (default) or throws an exception). */
+    const i_predicate<T> & _predicate_; /*!< The embedded predicate. */
+    bool _no_data_means_false_; /*!< A flag to indicate the behaviour in case of NULL pointer : predicate returns false (default) or throws an exception). */
   };
 
 } // end of namespace datatools
@@ -328,10 +350,8 @@ namespace boost {
 
 #endif // DATATOOLS_HANDLE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

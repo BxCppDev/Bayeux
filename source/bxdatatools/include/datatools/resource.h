@@ -40,7 +40,7 @@ namespace datatools {
   //!        environment variable DATATOOLS_RESOURCE_DIR as a directory path on the filesystem
   //!        as an alternative base directory for resources in place of the
   //!        standard installation path
-  std::string get_resource_dir(bool overriden_env = false);
+  std::string get_resource_dir(bool overriden_env_ = false);
 
   //! Return URL, i.e. a path, to named resource
   //! By default the encoded resource root, determined at compile time
@@ -50,15 +50,14 @@ namespace datatools {
   //! \param rname name of resource, given as a path relative to
   //!        resource root.
   //! \param overriden_env flag to allow path overriding by the DATATOOLS_RESOURCE_DIR environment variable.
-  std::string get_resource(const std::string& rname, bool overriden_env = false);
+  std::string get_resource(const std::string & rname_, bool overriden_env_ = false);
+
 } // namespace datatools
 
 #endif // DATATOOLS_RESOURCE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

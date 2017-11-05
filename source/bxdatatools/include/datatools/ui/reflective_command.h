@@ -38,7 +38,8 @@ namespace datatools {
 
     //! \brief Reflective command for a target object
     template <typename Type>
-    class reflective_command : public target_command<Type>
+    class reflective_command
+      : public target_command<Type>
     {
     public:
 

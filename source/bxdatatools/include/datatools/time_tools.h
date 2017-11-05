@@ -15,7 +15,9 @@ namespace datatools {
   /**!  \struct computing_time
      \brief A class that compute time statistics
   */
-  class computing_time : public i_tree_dumpable {
+  class computing_time
+    : public i_tree_dumpable
+  {
   public:
 
     static double system_dead_time();
@@ -58,38 +60,37 @@ namespace datatools {
 
     void reset();
 
-    virtual void tree_dump(std::ostream& a_out = std::clog,
-			   const std::string& a_title = "",
-			   const std::string& a_indent = "",
-			   bool a_inherit = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+         const std::string & title_ = "",
+         const std::string & indent_ = "",
+         bool inherit_ = false) const;
 
-    static bool g_timeval_subtract(const timeval& a_stop,
-				   const timeval& a_start,
-				   timeval& a_result);
+    static bool g_timeval_subtract(const timeval & stop_,
+           const timeval & start_,
+           timeval & result_);
 
     static double compute_system_dead_time();
 
-
   private:
-    timeval start_;
-    timeval stop_;
-    size_t  counts_;
-    double  system_dead_time_;
-    double  sum_time_;
-    double  min_time_;
-    double  max_time_;
-    double  sum2_time_;
-    double  last_elapsed_time_;
+
+    timeval _start_;
+    timeval _stop_;
+    size_t  _counts_;
+    double  _system_dead_time_;
+    double  _sum_time_;
+    double  _min_time_;
+    double  _max_time_;
+    double  _sum2_time_;
+    double  _last_elapsed_time_;
+
   };
 
 } // namespace datatools
 
 #endif // DATATOOLS_TIME_TOOLS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

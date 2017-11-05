@@ -100,10 +100,8 @@ DR_CLASS_VERSION(foo::bar, 1);
 
 #endif // DATATOOLS_DETAIL_REFLECTION_VERSION_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

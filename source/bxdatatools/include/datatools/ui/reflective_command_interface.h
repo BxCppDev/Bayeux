@@ -39,7 +39,8 @@ namespace datatools {
 
     //! \brief Reflective command interface for a target object
     template <typename Type>
-    class reflective_command_interface : public target_command_interface<Type>
+    class reflective_command_interface
+      : public target_command_interface<Type>
     {
     public:
 

@@ -108,10 +108,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_PARAMETER_PHYSICAL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

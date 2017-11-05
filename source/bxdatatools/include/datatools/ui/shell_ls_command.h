@@ -31,7 +31,8 @@ namespace datatools {
   namespace ui {
 
     //! \brief Shell ls command
-    struct shell_ls_command : public const_target_command<basic_shell>
+    struct shell_ls_command
+      : public const_target_command<basic_shell>
     {
       shell_ls_command(const basic_shell &);
       virtual ~shell_ls_command();
@@ -46,10 +47,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_SHELL_LS_COMMAND_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -100,55 +100,55 @@ namespace datatools {
     static priority get_priority(const std::string& name);
 
     //! return priority label from the priority enumeration value
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns the matching priority label or the empty string if the priority
     //!          is not valid
-    static std::string get_priority_label(priority p);
+    static std::string get_priority_label(priority p_);
 
     //! check if priority is defined
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is undefined
-    static bool is_undefined(priority p);
+    static bool is_undefined(priority p_);
 
     //! check if priority satisfy the fatal level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the fatal level
-    static bool is_fatal(priority p);
+    static bool is_fatal(priority p_);
 
     //! check if priority satisfy the critical level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the critical level
-    static bool is_critical(priority p);
+    static bool is_critical(priority p_);
 
     //! check if priority satisfy the error level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the error level
-    static bool is_error(priority p);
+    static bool is_error(priority p_);
 
     //! check if priority satisfy the warning level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the warning level
-    static bool is_warning(priority p);
+    static bool is_warning(priority p_);
 
     //! check if priority satisfy the notice level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the notice level
-    static bool is_notice(priority p);
+    static bool is_notice(priority p_);
 
     //! check if priority satisfy the information level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the information level
-    static bool is_information(priority p);
+    static bool is_information(priority p_);
 
     //! check if priority satisfy the debug level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the debug level
-    static bool is_debug(priority p);
+    static bool is_debug(priority p_);
 
     //! check if priority satisfy the trace level
-    //! @param p priority enumeration
+    //! @param p_ priority enumeration
     //! @returns true if the priority is at least at the trace level
-    static bool is_trace(priority p);
+    static bool is_trace(priority p_);
 
     //! return the priority level from a collection of properties
     //! The following properties are recognized:
@@ -169,21 +169,22 @@ namespace datatools {
     //!
     //! Note that the "logging.priority" property has precedence on
     //! "logging.debug" (or "debug") and "logging.verbose" or ("verbose").
-    //! @param config         a collection of properties to be searched
-    //! @param default_prio   the default logging priority threshold
-    //! @param throw_on_error is true, an invalid logging priority label
+    //! @param config_         a collection of properties to be searched
+    //! @param default_prio_   the default logging priority threshold
+    //! @param throw_on_error_ is true, an invalid logging priority label
     //!        triggers an exception
     //! @returns the priority as configured from the properties
-    static priority extract_logging_configuration(const datatools::properties & config,
-              priority default_prio = datatools::logger::PRIO_FATAL,
-              bool throw_on_error = true);
+    static priority extract_logging_configuration(const datatools::properties & config_,
+                                                  priority default_prio_ = datatools::logger::PRIO_FATAL,
+                                                  bool throw_on_error_ = true);
 
     static void declare_ocd_logging_configuration(datatools::object_configuration_description &,
-              const std::string & default_value_ = "fatal",
-              const std::string & prefix_ = "",
-              const std::string & from_ = "");
+                                                  const std::string & default_value_ = "fatal",
+                                                  const std::string & prefix_ = "",
+                                                  const std::string & from_ = "");
 
   };
+
 } // namespace datatools
 
 #ifndef Q_MOC_RUN

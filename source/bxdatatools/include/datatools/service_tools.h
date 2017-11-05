@@ -147,16 +147,16 @@ namespace datatools {
     // bool has_slave(const std::string& name) const;
 
     // //! Remove slave service with given name
-    // void remove_slave(const std::string& name);
+    // void remove_slave(const std::string& name_);
 
     //! Check if the service object has master service with given name
-    bool has_master(const std::string& name) const;
+    bool has_master(const std::string& name_) const;
 
     //! Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
-                           const std::string & title  = "",
-                           const std::string & indent = "",
-                           bool inherit = false) const;
+    virtual void tree_dump(std::ostream& out_ = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
     //! Return a handle to the non mutable service
     const service_handle_type & get_service_handle() const;
@@ -168,7 +168,7 @@ namespace datatools {
     bool has_service_manager() const;
 
     //! Set the service manager
-    void set_service_manager(service_manager & smgr);
+    void set_service_manager(service_manager & smgr_);
 
     //! Return a reference to the service manager
     const service_manager & get_service_manager() const;

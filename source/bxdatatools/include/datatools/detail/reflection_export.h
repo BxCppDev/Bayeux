@@ -23,11 +23,13 @@ namespace datatools {
       template<class T>
       struct guid_initializer
       {
-        void export_guid(int tag) const {
+        void export_guid(int tag) const
+        {
           ::datatools::detail::reflection::implement_reflection<T> (tag);
           return;
         }
-        guid_initializer const & export_guid() const {
+        guid_initializer const & export_guid() const
+        {
           //BOOST_STATIC_WARNING(boost::is_polymorphic< T >::value);
           // note: exporting an abstract base class will have no effect
           // and cannot be used to instantitiate serialization code
@@ -54,7 +56,8 @@ namespace datatools {
       template<class T>
       struct guid_defined : boost::mpl::false_ {};
       template<class T>
-      inline const char * guid(){
+      inline const char * guid()
+      {
         return NULL;
       }
 
@@ -136,10 +139,8 @@ DR_CLASS_EXPORT(foo::bar, "foo::bar"");
 
 #endif // DATATOOLS_DETAIL_REFLECTION_EXPORT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

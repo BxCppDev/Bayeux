@@ -96,11 +96,12 @@ namespace datatools {
    * }
    * \endcode
    */
-  class multi_properties :
-    public datatools::i_serializable,
-    public datatools::i_clear,
-    public datatools::i_tree_dumpable,
-    public datatools::i_cloneable {
+  class multi_properties
+    : public datatools::i_serializable
+    , public datatools::i_clear
+    , public datatools::i_tree_dumpable
+    , public datatools::i_cloneable
+  {
   public:
 
     /// \brief Default values
@@ -113,12 +114,14 @@ namespace datatools {
 
   public:
     //! \brief Section entry handle internal data stored within the dictionary of the multi_properties class.
-    class entry : public datatools::i_tree_dumpable {
+    class entry
+      : public datatools::i_tree_dumpable
+    {
     public:
 
       /// Constructor
-      entry(const std::string& a_key = "",
-            const std::string& a_meta = "");
+      entry(const std::string & key_ = "",
+            const std::string & meta_ = "");
 
       /// Destructor
       virtual ~entry();
@@ -130,30 +133,30 @@ namespace datatools {
       properties& grab_properties();
 
       /// Return the primary key
-      const std::string& get_key() const;
+      const std::string & get_key() const;
 
       /// Set the primary key
-      void set_key(const std::string&);
+      void set_key(const std::string &);
 
       /// Return the meta information text
-      const std::string& get_meta() const;
+      const std::string & get_meta() const;
 
       /// Set the meta information text
-      void set_meta(const std::string&);
+      void set_meta(const std::string &);
 
       /// Check if meta information text is not empty
       bool has_meta() const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream& a_out = std::clog,
-                             const std::string& a_title = "",
-                             const std::string& a_oindent = "",
-                             bool a_inherit = false) const;
+      virtual void tree_dump(std::ostream & out_ = std::clog,
+                             const std::string & title_ = "",
+                             const std::string & indent_ = "",
+                             bool inherit_ = false) const;
 
     private:
-      std::string key_;        //!< Primary key of the section
-      std::string meta_;       //!< Meta information text of the section
-      properties  properties_; //!< Container of properties stored in the section
+      std::string _key_;        //!< Primary key of the section
+      std::string _meta_;       //!< Meta information text of the section
+      properties  _properties_; //!< Container of properties stored in the section
 
       BOOST_SERIALIZATION_BASIC_DECLARATION()
 
@@ -171,10 +174,10 @@ namespace datatools {
   private:
 
     /// Private initialization
-    void _init_ (const std::string& a_key_label,
-                 const std::string& a_meta_label,
-                 const std::string& a_description,
-                 bool a_debug);
+    void _init_ (const std::string & key_label_,
+                 const std::string & meta_label_,
+                 const std::string & description_,
+                 bool debug_);
 
     /// Private copy
     void _copy_impl_(const multi_properties &);
@@ -185,14 +188,14 @@ namespace datatools {
     multi_properties();
 
     /// Constructor specifying key label and meta label
-    multi_properties(const std::string& a_key_label,
-                     const std::string& a_meta_label);
+    multi_properties(const std::string & key_label_,
+                     const std::string & meta_label_);
 
     /// Constructor specifying key label, meta label, description and debug flag
-    multi_properties(const std::string& a_key_label,
-                     const std::string& a_meta_label,
-                     const std::string& a_description,
-                     bool a_debug = false);
+    multi_properties(const std::string & key_label_,
+                     const std::string & meta_label_,
+                     const std::string & description_,
+                     bool debug_ = false);
 
     /// Destructor
     virtual ~multi_properties();
@@ -210,37 +213,37 @@ namespace datatools {
     void set_debug(bool = true);
 
     /// Set the description
-    void set_description(const std::string& a_description);
+    void set_description(const std::string & description_);
 
     /// Check if a description is available
     bool has_description() const;
 
     /// Get the description
-    const std::string& get_description() const;
+    const std::string & get_description() const;
 
     /// Check if the key label is set
     bool has_key_label() const;
 
     /// Set the key label
-    void set_key_label(const std::string& a_key_label);
+    void set_key_label(const std::string & key_label_);
 
     /// Clear the key label
     void clear_key_label();
 
     /// Return the key label
-    const std::string& get_key_label() const;
+    const std::string & get_key_label() const;
 
     /// Check if the meta label is set
     bool has_meta_label() const;
 
     /// Set the meta label
-    void set_meta_label(const std::string& a_meta_label);
+    void set_meta_label(const std::string & meta_label_);
 
     /// Clear the meta label
     void clear_meta_label();
 
     /// Return the meta label
-    const std::string& get_meta_label() const;
+    const std::string & get_meta_label() const;
 
     /// Return the number of entries
     uint32_t size() const;
@@ -261,16 +264,16 @@ namespace datatools {
     const entries_ordered_col_type& ordered_entries() const;
 
     /// Return a const reference to the stored entry
-    const entry& get(const std::string& a_key) const;
+    const entry& get(const std::string & key_) const;
 
     /// Return a mutable reference to the stored entry
-    entry& grab(const std::string& a_key);
+    entry& grab(const std::string & key_);
 
     /// Check if a section with a given key exists
-    bool has_key(const std::string& a_key) const;
+    bool has_key(const std::string & key_) const;
 
     /// Check if a section with given key and meta exists
-    bool has_key_with_meta(const std::string& a_key, const std::string& a_meta) const;
+    bool has_key_with_meta(const std::string & key_, const std::string & meta_) const;
 
     //! Returns the ith key
     const std::string & key(int) const;
@@ -282,64 +285,65 @@ namespace datatools {
     std::vector<std::string> keys() const;
 
     /// Build an array of keys
-    void keys(std::vector<std::string>&k) const;
+    void keys(std::vector<std::string>  & keys_) const;
 
     /// Return an array of orderered keys
     std::vector<std::string> ordered_keys() const;
 
     /// Build an array of orderered keys
-    void ordered_keys(std::vector<std::string>&k) const;
+    void ordered_keys(std::vector<std::string> & keys_) const;
 
     /// Check if a section exists
-    bool has_section(const std::string& a_key) const;
+    bool has_section(const std::string & key_) const;
 
     /// Return the const reference to the properties store in a section
-    const properties& get_section(const std::string& a_key) const;
+    const properties& get_section(const std::string & key_) const;
 
     /// Return the const reference to the properties store in a section
-    const properties& get_section_const(const std::string& a_key) const;
+    const properties& get_section_const(const std::string & key_) const;
 
     /// Return the mutable reference to the properties store in a section
-    properties& grab_section(const std::string& a_key);
+    properties& grab_section(const std::string & key_);
 
     /// Add a new section with primary key, meta information text and a collection of properties
-    void add(const std::string& a_key,
-             const std::string& a_meta,
-             const properties& a_props);
+    void add(const std::string & key_,
+             const std::string & meta_,
+             const properties & props_);
 
     /// Add a new section with primary key and a collection of properties
-    void add(const std::string& a_key,
-             const properties& a_props);
+    void add(const std::string & key_,
+             const properties& props_);
 
     /// Add an empty section with primary key and meta information text
-    void add(const std::string& a_key,
-             const std::string& a_meta = "");
+    void add(const std::string & key_,
+             const std::string & meta_ = "");
 
     /// Add a new section with primary key and meta information text and return a mutable reference to the store collection of properties
-    properties& add_section(const std::string& a_key,
-                            const std::string& a_meta = "");
+    properties& add_section(const std::string & key_,
+                            const std::string & meta_ = "");
 
     /// Remove a section
-    void remove(const std::string& a_key);
+    void remove(const std::string & key_);
 
     /// Write to a configuration file
-    void write(const std::string& filename,
-               uint32_t options = config::HEADER_FOOTER | config::SKIP_PRIVATE_SECTIONS) const;
+    void write(const std::string & filename_,
+               uint32_t options_ = config::HEADER_FOOTER | config::SKIP_PRIVATE_SECTIONS) const;
 
     /// Read from a configuration file
-    void read(const std::string& filename, uint32_t options = 0);
+    void read(const std::string & filename_, uint32_t options_ = 0);
 
     /// Basic print
-    void dump(std::ostream& a_out = std::clog) const;
+    void dump(std::ostream & out_ = std::clog) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& a_out         = std::clog,
-                           const std::string& a_title  = "",
-                           const std::string& a_indent = "",
-                           bool a_inherit          = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_          = false) const;
 
     /// \brief Reader/writer class for multi_properties objects
-    class config {
+    class config
+    {
     public:
       enum options_flag {
         SKIP_PRIVATE_SECTIONS = bit_mask::bit00, ///< Skip private sections bit
@@ -368,22 +372,22 @@ namespace datatools {
       void reset();
 
       /// Read from an input file
-      void read(const std::string & a_filename, multi_properties& target_);
+      void read(const std::string & filename, multi_properties & target_);
 
       /// Read from an input stream
-      void read(std::istream& a_in, multi_properties& target_);
+      void read(std::istream & in_, multi_properties & target_);
 
       /// Write to an output stream
-      void write(std::ostream& a_out, const multi_properties& source_);
+      void write(std::ostream& out_, const multi_properties & source_);
 
       /// Write to an output file
-      void write(const std::string & a_filename, const multi_properties& source_);
+      void write(const std::string & filename_, const multi_properties & source_);
 
       /// Check if topic is set
       bool has_topic() const;
 
       /// Set the topic that should be matched
-      void set_topic(const std::string & topic);
+      void set_topic(const std::string & topic_);
 
       /// Return the topic
       const std::string & get_topic() const;
@@ -394,10 +398,10 @@ namespace datatools {
       void _init_defaults();
 
       /// Read from an input stream
-      void _read(std::istream& a_in, multi_properties& target_);
+      void _read(std::istream & in_, multi_properties & target_);
 
       /// Write to an output stream
-      void _write(std::ostream& a_out, const multi_properties& target_);
+      void _write(std::ostream & out_, const multi_properties & target_);
 
       /// Store the current filename
       void _set_current_filename(const std::string & filename_);
@@ -424,29 +428,27 @@ namespace datatools {
   private:
 
     /// Remove section implementation
-    void remove_impl(const std::string& a_key);
+    void remove_impl(const std::string & key_);
 
     /// Add section implementation
-    void add_impl(const std::string& a_key,
-                  const std::string& a_meta = "");
+    void add_impl(const std::string & key_,
+                  const std::string & meta_ = "");
 
     /// Add section implementation
-    properties& add_impl2(const std::string& a_key,
-                          const std::string& a_meta = "");
-
-    // /// @deprecated Read section implementation
-    // void read_impl(std::istream& a_in, bool a_skip_private);
+    properties& add_impl2(const std::string & key_,
+                          const std::string & meta_ = "");
 
     /// Set default values at construction
     void init_defaults();
 
   private:
-    bool                  debug_;       //!< Debug flag
-    std::string           description_; //!< Description of the container
-    std::string           key_label_;   //!< The key label used by the container
-    std::string           meta_label_;  //!< The meta label used by the container
-    entries_col_type      entries_;     //!< List of stored properties objects (unordered)
-    entries_ordered_col_type ordered_entries_; //!< List of ordered properties objects
+
+    bool                  _debug_;       //!< Debug flag
+    std::string           _description_; //!< Description of the container
+    std::string           _key_label_;   //!< The key label used by the container
+    std::string           _meta_label_;  //!< The meta label used by the container
+    entries_col_type      _entries_;     //!< List of stored properties objects (unordered)
+    entries_ordered_col_type _ordered_entries_; //!< List of ordered properties objects
 
     //! Cloneable interface
     DATATOOLS_CLONEABLE_DECLARATION(multi_properties)
@@ -483,10 +485,8 @@ BOOST_CLASS_VERSION(datatools::multi_properties, 2)
 
 #endif // DATATOOLS_MULTI_PROPERTIES_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

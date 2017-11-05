@@ -5,8 +5,7 @@
 //!          for example while shooting random numbers and/or associated
 //!          values.
 //
-// Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013 by Université de Caen Basse-Normandie
+// Copyright (c) 2013-2017 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
 // This file is part of datatools.
 //
@@ -30,10 +29,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
-// Third Party:
-// - Boost:
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 // This Project:
 #include <datatools/utils.h>
@@ -41,7 +37,8 @@
 namespace datatools {
 
   /// \brief A tracer object stores some arbitrary output in a trace file
-  class tracer {
+  class tracer
+  {
   public:
 
     tracer();
@@ -74,15 +71,17 @@ namespace datatools {
 
     void initialize(int id_, const std::string & filename_);
 
-    void initialize(int id_, const std::string & filename_,
-		    bool preserved_file_);
+    void initialize(int id_,
+                    const std::string & filename_,
+                    bool preserved_file_);
 
     void reset();
 
     std::ofstream & out(bool increment_ = true);
 
     template<class Type>
-    void trace(const Type & value_, bool increment_ = true) {
+    void trace(const Type & value_, bool increment_ = true)
+    {
       out(increment_) << ' ' << value_;
       if (increment_) out(false) << '\n';
     }
@@ -96,16 +95,16 @@ namespace datatools {
     std::string _label_;
     std::string _filename_;
     bool _preserved_file_;
-    boost::scoped_ptr<std::ofstream> _fout_;
+    std::unique_ptr<std::ofstream> _fout_;
     int _counter_;
 
   };
 
 } // namespace datatools
 
-#define DT_TRACER_INIT(TracerId,TracerFilename)                         \
-  {                                                                     \
-    ::datatools::tracer::grab_global_tracer(TracerId,TracerFilename);   \
+#define DT_TRACER_INIT(TracerId,TracerFilename)                       \
+  {                                                                   \
+    ::datatools::tracer::grab_global_tracer(TracerId,TracerFilename); \
   }
 /**/
 
@@ -125,18 +124,16 @@ namespace datatools {
   }
 /**/
 
-#define DT_TRACER_RESET(TracerId)                                       \
-  {                                                                     \
-    ::datatools::tracer::grab_global_tracer(TracerId).reset();          \
+#define DT_TRACER_RESET(TracerId)                               \
+  {                                                             \
+    ::datatools::tracer::grab_global_tracer(TracerId).reset();  \
   }
 /**/
 
 #endif // DATATOOLS_TRACER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

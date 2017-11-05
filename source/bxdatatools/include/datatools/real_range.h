@@ -42,16 +42,17 @@
 namespace datatools {
 
   //! \brief A class representing an interval of real (double precision) values with support of embedded units.
-  class real_range {
+  class real_range
+  {
   public:
 
     /// Default constructor
     real_range();
 
     /// Constructor
-    real_range(double from, double to,
-               range_bound_info_type from_policy = range_bound_included,
-               range_bound_info_type to_policy = range_bound_included);
+    real_range(double from_, double to_,
+               range_bound_info_type from_policy_ = range_bound_included,
+               range_bound_info_type to_policy_ = range_bound_included);
 
     /// Check the validity of the interval
     bool is_valid() const;
@@ -69,16 +70,16 @@ namespace datatools {
     void reset();
 
     /// Set the lower bound
-    void set_lower(double from, range_bound_info_type policy = range_bound_included);
+    void set_lower(double from_, range_bound_info_type policy_ = range_bound_included);
 
     /// Set the upper bound
-    void set_upper(double to, range_bound_info_type policy = range_bound_included);
+    void set_upper(double to_, range_bound_info_type policy_ = range_bound_included);
 
     /// Set the bounds
-    void set(double from,
-             double to,
-             range_bound_info_type from_policy = range_bound_included,
-             range_bound_info_type to_policy   = range_bound_included);
+    void set(double from_,
+             double to_,
+             range_bound_info_type from_policy_ = range_bound_included,
+             range_bound_info_type to_policy_   = range_bound_included);
 
     /// Check if lower bound is defined
     bool is_lower_bounded() const;
@@ -105,16 +106,16 @@ namespace datatools {
     double get_upper() const;
 
     /// Return the width of the interval
-    double width(double tolerance = -1.0) const;
+    double width(double tolerance_ = -1.0) const;
 
     /// Check if interval is empty
-    bool is_empty(double tolerance = -1.0) const;
+    bool is_empty(double tolerance_ = -1.0) const;
 
     /// Check if the interval is degenerated (one unique value)
-    bool is_singleton(double tolerance = -1.0) const;
+    bool is_singleton(double tolerance_ = -1.0) const;
 
     /// Return the singleton value
-    double singleton(double tolerance = -1.0) const;
+    double singleton(double tolerance_ = -1.0) const;
 
     // Collections of 'make' methods :
 
@@ -136,11 +137,11 @@ namespace datatools {
 
     /// Build a half bounded interval with no upper bound
     // "[lower;)" or "(lower;[
-    void make_upper_unbounded(double from, bool inclusive = true);
+    void make_upper_unbounded(double from_, bool inclusive_ = true);
 
     /// Build a half bounded interval with no lower bound
     // "(;upper]" or "(;upper)"
-    void make_lower_unbounded(double to, bool inclusive = true);
+    void make_lower_unbounded(double to_, bool inclusive_ = true);
 
     /// Build a full unbounded interval with no lower or upper bounds
     // "(;)"
@@ -149,24 +150,24 @@ namespace datatools {
     /// Build a fully bounded interval with specific lower and upper bounds
     // "(lower;upper]" or "(lower;upper)"
     // "[lower;upper]" or "[lower;upper)"
-    void make_bounded(double from, double to,
-                      bool lower_included = true,
-                      bool upper_included = true);
+    void make_bounded(double from_, double to_,
+                      bool lower_included_ = true,
+                      bool upper_included_ = true);
 
     /// Check if a value belongs to the interval
-    bool has(double value, double a_tolerance = -1.0) const;
+    bool has(double value_, double tolerance_ = -1.0) const;
 
     /// Check if an real interval belongs to the interval
-    bool has(const real_range & rr, double a_tolerance = -1.0) const;
+    bool has(const real_range & rr_, double tolerance_ = -1.0) const;
 
     /// Basic print
-    void dump(std::ostream& a_out = std::clog, double a_tolerance = -1.0) const;
+    void dump(std::ostream & out_ = std::clog, double tolerance_ = -1.0) const;
 
     /// Return the first value belonging to the half lower bounded interval
-    double first(double a_tolerance = -1.0) const;
+    double first(double tolerance_ = -1.0) const;
 
     /// Return the last value belonging to the half upper bounded interval
-    double last(double a_tolerance = -1.0) const;
+    double last(double tolerance_ = -1.0) const;
 
     /// Check if unit label is set
     bool has_unit_label() const;
@@ -193,55 +194,53 @@ namespace datatools {
     const std::string & get_preferred_unit() const;
 
     /// Print operator using the ISO_31-11 standard
-    friend std::ostream& operator<<(std::ostream& a_out,
-                                    const real_range& a_range);
+    friend std::ostream & operator<<(std::ostream & out_,
+                                    const real_range & range_);
 
     /// Input operator using the ISO_31-11 standard
-    friend std::istream& operator>>(std::istream& a_in,
-                                    real_range& a_range);
+    friend std::istream & operator>>(std::istream & in_,
+                                    real_range & range_);
 
     /// Given a relative tolerance, compute the absolute tolerance associated to bounds
-    static double compute_tolerance(double a_lower, double a_upper,
-                                    double a_relative_tolerance = -1.0);
+    static double compute_tolerance(double lower_, double upper_,
+                                    double relative_tolerance_ = -1.0);
 
     /// Compare intervals
-    int compare(const real_range& a_range) const;
+    int compare(const real_range & range_) const;
 
     /// Comparison operator
-    bool operator<(const real_range& a_range) const;
+    bool operator<(const real_range & range_) const;
 
     /// Comparison operator
-    bool operator>(const real_range& a_range) const;
+    bool operator>(const real_range & range_) const;
 
     /// Comparison operator
-    bool operator==(const real_range& a_range) const;
+    bool operator==(const real_range & range_) const;
 
   protected:
 
     /// Return an effective absolute tolerance
-    double _effective_tolerance(double a_tolerance) const;
+    double _effective_tolerance(double tolerance_) const;
 
     /// Set default attribute values
     void _set_defaults();
 
   private:
 
-    std::string            unit_label_;     //!< Unit label
-    std::string            preferred_unit_; //!< Symbol of the preferred unit
-    range_bound_info_type  lower_flag_;     //!< The flag associated to the lower bound
-    double                 lower_;          //!< The lower bound
-    range_bound_info_type  upper_flag_;     //!< The flag associated to the upper bound
-    double                 upper_;          //!< The upper bound
+    std::string            _unit_label_;     //!< Unit label
+    std::string            _preferred_unit_; //!< Symbol of the preferred unit
+    range_bound_info_type  _lower_flag_;     //!< The flag associated to the lower bound
+    double                 _lower_;          //!< The lower bound
+    range_bound_info_type  _upper_flag_;     //!< The flag associated to the upper bound
+    double                 _upper_;          //!< The upper bound
   };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_REAL_RANGE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

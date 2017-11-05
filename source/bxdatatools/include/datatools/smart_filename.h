@@ -49,7 +49,8 @@ namespace datatools {
    *  \li "list" : explicit list of filenames
    *  \li "incremental" : list of filenames built from an incremental approach
    */
-  class smart_filename {
+  class smart_filename
+  {
   public:
     static const int MODE_INCREMENTAL_UNRANGED          = -1;
     static const int MODE_INCREMENTAL_DEFAULT_START     =  0;
@@ -68,11 +69,8 @@ namespace datatools {
       static const std::string & mode_incremental();
     };
 
-  public:
     typedef std::vector<std::string>  list_type;
     typedef list_type::const_iterator const_iterator;
-
-  public:
 
     /// Default constructor:
     smart_filename();
@@ -81,7 +79,7 @@ namespace datatools {
     virtual ~smart_filename();
 
     /// Set logging priority
-    void set_logging_priority(datatools::logger::priority p);
+    void set_logging_priority(datatools::logger::priority p_);
 
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
@@ -123,84 +121,84 @@ namespace datatools {
     const_iterator end() const;
 
     /// Access to a filename by index
-    const std::string& operator[](int index) const;
+    const std::string & operator[](int index_) const;
 
     /// Access to a filename by index
-    const std::string& get_filename(int index) const;
+    const std::string & get_filename(int index_) const;
 
     /// Check if a given filename exists from the embedded list of filenames
-    bool has_filename(const std::string& name, bool expand = true) const;
+    bool has_filename(const std::string & name_, bool expand_ = true) const;
 
     /// Set the filename in single mode
-    void set(const std::string& filename);
+    void set(const std::string & filename_);
 
     /// Set the single mode and associated filename
-    void set_single(const std::string& filename);
+    void set_single(const std::string & filename_);
 
     /// Add a filename in list mode
-    void add(const std::string& filename);
+    void add(const std::string & filename_);
 
     /// Add a filename in list mode
-    void add_to_list(const std::string& filename);
+    void add_to_list(const std::string & filename_);
 
     /// Reset the object
     void reset();
 
     /// Build the filename from the increment index in incremental mode
-    void build_incremental_filename(int increment_index,
-                                    std::string& filename) const;
+    void build_incremental_filename(int increment_index_,
+                                    std::string & filename_) const;
 
     /// Raw print
-    void dump(std::ostream& out = std::clog) const;
+    void dump(std::ostream & out_ = std::clog) const;
 
     /// Initialize from a list of configuration parameters
-    void initialize(const properties& config);
+    void initialize(const properties & config_);
 
     /// Print the list of filenames
-    void print_list_of_filenames(std::ostream& out = std::clog) const;
+    void print_list_of_filenames(std::ostream & out_ = std::clog) const;
 
     /// Store the list of filenames in a file
-    void store_list_of_filenames(const std::string& a_list_filename,
-         bool append = true) const;
+    void store_list_of_filenames(const std::string & list_filename_,
+                                 bool append_ = true) const;
 
     /// Make a smart_filename object in single mode
-    static void make_single(smart_filename& a_smart_filename,
-          const std::string& filename,
-          bool expand_path = true);
+    static void make_single(smart_filename & smart_filename_,
+                            const std::string & filename_,
+                            bool expand_path_ = true);
 
     /// Make a smart_filename object in list mode
-    static void make_list(smart_filename& a_smart_filename,
-        bool allow_duplication = false,
-        bool expand_path = true);
+    static void make_list(smart_filename & smart_filename_,
+                          bool allow_duplication_ = false,
+                          bool expand_path_ = true);
 
     /// Make a smart_filename object in list mode
-    static void make_list(smart_filename& a_smart_filename,
-        const std::string& a_list_file,
-        bool allow_duplication = false,
-        bool expand_path = true);
+    static void make_list(smart_filename & smart_filename_,
+                          const std::string & list_file_,
+                          bool allow_duplication_ = false,
+                          bool expand_path_ = true);
 
     /// Make a smart_filename object in incremental mode
-    static void make_incremental(smart_filename& a_smart_filename,
-         const std::string& path,
-         const std::string& prefix,
-         const std::string& extension,
-         int stopping_index,
-         int starting_index = 0,
-         int increment_index = 1,
-         const std::string& suffix = "",
-         int incremental_index_ndigit = 0,
-         bool expand_path = true);
+    static void make_incremental(smart_filename & smart_filename_,
+                                 const std::string & path_,
+                                 const std::string & prefix_,
+                                 const std::string & extension_,
+                                 int stopping_index_,
+                                 int starting_index_ = 0,
+                                 int increment_index_ = 1,
+                                 const std::string & suffix_ = "",
+                                 int incremental_index_ndigit_ = 0,
+                                 bool expand_path_ = true);
 
     /// Make a smart_filename object in unranged incremental mode
-    static void make_unranged_incremental(smart_filename& smart_filename,
-            const std::string& path,
-            const std::string& prefix,
-            const std::string & a_extension,
-            int starting_index = 0,
-            int increment_index = 1,
-            const std::string& suffix = "",
-            int incremental_index_ndigit = 0,
-            bool expand_path = true);
+    static void make_unranged_incremental(smart_filename & smart_filename_,
+                                          const std::string & path_,
+                                          const std::string & prefix_,
+                                          const std::string & extension_,
+                                          int starting_index_ = 0,
+                                          int increment_index_ = 1,
+                                          const std::string & suffix_ = "",
+                                          int incremental_index_ndigit_ = 0,
+                                          bool expand_path_ = true);
 
   protected:
 
@@ -208,7 +206,7 @@ namespace datatools {
     void set_mode(int);
 
     /// Add a file name in the embedded list of filenames
-    void add_list(const std::string& filename);
+    void add_list(const std::string & filename_);
 
     /// Set the flag to allow duplicated filenames
     void set_list_allow_duplication(bool);
@@ -218,20 +216,20 @@ namespace datatools {
 
   private:
 
-    datatools::logger::priority logging_;    //!< Logging priority
-    uint32_t    mode_;                       //!< Mode
-    bool        expand_path_;                //!< Flag to expand the file path name
-    list_type   list_;                       //!< The list of filenames
-    bool        list_allow_duplication_;     //!< Flag to allow duplication of filenames in the list
-    bool        ranged_;                     //!< Flag to indicate if the list is ranged
-    std::string incremental_path_;           //!< Path of the incremented filenames
-    std::string incremental_prefix_;         //!< Prefix of the incremented filenames
-    std::string incremental_suffix_;         //!< Suffix of the incremented filenames
-    std::string incremental_extension_;      //!< Extension of the incremented filenames
-    int32_t     incremental_starting_index_; //!< Starting index of the incremented filenames
-    int32_t     incremental_stopping_index_; //!< Stopping index of the incremented filenames
-    int32_t     incremental_increment_;      //!< Index increment of the incremented filenames
-    uint32_t    incremental_index_ndigit_;   //!< Number of digits used for the increment part of the filenames
+    datatools::logger::priority _logging_;    //!< Logging priority
+    uint32_t    _mode_;                       //!< Mode
+    bool        _expand_path_;                //!< Flag to expand the file path name
+    list_type   _list_;                       //!< The list of filenames
+    bool        _list_allow_duplication_;     //!< Flag to allow duplication of filenames in the list
+    bool        _ranged_;                     //!< Flag to indicate if the list is ranged
+    std::string _incremental_path_;           //!< Path of the incremented filenames
+    std::string _incremental_prefix_;         //!< Prefix of the incremented filenames
+    std::string _incremental_suffix_;         //!< Suffix of the incremented filenames
+    std::string _incremental_extension_;      //!< Extension of the incremented filenames
+    int32_t     _incremental_starting_index_; //!< Starting index of the incremented filenames
+    int32_t     _incremental_stopping_index_; //!< Stopping index of the incremented filenames
+    int32_t     _incremental_increment_;      //!< Index increment of the incremented filenames
+    uint32_t    _incremental_index_ndigit_;   //!< Number of digits used for the increment part of the filenames
   };
 
 }  // end of namespace datatools

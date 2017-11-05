@@ -49,9 +49,10 @@ namespace datatools {
   class object_configuration_description;
 
   /// \brief A base class with useful attributes usable in many contexts
-  class enriched_base  :
-    public datatools::i_serializable,
-    public datatools::i_tree_dumpable {
+  class enriched_base
+    : public datatools::i_serializable
+    , public datatools::i_tree_dumpable
+  {
 
   public:
 
@@ -149,9 +150,9 @@ namespace datatools {
     void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out_ = std::clog,
-                           const std::string& title_  = "",
-                           const std::string& indent_ = "",
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
                            bool inherit_ = false) const;
 
     /// Initialization from a container of properties
@@ -208,16 +209,10 @@ BOOST_CLASS_EXPORT_KEY2(datatools::enriched_base, "datatools::enriched_base")
 DR_CLASS_INIT(::datatools::enriched_base)
 #endif // Q_MOC_RUN
 
-// Explicit class version:
-// #include <boost/serialization/version.hpp>
-// BOOST_CLASS_VERSION(datatools::enriched_base, 0)
-
 #endif // DATATOOLS_ENRICHED_BASE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -46,7 +46,8 @@ namespace datatools {
     class base_command_interface;
 
     //! \brief Base command
-    class base_command : public datatools::enriched_base
+    class base_command
+      : public datatools::enriched_base
     {
     public:
 

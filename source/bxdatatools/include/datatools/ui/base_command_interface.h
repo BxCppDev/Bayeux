@@ -50,7 +50,8 @@ namespace datatools {
     //!
     //!        This object contains a dictionary of commands
     //!        associated to some arbitrary resource (object)
-    class base_command_interface : public datatools::enriched_base
+    class base_command_interface
+      : public datatools::enriched_base
     {
     public:
 

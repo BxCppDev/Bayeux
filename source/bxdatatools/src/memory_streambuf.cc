@@ -32,8 +32,8 @@ namespace datatools {
   }
 
   iarraystream::iarraystream(const byte_t * array_, size_t array_size_)
-    : array_input_buffer(array_, array_size_),
-      std::istream(this)
+    : array_input_buffer(array_, array_size_)
+    , std::istream(this)
   {
     return;
   }
@@ -59,14 +59,14 @@ namespace datatools {
   const size_t vector_output_buffer::DEFAULT_CAPACITY;
   const size_t vector_output_buffer::DEFAULT_INCREMENT;
 
-  vector_output_buffer::vector_output_buffer(size_t capacity,
-                                             size_t increment,
-                                             size_t max_capacity)
+  vector_output_buffer::vector_output_buffer(size_t capacity_,
+                                             size_t increment_,
+                                             size_t max_capacity_)
   {
-    max_capacity_ = buffer_.max_size();
-    this->_init(capacity);
-    this->_set_increment(increment);
-    this->set_max_capacity(max_capacity);
+    _max_capacity_ = _buffer_.max_size();
+    this->_init(capacity_);
+    this->_set_increment(increment_);
+    this->set_max_capacity(max_capacity_);
     return;
   }
 
@@ -77,65 +77,65 @@ namespace datatools {
 
   const std::vector<char> & vector_output_buffer::buffer() const
   {
-    return buffer_;
+    return _buffer_;
   }
 
-  void vector_output_buffer::set_max_capacity(size_t max_capacity)
+  void vector_output_buffer::set_max_capacity(size_t max_capacity_)
   {
-    if (max_capacity > 0) {
-      size_t new_max_capacity = max_capacity;
-      max_capacity_ = std::max(buffer_.capacity(), new_max_capacity);
+    if (max_capacity_ > 0) {
+      size_t new_max_capacity = max_capacity_;
+      _max_capacity_ = std::max(_buffer_.capacity(), new_max_capacity);
     } else {
-      max_capacity_ = buffer_.max_size();
+      _max_capacity_ = _buffer_.max_size();
     }
     return;
   }
 
-  void vector_output_buffer::reset(size_t capacity,
-                                   size_t increment,
-                                   size_t max_capacity)
+  void vector_output_buffer::reset(size_t capacity_,
+                                   size_t increment_,
+                                   size_t max_capacity_)
   {
-    max_capacity_ = buffer_.max_size();
-    buffer_.clear();
-    this->_init(capacity);
-    this->_set_increment(increment);
-    this->set_max_capacity(max_capacity);
+    _max_capacity_ = _buffer_.max_size();
+    _buffer_.clear();
+    this->_init(capacity_);
+    this->_set_increment(increment_);
+    this->set_max_capacity(max_capacity_);
     return;
   }
 
   size_t vector_output_buffer::get_size() const
   {
-    return buffer_.size();
+    return _buffer_.size();
   }
 
 
   const char * vector_output_buffer::get_address() const
   {
-    if (buffer_.size() > 0) {
-      return const_cast<char*>(&buffer_[0]);
+    if (_buffer_.size() > 0) {
+      return const_cast<char*>(&_buffer_[0]);
     }
     return 0;
   }
 
-  void vector_output_buffer::_init(size_t new_capacity)
+  void vector_output_buffer::_init(size_t new_capacity_)
   {
     size_t min_capacity = MIN_CAPACITY;
-    size_t capacity = std::max(min_capacity, new_capacity);
-    buffer_.reserve(capacity);
-    char* base = const_cast<char*>(&buffer_[0]);
-    char* endp = base + buffer_.size();
+    size_t capacity = std::max(min_capacity, new_capacity_);
+    _buffer_.reserve(capacity);
+    char* base = const_cast<char*>(&_buffer_[0]);
+    char* endp = base + _buffer_.size();
     *base = '\0';
     setp(base, endp);
     return;
   }
 
-  void vector_output_buffer::_set_increment(size_t increment)
+  void vector_output_buffer::_set_increment(size_t increment_)
   {
-    if (increment > 0) {
+    if (increment_ > 0) {
       size_t min_increment = MIN_INCREMENT;
-      increment_ = std::max(min_increment, increment);
+      _increment_ = std::max(min_increment, increment_);
     } else {
-      increment_ = 0;
+      _increment_ = 0;
     }
     return;
   }
@@ -143,13 +143,13 @@ namespace datatools {
   void vector_output_buffer::dump() const
   {
     std::cerr << "DUMP: " << std::endl;
-    std::cerr << "|-- Increment:       " << increment_ << std::endl;
-    std::cerr << "|-- Max capacity:    " << max_capacity_ << std::endl;
-    std::cerr << "|-- Buffer size:     " << buffer_.size() << std::endl;
-    std::cerr << "|-- Buffer capacity: " << buffer_.capacity() << std::endl;
+    std::cerr << "|-- Increment:       " << _increment_ << std::endl;
+    std::cerr << "|-- Max capacity:    " << _max_capacity_ << std::endl;
+    std::cerr << "|-- Buffer size:     " << _buffer_.size() << std::endl;
+    std::cerr << "|-- Buffer capacity: " << _buffer_.capacity() << std::endl;
     std::cerr << "|-- Buffer contains: `";
-    for (int i = 0; i < (int)buffer_.size(); i++) {
-      std::cerr << buffer_[i];
+    for (int i = 0; i < (int)_buffer_.size(); i++) {
+      std::cerr << _buffer_[i];
     }
     std::cerr << "'" << std::endl;
     std::cerr << "|-- pptr ():         "
@@ -165,53 +165,54 @@ namespace datatools {
               << std::endl;
 
     std::cerr << "`-- " << "end" << std::endl;
+    return;
   }
 
-  int vector_output_buffer::overflow(int c)
+  int vector_output_buffer::overflow(int c_)
   {
-    const char conv = std::char_traits<char>::to_char_type(c);
-    const bool testeof = std::char_traits<char>::eq_int_type(c, std::char_traits<char>::eof());
+    const char conv = std::char_traits<char>::to_char_type(c_);
+    const bool testeof = std::char_traits<char>::eq_int_type(c_, std::char_traits<char>::eof());
 
     if (__builtin_expect(testeof, false)) {
-      return std::char_traits<char>::not_eof(c);
+      return std::char_traits<char>::not_eof(c_);
     }
 
-    const size_t capacity = buffer_.capacity();
+    const size_t capacity = _buffer_.capacity();
     const bool testput = this->pptr() < this->epptr();
     if (!testput) {
-      if (buffer_.size() == buffer_.capacity()) {
-        if (capacity == max_capacity_) {
+      if (_buffer_.size() == _buffer_.capacity()) {
+        if (capacity == _max_capacity_) {
           return std::char_traits<char>::eof();
         }
 
-        size_t opt_len = buffer_.capacity();
-        if (increment_ > 0) {
-          opt_len += increment_;
+        size_t opt_len = _buffer_.capacity();
+        if (_increment_ > 0) {
+          opt_len += _increment_;
         } else {
           opt_len *= 3;
         }
 
-        const size_t len = std::min(opt_len, max_capacity_);
-        buffer_.reserve(len);
+        const size_t len = std::min(opt_len, _max_capacity_);
+        _buffer_.reserve(len);
       }
 
-      buffer_.push_back(conv);
-      char* base = const_cast<char*>(&buffer_[0]);
-      char* endp = base + buffer_.size();
-      setp(base + buffer_.size(), endp);
+      _buffer_.push_back(conv);
+      char* base = const_cast<char*>(&_buffer_[0]);
+      char* endp = base + _buffer_.size();
+      setp(base + _buffer_.size(), endp);
     } else {
-      buffer_.push_back(conv);
+      _buffer_.push_back(conv);
       this->pbump(1);
     }
 
-    return std::char_traits<char>::not_eof(c);
+    return std::char_traits<char>::not_eof(c_);
   }
 
-  ovectorstream::ovectorstream(size_t capacity,
-                               size_t increment,
-                               size_t max_capacity)
-    : vector_output_buffer(capacity, increment, max_capacity),
-      std::ostream(this)
+  ovectorstream::ovectorstream(size_t capacity_,
+                               size_t increment_,
+                               size_t max_capacity_)
+    : vector_output_buffer(capacity_, increment_, max_capacity_)
+    , std::ostream(this)
   {
     return;
   }

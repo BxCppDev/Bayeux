@@ -26,9 +26,8 @@
  *
  *   Integer range class.
  *
- * History:
- *
  */
+
 #ifndef DATATOOLS_INTEGER_RANGE_H
 #define DATATOOLS_INTEGER_RANGE_H
 
@@ -47,7 +46,8 @@
 namespace datatools {
 
   //! \brief A class representing an interval of integer values.
-  class integer_range {
+  class integer_range
+  {
   public:
 
     // Intrinsic integer is 32 bits:
@@ -57,9 +57,9 @@ namespace datatools {
     integer_range();
 
     /// Constructor
-    integer_range(value_type from, value_type to,
-                  range_bound_info_type from_policy = range_bound_included,
-                  range_bound_info_type to_policy   = range_bound_included);
+    integer_range(value_type from_, value_type to_,
+                  range_bound_info_type from_policy_ = range_bound_included,
+                  range_bound_info_type to_policy_   = range_bound_included);
 
     /// Check the validity of the interval
     bool is_valid() const;
@@ -77,10 +77,10 @@ namespace datatools {
     void reset();
 
     /// Set the lower bound
-    void set_lower(value_type from, range_bound_info_type policy = range_bound_included);
+    void set_lower(value_type from_, range_bound_info_type policy_ = range_bound_included);
 
     /// Set the upper bound
-    void set_upper(value_type to, range_bound_info_type policy = range_bound_included);
+    void set_upper(value_type to_, range_bound_info_type policy_ = range_bound_included);
 
     /// Set the bounds
     void set(value_type from, value_type to,
@@ -140,18 +140,18 @@ namespace datatools {
 
     /// Build a half bounded interval with no upper bound
     // "[lower;)" or "(lower;)
-    void make_upper_unbounded(value_type from, bool inclusive = true);
+    void make_upper_unbounded(value_type from_, bool inclusive_ = true);
 
     /// Build a half bounded interval with no lower bound
     // "(;upper]" or "(;upper)"
-    void make_lower_unbounded(value_type to, bool inclusive = true);
+    void make_lower_unbounded(value_type to_, bool inclusive_ = true);
 
     /// Build a fully bounded interval with specific lower and upper bounds
     // "(lower;upper]" or "(lower;upper)"
     // "[lower;upper]" or "[lower;upper)"
-    void make_bounded(value_type from, value_type to,
-                      bool lower_included = true,
-                      bool upper_included = true);
+    void make_bounded(value_type from_, value_type to_,
+                      bool lower_included_ = true,
+                      bool upper_included_ = true);
 
     /// Check if a value belongs to the interval
     bool has(value_type value) const;
@@ -163,12 +163,12 @@ namespace datatools {
     void dump(std::ostream& out = std::clog) const;
 
     /// Print operator
-    friend std::ostream& operator<<(std::ostream& out,
-                                    const integer_range& a_range);
+    friend std::ostream& operator<<(std::ostream & out,
+                                    const integer_range & range_);
 
     /// Input operator
-    friend std::istream& operator>>(std::istream& in,
-                                    integer_range& a_range);
+    friend std::istream& operator>>(std::istream & in,
+                                    integer_range & range_);
 
     /// Return the first value from the fully bounded interval
     value_type begin() const;
@@ -183,41 +183,39 @@ namespace datatools {
     value_type last() const;
 
     /// Compare intervals
-    int compare(const integer_range& a_range) const;
+    int compare(const integer_range& range_) const;
 
     /// Comparison operator
-    bool operator<(const integer_range& a_range) const;
+    bool operator<(const integer_range & range_) const;
 
     /// Comparison operator
-    bool operator>(const integer_range& a_range) const;
+    bool operator>(const integer_range & range_) const;
 
     /// Comparison operator
-    bool operator==(const integer_range& a_range) const;
+    bool operator==(const integer_range & range_) const;
 
     /// Build the associated canonical interval (with bounds flagged as included)
-    void make_canonical(integer_range& a_range) const;
+    void make_canonical(integer_range & range_) const;
 
     /// Check intersect with another interval and build the resulting intersection interval
-    bool intersect(const integer_range& a_range, integer_range& a_inter) const;
+    bool intersect(const integer_range & range_, integer_range & inter_) const;
 
     /// Check intersect with another interval
-    bool intersect(const integer_range& a_range) const;
+    bool intersect(const integer_range & range_) const;
 
   private:
-    range_bound_info_type lower_flag_; //!< The flag associated to the lower bound
-    value_type            lower_;      //!< The lower bound
-    range_bound_info_type upper_flag_; //!< The flag associated to the upper bound
-    value_type            upper_;      //!< The upper bound
+    range_bound_info_type _lower_flag_; //!< The flag associated to the lower bound
+    value_type            _lower_;      //!< The lower bound
+    range_bound_info_type _upper_flag_; //!< The flag associated to the upper bound
+    value_type            _upper_;      //!< The upper bound
   };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_INTEGER_RANGE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

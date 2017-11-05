@@ -1,4 +1,5 @@
 //! \file datatools/event_id-reflect.h
+
 #ifndef DATATOOLS_EVENT_ID_REFLECT_H
 #define DATATOOLS_EVENT_ID_REFLECT_H
 
@@ -83,10 +84,8 @@ namespace datatools {
 
 #endif // DATATOOLS_EVENT_ID_REFLECT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

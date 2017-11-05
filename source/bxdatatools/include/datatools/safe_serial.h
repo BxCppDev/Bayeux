@@ -30,35 +30,39 @@ namespace datatools {
 
   //! \brief Template container wrapper class for safe storage of object with regards to Boost/Serilization memory tracking feature.
   template<class T>
-  class safe_serial {
+  class safe_serial
+  {
   public:
     typedef T data_type;
 
-  public:
-
     /// Default constructor
-    safe_serial() : data_() {
+    safe_serial() : data_()
+    {
       last_ = data_.rend();
     }
 
     /// Destructor
-    virtual ~safe_serial() {
+    virtual ~safe_serial()
+    {
       this->clear();
     }
 
     /// Clear the container
-    void clear() {
+    void clear()
+    {
       data_.clear();
       last_ = data_.rend();
     }
 
     /// Check if the container is empty
-    bool empty() const {
+    bool empty() const
+    {
       return data_.size() == 0;
     }
 
     /// Return a const reference to the current object
-    const data_type& get() const {
+    const data_type & get() const
+    {
       DT_THROW_IF (this->empty(), std::logic_error, "No data!");
       return *(last_);
     }
@@ -70,13 +74,15 @@ namespace datatools {
     // }
 
     /// Return a mutable reference to the current object
-    data_type& grab() {
+    data_type & grab()
+    {
       DT_THROW_IF (this->empty(), std::logic_error, "No data!");
       return *(last_);
     }
 
     /// Insert a new object at the end
-    void make() {
+    void make()
+    {
       try {
         data_.push_back(data_type());
       }
@@ -87,24 +93,25 @@ namespace datatools {
     }
 
     /// Set the current object
-    void set(const data_type& data) {
+    void set(const data_type & data)
+    {
       this->make();
       this->get() = data;
     }
 
   private:
+
     typename std::list<T>                   data_; /// The list of objects
     typename std::list<T>::reverse_iterator last_; /// The current position of the last object
+
   };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_SAFE_SERIAL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

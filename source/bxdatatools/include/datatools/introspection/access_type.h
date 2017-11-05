@@ -66,10 +66,8 @@ DR_TYPE_INIT(::datatools::introspection::access_type)
 
 #endif // DATATOOLS_INTROSPECTION_ACCESS_TYPE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

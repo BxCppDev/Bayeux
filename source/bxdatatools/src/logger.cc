@@ -47,18 +47,19 @@
 #include <datatools/object_configuration_description.h>
 
 namespace {
-//! Hide awkward boost bimap declaration in a typedef
-struct PriorityLookup {
-  typedef boost::bimap<
+
+  //! Hide boost bimap declaration in a typedef
+  struct PriorityLookup {
+    typedef boost::bimap<
       boost::bimaps::set_of<std::string>,
       boost::bimaps::multiset_of<datatools::logger::priority>
       > LookupTable;
-};
+  };
 
-//! Construct the lookup table.
-PriorityLookup::LookupTable ConstructLookupTable() {
-  PriorityLookup::LookupTable a;
-  boost::assign::insert(a)
+  //! Construct the lookup table.
+  PriorityLookup::LookupTable ConstructLookupTable() {
+    PriorityLookup::LookupTable a;
+    boost::assign::insert(a)
       ("PRIO_FATAL", datatools::logger::PRIO_FATAL)
       ("FATAL", datatools::logger::PRIO_FATAL)
       ("fatal", datatools::logger::PRIO_FATAL)
@@ -84,144 +85,146 @@ PriorityLookup::LookupTable ConstructLookupTable() {
       ("TRACE", datatools::logger::PRIO_TRACE)
       ("trace", datatools::logger::PRIO_TRACE);
 
-  return a;
-}
+    return a;
+  }
 
-//! Return priority label stripped of "PRIO_" prefix and lowercased
-std::string GetCanonicalLabel(const std::string& raw) {
-  return boost::to_lower_copy(boost::ireplace_first_copy(raw, "PRIO_", ""));
-}
+  //! Return priority label stripped of "PRIO_" prefix and lowercased
+  std::string GetCanonicalLabel(const std::string & raw_)
+  {
+    return boost::to_lower_copy(boost::ireplace_first_copy(raw_, "PRIO_", ""));
+  }
 
 } // namespace
 
 namespace datatools {
-logger::priority logger::get_priority(const std::string& name) {
-  static PriorityLookup::LookupTable a;
-  if (a.empty()) a = ConstructLookupTable();
 
-  PriorityLookup::LookupTable::left_const_iterator p = a.left.find(name);
-  return p != a.left.end() ? p->second : PRIO_UNDEFINED;
-}
-
-std::string logger::get_priority_label(logger::priority p)
-{
-  static PriorityLookup::LookupTable a;
-  if (a.empty()) a = ConstructLookupTable();
-
-  PriorityLookup::LookupTable::right_const_iterator n = a.right.find(p);
-  return n != a.right.end() ? GetCanonicalLabel(n->second) : "";
-}
-
-bool logger::is_undefined(priority p)
-{
-  return p == PRIO_UNDEFINED;
-}
-
-bool logger::is_fatal(priority p)
-{
-  return p >= PRIO_FATAL;
-}
-
-bool logger::is_critical(priority p)
-{
-  return p >= PRIO_CRITICAL;
-}
-
-bool logger::is_error(priority p)
-{
-  return p >= PRIO_ERROR;
-}
-
-bool logger::is_warning(priority p)
-{
-  return p >= PRIO_WARNING;
-}
-
-bool logger::is_notice(priority p)
-{
-  return p >= PRIO_NOTICE;
-}
-
-bool logger::is_information(priority p)
-{
-  return p >= PRIO_INFORMATION;
-}
-
-bool logger::is_debug(priority p)
-{
-  return p >= PRIO_DEBUG;
-}
-
-bool logger::is_trace(priority p)
-{
-  return p >= PRIO_TRACE;
-}
-
-logger::priority logger::extract_logging_configuration(
-  const datatools::properties & config,
-  logger::priority default_prio,
-  bool throw_on_error)
-{
-  datatools::logger::priority p = default_prio;
-  if (config.has_key("logging.priority")) {
-    std::string ps = config.fetch_string("logging.priority");
-    p = datatools::logger::get_priority(ps);
-    if (p == datatools::logger::PRIO_UNDEFINED) {
-      DT_THROW_IF(throw_on_error,
-                  std::logic_error,
-                  "Invalid logging priority label '" << ps << "' !");
-      p = default_prio;
-    }
-  } else if (config.has_flag("debug") || config.has_flag("logging.debug")) {
-    p = datatools::logger::PRIO_DEBUG;
-  } else if (config.has_flag("verbose") || config.has_flag("logging.verbose")) {
-    p = datatools::logger::PRIO_NOTICE;
-  }
-  return p;
-}
-
-void logger::declare_ocd_logging_configuration(datatools::object_configuration_description & ocd_,
-                                               const std::string & default_value_,
-                                               const std::string & prefix_,
-                                               const std::string & from_)
-{
+  logger::priority logger::get_priority(const std::string & name_)
   {
-    std::ostringstream desc;
-    desc <<  "Allowed values are:                      \n"
-      "                                                \n"
-      "  * ``\"trace\"`` : Heavy development messages  \n"
-      "  * ``\"debug\"`` : Debug messages              \n"
-      "  * ``\"information\"`` :                       \n"
-      "  * ``\"notice\"`` :                            \n"
-      "  * ``\"warning\"`` :                           \n"
-      "  * ``\"error\"`` :                             \n"
-      "  * ``\"critical\"`` :                          \n"
-      "  * ``\"fatal\"`` : Only fatal error messages   \n"
-      "                                                \n";
-    std::ostringstream example;
-    example <<
-      "Set the logging priority to allow the printing  \n"
-      "of informational messages: ::                   \n"
-      "                                                \n";
-    example << "  " << prefix_;
-    example << "logging.priority : string = \"notice\" \n"
-      "                                                \n";
+    static PriorityLookup::LookupTable a;
+    if (a.empty()) a = ConstructLookupTable();
 
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern(prefix_ + "logging.priority")
-      .set_terse_description("Set the logging priority threshold")
-      .set_traits(datatools::TYPE_STRING)
-      .set_mandatory(false)
-      .set_default_value_string(default_value_.empty() ? "fatal": default_value_)
-      .set_long_description(desc.str())
-      .add_example(example.str())
-      ;
-    if (! from_.empty()) {
-      cpd.set_from(from_);
-    }
+    PriorityLookup::LookupTable::left_const_iterator p = a.left.find(name_);
+    return p != a.left.end() ? p->second : PRIO_UNDEFINED;
   }
 
-  return;
-}
+  std::string logger::get_priority_label(logger::priority p_)
+  {
+    static PriorityLookup::LookupTable a;
+    if (a.empty()) a = ConstructLookupTable();
+
+    PriorityLookup::LookupTable::right_const_iterator n = a.right.find(p_);
+    return n != a.right.end() ? GetCanonicalLabel(n->second) : "";
+  }
+
+  bool logger::is_undefined(priority p_)
+  {
+    return p_ == PRIO_UNDEFINED;
+  }
+
+  bool logger::is_fatal(priority p_)
+  {
+    return p_ >= PRIO_FATAL;
+  }
+
+  bool logger::is_critical(priority p_)
+  {
+    return p_ >= PRIO_CRITICAL;
+  }
+
+  bool logger::is_error(priority p_)
+  {
+    return p_ >= PRIO_ERROR;
+  }
+
+  bool logger::is_warning(priority p_)
+  {
+    return p_ >= PRIO_WARNING;
+  }
+
+  bool logger::is_notice(priority p_)
+  {
+    return p_ >= PRIO_NOTICE;
+  }
+
+  bool logger::is_information(priority p_)
+  {
+    return p_ >= PRIO_INFORMATION;
+  }
+
+  bool logger::is_debug(priority p_)
+  {
+    return p_ >= PRIO_DEBUG;
+  }
+
+  bool logger::is_trace(priority p)
+  {
+    return p >= PRIO_TRACE;
+  }
+
+  logger::priority logger::extract_logging_configuration(const datatools::properties & config_,
+                                                         logger::priority default_prio_,
+                                                         bool throw_on_error_)
+  {
+    datatools::logger::priority p = default_prio_;
+    if (config_.has_key("logging.priority")) {
+      std::string ps = config_.fetch_string("logging.priority");
+      p = datatools::logger::get_priority(ps);
+      if (p == datatools::logger::PRIO_UNDEFINED) {
+        DT_THROW_IF(throw_on_error_,
+                    std::logic_error,
+                    "Invalid logging priority label '" << ps << "' !");
+        p = default_prio_;
+      }
+    } else if (config_.has_flag("debug") || config_.has_flag("logging.debug")) {
+      p = datatools::logger::PRIO_DEBUG;
+    } else if (config_.has_flag("verbose") || config_.has_flag("logging.verbose")) {
+      p = datatools::logger::PRIO_NOTICE;
+    }
+    return p;
+  }
+
+  void logger::declare_ocd_logging_configuration(datatools::object_configuration_description & ocd_,
+                                                 const std::string & default_value_,
+                                                 const std::string & prefix_,
+                                                 const std::string & from_)
+  {
+    {
+      std::ostringstream desc;
+      desc <<  "Allowed values are:                      \n"
+        "                                                \n"
+        "  * ``\"trace\"`` : Heavy development messages  \n"
+        "  * ``\"debug\"`` : Debug messages              \n"
+        "  * ``\"information\"`` :                       \n"
+        "  * ``\"notice\"`` :                            \n"
+        "  * ``\"warning\"`` :                           \n"
+        "  * ``\"error\"`` :                             \n"
+        "  * ``\"critical\"`` :                          \n"
+        "  * ``\"fatal\"`` : Only fatal error messages   \n"
+        "                                                \n";
+      std::ostringstream example;
+      example <<
+        "Set the logging priority to allow the printing  \n"
+        "of informational messages: ::                   \n"
+        "                                                \n";
+      example << "  " << prefix_;
+      example << "logging.priority : string = \"notice\" \n"
+        "                                                \n";
+
+      configuration_property_description & cpd = ocd_.add_configuration_property_info();
+      cpd.set_name_pattern(prefix_ + "logging.priority")
+        .set_terse_description("Set the logging priority threshold")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_default_value_string(default_value_.empty() ? "fatal": default_value_)
+        .set_long_description(desc.str())
+        .add_example(example.str())
+        ;
+      if (! from_.empty()) {
+        cpd.set_from(from_);
+      }
+    }
+
+    return;
+  }
 
 } // namespace datatools

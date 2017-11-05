@@ -15,6 +15,7 @@
 #include <datatools/i_serializable.h>
 
 namespace datatools {
+
   /*! \brief A class representing a version ID :
    *
    * Supported formats are:
@@ -63,8 +64,8 @@ namespace datatools {
    *  Version ID can be invalidated : format is then "?"
    *
    */
-  class version_id :
-    public datatools::i_serializable
+  class version_id
+    : public datatools::i_serializable
   {
   public:
     // TODO: could probably all be private or in an PImpl...
@@ -84,13 +85,14 @@ namespace datatools {
     };
 
   public:
+
     // Constructors/Destructors
     version_id();
 
-    explicit version_id(const std::string& tag);
+    explicit version_id(const std::string & tag_);
 
-    version_id(int major, int minor = -1, int revision = -1,
-               const std::string& tag = "");
+    version_id(int major_, int minor_ = -1, int revision_ = -1,
+               const std::string & tag_ = "");
 
     // Global operations
     bool is_valid() const;
@@ -133,58 +135,59 @@ namespace datatools {
 
     bool has_special_tag() const;
 
-    const std::string& get_tag() const;
+    const std::string & get_tag() const;
 
     int get_tag_number() const;
 
-    void set_tag(const std::string&);
+    void set_tag(const std::string &);
 
     // Comparisons
-    bool equals(const version_id&, bool ignore_tag = false) const;
+    bool equals(const version_id &, bool ignore_tag_ = false) const;
 
-    bool operator==(const version_id&) const;
+    bool operator==(const version_id &) const;
 
-    int compare(const version_id&, bool major_only_ = false) const;
+    int compare(const version_id &, bool major_only_ = false) const;
 
-    bool matches(const std::string& version_rules, bool major_only_ = false) const;
+    bool matches(const std::string & version_rules_, bool major_only_ = false) const;
 
     // I/O and Conversions
-    friend std::ostream& operator<<(std::ostream&, const version_id&);
+    friend std::ostream & operator<<(std::ostream &, const version_id &);
 
-    friend std::istream& operator>>(std::istream&, version_id&);
+    friend std::istream & operator>>(std::istream &, version_id &);
 
-    void to_string(std::string& format) const;
+    void to_string(std::string& format_) const;
 
     std::string to_string() const;
 
-    bool from_string(const std::string&);
+    bool from_string(const std::string &);
 
-    void dump(std::ostream& out = std::clog,
-              const std::string& title = "",
-              const std::string& indent = "") const;
+    void dump(std::ostream & out_ = std::clog,
+              const std::string & title_ = "",
+              const std::string & indent_ = "") const;
 
 
     // These could/should be free functions
-    static int compare(const version_id& vid0,
-                       const version_id& vid1,
+    static int compare(const version_id & vid0_,
+                       const version_id & vid1_,
                        bool major_only = false);
 
-    static bool are_orderable(const version_id& vid0,
-                              const version_id& vid1,
-                              bool major_only = false);
+    static bool are_orderable(const version_id & vid0_,
+                              const version_id & vid1_,
+                              bool major_only_ = false);
 
     //! Return an invalid version identifier
     static const version_id & invalid();
 
   private:
-    int32_t major_;      //!< The major number
-    int32_t minor_;      //!< The minor number
-    int32_t revision_;   //!< The revision number
-    std::string tag_;    //!< An additional tag (string)
-    int32_t tag_number_; //!< An additional tag number (numeric)
+    int32_t     _major_;      //!< The major number
+    int32_t     _minor_;      //!< The minor number
+    int32_t     _revision_;   //!< The revision number
+    std::string _tag_;        //!< An additional tag (string)
+    int32_t     _tag_number_; //!< An additional tag number (numeric)
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(version_id)
+
   };
 
 } // namespace datatools

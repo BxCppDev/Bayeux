@@ -24,8 +24,6 @@
  *
  *   Some utilities for the description of configuration variants and parameters.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_ARRAY_OCCURRENCE_H
@@ -39,7 +37,8 @@ namespace datatools {
   namespace configuration {
 
     /// \brief Single occurrence
-    class array_occurrence : public i_occurrence
+    class array_occurrence
+      : public i_occurrence
     {
     public:
 
@@ -89,10 +88,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_ARRAY_OCCURRENCE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

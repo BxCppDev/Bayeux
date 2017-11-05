@@ -9,13 +9,14 @@
 // - Boost:
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/string.hpp>
-#include <boost/serialization/shared_ptr.hpp>
+// #include <boost/serialization/shared_ptr.hpp>
 
 // This project:
 #include <datatools/utils.h>
 #include <datatools/properties.ipp>
 
 namespace datatools {
+
   template<class Archive>
   void enriched_base::serialize (Archive & archive,
                                  const unsigned int /*version*/)
@@ -28,6 +29,7 @@ namespace datatools {
     archive & boost::serialization::make_nvp("auxiliaries",       _auxiliaries_);
     return;
   }
+
 } // end of namespace datatools
 
 #endif // DATATOOLS_ENRICHED_BASE_IPP

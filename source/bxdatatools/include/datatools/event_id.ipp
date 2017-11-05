@@ -21,8 +21,9 @@ namespace datatools {
     if (version > 0) {
       archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     }
-    archive & boost::serialization::make_nvp("run_number", run_number_);
-    archive & boost::serialization::make_nvp("event_number", event_number_);
+    archive & boost::serialization::make_nvp("run_number", _run_number_);
+    archive & boost::serialization::make_nvp("event_number", _event_number_);
+    return;
   }
 
 } // end of namespace datatools

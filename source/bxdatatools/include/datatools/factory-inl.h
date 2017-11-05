@@ -14,206 +14,231 @@ namespace datatools {
   // Constructor:
   template <typename BaseType>
   factory_register<BaseType>::factory_register()
-    : label_(),
-      logging_(datatools::logger::PRIO_FATAL),
-      registered_() {}
+    : _label_()
+    , _logging_(datatools::logger::PRIO_FATAL)
+    ,  _registered_()
+  {
+    return;
+  }
 
   // Constructor:
   template <typename BaseType>
-  factory_register<BaseType>::factory_register(const std::string& label,
-                                               unsigned int flags)
-    : label_(label),
-      logging_(datatools::logger::PRIO_FATAL) {
-    if (flags & verbose) {
+  factory_register<BaseType>::factory_register(const std::string & label_,
+                                               unsigned int flags_)
+    : _label_(label_),
+      _logging_(datatools::logger::PRIO_FATAL) {
+    if (flags_ & verbose) {
       set_logging_priority(datatools::logger::PRIO_INFORMATION);
     }
-    DT_LOG_INFORMATION(logging_,"Construction (label='" << label_ << "'...");
-    DT_LOG_INFORMATION(logging_,"Construction is done (label='" << label_ << "'...");
+    DT_LOG_INFORMATION(_logging_,"Construction (label='" << _label_ << "'...");
+    DT_LOG_INFORMATION(_logging_,"Construction is done (label='" << _label_ << "'...");
+    return;
   }
 
   // Destructor:
   template <typename BaseType>
-  factory_register<BaseType>::~factory_register() {
-    DT_LOG_INFORMATION(logging_,"Destruction (label='" << label_ << "'...");
-
+  factory_register<BaseType>::~factory_register()
+  {
+    DT_LOG_INFORMATION(_logging_,"Destruction (label='" << _label_ << "'...");
     this->clear();
-
-    DT_LOG_INFORMATION(logging_,"Destruction is done (label='" << label_ << "'...");
+    DT_LOG_INFORMATION(_logging_,"Destruction is done (label='" << _label_ << "'...");
+    return;
   }
 
   template <typename BaseType>
-  datatools::logger::priority factory_register<BaseType>::get_logging_priority() const {
-    return logging_;
+  datatools::logger::priority factory_register<BaseType>::get_logging_priority() const
+  {
+    return _logging_;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::set_logging_priority(datatools::logger::priority logging) {
-    logging_ = logging;
+  void factory_register<BaseType>::set_logging_priority(datatools::logger::priority logging_)
+  {
+    _logging_ = logging_;
+    return;
   }
 
   template <typename BaseType>
-  const std::string& factory_register<BaseType>::get_label() const {
-    return label_;
+  const std::string& factory_register<BaseType>::get_label() const
+  {
+    return _label_;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::set_label(const std::string& label) {
-    label_ = label;
+  void factory_register<BaseType>::set_label(const std::string & label_)
+  {
+    _label_ = label_;
+    return;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::list_of_factories(std::vector<std::string>& ids) const {
-    for (typename factory_map_type::const_iterator i = registered_.begin();
-         i != registered_.end();
+  void factory_register<BaseType>::list_of_factories(std::vector<std::string> & ids_) const
+  {
+    for (typename factory_map_type::const_iterator i = _registered_.begin();
+         i != _registered_.end();
          ++i) {
-      ids.push_back(i->first);
+      ids_.push_back(i->first);
     }
+    return;
   }
 
   template <typename BaseType>
-  bool factory_register<BaseType>::has(const std::string& id) const {
-    return registered_.find(id) != registered_.end();
+  bool factory_register<BaseType>::has(const std::string & id_) const
+  {
+    return _registered_.find(id_) != _registered_.end();
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::clear() {
-    for (typename factory_map_type::iterator i = registered_.begin();
-         i != registered_.end();
+  void factory_register<BaseType>::clear()
+  {
+    for (typename factory_map_type::iterator i = _registered_.begin();
+         i != _registered_.end();
          ++i) {
       if (i->second != 0) {
-        DT_LOG_INFORMATION(logging_,"Destroying registered allocator/functor '" << i->first << "'");
+        DT_LOG_INFORMATION(_logging_,"Destroying registered allocator/functor '" << i->first << "'");
       }
     }
-    registered_.clear();
+    _registered_.clear();
+    return;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::reset() {
+  void factory_register<BaseType>::reset()
+  {
     this->clear();
-    label_.clear();
-    logging_ = datatools::logger::PRIO_FATAL;
+    _label_.clear();
+    _logging_ = datatools::logger::PRIO_FATAL;
+    return;
   }
 
   template <typename BaseType>
-  typename factory_register<BaseType>::factory_type&
-  factory_register<BaseType>::grab(const std::string& id) {
-    typename factory_map_type::iterator found = registered_.find(id);
-    DT_THROW_IF(found == registered_.end(), std::logic_error,
-                "Class ID '" << id << "' is not registered !");
+  typename factory_register<BaseType>::factory_type &
+  factory_register<BaseType>::grab(const std::string & id_)
+  {
+    typename factory_map_type::iterator found = _registered_.find(id_);
+    DT_THROW_IF(found == _registered_.end(), std::logic_error,
+                "Class ID '" << id_ << "' is not registered !");
     return found->second;
   }
 
   template <typename BaseType>
-  const typename factory_register<BaseType>::factory_type&
-  factory_register<BaseType>::get(const std::string& id) const {
-    typename factory_map_type::const_iterator found = registered_.find(id);
-    DT_THROW_IF(found == registered_.end(), std::logic_error,
-                "Class ID '" << id << "' is not registered !");
+  const typename factory_register<BaseType>::factory_type &
+  factory_register<BaseType>::get(const std::string & id_) const
+  {
+    typename factory_map_type::const_iterator found = _registered_.find(id_);
+    DT_THROW_IF(found == _registered_.end(), std::logic_error,
+                "Class ID '" << id_ << "' is not registered !");
     return found->second;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::registration(const std::string& id,
-                                                const factory_type& factory) {
-    DT_LOG_NOTICE(logging_, "Registration of class with ID '" << id << "'");
-
-    typename factory_map_type::const_iterator found = registered_.find(id);
-    DT_THROW_IF(found != registered_.end(), std::logic_error,
-                "Class ID '" << id << "' is already registered !");
-    registered_[id] = factory;
+  void factory_register<BaseType>::registration(const std::string & id_,
+                                                const factory_type & factory_)
+  {
+    DT_LOG_NOTICE(_logging_, "Registration of class with ID '" << id_ << "'");
+    typename factory_map_type::const_iterator found = _registered_.find(id_);
+    DT_THROW_IF(found != _registered_.end(), std::logic_error,
+                "Class ID '" << id_ << "' is already registered !");
+    _registered_[id_] = factory_;
+    return;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::unregistration(const std::string & id) {
-    DT_LOG_NOTICE(logging_, "Unregistration of class with ID '" << id << "'");
-
-    typename factory_map_type::const_iterator found = registered_.find(id);
-    DT_THROW_IF(found == registered_.end(), std::logic_error,
-                "Class ID '" << id << "' is not registered !");
-    registered_.erase(id);
+  void factory_register<BaseType>::unregistration(const std::string & id_)
+  {
+    DT_LOG_NOTICE(_logging_, "Unregistration of class with ID '" << id_ << "'");
+    typename factory_map_type::const_iterator found = _registered_.find(id_);
+    DT_THROW_IF(found == _registered_.end(), std::logic_error,
+                "Class ID '" << id_ << "' is not registered !");
+    _registered_.erase(id_);
+    return;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::import(const factory_register & other) {
-    DT_LOG_NOTICE(logging_, "Importing registered factories from register '" << other.get_label() << "'...");
-    for (typename factory_map_type::const_iterator i = other.registered_.begin();
-         i != other.registered_.end();
+  void factory_register<BaseType>::import(const factory_register & other_)
+  {
+    DT_LOG_NOTICE(_logging_, "Importing registered factories from register '" << other_.get_label() << "'...");
+    for (typename factory_map_type::const_iterator i = other_._registered_.begin();
+         i != other_._registered_.end();
          ++i) {
-      const factory_type& the_out_factory = i->second;
+      const factory_type & the_out_factory = i->second;
       this->registration(i->first, the_out_factory);
     }
-    DT_LOG_NOTICE(logging_, "Done.");
+    DT_LOG_NOTICE(_logging_, "Done.");
+    return;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::import_some(const factory_register & other,
-                                               const std::vector<std::string> & imported_factories) {
-    DT_LOG_NOTICE(logging_, "Importing registered factories from register '" << other.get_label() << "'...");
-    for (typename factory_map_type::const_iterator i = other.registered_.begin();
-         i != other.registered_.end();
+  void factory_register<BaseType>::import_some(const factory_register & other_,
+                                               const std::vector<std::string> & imported_factories_)
+  {
+    DT_LOG_NOTICE(_logging_, "Importing registered factories from register '" << other_.get_label() << "'...");
+    for (typename factory_map_type::const_iterator i = other_._registered_.begin();
+         i != other_._registered_.end();
          ++i) {
-      if (std::find(imported_factories.begin(), imported_factories.end(), i->first) != imported_factories.end()) {
-        const factory_type& the_out_factory = i->second;
+      if (std::find(imported_factories_.begin(), imported_factories_.end(), i->first) != imported_factories_.end()) {
+        const factory_type & the_out_factory = i->second;
         this->registration(i->first, the_out_factory);
       }
     }
-    DT_LOG_NOTICE(logging_, "Done.");
+    DT_LOG_NOTICE(_logging_, "Done.");
+    return;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::print(std::ostream& out,
-                                         const std::string& indent) const {
+  void factory_register<BaseType>::print(std::ostream & out_,
+                                         const std::string & indent_) const
+  {
     std::ostringstream title_oss;
     title_oss << "List of registered allocators/functors for label \""
-              << label_
+              << _label_
               << "\" : ";
-    this->tree_dump(out, title_oss.str(), indent);
+    this->tree_dump(out_, title_oss.str(), indent_);
+    return;
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::tree_dump(std::ostream& out,
-                                             const std::string& title,
-                                             const std::string& a_indent,
-                                             bool inherit) const {
-    std::string indent;
-    if (!a_indent.empty()) indent = a_indent;
+  void factory_register<BaseType>::tree_dump(std::ostream & out_,
+                                             const std::string & title_,
+                                             const std::string & indent_,
+                                             bool inherit_) const
+  {
+    if (!title_.empty()) { out_ << indent_ << title_ << std::endl; }
 
-    if (!title.empty()) { out << indent << title << std::endl; }
-
-    out << indent << i_tree_dumpable::tag
+    out_ << indent_ << i_tree_dumpable::tag
         << "Label   : '"
-        << label_ << "'" << std::endl;
-    out << indent << i_tree_dumpable::tag
-        << "Logging threshold : "
-        << datatools::logger::get_priority_label(logging_) << std::endl;
-    out << indent << i_tree_dumpable::inherit_tag(inherit)
-        << "Registered factories : " << registered_.size() << std::endl;
+        << _label_ << "'" << std::endl;
 
-    for (typename factory_map_type::const_iterator i = registered_.begin();
-         i != registered_.end ();
+    out_ << indent_ << i_tree_dumpable::tag
+        << "Logging threshold : "
+        << datatools::logger::get_priority_label(_logging_) << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+        << "Registered factories : " << _registered_.size() << std::endl;
+
+    for (typename factory_map_type::const_iterator i = _registered_.begin();
+         i != _registered_.end();
          ++i) {
-      out << a_indent;
-      out << i_tree_dumpable::inherit_skip_tag(inherit);
+      out_ << indent_;
+      out_ << i_tree_dumpable::inherit_skip_tag(inherit_);
       typename factory_map_type::const_iterator j = i;
       j++;
-      if (j == registered_.end()) {
-        out << i_tree_dumpable::last_tag;
+      if (j == _registered_.end()) {
+        out_ << i_tree_dumpable::last_tag;
       } else {
-        out << i_tree_dumpable::tag;
+        out_ << i_tree_dumpable::tag;
       }
-
-      out << "ID: \"" << i->first << "\" @ " << &i->second << std::endl;
+      out_ << "ID: \"" << i->first << "\" @ " << &i->second << std::endl;
     }
+    return;
   }
 
 } // namespace datatools
 
 #endif // DATATOOLS_FACTORY_INL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

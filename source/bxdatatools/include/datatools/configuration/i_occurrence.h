@@ -24,8 +24,6 @@
  *
  *   Some utilities for the description of configuration variants and parameters.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_I_OCCURRENCE_H
@@ -89,10 +87,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_I_OCCURRENCE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

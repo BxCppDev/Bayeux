@@ -53,10 +53,10 @@ namespace datatools {
     virtual int reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
-                           const std::string & title = "",
-                           const std::string & indent = "",
-                           bool inherit = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
     /// Return a mutable reference to the embedded library info dictionary
     library_info & grab_libinfo();

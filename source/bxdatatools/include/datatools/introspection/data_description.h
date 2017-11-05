@@ -37,7 +37,8 @@ namespace datatools {
   namespace introspection {
 
     //! \brief Data description
-    class data_description : public datatools::i_tree_dumpable
+    class data_description
+      : public datatools::i_tree_dumpable
     {
     public:
 
@@ -208,10 +209,8 @@ namespace datatools {
 
 #endif // DATATOOLS_INTROSPECTION_DATA_DESCRIPTION_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

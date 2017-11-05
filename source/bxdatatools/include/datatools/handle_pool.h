@@ -1,4 +1,4 @@
-/// \file datatools/handle.h
+/// \file datatools/handle_pool.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-05-10
  * Last modified : 2013-04-22
@@ -25,6 +25,7 @@
  *  A pool of handles.
  *
  */
+
 #ifndef DATATOOLS_HANDLE_POOL_H
 #define DATATOOLS_HANDLE_POOL_H
 
@@ -39,25 +40,24 @@
 
 namespace datatools {
 
-  /*! \brief A pool of handles on a given class
-   */
+  /// \brief A pool of handles on a given class
   template <class T>
-  class handle_pool  {
+  class handle_pool
+  {
   public:
+
     typedef T element_type;
     typedef datatools::handle<element_type> handle_type;
 
-  public:
     /// Construct an empty pool
     handle_pool();
 
     /// Construct a pool with a default size
-    explicit handle_pool(size_t size);
+    explicit handle_pool(size_t size_);
 
     /// Destructor
     virtual ~handle_pool();
 
-  public:
     /// Empty the pool
     void clear();
 
@@ -71,36 +71,37 @@ namespace datatools {
     void reset();
 
     /// Change number of handles pool can contain
-    void resize(size_t size);
+    void resize(size_t size_);
 
     /// Return a const reference to a new handle
     const handle_type& create();
 
     /// Input pool capacity and used handles to an output stream
-    void dump(std::ostream& out = std::clog,
-              const std::string& title = "",
-              const std::string& indent = "",
-              bool abridged = true) const;
+    void dump(std::ostream & out_ = std::clog,
+              const std::string & title_ = "",
+              const std::string & indent_ = "",
+              bool abridged_ = true) const;
 
-  protected:
     /// Implementation for public resize method
-    void resize_impl(size_t size);
+    void resize_impl(size_t size_);
 
   protected:
-    std::vector<handle_type> buffer_; //<! Collection of handles held in the pool
-    size_t number_of_used_item_; //<! Number of pool handles currently in use
-  };
 
+    std::vector<handle_type> _buffer_; //<! Collection of handles held in the pool
+    size_t _number_of_used_item_; //<! Number of pool handles currently in use
+
+  };
 
   //----------------------------------------------------------------------
   // Implementation of handle_pool methods
 
   template <typename T>
-  handle_pool<T>::handle_pool() {
+  handle_pool<T>::handle_pool()
+  {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
 #endif
-    number_of_used_item_ = 0;
+    _number_of_used_item_ = 0;
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
 #endif
@@ -108,12 +109,13 @@ namespace datatools {
 
 
   template <typename T>
-  handle_pool<T>::handle_pool(size_t size) {
+  handle_pool<T>::handle_pool(size_t size_)
+  {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
 #endif
-    number_of_used_item_ = 0;
-    this->resize_impl(size);
+    _number_of_used_item_ = 0;
+    this->resize_impl(size_);
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
 #endif
@@ -121,143 +123,154 @@ namespace datatools {
 
 
   template <typename T>
-  handle_pool<T>::~handle_pool() {
+  handle_pool<T>::~handle_pool()
+  {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
-    DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "buffer size is " << buffer.size());
+    DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "buffer size is " << _buffer_.size());
     DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "number of used element " << _number_of_used_item);
 #endif
-    number_of_used_item_ = 0;
-    buffer_.clear();
+    _number_of_used_item_ = 0;
+    _buffer_.clear();
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
 #endif
+    return;
   }
 
 
   template <typename T>
-  void handle_pool<T>::clear() {
-    buffer_.clear();
+  void handle_pool<T>::clear()
+  {
+    _buffer_.clear();
+    return;
   }
 
 
   template <typename T>
-  size_t handle_pool<T>::get_capacity() const {
-    return buffer_.size();
+  size_t handle_pool<T>::get_capacity() const
+  {
+    return _buffer_.size();
   }
 
 
   template <typename T>
-  size_t handle_pool<T>::get_number_of_used_item() const {
-    return number_of_used_item_;
+  size_t handle_pool<T>::get_number_of_used_item() const
+  {
+    return _number_of_used_item_;
   }
 
 
   template <typename T>
-  void handle_pool<T>::reset() {
-    number_of_used_item_ = 0;
+  void handle_pool<T>::reset()
+  {
+    _number_of_used_item_ = 0;
+    return;
   }
 
 
   template <typename T>
-  void handle_pool<T>::resize(size_t size) {
-    DT_THROW_IF (number_of_used_item_ > 0,
+  void handle_pool<T>::resize(size_t size_)
+  {
+    DT_THROW_IF (_number_of_used_item_ > 0,
                  std::logic_error,
                  "Cannot resize pool with items in use");
-    this->resize_impl(size);
+    this->resize_impl(size_);
+    return;
   }
 
 
   template <typename T>
-  const typename handle_pool<T>::handle_type& handle_pool<T>::create() {
+  const typename handle_pool<T>::handle_type& handle_pool<T>::create()
+  {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
-    DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "buffer size is " << buffer.size());
-    DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "number of used element " << _number_of_used_item);
+    DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "buffer size is " << _buffer_.size());
+    DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "number of used element " << _number_of_used_item_);
 #endif
 
-    if (number_of_used_item_ < buffer_.size()) {
+    if (_number_of_used_item_ < _buffer_.size()) {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
       DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Use a pre-allocated element @ position "
-                   << number_of_used_item_);
+                   << _number_of_used_item_);
       DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
 #endif
-      return buffer_[number_of_used_item_++];
+      return _buffer_[_number_of_used_item_++];
     }
 
     element_type *ptr = new element_type;
-    buffer_.push_back(handle_type(ptr));
-    number_of_used_item_++;
+    _buffer_.push_back(handle_type(ptr));
+    _number_of_used_item_++;
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Use a newly allocated element @ position "
-                 << (number_of_used_item_ - 1));
+                 << (_number_of_used_item_ - 1));
     DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
 #endif
-    return buffer_.back();
+    return _buffer_.back();
   }
 
 
   template <typename T>
-  void handle_pool<T>::dump(std::ostream& out,
-                            const std::string& title,
-                            const std::string& indent,
-                            bool abridged) const {
-    if (!title.empty()) {
-      out << indent << title << " : " << std::endl;
+  void handle_pool<T>::dump(std::ostream & out_,
+                            const std::string & title_,
+                            const std::string & indent_,
+                            bool abridged_) const {
+    if (!title_.empty()) {
+      out_ << indent_ << title_ << " : " << std::endl;
     }
-    out << indent << "|-- " << "Capacity     : " << this->get_capacity() << std::endl;
-    out << indent << "|-- " << "# Used items : " << number_of_used_item_ << std::endl;
-    out << indent << "`-- " << "Items @ " << std::endl;
-    for (size_t i = 0; i < buffer_.size(); ++i) {
-      if (abridged) {
+    out_ << indent_ << "|-- " << "Capacity     : " << this->get_capacity() << std::endl;
+    out_ << indent_ << "|-- " << "# Used items : " << _number_of_used_item_ << std::endl;
+    out_ << indent_ << "`-- " << "Items @ " << std::endl;
+    for (size_t i = 0; i < _buffer_.size(); ++i) {
+      if (abridged_) {
         if (i >= 10) continue;
       }
-      out << indent << "    ";
-      const handle_type& h = buffer_[i];
-      if (i < buffer_.size() - 1) {
-        out << "|-- ";
+      out_ << indent_ << "    ";
+      const handle_type& h = _buffer_[i];
+      if (i < _buffer_.size() - 1) {
+        out_ << "|-- ";
       } else {
-        out << "`-- ";
+        out_ << "`-- ";
       }
-      out << "index " << i << " : ";
+      out_ << "index " << i << " : ";
       if (!h) {
-        out << "No element!" << std::endl;
-      }
-      else {
-        out << "@ " << &h.get() << " [unique=" << h.unique() << "]"<< std::endl;
+        out_ << "No element!" << std::endl;
+      } else {
+        out_ << "@ " << &h.get() << " [unique=" << h.unique() << "]"<< std::endl;
       }
     }
+    return;
   }
 
 
   template <typename T>
-  void handle_pool<T>::resize_impl(size_t size) {
+  void handle_pool<T>::resize_impl(size_t size_) {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
 #endif
 
-    size_t current_size = buffer_.size();
+    size_t current_size = _buffer_.size();
 
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS,  "current_size = " << current_size);
 #endif
 
-    if (size <= current_size) {
+    if (size_ <= current_size) {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
-      DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Capacity is enough for " << size);
+      DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Capacity is enough for " << size_);
 #endif
       return;
     }
 
-    buffer_.reserve(size);
-    for (size_t i = current_size; i < size; ++i) {
+    _buffer_.reserve(size_);
+    for (size_t i = current_size; i < size_; ++i) {
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
       DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS,  "Add a handle with a new element...");
 #endif
-      buffer_.push_back(handle_type(new element_type));
+      _buffer_.push_back(handle_type(new element_type));
     }
 
-    number_of_used_item_ = 0;
+    _number_of_used_item_ = 0;
 
 #ifdef DATATOOLS_HANDLE_POOL_DEVEL
     DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
@@ -270,10 +283,8 @@ namespace datatools {
 
 #endif // DATATOOLS_HANDLE_POOL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -73,13 +73,13 @@
   DT_THROW_IF(i < 0, std::logic_error, "parameter i(" << i << ") is negative");
   @endcode
 */
-#define DT_THROW_IF(Condition, ExceptionType, Message)			\
-  {									\
-    if (Condition) {							\
-      std::stringstream sDT_THROW_IF_ONLY;						\
+#define DT_THROW_IF(Condition, ExceptionType, Message)      \
+  {                 \
+    if (Condition) {              \
+      std::stringstream sDT_THROW_IF_ONLY;            \
       sDT_THROW_IF_ONLY << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
-      throw ExceptionType(sDT_THROW_IF_ONLY.str());					\
-    }									\
+      throw ExceptionType(sDT_THROW_IF_ONLY.str());         \
+    }                 \
   }
 
 
@@ -118,19 +118,17 @@
   DT_THROW(std::domain_error, "parameter i(" << i << ") is negative");
   @endcode
 */
-#define DT_THROW(ExceptionType, Message)				\
-  {									\
-    std::stringstream sDT_THROW_ONLY;						\
+#define DT_THROW(ExceptionType, Message)        \
+  {                 \
+    std::stringstream sDT_THROW_ONLY;           \
     sDT_THROW_ONLY << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
-    throw ExceptionType(sDT_THROW_ONLY.str());					\
+    throw ExceptionType(sDT_THROW_ONLY.str());          \
   }
 
 #endif // DATATOOLS_EXCEPTION_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

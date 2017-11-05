@@ -16,15 +16,16 @@ namespace datatools {
 
   /// Boost serialization template method
   template<class Archive>
-  void version_id::serialize(Archive & archive,
+  void version_id::serialize(Archive & archive_,
                              const unsigned int /* version */)
   {
-    archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    archive & boost::serialization::make_nvp("major", major_);
-    archive & boost::serialization::make_nvp("minor", minor_);
-    archive & boost::serialization::make_nvp("revision", revision_);
-    archive & boost::serialization::make_nvp("tag", tag_);
-    archive & boost::serialization::make_nvp("tag_number", tag_number_);
+    archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    archive_ & boost::serialization::make_nvp("major", _major_);
+    archive_ & boost::serialization::make_nvp("minor", _minor_);
+    archive_ & boost::serialization::make_nvp("revision", _revision_);
+    archive_ & boost::serialization::make_nvp("tag", _tag_);
+    archive_ & boost::serialization::make_nvp("tag_number", _tag_number_);
+    return;
   }
 
 } // end of namespace datatools

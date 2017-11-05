@@ -25,14 +25,15 @@
  *  Some templatized caster utilities and associated macros.
  *
  */
+
 #ifndef DATATOOLS_CASTER_UTILS_H
 #define DATATOOLS_CASTER_UTILS_H
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <typeinfo>
 
-// Third Party
+// Third Party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
 
@@ -42,26 +43,31 @@ namespace datatools {
     \brief  Templatized abstract interface class with a cast method using covariant return types .
   */
   template<typename From, typename ToBase>
-    struct i_caster {
-      virtual ToBase* cast(From*) = 0;
-    };
+  struct i_caster
+  {
+    virtual ToBase * cast(From *) = 0;
+  };
 
   /*!<  \struct caster
     \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type.
   */
   template <typename From, typename ToBase, typename ToDaughter>
-    struct caster : public i_caster<From, ToBase> {
-    virtual ToDaughter* cast(From* ptr) {
-      return reinterpret_cast<ToDaughter*>(ptr);
+  struct caster
+    : public i_caster<From, ToBase>
+  {
+
+    virtual ToDaughter * cast(From * ptr_) {
+      return reinterpret_cast<ToDaughter*>(ptr_);
     }
 
     virtual ~caster() {}
   };
 
   template<class Base, class Derived>
-    bool is_covariant(const Base& b) {
-    const Base* pb = &b;
-    const Derived* dummy = dynamic_cast<const Derived*>(pb);
+  bool is_covariant(const Base & b_)
+  {
+    const Base * pb = &b_;
+    const Derived * dummy = dynamic_cast<const Derived *>(pb);
     if (!dummy) {
       return false;
     }
@@ -92,10 +98,8 @@ public:                                                                 \
 
 #endif // DATATOOLS_CASTER_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

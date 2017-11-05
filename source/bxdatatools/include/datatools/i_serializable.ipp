@@ -17,16 +17,15 @@ namespace datatools {
                                                      archive __attribute__((unused)),
                                                      version __attribute__((unused)) )
   {
+    return;
   }
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_I_SERIALIZABLE_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

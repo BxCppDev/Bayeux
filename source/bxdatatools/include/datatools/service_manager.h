@@ -90,18 +90,18 @@ namespace datatools {
     // typedef std::map<std::string, dependee_manager_handle> mgr_dict_type;
 
     //! Constructor
-    service_manager(const std::string & name = "",
-                    const std::string & description = "",
-                    uint32_t flag = BLANK);
+    service_manager(const std::string & name_ = "",
+                    const std::string & description_ = "",
+                    uint32_t flag_ = BLANK);
 
     //! Destructor
     virtual ~service_manager();
 
     //! Set the name of the service
-    void set_name(const std::string& name);
+    void set_name(const std::string& name_);
 
     //! Set the description of the service
-    void set_description(const std::string& description);
+    void set_description(const std::string& description_);
 
     //! Get the name of the service
     const std::string& get_name() const;
@@ -113,7 +113,7 @@ namespace datatools {
     bool is_debug() const;
 
     //! Set the debug flag
-    void set_debug(bool debug = true);
+    void set_debug(bool debug_ = true);
 
     //! Set the flag to allow_dynamic_services
     void set_allow_dynamic_services(bool);
@@ -134,7 +134,7 @@ namespace datatools {
     void initialize();
 
     //! Initialize the manager from a container of properties
-    void initialize(const datatools::properties& config);
+    void initialize(const datatools::properties& config_);
 
     //! Reset the manager
     void reset();
@@ -152,14 +152,14 @@ namespace datatools {
     // void unmount_dependee_managers();
 
     //! Check if a service identifier/type is supported
-    bool has_service_type(const std::string& id) const;
+    bool has_service_type(const std::string& id_) const;
 
     //! Register a service factory
     template <class ServiceClass>
-    void register_service_type(const std::string& id);
+    void register_service_type(const std::string& id_);
 
     //! Unregister a service factory
-    void unregister_service_type(const std::string& id);
+    void unregister_service_type(const std::string& id_);
 
     //! \brief Special flag to build the list of service names
     enum service_filter_flag {
@@ -176,69 +176,69 @@ namespace datatools {
     /**  @param name The name of the service to be checked
      *   @return true if the manager hosts the service requested by name
      */
-    bool has(const std::string& name) const;
+    bool has(const std::string& name_) const;
 
     /**  @param name The name of the service to be checked
      *   @return true if the service is initialized
      */
-    bool is_initialized(const std::string& name) const;
+    bool is_initialized(const std::string& name_) const;
 
     /**  @param name The name of the service to be checked
      *   @return true if the service is of the requested type
      */
     template <class T>
-    bool is_a(const std::string& name) const;
+    bool is_a(const std::string& name_) const;
 
     /**  Same as the mutable 'get' method
      *   @param name The name of the service to be checked
      *   @return a mutable reference to the service instance requested by name and type
      */
     template<class T>
-    T& grab(const std::string& name);
+    T& grab(const std::string& name_);
 
     /**  @param name The name of the service to be checked
      *   @return a const reference to the service instance requested by name and type
      */
     template<class T>
-    const T& get(const std::string& name) const;
+    const T& get(const std::string& name_) const;
 
     /**  @param name The name of the service to be checked
      *   @return a mutable reference to the service instance requested by name
      */
-    base_service & grab_service(const std::string& name);
+    base_service & grab_service(const std::string& name_);
 
     /**  @param name The name of the service to be checked
      *   @return a const reference to the service instance requested by name
      */
-    const base_service & get_service(const std::string& name) const;
+    const base_service & get_service(const std::string& name_) const;
 
     //! Check if a service with given name can be dropped
-    bool can_drop(const std::string& name) const;
+    bool can_drop(const std::string& name_) const;
 
     //! Drop a service given its name
-    void drop(const std::string& name);
+    void drop(const std::string& name_);
 
     //! Load a service with given name, identifier and configuration
-    void load(const std::string& name,
-              const std::string& id,
-              const datatools::properties& config);
+    void load(const std::string& name_,
+              const std::string& id_,
+              const datatools::properties& config_);
 
     //! Load a service with given name and identifier and without initialization
     //!
     //! Initialization must be manually done later through the returned reference
     //! This method is reserved for experts only because it uses the
     //! interface of the service manager in a very special way.
-    base_service & load_no_init(const std::string& name,
-                                const std::string& id);
+    base_service & load_no_init(const std::string& name_,
+                                const std::string& id_);
 
     //! Configure an uninitialized service
     //!
     //! This method is reserved for experts only because it uses the
     //! interface of the service manager in a very special way.
-    void configure_no_init(const std::string& name, const datatools::properties& config);
+    void configure_no_init(const std::string& name_, const datatools::properties& config_);
 
     //! Load a set of services from a multi-service configuration
-    void load(const datatools::multi_properties& config);
+    void load(const datatools::multi_properties& config_);
 
     //! Return the list of services locally hosted by this manager
     const service_dict_type& get_local_services() const;
@@ -247,15 +247,15 @@ namespace datatools {
     const service_dict_type& get_bus_of_services(const bool update_ = false) const;
 
     //! Basic print of embedded services
-    void dump_services(std::ostream& out = std::clog,
-                       const std::string& title  = "",
-                       const std::string& indent = "") const;
+    void dump_services(std::ostream & out_ = std::clog,
+                       const std::string& title_  = "",
+                       const std::string& indent_ = "") const;
 
     //! Smart print
-    virtual void tree_dump(std::ostream& out         = std::clog,
-                           const std::string& title  = "",
-                           const std::string& indent = "",
-                           bool inherit              = false) const;
+    virtual void tree_dump(std::ostream& out_         = std::clog,
+                           const std::string& title_  = "",
+                           const std::string& indent_ = "",
+                           bool inherit_              = false) const;
 
     //! Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
@@ -272,29 +272,29 @@ namespace datatools {
   protected:
 
     //! Load a service
-    void load_service(const std::string& name,
-                      const std::string& id,
-                      const datatools::properties& config);
+    void load_service(const std::string& name_,
+                      const std::string& id_,
+                      const datatools::properties& config_);
 
     //! Load a service with or without initialization
-    void load_service(const std::string& name,
-                      const std::string& id,
-                      const datatools::properties* config_ptr);
+    void load_service(const std::string& name_,
+                      const std::string& id_,
+                      const datatools::properties * config_ptr_);
 
     //! Preload the factory register from service factory system register
     void preload_global_dict();
 
     //! Instantiate a service from its entry
-    void create_service(service_entry& entry);
+    void create_service(service_entry& entry_);
 
     //! Initialize a service from its entry
-    void initialize_service(service_entry& entry);
+    void initialize_service(service_entry& entry_);
 
     //! Reset a service from its entry
-    void reset_service(service_entry& entry);
+    void reset_service(service_entry& entry_);
 
     //! Destroy a service from its entry
-    void destroy_service(service_entry& entry);
+    void destroy_service(service_entry& entry_);
 
     //! Action done at service creation
     void at_service_creation(const std::string & service_name_, const std::string & service_type_id_);
@@ -311,25 +311,25 @@ namespace datatools {
   private:
 
     //! Set the factory preload flag
-    void set_preload(bool preload);
+    void set_preload(bool preload_);
 
   private:
 
-    datatools::logger::priority _logging_priority = datatools::logger::PRIO_FATAL; //!< Logging priority threshold
-    bool         initialized_ = false; //!< Initialization flag
-    std::string  name_;                //!< Manager's name
-    std::string  description_;         //!< Manager's description
-    bool         preload_ = false;     //!< Factory preload flag
-    bool         force_initialization_at_load_ = false; //!< Flag for triggering service initialization at load (rather than first use)
-    bool         allow_dynamic_services_ = false;       //!< Flag to allow dynamic services
+    datatools::logger::priority _logging_priority_ = datatools::logger::PRIO_FATAL; //!< Logging priority threshold
+    bool         _initialized_ = false; //!< Initialization flag
+    std::string  _name_;                //!< Manager's name
+    std::string  _description_;         //!< Manager's description
+    bool         _preload_ = false;     //!< Factory preload flag
+    bool         _force_initialization_at_load_ = false; //!< Flag for triggering service initialization at load (rather than first use)
+    bool         _allow_dynamic_services_ = false;       //!< Flag to allow dynamic services
 
     // 2012-04-09 FM : support for datatools::factory system :
-    base_service::factory_register_type  factory_register_;
-    // mgr_dict_type                        dependee_managers_; //!< Dictionary of dependee managers
+    base_service::factory_register_type  _factory_register_;
+    // mgr_dict_type                        _dependee_managers_; //!< Dictionary of dependee managers
 
-    service_dict_type                    local_services_; //!< Dictionary of services managed locally
+    service_dict_type                    _local_services_; //!< Dictionary of services managed locally
 
-    service_dict_type                    service_bus_; //!< Bus of all services known from this manager
+    service_dict_type                    _service_bus_; //!< Bus of all services known from this manager
 
     friend class service_entry;
   };

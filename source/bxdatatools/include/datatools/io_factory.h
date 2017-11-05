@@ -173,19 +173,19 @@ namespace datatools {
       static const std::string & bzip2_extension();
     };
 
-    static int guess_mode_from_filename(const std::string& a_filename,
-                                        int& a_mode);
+    static int guess_mode_from_filename(const std::string & filename_,
+                                        int & mode_);
 
     void set_logging_priority(datatools::logger::priority);
 
     datatools::logger::priority get_logging_priority() const;
 
     /// Constructor
-    io_factory(int a_mode = io_factory::MODE_DEFAULT);
+    io_factory(int mode_ = io_factory::MODE_DEFAULT);
 
     /// Constructor
-    io_factory(const std::string & a_stream_name,
-               int a_mode = io_factory::MODE_DEFAULT);
+    io_factory(const std::string & stream_name_,
+               int mode_ = io_factory::MODE_DEFAULT);
 
     /// Destructor
     virtual ~io_factory();
@@ -228,7 +228,7 @@ namespace datatools {
 
     int init_read_archive();
 
-    int init_read(const std::string& a_stream_nam);
+    int init_read(const std::string & stream_name_);
 
     int reset_read_archive();
 
@@ -236,13 +236,13 @@ namespace datatools {
 
     int init_write_archive();
 
-    int init_write(const std::string& a_stream_name);
+    int init_write(const std::string & stream_name_);
 
     int reset_write_archive();
 
     int reset_write();
 
-    int init(const std::string& a_stream_name, int a_mode);
+    int init(const std::string& stream_name_, int mode_);
 
     void ctor_defaults();
 
@@ -251,86 +251,84 @@ namespace datatools {
   public:
 
     template <typename Data>
-    void store(const Data& data) {
+    void store(const Data & data_)
+    {
       DT_THROW_IF (!this->is_write(),
                    std::logic_error,
                    "Not a writer factory!");
-      if (otar_ptr_ != 0) {
-        this->store_text<Data>(*otar_ptr_, data);
-      } else if (oxar_ptr_ != 0) {
-        this->store_xml<Data>(*oxar_ptr_, data);
-      } else if (obar_ptr_ != 0) {
-        this->store_binary<Data>(*obar_ptr_, data);
+      if (_otar_ptr_ != 0) {
+        this->store_text<Data>(*_otar_ptr_, data_);
+      } else if (_oxar_ptr_ != 0) {
+        this->store_xml<Data>(*_oxar_ptr_, data_);
+      } else if (_obar_ptr_ != 0) {
+        this->store_binary<Data>(*_obar_ptr_, data_);
       }
     }
 
     template <typename Data>
-    void load(Data& data) {
+    void load(Data & data_)
+    {
       DT_THROW_IF (!this->is_read(),
                    std::logic_error,
                    "Not a reader factory!");
-      DT_THROW_IF (in_fs_ == 0,
+      DT_THROW_IF (_in_fs_ == 0,
                    std::runtime_error,
                    "No input stream!");
 
-      // 2008-10-03 FM: add EOF check code
-      if (*in_fs_) {
+      if (*_in_fs_) {
+        // 2008-10-03 FM: add EOF check code
         // 2009-03-08 FM: Is it possible to have better EOF check code
         // here for unzipped text and XML archives?
         char c = 0;
-        in_fs_->get(c);
-        if (in_fs_) {
-          in_fs_->putback(c);
+        _in_fs_->get(c);
+        if (_in_fs_) {
+          _in_fs_->putback(c);
         }
       }
 
-      if (! *in_fs_) {
-        DT_THROW_IF (in_fs_->eof(),
+      if (! *_in_fs_) {
+        DT_THROW_IF (_in_fs_->eof(),
                      std::runtime_error,
                      "Input stream at EOF!");
-        DT_THROW_IF (in_fs_->fail(),
+        DT_THROW_IF (_in_fs_->fail(),
                      std::runtime_error,
                      "Input stream in fail status!");
-        DT_THROW_IF (in_fs_->bad(),
+        DT_THROW_IF (_in_fs_->bad(),
                      std::runtime_error,
                      "Input stream in bad status!");
       }
 
       try {
-        if (itar_ptr_ != 0) {
-          this->load_text<Data>(*itar_ptr_, data);
-          *in_fs_ >> std::ws;
-        } else if (ixar_ptr_ != 0) {
-          this->load_xml<Data>(*ixar_ptr_, data);
-          *in_fs_ >> std::ws;
-        } else if (ibar_ptr_ != 0) {
-          this->load_binary<Data>(*ibar_ptr_, data);
+        if (_itar_ptr_ != 0) {
+          this->load_text<Data>(*_itar_ptr_, data_);
+          *_in_fs_ >> std::ws;
+        } else if (_ixar_ptr_ != 0) {
+          this->load_xml<Data>(*_ixar_ptr_, data_);
+          *_in_fs_ >> std::ws;
+        } else if (_ibar_ptr_ != 0) {
+          this->load_binary<Data>(*_ibar_ptr_, data_);
         }
-      }
-      // 2011-02-25 FM:
-      catch (boost::archive::archive_exception& x) {
+      } catch (boost::archive::archive_exception & x) {
         throw;
-      }
-      catch (std::exception& x) {
+      } catch (std::exception & x) {
         throw;
-      }
-      catch (...) {
+      } catch (...) {
         DT_LOG_WARNING(get_logging_priority(),
                        "Cannot load data from archive: "
                        << "unexpected exception" << "!");
         DT_THROW(std::runtime_error, "Internal exception!");
       }
 
-      if (! *in_fs_) {
-        if (in_fs_->fail()) {
+      if (! *_in_fs_) {
+        if (_in_fs_->fail()) {
           DT_LOG_WARNING(get_logging_priority(),
                          "Input stream is now in fail status!");
         }
-        if (in_fs_->eof()) {
+        if (_in_fs_->eof()) {
           DT_LOG_WARNING(get_logging_priority(),
                          "Input stream is now in EOF status!");
         }
-        if (in_fs_->bad()) {
+        if (_in_fs_->bad()) {
           DT_LOG_WARNING(get_logging_priority(),
                          "Input stream is now in bad status!");
         }
@@ -338,96 +336,110 @@ namespace datatools {
     }
 
     template <typename Data>
-    friend io_factory& operator<<(io_factory& iof, const Data& data) {
-      iof.store(data);
-      return iof;
+    friend io_factory& operator<<(io_factory & iof_, const Data & data_)
+    {
+      iof_.store(data_);
+      return iof_;
     }
 
     template <typename Data>
-    friend io_factory& operator>>(io_factory& iof, Data& data) {
-      iof.load(data);
-      return iof;
+    friend io_factory& operator>>(io_factory & iof_, Data & data_)
+    {
+      iof_.load(data_);
+      return iof_;
     }
 
-    virtual void tree_dump(std::ostream& out = std::clog,
-                           const std::string& title = "",
-                           const std::string& indent = "",
-                           bool inherit = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
-    void dump(std::ostream& out) const;
-
-  private:
-    template <typename Data>
-    void store_text(boost::archive::text_oarchive& archive,
-                    const Data& data) {
-      const Data& b = data;
-      archive << b;
-    }
-
-    template <typename Data>
-    void store_xml(boost::archive::xml_oarchive& archive,
-                   const Data& data) {
-      const Data& b = data;
-      archive << boost::serialization::make_nvp("record", b);
-    }
-
-    template <typename Data>
-    void store_binary(eos::portable_oarchive& archive,
-                      const Data& data) {
-      const Data& b = data;
-      archive << b;
-    }
-
-    template <typename Data>
-    void load_text(boost::archive::text_iarchive& archive,
-                   Data& data) {
-      Data& b = data;
-      archive >> b;
-    }
-
-    template <typename Data>
-    void load_xml(boost::archive::xml_iarchive& archive,
-                  Data& data) {
-      Data& b = data;
-      archive >> boost::serialization::make_nvp("record", b);
-    }
-
-    template <typename Data>
-    void load_binary(eos::portable_iarchive& archive,
-                     Data& data) {
-      Data& b = data;
-      archive >> b;
-    }
+    void dump(std::ostream & out_) const;
 
   private:
 
+    template <typename Data>
+    void store_text(boost::archive::text_oarchive & archive_,
+                    const Data & data_)
+    {
+      const Data & b = data_;
+      archive_ << b;
+      return;
+    }
 
-    datatools::logger::priority _logging_priority; ///< Logging priority threshold
-    unsigned int mode_; ///< Mode bitset of the I/O factory
+    template <typename Data>
+    void store_xml(boost::archive::xml_oarchive & archive_,
+                   const Data & data_)
+    {
+      const Data & b = data_;
+      archive_ << boost::serialization::make_nvp("record", b);
+      return;
+    }
 
-    std::istream *in_;
-    std::ostream *out_;
+    template <typename Data>
+    void store_binary(eos::portable_oarchive & archive_,
+                      const Data & data_)
+    {
+      const Data & b = data_;
+      archive_ << b;
+      return;
+    }
 
-    std::ifstream *fin_;
-    std::ofstream *fout_;
+    template <typename Data>
+    void load_text(boost::archive::text_iarchive & archive_,
+                   Data & data_) {
+      Data & b = data_;
+      archive_ >> b;
+      return;
+    }
 
-    boost::iostreams::filtering_istream *in_fs_;
-    boost::iostreams::filtering_ostream *out_fs_;
+    template <typename Data>
+    void load_xml(boost::archive::xml_iarchive & archive_,
+                  Data & data_)
+    {
+      Data & b = data_;
+      archive_ >> boost::serialization::make_nvp("record", b);
+      return;
+    }
 
-    std::locale *default_locale_;
-    std::locale *locale_;
+    template <typename Data>
+    void load_binary(eos::portable_iarchive & archive_,
+                     Data & data_)
+    {
+      Data & b = data_;
+      archive_ >> b;
+      return;
+    }
 
-    bool read_archive_is_initialized_;
-    bool write_archive_is_initialized_;
+  private:
 
-    boost::archive::text_iarchive *itar_ptr_;
-    boost::archive::text_oarchive *otar_ptr_;
 
-    boost::archive::xml_iarchive  *ixar_ptr_;
-    boost::archive::xml_oarchive  *oxar_ptr_;
+    datatools::logger::priority _logging_priority_; ///< Logging priority threshold
+    unsigned int _mode_; ///< Mode bitset of the I/O factory
 
-    eos::portable_iarchive *ibar_ptr_;
-    eos::portable_oarchive *obar_ptr_;
+    std::istream * _in_;
+    std::ostream * _out_;
+
+    std::ifstream * _fin_;
+    std::ofstream * _fout_;
+
+    boost::iostreams::filtering_istream * _in_fs_;
+    boost::iostreams::filtering_ostream * _out_fs_;
+
+    std::locale * _default_locale_;
+    std::locale * _locale_;
+
+    bool _read_archive_is_initialized_;
+    bool _write_archive_is_initialized_;
+
+    boost::archive::text_iarchive * _itar_ptr_;
+    boost::archive::text_oarchive * _otar_ptr_;
+
+    boost::archive::xml_iarchive  * _ixar_ptr_;
+    boost::archive::xml_oarchive  * _oxar_ptr_;
+
+    eos::portable_iarchive * _ibar_ptr_;
+    eos::portable_oarchive * _obar_ptr_;
 
   }; // end of class io_factory
 
@@ -439,12 +451,14 @@ namespace datatools {
    *
    *
    */
-  class io_reader : public io_factory {
+  class io_reader
+    : public io_factory
+  {
   public:
-    io_reader(int mode = io_factory::MODE_DEFAULT);
+    io_reader(int mode_ = io_factory::MODE_DEFAULT);
 
-    io_reader(const std::string& stream_name,
-              int mode = io_factory::MODE_DEFAULT);
+    io_reader(const std::string & stream_name_,
+              int mode_ = io_factory::MODE_DEFAULT);
 
     virtual ~io_reader();
   };
@@ -457,11 +471,13 @@ namespace datatools {
    *
    *
    */
-  class io_writer : public io_factory {
+  class io_writer
+    : public io_factory
+  {
   public:
-    io_writer(int mode = io_factory::MODE_DEFAULT);
-    io_writer(const std::string& stream_name,
-              int mode = io_factory::MODE_DEFAULT);
+    io_writer(int mode_ = io_factory::MODE_DEFAULT);
+    io_writer(const std::string & stream_name_,
+              int mode_ = io_factory::MODE_DEFAULT);
 
     virtual ~io_writer();
   };
@@ -503,7 +519,8 @@ namespace datatools {
    * }
    * \endcode
    */
-  class data_reader {
+  class data_reader
+  {
 
   public:
 
@@ -518,22 +535,22 @@ namespace datatools {
     data_reader();
 
     /// Constructor
-    data_reader(const std::string& filename,
-                bool use_multiple_archives = using_single_archive);
+    data_reader(const std::string & filename_,
+                bool use_multiple_archives_ = using_single_archive);
 
     /// Constructor
-    data_reader(const std::string& filename, int mode);
+    data_reader(const std::string & filename_, int mode_);
 
     /// Destructor
     virtual ~data_reader();
 
     bool is_error() const;
 
-    const std::string& get_record_tag() const;
+    const std::string & get_record_tag() const;
 
     bool has_record_tag() const;
 
-    bool record_tag_is(const std::string& tag) const;
+    bool record_tag_is(const std::string & tag_) const;
 
     void reset();
 
@@ -559,82 +576,95 @@ namespace datatools {
 
     bool is_xml() const;
 
-    void init(const std::string& filename,
-              bool use_multiple_archives = using_single_archive);
+    void init(const std::string & filename_,
+              bool use_multiple_archives_ = using_single_archive);
 
-    void init_multi(const std::string& filename) {
-      this->init(filename, using_multiple_archives);
+    void init_multi(const std::string & filename_)
+    {
+      this->init(filename_, using_multiple_archives);
+      return;
     }
 
-    void init_single(const std::string& filename) {
-      this->init(filename, using_single_archive);
+    void init_single(const std::string & filename_)
+    {
+      this->init(filename_, using_single_archive);
     }
 
-    void init(const std::string& filename, int mode);
+    void init(const std::string & filename_, int mode_);
 
-    void dump(std::ostream& out = std::clog) const;
+    void dump(std::ostream & out_ = std::clog) const;
 
     template <typename Data>
-    void load(const std::string& tag, Data& data) {
+    void load(const std::string & tag_, Data & data_)
+    {
       DT_THROW_IF (!this->has_record_tag(),
                    std::logic_error,
                    "No more record tag!");
-      DT_THROW_IF(this->get_record_tag() != tag,
+      DT_THROW_IF(this->get_record_tag() != tag_,
                   std::logic_error,
                   "Unexpected tag ('" << this->get_record_tag()
-                  << " != " << tag << "')!");
-      this->basic_load(data);
-      if (reader_->is_multi_archives()) reader_->stop_archive();
+                  << " != " << tag_ << "')!");
+      this->basic_load(data_);
+      if (_reader_->is_multi_archives()) _reader_->stop_archive();
       this->read_next_tag();
+      return;
     }
 
     template <typename Data>
-    void load_alt(const std::string& tag, const std::string& alt_tag, Data& data) {
+    void load_alt(const std::string & tag_, const std::string & alt_tag_, Data & data_)
+    {
       DT_THROW_IF (!this->has_record_tag(),
                    std::logic_error,
                    "No more record tag!");
-      if (this->get_record_tag() != tag) {
-        DT_THROW_IF (this->get_record_tag() != alt_tag,
+      if (this->get_record_tag() != tag_) {
+        DT_THROW_IF (this->get_record_tag() != alt_tag_,
                      std::logic_error,
                      "Unexpected tag ('"
                      << this->get_record_tag()
-                     << " != " << tag << "')!");
+                     << " != " << tag_ << "')!");
       }
-      this->basic_load(data);
-      if (reader_->is_multi_archives()) reader_->stop_archive();
+      this->basic_load(data_);
+      if (_reader_->is_multi_archives()) _reader_->stop_archive();
       this->read_next_tag();
+      return;
     }
 
     template <typename Data>
-    void load_serializable(Data& data,
-                           typename boost::disable_if< has_bsts<Data> >::type* dummy = 0) {
-      if(!dummy) dummy=0;
-      this->load(data.get_serial_tag(), data);
+    void load_serializable(Data & data_,
+                           typename boost::disable_if< has_bsts<Data> >::type * dummy_ = 0)
+    {
+      if(!dummy_) dummy_ = 0;
+      this->load(data_.get_serial_tag(), data_);
+      return;
     }
 
     template <typename Data>
-    void load_serializable(
-                           Data& data,
-                           typename boost::enable_if< has_bsts<Data> >::type* dummy = 0) {
-      if(!dummy) dummy=0;
-      this->load_alt(data.get_serial_tag(),
+    void load_serializable(Data & data_,
+                           typename boost::enable_if< has_bsts<Data> >::type * dummy_ = 0)
+    {
+      if(!dummy_) dummy_ = 0;
+      this->load_alt(data_.get_serial_tag(),
                      ::datatools::backward_serial_tag<Data> (0),
-                     data);
+                     data_);
+      return;
     }
 
     template <typename Data>
-    void load(Data& data) {
-      load_serializable (data);
+    void load(Data & data_)
+    {
+      load_serializable(data_);
+      return;
     }
 
   protected:
     template <typename Data>
-    void basic_load(Data& data) {
-      DT_THROW_IF (reader_ == 0,
+    void basic_load(Data & data_)
+    {
+      DT_THROW_IF (_reader_ == 0,
                    std::logic_error,
                    "Not initialized!");
       try {
-        reader_->load(data);
+        _reader_->load(data_);
       }
       catch (std::exception& x) {
         bool warn = false;
@@ -649,32 +679,35 @@ namespace datatools {
                        << x.what() << " !");
         }
         //<<<
-        status_   = STATUS_ERROR;
-        next_tag_ = empty_record_tag();
+        _status_   = STATUS_ERROR;
+        _next_tag_ = empty_record_tag();
         DT_THROW_IF(true, std::logic_error, x.what());
       }
       catch (...) {
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                      "Cannot read data: "
                      << "Unexpected exception" << " !");
-        status_   = STATUS_ERROR;
-        next_tag_ = empty_record_tag();
+        _status_   = STATUS_ERROR;
+        _next_tag_ = empty_record_tag();
         DT_THROW_IF(true, std::logic_error, "Unexpected error!");
       }
+      return;
     }
 
 
   private:
+
     void read_next_tag();
 
-    void init_reader(const std::string& filename, int a_mode);
+    void init_reader(const std::string & filename_, int a_mode_);
 
     void reset_reader();
 
   private:
-    int         status_;
-    io_reader   *reader_;
-    std::string next_tag_;
+
+    int          _status_;
+    io_reader   * _reader_;
+    std::string   _next_tag_;
 
   };
 
@@ -701,18 +734,19 @@ namespace datatools {
    * }
    * \endcode
    */
-  class data_writer {
+  class data_writer
+  {
   public:
     /// Default constructor
     data_writer();
 
     /// Constructor
-    data_writer(const std::string& filename, int mode);
+    data_writer(const std::string & filename_, int mode_);
 
     /// Constructor
-    data_writer(const std::string& filename,
-                bool use_multiple_archives = using_single_archive,
-                bool append_mode = no_append_mode);
+    data_writer(const std::string & filename_,
+                bool use_multiple_archives_ = using_single_archive,
+                bool append_mode_ = no_append_mode);
 
     /// Destructor
     virtual ~data_writer();
@@ -741,64 +775,71 @@ namespace datatools {
 
     void reset();
 
-    void init(const std::string& filename,
-              bool a_multiple_archives = using_single_archive,
-              bool a_append_mode = no_append_mode);
+    void init(const std::string & filename_,
+              bool a_multiple_archives_ = using_single_archive,
+              bool a_append_mode_ = no_append_mode);
 
-    void init_multi(const std::string& filename);
+    void init_multi(const std::string & filename_);
 
-    void init_single(const std::string& filename);
+    void init_single(const std::string & filename_);
 
-    void init(const std::string& filename, int mode);
+    void init(const std::string & filename_, int mode_);
 
   public:
+
     template <typename Data>
-    void store(const std::string& tag, const Data& data) {
-      if (writer_->is_multi_archives()) {
-        writer_->start_archive();
+    void store(const std::string & tag_, const Data & data_)
+    {
+      if (_writer_->is_multi_archives()) {
+        _writer_->start_archive();
       }
-
-      this->basic_store<std::string>(tag);
-      this->basic_store<Data>(data);
-
-      if (writer_->is_multi_archives()) {
-        writer_->stop_archive();
+      this->basic_store<std::string>(tag_);
+      this->basic_store<Data>(data_);
+      if (_writer_->is_multi_archives()) {
+        _writer_->stop_archive();
       }
+      return;
     }
 
     template <typename Data>
-    void store(const Data& data) {
+    void store(const Data & data_)
+    {
       const datatools::i_serializable& i_ser =
-        static_cast<const datatools::i_serializable&>(data);
-      this->store<Data>(i_ser.get_serial_tag(), data);
+        static_cast<const datatools::i_serializable&>(data_);
+      this->store<Data>(i_ser.get_serial_tag(), data_);
+      return;
     }
 
   protected:
+
     template <typename Data>
-    void basic_store(const Data& data) {
-      DT_THROW_IF (writer_ == 0,
+    void basic_store(const Data & data_)
+    {
+      DT_THROW_IF (_writer_ == 0,
                    std::logic_error,
                    "Not initialized!");
-      writer_->store<Data>(data);
+      _writer_->store<Data>(data_);
+      return;
     }
 
   private:
-    void init_writer(const std::string& filename, int mode);
+
+    void init_writer(const std::string & filename_, int mode_);
 
     void reset_writer();
 
   private:
-    io_writer *writer_;
+
+    io_writer * _writer_;
+
   };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_IO_FACTORY_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

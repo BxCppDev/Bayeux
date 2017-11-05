@@ -25,11 +25,11 @@ namespace datatools {
   }
 
   int library_query_service::initialize(const datatools::properties & config_,
-                                       datatools::service_dict_type& /*services_*/)
+                                        datatools::service_dict_type & /*services_*/)
   {
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Service is already initialized!");
-    base_service::common_initialize(config_);
+    base_service::_common_initialize(config_);
     _init_();
     _initialized_ = true;
     return datatools::SUCCESS;
@@ -44,9 +44,9 @@ namespace datatools {
     return datatools::SUCCESS;
   }
 
-  void library_query_service::tree_dump(std::ostream& out_,
-                                       const std::string& title_,
-                                       const std::string& indent_,
+  void library_query_service::tree_dump(std::ostream & out_,
+                                       const std::string & title_,
+                                       const std::string & indent_,
                                        bool inherit_) const
   {
     this->base_service::tree_dump(out_, title_, indent_, true);

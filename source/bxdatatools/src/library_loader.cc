@@ -15,7 +15,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/preprocessor/stringize.hpp>
-#include <boost/scoped_ptr.hpp>
 
 // This Project:
 #include <datatools/detail/DynamicLoader.h>
@@ -26,22 +25,26 @@
 #include <datatools/logger.h>
 
 namespace datatools {
+
   struct library_entry_type;
   typedef datatools::handle<library_entry_type> handle_library_entry_type;
   typedef std::map<std::string, handle_library_entry_type> handle_library_entry_dict_type;
   typedef std::list<handle_library_entry_type> handle_library_entry_stack_type;
 
   //! \brief A class used internally by the library_loader class
-  struct library_entry_type {
-    library_entry_type(const std::string& lib_name      = "",
-                       const std::string& lib_directory = "",
-                       const std::string& lib_filename  = "",
-                       const std::string& lib_full_path = "",
-                       const std::string& lib_version   = "",
-                       bool lib_autoload                = true);
+  struct library_entry_type
+  {
+
+    library_entry_type(const std::string & lib_name_      = "",
+                       const std::string & lib_directory_ = "",
+                       const std::string & lib_filename_  = "",
+                       const std::string & lib_full_path_ = "",
+                       const std::string & lib_version_   = "",
+                       bool lib_autoload_                = true);
+
     virtual ~library_entry_type();
 
-    void print(std::ostream& out = std::clog, const std::string& indent = "") const;
+    void print(std::ostream & out_ = std::clog, const std::string & indent_ = "") const;
 
   public:
     std::string name;
@@ -54,26 +57,31 @@ namespace datatools {
     datatools::detail::DynamicLoader::LibraryHandle handle;
   };
 
-  class library_loader::LibraryCollection {
+  class library_loader::LibraryCollection
+  {
   public:
-    handle_library_entry_stack_type stacked_libraries_;
-    handle_library_entry_dict_type  libraries_;
+    handle_library_entry_stack_type _stacked_libraries_;
+    handle_library_entry_dict_type  _libraries_;
   };
 
 
   //----------------------------------------------------------------------
   // library_entry struct
-  library_entry_type::library_entry_type(const std::string& lib_name,
-                                         const std::string& lib_directory,
-                                         const std::string& lib_filename,
-                                         const std::string& lib_full_path,
-                                         const std::string& lib_version,
-                                         bool lib_autoload)
-    : name(lib_name), directory(lib_directory), filename(lib_filename),
-      full_path(lib_full_path), version(lib_version),
-      autoload(lib_autoload), status(0), handle(0) {}
+  library_entry_type::library_entry_type(const std::string & lib_name_,
+                                         const std::string & lib_directory_,
+                                         const std::string & lib_filename_,
+                                         const std::string & lib_full_path_,
+                                         const std::string & lib_version_,
+                                         bool lib_autoload_)
+    : name(lib_name_), directory(lib_directory_), filename(lib_filename_),
+      full_path(lib_full_path_), version(lib_version_),
+      autoload(lib_autoload_), status(0), handle(0)
+  {
+    return;
+  }
 
-  library_entry_type::~library_entry_type() {
+  library_entry_type::~library_entry_type()
+  {
     if (handle != 0) {
       int statusOnClose = datatools::detail::DynamicLoader::CloseLibrary(handle);
       if (statusOnClose != 1) {
@@ -89,32 +97,33 @@ namespace datatools {
     handle = 0;
   }
 
-  void library_entry_type::print(std::ostream& out,
-                                 const std::string& indent) const {
-    out << indent << "|-- Name      : " << name << std::endl;
+  void library_entry_type::print(std::ostream & out_,
+                                 const std::string & indent_) const
+  {
+    out_ << indent_ << "|-- Name      : " << name << std::endl;
     if (!directory.empty()) {
-      out << indent << "|-- Directory : '" << directory << "'" << std::endl;
+      out_ << indent_ << "|-- Directory : '" << directory << "'" << std::endl;
     }
     if (!filename.empty()) {
-      out << indent << "|-- Filename  : '" << filename << "'" << std::endl;
+      out_ << indent_ << "|-- Filename  : '" << filename << "'" << std::endl;
     }
-    out << indent << "|-- Full path : '" << full_path << "'" << std::endl;
+    out_ << indent_ << "|-- Full path : '" << full_path << "'" << std::endl;
     {
       std::string fpe = full_path;
       fetch_path_with_env(fpe);
       if (fpe != full_path) {
-        out << indent << "|    `-- Expanded to : '" << fpe << "'" << std::endl;
+        out_ << indent_ << "|    `-- Expanded to : '" << fpe << "'" << std::endl;
       }
     }
     if (!version.empty()) {
-      out << indent << "|-- Version : '" << version << "'" << std::endl;
+      out_ << indent_ << "|-- Version : '" << version << "'" << std::endl;
     }
-    out << indent << "|-- Autoload  : " << (autoload ? "Yes" : "No") << std::endl;
-    out << indent << "`-- Loaded    : " << (handle ? "Yes" : "No");
+    out_ << indent_ << "|-- Autoload  : " << (autoload ? "Yes" : "No") << std::endl;
+    out_ << indent_ << "`-- Loaded    : " << (handle ? "Yes" : "No");
     if (handle != 0) {
-      out << " [" << handle << "]";
+      out_ << " [" << handle << "]";
     }
-    out << std::endl;
+    out_ << std::endl;
   }
 
 
@@ -122,39 +131,48 @@ namespace datatools {
   // library_loader class
   //
   library_loader::library_loader()
-    : config_(datatools::multi_properties("name", "filename")),
-      libEntries_(new LibraryCollection) {}
+    : _config_(datatools::multi_properties("name", "filename"))
+    , _lib_entries_(new LibraryCollection)
+  {
+    return;
+  }
 
-  library_loader::library_loader(const std::string& config_file)
-    : config_(datatools::multi_properties("name", "filename")),
-      libEntries_(new LibraryCollection) {
-    if(!config_file.empty()) {
-      std::string resolvedPathToConfig(config_file);
+  library_loader::library_loader(const std::string & config_file_)
+    : _config_(datatools::multi_properties("name", "filename"))
+    , _lib_entries_(new LibraryCollection)
+  {
+    if(!config_file_.empty()) {
+      std::string resolvedPathToConfig(config_file_);
       datatools::fetch_path_with_env(resolvedPathToConfig);
-      config_.read(resolvedPathToConfig);
+      _config_.read(resolvedPathToConfig);
     }
-    this->init();
+    this->_init();
+    return;
   }
 
-  library_loader::library_loader(const datatools::multi_properties& config)
-    : config_(config),
-      libEntries_(new LibraryCollection) {
-    this->init();
+  library_loader::library_loader(const datatools::multi_properties & config_)
+    : _config_(config_)
+    , _lib_entries_(new LibraryCollection)
+  {
+    this->_init();
+    return;
   }
 
-  // dtor :
-  library_loader::~library_loader() {
+  library_loader::~library_loader()
+  {
     this->close_all();
+    return;
   }
 
-  bool library_loader::has(const std::string& name) const {
-    return libEntries_->libraries_.find(name) != libEntries_->libraries_.end();
+  bool library_loader::has(const std::string & name_) const
+  {
+    return _lib_entries_->_libraries_.find(name_) != _lib_entries_->_libraries_.end();
   }
 
-  bool library_loader::is_loaded(const std::string& name) const {
-    handle_library_entry_dict_type::const_iterator found = libEntries_->libraries_.find(name);
-
-    if (found != libEntries_->libraries_.end()) {
+  bool library_loader::is_loaded(const std::string & name_) const
+  {
+    handle_library_entry_dict_type::const_iterator found = _lib_entries_->_libraries_.find(name_);
+    if (found != _lib_entries_->_libraries_.end()) {
       if (found->second.get().handle != 0) {
         return true;
       }
@@ -173,8 +191,8 @@ namespace datatools {
     }
 
     handle_library_entry_type le_handle(new library_entry_type);
-    libEntries_->libraries_[lib_name_] = le_handle;
-    library_entry_type& le = libEntries_->libraries_[lib_name_].grab();
+    _lib_entries_->_libraries_[lib_name_] = le_handle;
+    library_entry_type& le = _lib_entries_->_libraries_[lib_name_].grab();
     le.name         = lib_name_;
     le.filename     = lib_filename_;
     le.version      = lib_version_;
@@ -244,8 +262,8 @@ namespace datatools {
         directory = lib_dir_tokens[1];
       }
     }
-    handle_library_entry_dict_type::iterator found = libEntries_->libraries_.find(lib_name);
-    if (found == libEntries_->libraries_.end()) {
+    handle_library_entry_dict_type::iterator found = _lib_entries_->_libraries_.find(lib_name);
+    if (found == _lib_entries_->_libraries_.end()) {
       int status = this->registration(lib_name,
                                       directory,
                                       filename_,
@@ -260,7 +278,7 @@ namespace datatools {
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR, message.str());
         return EXIT_FAILURE;
       }
-      found = libEntries_->libraries_.find(lib_name);
+      found = _lib_entries_->_libraries_.find(lib_name);
     }
     library_entry_type& le = found->second.grab();
     std::string check = le.full_path;
@@ -268,7 +286,7 @@ namespace datatools {
     le.handle = datatools::detail::DynamicLoader::OpenLibrary(check.c_str());
 
     if (le.handle != 0) {
-      libEntries_->stacked_libraries_.push_front(found->second);
+      _lib_entries_->_stacked_libraries_.push_front(found->second);
     } else {
       std::ostringstream message;
       message << "datatools::library_loader::load: "
@@ -287,12 +305,12 @@ namespace datatools {
       return EXIT_FAILURE;
     }
 
-    if (libEntries_->stacked_libraries_.front().get().name != lib_name_) {
+    if (_lib_entries_->_stacked_libraries_.front().get().name != lib_name_) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Cannot close library '" << lib_name_ << "' !");
       return EXIT_FAILURE;
     }
 
-    handle_library_entry_dict_type::iterator found = libEntries_->libraries_.find(lib_name_);
+    handle_library_entry_dict_type::iterator found = _lib_entries_->_libraries_.find(lib_name_);
     handle_library_entry_type& hle = found->second;
     library_entry_type& le = hle.grab();
 
@@ -307,18 +325,18 @@ namespace datatools {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
       return EXIT_FAILURE;
     } else {
-      libEntries_->stacked_libraries_.front ().grab().handle = 0;
-      libEntries_->stacked_libraries_.pop_front();
+      _lib_entries_->_stacked_libraries_.front ().grab().handle = 0;
+      _lib_entries_->_stacked_libraries_.pop_front();
     }
     return EXIT_SUCCESS;
   }
 
 
   int library_loader::close_all() {
-    while (!libEntries_->stacked_libraries_.empty()) {
-      handle_library_entry_type& hle = libEntries_->stacked_libraries_.front();
+    while (!_lib_entries_->_stacked_libraries_.empty()) {
+      handle_library_entry_type& hle = _lib_entries_->_stacked_libraries_.front();
       if (!hle) {
-        libEntries_->stacked_libraries_.pop_front(); // remove top element
+        _lib_entries_->_stacked_libraries_.pop_front(); // remove top element
       } else {
         library_entry_type& le = hle.grab();
         if (le.handle != 0) {
@@ -347,7 +365,7 @@ namespace datatools {
           // else
           //   {
           le.handle = 0;
-          libEntries_->stacked_libraries_.pop_front (); // remove top element
+          _lib_entries_->_stacked_libraries_.pop_front (); // remove top element
           // }
         }
       }
@@ -355,50 +373,50 @@ namespace datatools {
     return EXIT_SUCCESS;
   }
 
-  void library_loader::print(std::ostream& out) const {
-    out << "Library loader : " << std::endl;
-    out << "List of registered shared libraries :" << std::endl;
+  void library_loader::print(std::ostream& out_) const {
+    out_ << "Library loader : " << std::endl;
+    out_ << "List of registered shared libraries :" << std::endl;
     for (handle_library_entry_dict_type::const_iterator i
-           = libEntries_->libraries_.begin();
-         i != libEntries_->libraries_.end();
+           = _lib_entries_->_libraries_.begin();
+         i != _lib_entries_->_libraries_.end();
          ++i) {
       handle_library_entry_dict_type::const_iterator j = i;
       j++;
       const library_entry_type& le = i->second.get();
       std::string tag = "|   ";
-      if (j == libEntries_->libraries_.end()) {
-        out << "`-- ";
+      if (j == _lib_entries_->_libraries_.end()) {
+        out_ << "`-- ";
         tag = "    ";
       } else {
-        out << "|-- ";
+        out_ << "|-- ";
       }
-      out << "Library : '" << i->first << "'" << std::endl;
-      le.print(out, tag);
+      out_ << "Library : '" << i->first << "'" << std::endl;
+      le.print(out_, tag);
     }
-    out << "List of loaded shared libraries :" << std::endl;
-    for (handle_library_entry_stack_type::const_iterator i = libEntries_->stacked_libraries_.begin();
-         i != libEntries_->stacked_libraries_.end();
+    out_ << "List of loaded shared libraries :" << std::endl;
+    for (handle_library_entry_stack_type::const_iterator i = _lib_entries_->_stacked_libraries_.begin();
+         i != _lib_entries_->_stacked_libraries_.end();
          ++i) {
       handle_library_entry_stack_type::const_iterator j = i;
       j++;
       const library_entry_type& le = i->get();
       std::string tag = "|   ";
-      if (j == libEntries_->stacked_libraries_.end()) {
-        out << "`-- ";
+      if (j == _lib_entries_->_stacked_libraries_.end()) {
+        out_ << "`-- ";
         tag = "    ";
       } else {
-        out << "|-- ";
+        out_ << "|-- ";
       }
-      out << "Library : '" << le.name << "'" << std::endl;
+      out_ << "Library : '" << le.name << "'" << std::endl;
     }
   }
 
-  library_loader::symbol_ptr library_loader::get_symbol_address(
-                                                                const std::string& lib_name_,
-                                                                const std::string& symbol_) {
+  library_loader::symbol_ptr library_loader::get_symbol_address(const std::string& lib_name_,
+                                                                const std::string& symbol_)
+  {
     // shorter typename?
-    handle_library_entry_dict_type::const_iterator found = libEntries_->libraries_.find(lib_name_);
-    DT_THROW_IF (found == libEntries_->libraries_.end(),
+    handle_library_entry_dict_type::const_iterator found = _lib_entries_->_libraries_.find(lib_name_);
+    DT_THROW_IF (found == _lib_entries_->_libraries_.end(),
                  std::logic_error,
                  "The shared library file '" << lib_name_ << "' is not registered !");
     DT_THROW_IF (found->second.get().handle == 0,
@@ -407,20 +425,19 @@ namespace datatools {
     return datatools::detail::DynamicLoader::GetSymbolAddress(found->second.get().handle, symbol_.c_str());
   }
 
-  void library_loader::init() {
-    if (config_.empty()) return;
+  void library_loader::_init()
+  {
+    if (_config_.empty()) return;
 
-    BOOST_FOREACH(const multi_properties::entry* ptr,
-                  config_.ordered_entries()) {
+    BOOST_FOREACH(const multi_properties::entry* ptr, _config_.ordered_entries()) {
       const multi_properties::entry& e = *ptr;
-      const properties& lib_properties = e.get_properties();
+      const properties & lib_properties = e.get_properties();
       std::string lib_name       = e.get_key ();
       std::string lib_filename   = e.get_meta ();
       std::string lib_directory  = "";
       std::string lib_full_path  = "";
       std::string lib_version    = "";
       bool lib_autoload   = false;
-
       if (lib_properties.has_key("full_path")) {
         lib_full_path = lib_properties.fetch_string("full_path");
       } else {
@@ -464,7 +481,8 @@ namespace datatools {
  ***************/
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(datatools::library_loader)
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::library_loader,ocd_) {
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::library_loader,ocd_)
+{
   ocd_.set_class_name("datatools::library_loader");
   ocd_.set_class_description("A shared library (DLL) loader");
   ocd_.set_class_library("datatools");

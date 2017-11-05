@@ -3,15 +3,11 @@
  * Creation date: 2008-02-15
  * Last modified: 2013-03-22
  *
- * License:
- *
- *
  * Description:
  *  A generic event id with run number and event number
  *
- * History:
- *
  */
+
 #ifndef DATATOOLS_EVENT_ID_H
 #define DATATOOLS_EVENT_ID_H
 
@@ -57,10 +53,11 @@ namespace datatools {
    *
    */
 
-  class event_id :
-    public datatools::i_serializable,
-    public datatools::i_tree_dumpable,
-    public datatools::i_clear {
+  class event_id
+    : public datatools::i_serializable
+    , public datatools::i_tree_dumpable
+    , public datatools::i_clear
+  {
   public:
     //! Constant value for an invalid run number.
     static const int INVALID_RUN_NUMBER = -1;
@@ -77,20 +74,19 @@ namespace datatools {
     static const char IO_FORMAT_ANY = '*';
     static const char IO_FORMAT_INVALID = '!';
 
-  public:
     //! The default constructor.
     /** Initialized to an invalid id.
      */
     event_id();
 
     //! A constructor that sets only the event number.
-    explicit event_id(int e);
+    explicit event_id(int e_);
 
     //! A constructor to fully set the event_id object.
     /** @param r the run number.
      *  @param e the event number.
      */
-    event_id(int r, int e);
+    event_id(int r_, int e_);
 
     //! The destructor.
     virtual ~event_id();
@@ -114,18 +110,18 @@ namespace datatools {
     //! Set the run number.
     /** @param r the run number.
      */
-    void set_run_number(int r);
+    void set_run_number(int r_);
 
     //! Set the event number.
     /** @param e the event number.
      */
-    void set_event_number(int e);
+    void set_event_number(int e_);
 
     //! Set the run and event numbers.
     /** @param r the run number.
      *  @param e the event number.
      */
-    void set(int r, int e);
+    void set(int r_, int e_);
 
     //! Check whether the ID is valid.
     bool is_valid() const;
@@ -145,28 +141,28 @@ namespace datatools {
      *  @param e the event number.
      *  @return true or false
      */
-    bool match(int r, int e) const;
+    bool match(int r_, int e_) const;
 
     //! Comparison operator.
-    bool operator==(const event_id& id) const;
+    bool operator==(const event_id & id_) const;
 
     //! Comparison operator.
-    bool operator<(const event_id& id) const;
+    bool operator<(const event_id & id_) const;
 
     //! Comparison operator.
-    bool operator>(const event_id& id) const;
+    bool operator>(const event_id & id_) const;
 
     //! Output convertor.
     std::string to_string() const;
 
     //! Input convertor.
-    void from_string(const std::string& s);
+    void from_string(const std::string & s_);
 
     //! Output operator.
-    friend std::ostream& operator<<(std::ostream& s, const event_id& id);
+    friend std::ostream & operator<<(std::ostream & s_, const event_id & id_);
 
     //! Input operator.
-    friend std::istream& operator>>(std::istream& s, event_id& id);
+    friend std::istream & operator>>(std::istream & s_, event_id & id_);
 
     //! Method for smart printing (from the datatools::i_tree_dump interface).
     /** @param out the output stream
@@ -174,24 +170,25 @@ namespace datatools {
      *   @param indent the indentation string
      *   @param inherit the inheritance flag.
      */
-    virtual void tree_dump(std::ostream& out = std::cerr,
-                           const std::string& title  = "",
-                           const std::string& indent = "",
-                           bool inherit = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::cerr,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
-    void smart_print(std::ostream& out,
-                     const std::string& title,
-                     const std::string& indent) const;
+    void smart_print(std::ostream & out_,
+                     const std::string & title_,
+                     const std::string & indent_) const;
 
-    std::string to_smart_string(const std::string& title,
-                                const std::string& indent) const;
+    std::string to_smart_string(const std::string & title_,
+                                const std::string & indent_) const;
 
     //! Shortcut to the tree_dump method with default arguments.
     void dump() const;
 
   private:
-    int32_t run_number_;   //!< The number of the run.
-    int32_t event_number_; //!< The number of the event within the run.
+
+    int32_t _run_number_;   //!< The number of the run.
+    int32_t _event_number_; //!< The number of the event within the run.
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(event_id)
@@ -207,23 +204,34 @@ namespace datatools {
   //! Predicate to check if an event_id equals another one.
   /** May be used with the std::find_if standard algorithm.
    */
-  class event_id_equal_predicate : public std::unary_function<event_id, bool> {
+  class event_id_equal_predicate
+    : public std::unary_function<event_id, bool>
+  {
   public:
+
     //! Constructor
     /** @param id the reference event ID.
      */
-    event_id_equal_predicate(const event_id & id) : id_(id) {}
+    event_id_equal_predicate(const event_id & id_)
+      : _id_(id_)
+    {
+      return;
+    }
 
     //! Functionnal operator
     /** @param id the event ID to be checked to the embedded reference ID.
      */
-    bool operator() (const event_id & id) const {
-      return id_ == id;
+    bool operator() (const event_id & id_) const
+    {
+      return _id_ == id_;
     }
 
   private:
-    event_id id_;
+
+    event_id _id_; ///< Event ID
+
   };
+
 } // end of namespace datatools
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::event_id)
@@ -239,10 +247,8 @@ BOOST_CLASS_VERSION(datatools::event_id, 1)
 
 #endif // DATATOOLS_EVENT_ID_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

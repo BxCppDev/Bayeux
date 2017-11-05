@@ -21,7 +21,8 @@ namespace datatools {
     archive_ & boost::serialization::make_nvp("category", _category_);
     archive_ & boost::serialization::make_nvp("mime",     _mime_);
     archive_ & boost::serialization::make_nvp("paths",    _paths_);
- }
+    return;
+  }
 
 } // end of namespace datatools
 

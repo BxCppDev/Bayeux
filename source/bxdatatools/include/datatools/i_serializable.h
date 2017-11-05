@@ -18,12 +18,14 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef DATATOOLS_I_SERIALIZABLE_H
 #define DATATOOLS_I_SERIALIZABLE_H
 
 // Standard Library:
 #include <string>
 #include <typeinfo>
+#include <memory>
 
 // Third Party:
 // - Boost:
@@ -31,7 +33,7 @@
 #include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/scoped_ptr.hpp>
+// #include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/datatools_config.h>
@@ -46,18 +48,19 @@
 namespace datatools {
 
   //! \brief Base abstract class of all serializable (and possibly introspectable) classes
-  class i_serializable {
+  class i_serializable
+  {
 
   public:
 
     /// Default constructor
-    i_serializable() {};
+    i_serializable();
 
     /// Destructor
-    virtual ~i_serializable() {}
+    virtual ~i_serializable();
 
     /// Return the serialization string identifier of the class
-    virtual const std::string& get_serial_tag() const = 0;
+    virtual const std::string & get_serial_tag() const = 0;
 
     /// Macro to declare basic support for serialization
     BOOST_SERIALIZATION_BASIC_DECLARATION()
@@ -78,10 +81,6 @@ namespace datatools {
 DR_CLASS_INIT(::datatools::i_serializable)
 #endif // Q_MOC_RUN
 
-// Explicit class version:
-// #include <boost/serialization/version.hpp>
-// BOOST_CLASS_VERSION(datatools::i_serializable, 0)
-
 /******************
  * Helpful macros *
  ******************/
@@ -99,11 +98,11 @@ namespace datatools {
 /// Template support for serializable type (backward compatibility support)
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 
-#define DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(ClassName)   \
-  namespace datatools {                                                 \
-    template <>                                                         \
-    const std::string & serial_tag< ClassName >();                      \
-  }                                                                     \
+#define DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(ClassName) \
+  namespace datatools {                                               \
+    template <>                                                       \
+    const std::string & serial_tag< ClassName >();                    \
+  }                                                                   \
   /**/
 
 
@@ -117,11 +116,11 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  * };
  * \endcode
  */
-#define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()        \
-  public:                                                       \
-  static const std::string SERIAL_TAG;                          \
-  static const std::string & serial_tag();                      \
-  virtual const std::string& get_serial_tag() const;            \
+#define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()  \
+  public:                                                 \
+  static const std::string SERIAL_TAG;                    \
+  static const std::string & serial_tag();                \
+  virtual const std::string& get_serial_tag() const;      \
   /**/
 
 
@@ -151,7 +150,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
   namespace datatools {                                                 \
     template <>                                                         \
     const std::string & serial_tag<ClassName> (){                       \
-      static boost::scoped_ptr<std::string> _serial_tag(0);             \
+      static std::unique_ptr<std::string> _serial_tag;                  \
       if ( !_serial_tag){                                               \
         _serial_tag.reset(new std::string(ClassSerialTag));             \
       }                                                                 \
@@ -172,9 +171,9 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  * };
  * \endcode
  */
-#define DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()   \
-  public:                                                       \
-  struct backward_serial_tag_support {};                        \
+#define DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT() \
+  public:                                                     \
+  struct backward_serial_tag_support {};                      \
   /**/
 
 
@@ -190,9 +189,9 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
   namespace datatools {                                                 \
     template <>                                                         \
     const std::string & backward_serial_tag<ClassName> (int /*i*/){     \
-      static boost::scoped_ptr<std::string> _backward_serial_tag (0);   \
+      static std::unique_ptr<std::string> _backward_serial_tag;         \
       if ( !_backward_serial_tag){                                      \
-        _backward_serial_tag.reset (new std::string (ClassBackwardSerialTag)); \
+        _backward_serial_tag.reset (new std::string(ClassBackwardSerialTag)); \
       }                                                                 \
       return *_backward_serial_tag.get ();                              \
     }                                                                   \
@@ -264,10 +263,10 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *   };
  * \endcode
  */
-#define DATATOOLS_SERIALIZATION_DECLARATION()           \
-  public:                                               \
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()      \
-  BOOST_SERIALIZATION_BASIC_DECLARATION ()              \
+#define DATATOOLS_SERIALIZATION_DECLARATION()       \
+  public:                                           \
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()  \
+  BOOST_SERIALIZATION_BASIC_DECLARATION ()          \
   /**/
 
 /** Shortcut macro to generate the proper prototype of the
@@ -293,7 +292,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  */
 #define DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(ClassName,ArchiveId,VersionId) \
   template<class Archive>                                               \
-  void ClassName::serialize(Archive& ArchiveId, const unsigned int VersionId) \
+  void ClassName::serialize(Archive & ArchiveId, const unsigned int VersionId) \
   /**/
 
 
@@ -408,8 +407,9 @@ namespace datatools {
   template <typename T>
   bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
-                        typename boost::disable_if< has_bsts<T> >::type* dummy = 0) {
-    if(!dummy) dummy=0;
+                        typename boost::disable_if< has_bsts<T> >::type* dummy_ = 0)
+  {
+    if(!dummy_) dummy_ = 0;
     if (stag_ == T::serial_tag()) return true;
     if (! alt_tag_.empty()){
       if (stag_ == alt_tag_) return true;
@@ -420,8 +420,9 @@ namespace datatools {
   template <typename T>
   bool check_serial_tag(const std::string stag_,
                         const std::string alt_tag_ = "",
-                        typename boost::enable_if< has_bsts<T> >::type* dummy = 0) {
-    if(!dummy) dummy = 0;
+                        typename boost::enable_if< has_bsts<T> >::type* dummy_ = 0)
+  {
+    if(!dummy_) dummy_ = 0;
     if (stag_ == T::serial_tag()) return true;
     if (stag_ == ::datatools::backward_serial_tag<T> (0)) return true;
     if (! alt_tag_.empty()) {
@@ -434,10 +435,8 @@ namespace datatools {
 
 #endif // DATATOOLS_I_SERIALIZABLE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

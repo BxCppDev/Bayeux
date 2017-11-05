@@ -122,7 +122,7 @@ namespace datatools {
 
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Service is already initialized!");
-    base_service::common_initialize(config_);
+    base_service::_common_initialize(config_);
 
     if (datatools::logger::is_debug(get_logging_priority())) {
       config_.tree_dump(std::cerr, "Configuration for URN =>path resolver '" + get_name() + "' : ", "[debug] ");

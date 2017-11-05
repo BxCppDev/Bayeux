@@ -48,8 +48,8 @@ namespace datatools {
   class properties;
 
   /// \brief Host a register of static and/or dynamic informations about libraries or software components
-  class library_info :
-    public i_tree_dumpable
+  class library_info
+    : public i_tree_dumpable
   {
 
   public:

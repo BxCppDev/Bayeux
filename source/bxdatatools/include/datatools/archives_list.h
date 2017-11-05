@@ -71,14 +71,13 @@ namespace boost
   namespace serialization
   {
   }
+
 }
 
 #endif // DATATOOLS_ARCHIVES_LIST_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

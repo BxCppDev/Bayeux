@@ -3,14 +3,12 @@
  * Creation date: 2010-03-18
  * Last modified: 2015-10-18
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *
  *   Utilities for units based on the CLHEP library's implementation
- *
- * History:
- *
+  *
  */
 #ifndef DATATOOLS_UNITS_H
 #define DATATOOLS_UNITS_H
@@ -261,8 +259,8 @@ namespace datatools {
      *   double lu = datatools::units::get_unit_from("length", "cm");
      *   \endcode
      */
-    double get_unit_from(const std::string& unit_type,
-                         const std::string& unit_str);
+    double get_unit_from(const std::string& unit_type_,
+                         const std::string& unit_str_);
 
     //! Get the CLHEP unspecified unit value from a string.
     /**
@@ -272,7 +270,7 @@ namespace datatools {
      *   double u = datatools::units::get_unit("cm");
      *   \endcode
      */
-    double get_unit(const std::string& unit_str, bool throw_ = false);
+    double get_unit(const std::string& unit_str_, bool throw_ = false);
 
     //! Return an array containing the labels associated to all type of units supported  by the datatools::units class.
     // const std::vector<std::string>& get_unit_labels_registry();
@@ -292,10 +290,10 @@ namespace datatools {
      *     }
      *   \endcode
      */
-    bool is_unit_label_valid(const std::string & unit_label);
+    bool is_unit_label_valid(const std::string & unit_label_);
 
     //! Return the symbol of the default unit associated to a unit label supported by the datatools::units class.
-    std::string get_default_unit_symbol_from_label(const std::string & unit_label);
+    std::string get_default_unit_symbol_from_label(const std::string & unit_label_);
 
     //! Find the specified unit and the associated unit label from a string.
     /**
@@ -315,9 +313,9 @@ namespace datatools {
      *   \endcode
      *
      */
-    bool find_unit(const std::string & unit_str,
-                   double & unit_value,
-                   std::string & unit_label);
+    bool find_unit(const std::string & unit_str_,
+                   double & unit_value_,
+                   std::string & unit_label_);
 
     //! Get a value from a string taking into account the unit symbol.
     /**
@@ -327,7 +325,7 @@ namespace datatools {
      *   double val = datatools::units::get_value_with_unit("2.54 cm");
      *   \endcode
      */
-    double get_value_with_unit(const std::string& word);
+    double get_value_with_unit(const std::string& word_);
 
     //! Get a value from a string taking into account the unit symbol.
     /**
@@ -339,9 +337,9 @@ namespace datatools {
      *   bool ok = datatools::units::find_value_with_unit("2.54 cm", value, unit_label);
      *   \endcode
      */
-    bool find_value_with_unit(const std::string& word,
-                              double& value,
-                              std::string& unit_label,
+    bool find_value_with_unit(const std::string & word_,
+                              double & value_,
+                              std::string & unit_label_,
                               double default_unit_ = std::numeric_limits<double>::quiet_NaN());
 
     //! Parse a value from a string taking into account the unit symbol, set the value, the unit symbol and unit label.
@@ -366,7 +364,9 @@ namespace datatools {
                                uint32_t flags = 0);
 
     //! \brief The description of an unit
-    class unit : public i_tree_dumpable {
+    class unit
+      : public i_tree_dumpable
+    {
 
     public:
 
@@ -502,7 +502,9 @@ namespace datatools {
     };
 
     //! \brief The description of an unit dimension
-    class unit_dimension : public i_tree_dumpable {
+    class unit_dimension
+      : public i_tree_dumpable
+    {
 
     public:
 
@@ -618,7 +620,9 @@ namespace datatools {
     };
 
     //! \brief A registry for units
-    class registry : public i_tree_dumpable {
+    class registry
+      : public i_tree_dumpable
+    {
 
     public:
 
@@ -739,10 +743,8 @@ DR_TYPE_INIT(::datatools::units::power_of_ten)
 
 #endif // DATATOOLS_UNITS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

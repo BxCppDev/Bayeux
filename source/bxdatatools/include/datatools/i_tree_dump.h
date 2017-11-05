@@ -14,10 +14,9 @@
 
 namespace datatools {
 
-  /*! \brief An abstract interface with utilities for printable objects.
-   *
-   */
-  class i_tree_dumpable {
+  /// \brief An abstract interface with utilities for printable objects.
+  class i_tree_dumpable
+  {
   public:
 
     struct tags {
@@ -39,53 +38,61 @@ namespace datatools {
     /// Destructor
     virtual ~i_tree_dumpable();
 
-    static std::ostream & last_skip_tag(std::ostream& out);
+    static std::ostream & last_skip_tag(std::ostream& out_);
 
-    static std::ostream & skip_tag(std::ostream& out);
+    static std::ostream & skip_tag(std::ostream& out_);
 
-    static std::ostream & last_tag(std::ostream& out);
+    static std::ostream & last_tag(std::ostream& out_);
 
-    static std::ostream & tag(std::ostream& out);
+    static std::ostream & tag(std::ostream& out_);
 
     /// Main interface method for smart dump
-    virtual void tree_dump (std::ostream& out = std::clog,
-                            const std::string& title  = "",
-                            const std::string& indent = "",
-                            bool inherit = false) const = 0;
+    virtual void tree_dump(std::ostream& out_ = std::clog,
+                           const std::string& title_  = "",
+                           const std::string& indent_ = "",
+                           bool inherit_ = false) const = 0;
 
-    void tree_dump (int out_type = OSTREAM_CLOG,
-                    const std::string& title  = "",
-                    const std::string& indent = "",
-                    bool inherit = false) const;
+    void tree_dump(int out_type_ = OSTREAM_CLOG,
+                   const std::string& title_  = "",
+                   const std::string& indent_ = "",
+                   bool inherit_ = false) const;
 
-    void tree_print (int out_type = OSTREAM_CLOG,
-                     const std::string& title= "") const;
+    void tree_print(int out_type_ = OSTREAM_CLOG,
+                    const std::string& title_ = "") const;
 
-    void smart_print (int out_type = OSTREAM_CLOG,
-                      const std::string& title = "",
-                      const std::string& indent = "") const;
+    void smart_print(int out_type_ = OSTREAM_CLOG,
+                     const std::string& title_  = "",
+                     const std::string& indent_ = "") const;
 
     /// Output stream manipulator
-    class inherit_tag {
+    class inherit_tag
+    {
     public:
-      inherit_tag(bool inherit);
 
-      friend std::ostream & operator<<(std::ostream& out,
-                                       const inherit_tag& last_tag);
+      inherit_tag(bool inherit_);
+
+      friend std::ostream & operator<<(std::ostream & out_,
+                                       const inherit_tag & last_tag_);
 
     private:
-      bool inherit_;
+
+      bool _inherit_;
+
     };
 
     /// Output stream manipulator
-    class inherit_skip_tag {
+    class inherit_skip_tag
+    {
     public:
-      inherit_skip_tag(bool inherit);
 
-      friend std::ostream& operator<<(std::ostream& out,
-                                      const inherit_skip_tag& last_tag);
+      inherit_skip_tag(bool inherit_);
+
+      friend std::ostream& operator<<(std::ostream & out_,
+                                      const inherit_skip_tag & last_tag_);
     private:
-      bool inherit_;
+
+      bool _inherit_;
+
     };
 
 #ifndef Q_MOC_RUN
@@ -103,10 +110,8 @@ DR_CLASS_INIT(::datatools::i_tree_dumpable)
 
 #endif // DATATOOLS_I_TREE_DUMP_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

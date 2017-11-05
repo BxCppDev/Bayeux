@@ -26,9 +26,8 @@
  *
  *   Range tools
  *
- * History:
- *
  */
+
 #ifndef DATATOOLS_RANGE_TOOLS_H
 #define DATATOOLS_RANGE_TOOLS_H
 
@@ -61,10 +60,8 @@ namespace datatools {
 
 #endif // DATATOOLS_RANGE_TOOLS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

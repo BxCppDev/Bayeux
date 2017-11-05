@@ -17,10 +17,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <memory>
 
 // Third Party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/range/algorithm/replace_if.hpp>
 // - GSL:
@@ -311,160 +311,187 @@ namespace datatools {
     }
 
     double get_unit_in_dimension_from(const std::string & unit_id_,
-                                      const std::string & dimension_label_) {
+                                      const std::string & dimension_label_)
+    {
       const unit & the_unit = registry::const_system_registry().get_unit_from_any(unit_id_);
       DT_THROW_IF(!the_unit.is_dimension(dimension_label_), std::logic_error,
                   "Unit '" << unit_id_ << "' is not of " << dimension_label_ << " dimension !");
       return the_unit.get_value();
     }
 
-    bool is_unit_in_dimension_from(const std::string& unit_id_,
-                                  const std::string& unit_dimension_label_)
+    bool is_unit_in_dimension_from(const std::string & unit_id_,
+                                   const std::string & unit_dimension_label_)
     {
       const unit & the_unit = registry::const_system_registry().get_unit_from_any(unit_id_);
       return the_unit.is_dimension(unit_dimension_label_);
     }
 
-    double get_length_unit_from(const std::string & unit_id_) {
+    double get_length_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "length");
     }
 
 
-    double get_surface_unit_from(const std::string& unit_id_) {
+    double get_surface_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "surface");
     }
 
 
-    double get_volume_unit_from(const std::string& unit_id_) {
+    double get_volume_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "volume");
     }
 
 
-    double get_time_unit_from(const std::string& unit_id_) {
+    double get_time_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "time");
     }
 
 
-    double get_angle_unit_from(const std::string& unit_id_) {
+    double get_angle_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "angle");
     }
 
 
-    double get_solid_angle_unit_from(const std::string& unit_id_) {
+    double get_solid_angle_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "solid_angle");
     }
 
 
-    double get_energy_unit_from(const std::string & unit_id_) {
+    double get_energy_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "energy");
     }
 
 
-    double get_mass_unit_from(const std::string & unit_id_) {
+    double get_mass_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "mass");
     }
 
 
-    double get_pressure_unit_from(const std::string & unit_id_) {
+    double get_pressure_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "pressure");
     }
 
-    double get_magnetic_flux_density_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "magnetic_flux_density");
+    double get_magnetic_flux_density_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "magnetic_flux_density");
     }
 
-    double get_magnetic_field_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "magnetic_flux_density");
-     /*
-       if ((word == "T") || (word == "tesla")) return CLHEP::tesla;
-      if ((word == "G") || (word == "gauss")) return CLHEP::gauss;
-      if ((word == "kG") || (word == "kilogauss")) return CLHEP::kilogauss;
-      DT_THROW_BAD_UNIT("magnetic field", word);
-      // return std::numeric_limits<double>::quiet_NaN();
-      */
-    }
-
-
-    double get_electric_field_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "electric_field");
-    }
-
-    double get_electric_potential_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "electric_potential");
-    }
-
-    double get_electric_tension_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "electric_potential");
+    double get_magnetic_field_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "magnetic_flux_density");
+      /*
+        if ((word == "T") || (word == "tesla")) return CLHEP::tesla;
+        if ((word == "G") || (word == "gauss")) return CLHEP::gauss;
+        if ((word == "kG") || (word == "kilogauss")) return CLHEP::kilogauss;
+        DT_THROW_BAD_UNIT("magnetic field", word);
+        // return std::numeric_limits<double>::quiet_NaN();
+        */
     }
 
 
-    double get_temperature_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "temperature");
+    double get_electric_field_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "electric_field");
+    }
+
+    double get_electric_potential_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "electric_potential");
+    }
+
+    double get_electric_tension_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "electric_potential");
     }
 
 
-    double get_density_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "density");
-    }
-
-    double get_frequency_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "frequency");
+    double get_temperature_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "temperature");
     }
 
 
-    double get_activity_unit_from(const std::string & unit_id_) {
-     return get_unit_in_dimension_from(unit_id_, "activity");
-   }
+    double get_density_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "density");
+    }
+
+    double get_frequency_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "frequency");
+    }
 
 
-    double get_volume_activity_unit_from(const std::string & unit_id_) {
+    double get_activity_unit_from(const std::string & unit_id_)
+    {
+      return get_unit_in_dimension_from(unit_id_, "activity");
+    }
+
+
+    double get_volume_activity_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "volume_activity");
     }
 
 
-    double get_surface_activity_unit_from(const std::string & unit_id_) {
+    double get_surface_activity_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "surface_activity");
     }
 
 
-    double get_electric_charge_unit_from(const std::string & unit_id_) {
+    double get_electric_charge_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "electric_charge");
     }
 
 
-    double get_electric_current_unit_from(const std::string & unit_id_) {
+    double get_electric_current_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "electric_current");
     }
 
 
-    double get_mass_activity_unit_from(const std::string & unit_id_) {
+    double get_mass_activity_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "mass_activity");
     }
 
 
-    double get_velocity_unit_from(const std::string & unit_id_) {
+    double get_velocity_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "velocity");
     }
 
-    double get_speed_unit_from(const std::string & unit_id_) {
+    double get_speed_unit_from(const std::string & unit_id_)
+    {
       return get_unit_in_dimension_from(unit_id_, "velocity");
     }
 
 
-    double get_unit_from(const std::string& unit_type,
-                         const std::string& unit_str) {
-      return get_unit_in_dimension_from(unit_str, unit_type);
+    double get_unit_from(const std::string & unit_type_,
+                         const std::string & unit_str)
+    {
+      return get_unit_in_dimension_from(unit_str, unit_type_);
     }
 
 
-    bool is_unit_label_valid(const std::string & unit_label)
+    bool is_unit_label_valid(const std::string & unit_label_)
     {
-      return registry::const_system_registry().has_dimension(unit_label);
+      return registry::const_system_registry().has_dimension(unit_label_);
     }
 
-    std::string get_default_unit_symbol_from_label(const std::string & unit_type)
+    std::string get_default_unit_symbol_from_label(const std::string & unit_type_)
     {
-      const unit_dimension & the_unit_dim = registry::const_system_registry().get_dimension(unit_type);
+      const unit_dimension & the_unit_dim = registry::const_system_registry().get_dimension(unit_type_);
       const std::string & unit_name = the_unit_dim. get_default_unit_name();
       const unit & the_unit = registry::const_system_registry().get_unit(unit_name);
       return the_unit.get_main_symbol();
@@ -493,7 +520,7 @@ namespace datatools {
       return false;
     }
 
-    double get_unit(const std::string& unit_str_, bool throw_)
+    double get_unit(const std::string & unit_str_, bool throw_)
     {
       double unit_val;
       std::string unit_label;
@@ -623,7 +650,8 @@ namespace datatools {
     }
 
 
-    double get_value_with_unit(const std::string& word) {
+    double get_value_with_unit(const std::string & word)
+    {
       double unit_value = std::numeric_limits<double>::quiet_NaN();
       std::string unit_label;
       DT_THROW_IF (!find_value_with_unit(word, unit_value, unit_label),
@@ -1267,18 +1295,18 @@ namespace datatools {
           }
           const std::string & tok = tokens[i];
           if (devel) std::cerr << "DEVEL: compute_dimensional_powers: "
-                    << "tok='" << tok << "'" << std::endl;
+                               << "tok='" << tok << "'" << std::endl;
           decode = true;
           for (int j = BD_MASS; j < BD_LAST; j++) {
             std::string dim_sym = base_dimension_to_symbol((base_dimension_type)j);
             if (devel) std::cerr << "DEVEL: compute_dimensional_powers: " << "dim_sym='"
-                      << dim_sym << "'" << std::endl;
+                                 << dim_sym << "'" << std::endl;
             std::string ttt = tok.substr(0, dim_sym.size());
             if (devel) std::cerr << "DEVEL: compute_dimensional_powers: ttt=" << ttt << std::endl;
             if (ttt == dim_sym) {
               std::string dim_pow_str = tok.substr(dim_sym.size());
               if (devel) std::cerr << "DEVEL: compute_dimensional_powers: dim_pow_str='"
-                        << dim_pow_str << "'" << std::endl;
+                                   << dim_pow_str << "'" << std::endl;
               int dim_pow = 0;
               if (dim_pow_str.size()) {
                 std::istringstream dim_pow_in(dim_pow_str);
@@ -1293,8 +1321,8 @@ namespace datatools {
               }
               _dimensional_powers_[(int)j] += dim_pow;
               if (devel) std::cerr << "DEVEL: compute_dimensional_powers: "
-                        << "dimension [" << dim_sym << "] = "
-                        << _dimensional_powers_[(int)j] << std::endl;
+                                   << "dimension [" << dim_sym << "] = "
+                                   << _dimensional_powers_[(int)j] << std::endl;
               break;
             } // if
           } // for
@@ -1325,9 +1353,9 @@ namespace datatools {
 
 
     void unit_dimension::tree_dump(std::ostream & out_,
-                                  const std::string & title_,
-                                  const std::string & indent_,
-                                  bool inherit_) const
+                                   const std::string & title_,
+                                   const std::string & indent_,
+                                   bool inherit_) const
     {
       if (!title_.empty()) {
         out_ << indent_ << title_ << std::endl;
@@ -1557,7 +1585,7 @@ namespace datatools {
     // static
     registry & registry::_access_system_registry_()
     {
-      static boost::scoped_ptr<registry> _reg_singleton;
+      static std::unique_ptr<registry> _reg_singleton;
       if (! _reg_singleton) {
         _reg_singleton.reset(new registry);
 

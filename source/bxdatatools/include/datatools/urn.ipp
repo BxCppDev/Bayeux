@@ -18,6 +18,7 @@ namespace datatools {
   {
     archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     archive_ & boost::serialization::make_nvp("segments", _segments_);
+    return;
   }
 
 } // end of namespace datatools

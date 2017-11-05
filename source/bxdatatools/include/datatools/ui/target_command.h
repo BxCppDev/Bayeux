@@ -35,7 +35,8 @@ namespace datatools {
 
     //! \brief Base command for a target object
     template <typename Type>
-    class target_command : public base_command
+    class target_command
+      : public base_command
     {
     public:
 

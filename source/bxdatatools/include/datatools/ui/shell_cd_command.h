@@ -31,7 +31,8 @@ namespace datatools {
   namespace ui {
 
     //! \brief Shell cd command
-    struct shell_cd_command : public target_command<basic_shell>
+    struct shell_cd_command
+      : public target_command<basic_shell>
     {
       shell_cd_command(basic_shell &);
       virtual ~shell_cd_command();
@@ -46,10 +47,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_SHELL_CD_COMMAND_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

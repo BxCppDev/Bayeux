@@ -75,61 +75,61 @@ namespace datatools {
 
 
   void smart_filename::set_logging_priority(datatools::logger::priority p) {
-    logging_ = p;
+    _logging_ = p;
     return;
   }
 
   datatools::logger::priority smart_filename::get_logging_priority() const {
-    return logging_;
+    return _logging_;
   }
 
 
   int smart_filename::get_mode() const {
-    return mode_;
+    return _mode_;
   }
 
 
   bool smart_filename::is_initialized() const {
-    return (mode_ != MODE_INVALID);
+    return (_mode_ != MODE_INVALID);
   }
 
 
   bool smart_filename::is_expand_path() const {
-    return expand_path_;
+    return _expand_path_;
   }
 
 
   bool smart_filename::is_single() const {
-    return (mode_ == MODE_SINGLE);
+    return (_mode_ == MODE_SINGLE);
   }
 
 
   bool smart_filename::is_list() const {
-    return (mode_ == MODE_LIST);
+    return (_mode_ == MODE_LIST);
   }
 
 
   bool smart_filename::is_incremental() const {
-    return (mode_ == MODE_INCREMENTAL);
+    return (_mode_ == MODE_INCREMENTAL);
   }
 
 
   bool smart_filename::is_ranged() const {
-    return ranged_;
+    return _ranged_;
   }
 
 
   bool smart_filename::is_valid() const {
     if (!this->is_initialized()) return false;
     if (this->is_ranged()) {
-      return list_.size() > 0;
+      return _list_.size() > 0;
     }
     return true;
   }
 
 
   size_t smart_filename::current_size() const {
-    return list_.size();
+    return _list_.size();
   }
 
 
@@ -142,8 +142,8 @@ namespace datatools {
     if (!this->is_initialized()) {
       return false;
     }
-    if (this->is_ranged() || list_.size() > 0) {
-      return find(list_.begin(), list_.end(), fname) != list_.end();
+    if (this->is_ranged() || _list_.size() > 0) {
+      return find(_list_.begin(), _list_.end(), fname) != _list_.end();
     }
     return false;
   }
@@ -153,20 +153,20 @@ namespace datatools {
     DT_THROW_IF(!this->is_ranged(),
                 std::logic_error,
                 "List of filenames is not ranged ! Size is not known in advance !");
-    return list_.size();
+    return _list_.size();
   }
 
 
   smart_filename::const_iterator smart_filename::begin() const {
-    return list_.begin();
+    return _list_.begin();
   }
 
 
   smart_filename::const_iterator smart_filename::end() const {
-    DT_THROW_IF(!ranged_,
+    DT_THROW_IF(!_ranged_,
                 std::logic_error,
                 "List of filenames is not ranged (incremental mode with no stopping index) !");
-    return list_.end();
+    return _list_.end();
   }
 
 
@@ -180,43 +180,43 @@ namespace datatools {
     DT_THROW_IF(a_index < 0, std::range_error, "Index " << a_index << " is not valid !");
     if (this->is_incremental()
         && ! this->is_ranged()
-        && (a_index >= (int)list_.size())) {
+        && (a_index >= (int)_list_.size())) {
       smart_filename* mutable_this = const_cast<smart_filename*>(this);
-      for (int i = list_.size(); i <= a_index; ++i) {
+      for (int i = _list_.size(); i <= a_index; ++i) {
         std::string filename;
-        int file_number = incremental_starting_index_ +  incremental_increment_ * a_index;
+        int file_number = _incremental_starting_index_ +  _incremental_increment_ * a_index;
         this->build_incremental_filename(file_number, filename);
         mutable_this->add_list(filename);
       }
     } else {
-      DT_THROW_IF(a_index < 0 || a_index > (int)list_.size(),
+      DT_THROW_IF(a_index < 0 || a_index > (int)_list_.size(),
                   std::range_error,
                   "Index " << a_index<< " is not valid !");
     }
-    return list_[a_index];
+    return _list_[a_index];
   }
 
 
   void smart_filename::set_mode(int a_new_value) {
-    mode_ = a_new_value;
-    if (mode_ == MODE_SINGLE) {
-      ranged_ = true;
-    } else if (mode_ == MODE_LIST) {
-      ranged_ = true;
-    } else if (mode_ == MODE_INCREMENTAL) {
-      ranged_ = false;
-      if (incremental_stopping_index_ > MODE_INCREMENTAL_UNRANGED) {
-        ranged_ = true;
+    _mode_ = a_new_value;
+    if (_mode_ == MODE_SINGLE) {
+      _ranged_ = true;
+    } else if (_mode_ == MODE_LIST) {
+      _ranged_ = true;
+    } else if (_mode_ == MODE_INCREMENTAL) {
+      _ranged_ = false;
+      if (_incremental_stopping_index_ > MODE_INCREMENTAL_UNRANGED) {
+        _ranged_ = true;
       }
     } else {
-      ranged_ = false;
+      _ranged_ = false;
     }
   }
 
 
   void smart_filename::set(const std::string& a_new_value) {
     DT_THROW_IF(!this->is_single(),std::logic_error,"Not using 'single' mode !");
-    list_.clear();
+    _list_.clear();
     this->add_list(a_new_value);
   }
 
@@ -227,43 +227,43 @@ namespace datatools {
 
 
   void smart_filename::reset() {
-    logging_ = datatools::logger::PRIO_ERROR;
-    mode_ = MODE_INVALID;
-    ranged_ = false;
-    expand_path_ = true;
-    incremental_starting_index_ = 0;
-    incremental_stopping_index_ = MODE_INCREMENTAL_UNRANGED;
-    incremental_increment_      = MODE_INCREMENTAL_DEFAULT_INCREMENT;
-    incremental_prefix_ = "";
-    incremental_suffix_ = "";
-    incremental_extension_ = "";
-    incremental_path_ = "";
-    incremental_index_ndigit_ = 0;
-    list_.clear();
-    list_allow_duplication_ = false;
+    _logging_ = datatools::logger::PRIO_ERROR;
+    _mode_ = MODE_INVALID;
+    _ranged_ = false;
+    _expand_path_ = true;
+    _incremental_starting_index_ = 0;
+    _incremental_stopping_index_ = MODE_INCREMENTAL_UNRANGED;
+    _incremental_increment_      = MODE_INCREMENTAL_DEFAULT_INCREMENT;
+    _incremental_prefix_ = "";
+    _incremental_suffix_ = "";
+    _incremental_extension_ = "";
+    _incremental_path_ = "";
+    _incremental_index_ndigit_ = 0;
+    _list_.clear();
+    _list_allow_duplication_ = false;
   }
 
 
   void smart_filename::set_list_allow_duplication(bool a_new_value) {
-    list_allow_duplication_ = a_new_value;
+    _list_allow_duplication_ = a_new_value;
   }
 
 
   void smart_filename::add_list(const std::string& a_filename) {
     DT_THROW_IF(a_filename.empty(),std::logic_error,"Missing filename !");
-    DT_THROW_IF(this->is_single() && (list_.size() > 0),
+    DT_THROW_IF(this->is_single() && (_list_.size() > 0),
                 std::logic_error,
                 "Cannot add a filename ('single' mode) !");
     std::string filename = a_filename;
     if (this->is_expand_path()) {
       datatools::fetch_path_with_env(filename);
     }
-    if ((list_.size() > 0) && !list_allow_duplication_) {
-      DT_THROW_IF(std::find(list_.begin(), list_.end(), filename) != list_.end(),
+    if ((_list_.size() > 0) && !_list_allow_duplication_) {
+      DT_THROW_IF(std::find(_list_.begin(), _list_.end(), filename) != _list_.end(),
                   std::logic_error,
                   "Duplication error: filename '" << filename << "' is already in the list !");
     }
-    list_.push_back(filename);
+    _list_.push_back(filename);
   }
 
 
@@ -297,9 +297,9 @@ namespace datatools {
                                    const std::string& a_filename,
                                    bool a_expand_path) {
     a_smart_filename.reset();
-    a_smart_filename.ranged_ = true;
+    a_smart_filename._ranged_ = true;
     a_smart_filename.set_mode(MODE_SINGLE);
-    a_smart_filename.expand_path_ = a_expand_path;
+    a_smart_filename._expand_path_ = a_expand_path;
     a_smart_filename.add_list(a_filename);
   }
 
@@ -308,10 +308,10 @@ namespace datatools {
                                  bool a_allow_duplication,
                                  bool a_expand_path) {
     a_smart_filename.reset();
-    a_smart_filename.ranged_ = true;
+    a_smart_filename._ranged_ = true;
     a_smart_filename.set_mode(MODE_LIST);
     a_smart_filename.set_list_allow_duplication(a_allow_duplication);
-    a_smart_filename.expand_path_ = a_expand_path;
+    a_smart_filename._expand_path_ = a_expand_path;
   }
 
 
@@ -320,10 +320,10 @@ namespace datatools {
                                  bool a_allow_duplication,
                                  bool a_expand_path) {
     a_smart_filename.reset();
-    a_smart_filename.ranged_ = true;
+    a_smart_filename._ranged_ = true;
     a_smart_filename.set_mode(MODE_LIST);
     a_smart_filename.set_list_allow_duplication(a_allow_duplication);
-    a_smart_filename.expand_path_ = a_expand_path;
+    a_smart_filename._expand_path_ = a_expand_path;
     std::string list_filename = a_list_filename;
     datatools::fetch_path_with_env(list_filename);
     DT_THROW_IF(!boost::filesystem::exists(list_filename),
@@ -389,66 +389,66 @@ namespace datatools {
                                         bool a_expand_path) {
     a_smart_filename.reset();
     a_smart_filename.set_mode(MODE_INCREMENTAL);
-    a_smart_filename.ranged_ = false;
-    a_smart_filename.expand_path_ = a_expand_path;
+    a_smart_filename._ranged_ = false;
+    a_smart_filename._expand_path_ = a_expand_path;
     DT_THROW_IF(a_prefix.empty(),
                 std::logic_error,
                 "Missing prefix !");
-    a_smart_filename.incremental_path_ = a_path;
-    a_smart_filename.incremental_prefix_ = a_prefix;
-    a_smart_filename.incremental_extension_ = a_extension;
-    a_smart_filename.incremental_suffix_ = a_suffix;
-    a_smart_filename.incremental_index_ndigit_ = a_incremental_index_ndigit;
+    a_smart_filename._incremental_path_ = a_path;
+    a_smart_filename._incremental_prefix_ = a_prefix;
+    a_smart_filename._incremental_extension_ = a_extension;
+    a_smart_filename._incremental_suffix_ = a_suffix;
+    a_smart_filename._incremental_index_ndigit_ = a_incremental_index_ndigit;
     DT_THROW_IF(a_increment_index == 0,std::logic_error,"Invalid null increment !");
     std::string path;
     if (!a_path.empty()) {
-      path = a_smart_filename.incremental_path_;
+      path = a_smart_filename._incremental_path_;
       if (a_smart_filename.is_expand_path()) {
         datatools::fetch_path_with_env(path);
-        a_smart_filename.incremental_path_ = path;
+        a_smart_filename._incremental_path_ = path;
       }
     }
-    a_smart_filename.incremental_starting_index_ = a_starting_index;
-    a_smart_filename.incremental_stopping_index_ = a_stopping_index;
-    a_smart_filename.incremental_increment_ = a_increment_index;
-    a_smart_filename.ranged_ = false;
-    if (a_smart_filename.incremental_stopping_index_
+    a_smart_filename._incremental_starting_index_ = a_starting_index;
+    a_smart_filename._incremental_stopping_index_ = a_stopping_index;
+    a_smart_filename._incremental_increment_ = a_increment_index;
+    a_smart_filename._ranged_ = false;
+    if (a_smart_filename._incremental_stopping_index_
         <= MODE_INCREMENTAL_UNRANGED) {
-      a_smart_filename.incremental_stopping_index_ = MODE_INCREMENTAL_UNRANGED;
-      if (a_smart_filename.incremental_increment_ < 0) {
-        a_smart_filename.incremental_stopping_index_ = 0;
-        a_smart_filename.ranged_ = true;
+      a_smart_filename._incremental_stopping_index_ = MODE_INCREMENTAL_UNRANGED;
+      if (a_smart_filename._incremental_increment_ < 0) {
+        a_smart_filename._incremental_stopping_index_ = 0;
+        a_smart_filename._ranged_ = true;
       }
     } else {
-      a_smart_filename.ranged_ = true;
+      a_smart_filename._ranged_ = true;
     }
 
-    if (a_smart_filename.incremental_stopping_index_
+    if (a_smart_filename._incremental_stopping_index_
         > MODE_INCREMENTAL_UNRANGED) {
-      if (a_smart_filename.incremental_stopping_index_
-          < a_smart_filename.incremental_starting_index_) {
-        DT_THROW_IF(a_smart_filename.incremental_increment_ >= 0,
+      if (a_smart_filename._incremental_stopping_index_
+          < a_smart_filename._incremental_starting_index_) {
+        DT_THROW_IF(a_smart_filename._incremental_increment_ >= 0,
                     std::logic_error,
                     "Invalid increment rule (start="
-                    << a_smart_filename.incremental_starting_index_
+                    << a_smart_filename._incremental_starting_index_
                     << ",stop="
-                    << a_smart_filename.incremental_stopping_index_
+                    << a_smart_filename._incremental_stopping_index_
                     << ",increment="
-                    << a_smart_filename.incremental_increment_ << ") !");
+                    << a_smart_filename._incremental_increment_ << ") !");
       }
     }
 
-    int index = a_smart_filename.incremental_starting_index_;
+    int index = a_smart_filename._incremental_starting_index_;
     int direction = +1;
-    if (a_smart_filename.incremental_increment_ < 0) direction = -1;
+    if (a_smart_filename._incremental_increment_ < 0) direction = -1;
     if (a_smart_filename.is_ranged()) {
       while ((direction * index)
-             <= (direction * a_smart_filename.incremental_stopping_index_)) {
+             <= (direction * a_smart_filename._incremental_stopping_index_)) {
         std::string filename;
         a_smart_filename.build_incremental_filename(index, filename);
         a_smart_filename.add_list(filename);
         // increment:
-        index += a_smart_filename.incremental_increment_;
+        index += a_smart_filename._incremental_increment_;
       }
     }
     //a_smart_filename.dump(std::clog);
@@ -459,26 +459,26 @@ namespace datatools {
                                                   int increment_index_,
                                                   std::string& filename_) const {
     std::ostringstream filename_ss;
-    if (!incremental_path_.empty()) {
-      filename_ss << incremental_path_;
-      if (incremental_path_[incremental_path_.length() - 1] != '/') {
+    if (!_incremental_path_.empty()) {
+      filename_ss << _incremental_path_;
+      if (_incremental_path_[_incremental_path_.length() - 1] != '/') {
         filename_ss << '/';
       }
     }
-    filename_ss << incremental_prefix_;
-    if (incremental_index_ndigit_ > 0) {
+    filename_ss << _incremental_prefix_;
+    if (_incremental_index_ndigit_ > 0) {
       filename_ss << std::dec << std::setfill('0')
-                  << std::setw(incremental_index_ndigit_);
+                  << std::setw(_incremental_index_ndigit_);
     }
     filename_ss << increment_index_;
-    if (!incremental_suffix_.empty()) {
-      filename_ss << incremental_suffix_;
+    if (!_incremental_suffix_.empty()) {
+      filename_ss << _incremental_suffix_;
     }
-    if (!incremental_extension_.empty()) {
-      if (incremental_extension_[0] != '.') {
+    if (!_incremental_extension_.empty()) {
+      if (_incremental_extension_[0] != '.') {
         filename_ss << '.';
       }
-      filename_ss << incremental_extension_;
+      filename_ss << _incremental_extension_;
     }
     filename_ = filename_ss.str();
   }
@@ -508,7 +508,7 @@ namespace datatools {
 
   void smart_filename::dump(std::ostream& a_out) const {
     a_out << "smart_filename::dump : " << std::endl;
-    a_out << "|-- Logging priority : " << datatools::logger::get_priority_label(logging_) << std::endl;
+    a_out << "|-- Logging priority : " << datatools::logger::get_priority_label(_logging_) << std::endl;
     if (!this->is_initialized()) {
       a_out << "`-- Initialized : '" << "No" << "'" << std::endl;
     }
@@ -520,22 +520,22 @@ namespace datatools {
     if (this->is_list()) mode_str = labels::mode_list();
     if (this->is_incremental()) mode_str = labels::mode_incremental();
     a_out << "|-- Mode        : '" << mode_str << "'" << std::endl;
-    a_out << "|-- Ranged      : " << ranged_ << std::endl;
+    a_out << "|-- Ranged      : " << _ranged_ << std::endl;
     if (!this->is_valid()) {
       a_out << "`-- Valid       : '" << "No" << "'" << std::endl;
     } else {
       a_out << "|-- Valid       : '" << "Yes" << "'" << std::endl;
-      a_out << "`-- Current list [" << list_.size() << ']' << std::endl;
-      for (size_t i = 0; i < list_.size(); ++i) {
+      a_out << "`-- Current list [" << _list_.size() << ']' << std::endl;
+      for (size_t i = 0; i < _list_.size(); ++i) {
         a_out << "    ";
         size_t j = i;
         j++;
-        if (j != list_.size()) {
+        if (j != _list_.size()) {
           a_out << "|-- ";
         } else {
           a_out << "`-- ";
         }
-        a_out << "Filename '" << list_[i] << "'" << std::endl;
+        a_out << "Filename '" << _list_[i] << "'" << std::endl;
       }
     }
   }

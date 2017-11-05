@@ -42,8 +42,8 @@ namespace datatools {
      * true 1 t T false 0 f F
      * \endcode
      */
-    void validate(boost::any & v,
-                  const std::vector<std::string> & values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string> & values_,
                   datatools::ui::wrapped_boolean *, int);
 
     /** Validate the syntax for an integer value
@@ -53,8 +53,8 @@ namespace datatools {
      * ... -2 -1 0 1 2 42 ...
      * \endcode
      */
-    void validate(boost::any & v,
-                  const std::vector<std::string> & values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string> & values_,
                   datatools::ui::wrapped_integer *, int);
 
     /** Validate the syntax for a dimensionless real value
@@ -67,8 +67,8 @@ namespace datatools {
      * ... -1.3 0 0.0 1.24 1.2e34 ...
      * \endcode
      */
-    void validate(boost::any & v,
-                  const std::vector<std::string> & values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string> & values_,
                   datatools::ui::wrapped_real_without_unit *, int);
 
     /** Validate the syntax for a real value with associated unit
@@ -84,8 +84,8 @@ namespace datatools {
      * "1.2 mm"
      * \endcode
      */
-    void validate(boost::any & v,
-                  const std::vector<std::string> & values,
+    void validate(boost::any & v_,
+                  const std::vector<std::string> & values_,
                   datatools::ui::wrapped_real_with_unit *, int);
 
   } // namespace ui
@@ -94,10 +94,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_VALIDATORS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

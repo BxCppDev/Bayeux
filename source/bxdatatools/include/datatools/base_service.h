@@ -74,29 +74,29 @@ namespace datatools {
     base_service();
 
     /// Constructor
-    base_service(const std::string& name,
-                 const std::string& display_name = "",
-                 const std::string& description = "",
-                 logger::priority lp = logger::PRIO_FATAL);
+    base_service(const std::string & name_,
+                 const std::string & display_name_ = "",
+                 const std::string & description_ = "",
+                 logger::priority lp_ = logger::PRIO_FATAL);
 
     /// Destructor
     virtual ~base_service();
 
     /// Undocumented unused/unimplemented method
-    virtual void fetch_dependencies(service_dependency_dict_type& /*dependencies*/) const;
+    virtual void fetch_dependencies(service_dependency_dict_type & /*dependencies_*/) const;
 
     /// Initialize the service without a list of properties nor other services
     virtual int initialize_simple();
 
     /// Initialize the service using only a list of properties without the needs of other services
-    virtual int initialize_standalone(const datatools::properties& config);
+    virtual int initialize_standalone(const datatools::properties & config_);
 
     /// Initialize the service using with access to a dictionary of other services
-    virtual int initialize_with_services(service_dict_type& service_dict);
+    virtual int initialize_with_services(service_dict_type & service_dict_);
 
     /// Initialize the service using a list of properties with access to a dictionary of other services
-    virtual int initialize(const datatools::properties& config,
-                           service_dict_type& service_dict) = 0;
+    virtual int initialize(const datatools::properties & config_,
+                           service_dict_type & service_dict_) = 0;
 
     /// Reset the service
     virtual int reset() = 0;
@@ -108,10 +108,10 @@ namespace datatools {
     virtual std::string service_class_id() const = 0;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
-                           const std::string & title = "",
-                           const std::string & indent = "",
-                           bool inherit = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
     /// Basic OCD support shared by all inherited modules
     static void common_ocd(datatools::object_configuration_description & ocd_);
@@ -119,14 +119,14 @@ namespace datatools {
   protected:
 
     /// Common initialization of services
-    void common_initialize(const datatools::properties & config);
+    void _common_initialize(const datatools::properties & config_);
 
-     // Factory stuff :
+    // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service)
 
 #ifndef Q_MOC_RUN
-      //! Reflection interface
-      DR_CLASS_RTTI()
+    //! Reflection interface
+    DR_CLASS_RTTI()
 #endif // Q_MOC_RUN
 
   };
@@ -141,14 +141,14 @@ DR_CLASS_INIT(datatools::base_service)
 #define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)    \
   private:                                                              \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME) \
-  public:                                                                 \
-  virtual std::string service_class_id() const;                           \
+  public:                                                               \
+  virtual std::string service_class_id() const;                         \
   /**/
 
 #define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::datatools::base_service,SERVICE_CLASS_NAME,SERVICE_ID) \
   std::string SERVICE_CLASS_NAME::service_class_id() const {return SERVICE_ID;}
-  /**/
+/**/
 
 #endif // DATATOOLS_BASE_SERVICE_H
 

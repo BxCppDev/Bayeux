@@ -31,7 +31,8 @@ namespace datatools {
   namespace ui {
 
     //! \brief Shell load command
-    struct shell_load_command : public target_command<basic_shell>
+    struct shell_load_command
+      : public target_command<basic_shell>
     {
       shell_load_command(basic_shell &);
       virtual ~shell_load_command();
@@ -46,10 +47,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_SHELL_LOAD_COMMAND_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

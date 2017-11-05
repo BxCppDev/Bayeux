@@ -35,28 +35,29 @@ namespace datatools {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_service,
                                                    "datatools::base_service/__system__")
 
-  // Constructor
   base_service::base_service()
   {
+    return;
   }
 
-  // Constructor
-  base_service::base_service(const std::string& name,
-                             const std::string& display_name,
-                             const std::string& terse_description,
-                             logger::priority lp)
-    : enriched_base(name, display_name, terse_description, lp)
+  base_service::base_service(const std::string & name_,
+                             const std::string & display_name_,
+                             const std::string & terse_description_,
+                             logger::priority lp_)
+    : enriched_base(name_, display_name_, terse_description_, lp_)
   {
+    return;
   }
 
-  // Destructor :
   base_service::~base_service()
   {
+    return;
   }
 
-  void base_service::fetch_dependencies(service_dependency_dict_type& dependencies) const
+  void base_service::fetch_dependencies(service_dependency_dict_type & dependencies_) const
   {
-    dependencies.clear();
+    dependencies_.clear();
+    return;
   }
 
   int base_service::initialize_simple()
@@ -65,38 +66,41 @@ namespace datatools {
     return this->initialize_standalone(dummy);
   }
 
-  int base_service::initialize_with_services(service_dict_type& service_dict)
+  int base_service::initialize_with_services(service_dict_type& service_dict_)
   {
     datatools::properties dummy;
-    return this->initialize(dummy, service_dict);
+    return this->initialize(dummy, service_dict_);
   }
 
-  int base_service::initialize_standalone(const datatools::properties& config)
+  int base_service::initialize_standalone(const datatools::properties & config_)
   {
     service_dict_type dummy;
-    return this->initialize(config, dummy);
+    return this->initialize(config_, dummy);
   }
 
-  void base_service::common_initialize(const datatools::properties& config)
+  void base_service::_common_initialize(const datatools::properties & config_)
   {
-    this->enriched_base::initialize(config, false);
+    this->enriched_base::initialize(config_, false);
   }
 
-  void base_service::tree_dump(std::ostream & a_out,
-                               const std::string & a_title,
-                               const std::string & a_indent,
-                               bool a_inherit) const
+  void base_service::tree_dump(std::ostream & out_,
+                               const std::string & title_,
+                               const std::string & indent_,
+                               bool inherit_) const
   {
-    this->enriched_base::tree_dump(a_out, a_title, a_indent, true);
+    this->enriched_base::tree_dump(out_, title_, indent_, true);
 
-    a_out << a_indent << i_tree_dumpable::inherit_tag(a_inherit)
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
           << "Service is initialized  : "
           << std::boolalpha << this->is_initialized() << std::endl;
+
+    return;
   }
 
-  void base_service::common_ocd(datatools::object_configuration_description & ocd)
+  void base_service::common_ocd(datatools::object_configuration_description & ocd_)
   {
-    enriched_base::init_ocd(ocd);
+    enriched_base::init_ocd(ocd_);
+    return;
   }
 
 }  // end of namespace datatools

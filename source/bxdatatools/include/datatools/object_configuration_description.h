@@ -71,7 +71,7 @@ namespace datatools {
       DEP_UNDEFINED = 0, ///< undefined dependency
       DEP_DYNAMIC   = 1, ///< Dynamic dependency from another property of which the name is used to build the property's name
       DEP_BY_FLAG   = 2, ///< Dependency from a boolean property (flag) with a specific value (true or false)
-      DEP_BY_LABEL  = 3 ///< Dependency from a string property (label) with a specific value
+      DEP_BY_LABEL  = 3  ///< Dependency from a string property (label) with a specific value
     };
 
     /// \brief Description of a dependency
@@ -99,19 +99,19 @@ namespace datatools {
     /// Default constructor
     configuration_property_description();
 
-    configuration_property_description & set_name_pattern(const std::string &np_);
-    configuration_property_description & set_from(const std::string &from_);
-    configuration_property_description & set_group(const std::string &group_);
-    configuration_property_description & set_terse_description(const std::string &desc_);
-    configuration_property_description & set_long_description(const std::string &desc_);
+    configuration_property_description & set_name_pattern(const std::string & np_);
+    configuration_property_description & set_from(const std::string & from_);
+    configuration_property_description & set_group(const std::string & group_);
+    configuration_property_description & set_terse_description(const std::string & desc_);
+    configuration_property_description & set_long_description(const std::string & desc_);
     configuration_property_description & set_mandatory(bool m_ = true);
     configuration_property_description & set_traits(int type_,
                                                     bool array_ = false,
                                                     int fixed_size_ = -1);
-    configuration_property_description & set_triggered_by_flag(const std::string &prop_name_,
+    configuration_property_description & set_triggered_by_flag(const std::string & prop_name_,
                                                                bool triggering_status_ = true);
-    configuration_property_description & set_triggered_by_label(const std::string &prop_name_,
-                                                                const std::string &labels_);
+    configuration_property_description & set_triggered_by_label(const std::string & prop_name_,
+                                                                const std::string & labels_);
     configuration_property_description & set_complex_triggering_conditions(bool = true);
     configuration_property_description & set_complex_dependencies(bool = true);
     configuration_property_description & set_explicit_unit(bool = true);
@@ -125,8 +125,8 @@ namespace datatools {
     configuration_property_description & set_default_value_real(double, const std::string & unit_symbol_ = "");
     configuration_property_description & set_default_value_string(const std::string &);
     configuration_property_description & set_default_array_size(int);
-    configuration_property_description & add_example(const std::string &example_);
-    configuration_property_description & set_deprecated(bool, const std::string &info_ = "");
+    configuration_property_description & add_example(const std::string & example_);
+    configuration_property_description & set_deprecated(bool, const std::string & info_ = "");
 
     bool is_deprecated() const;
     const std::string & get_deprecated_info() const;
@@ -381,10 +381,8 @@ namespace datatools {
 
 #endif // DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -3,9 +3,8 @@
 // Ourselves:
 #include <datatools/types.h>
 
-// Third party:
-// - Boost:
-#include <boost/scoped_ptr.hpp>
+// Standard library:
+#include <memory>
 
 // Clang doesn't like bimap's use of BOOST_PP...
 #if defined (__clang__)
@@ -25,7 +24,7 @@ namespace datatools {
   const boost::bimap< int, std::string > & get_type_to_labels_map()
   {
     typedef boost::bimap< int, std::string > bm_type;
-    static boost::scoped_ptr<bm_type> _bmap;
+    static std::unique_ptr<bm_type> _bmap;
     if (_bmap.get() == 0) {
       _bmap.reset(new bm_type);
       _bmap.get()->insert( bm_type::value_type(TYPE_NONE,    "?" ) );

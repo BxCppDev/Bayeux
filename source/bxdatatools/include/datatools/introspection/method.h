@@ -42,7 +42,8 @@ namespace datatools {
   namespace introspection {
 
     //! \brief Description of a method
-    class method : public datatools::enriched_base
+    class method
+      : public datatools::enriched_base
     {
     public:
 

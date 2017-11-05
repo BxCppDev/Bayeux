@@ -9,8 +9,6 @@
  *
  *   Some utilities for manipulating bit masks.
  *
- * History:
- *
  */
 #ifndef DATATOOLS_BIT_MASK_H
 #define DATATOOLS_BIT_MASK_H
@@ -20,9 +18,10 @@
 #include <boost/cstdint.hpp> // IWYU pragma: keep
 
 namespace datatools {
+
   /**! \struct bit_mask
-     \brief Some useful constants to manipulate bits typically within an unsigned integer of 32 bits.
-  */
+   *   \brief Some useful constants to manipulate bits typically within an unsigned integer of 32 bits.
+   */
   struct bit_mask {
   public:
     static const uint32_t bit00   = 0x00000001;
@@ -97,10 +96,8 @@ namespace datatools {
 
 #endif // DATATOOLS_BIT_MASK_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

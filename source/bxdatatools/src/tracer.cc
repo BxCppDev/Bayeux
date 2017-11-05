@@ -11,7 +11,6 @@
 // - Boost:
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 
 // This Project:
@@ -26,6 +25,7 @@ namespace datatools {
     _id_ = -1;
     _counter_ = 0;
     _preserved_file_ = false;
+    return;
   }
 
   tracer::tracer(int id_,
@@ -38,20 +38,22 @@ namespace datatools {
     set_id(id_);
     set_filename(filename_);
     set_label(label_);
+    return;
   }
-
 
   tracer::~tracer()
   {
     if (is_initialized()) {
       reset();
     }
+    return;
   }
 
   void tracer::set_id(int id_)
   {
     DT_THROW_IF(id_ < 0, std::logic_error, "Invalid tracer ID '" << id_ << "' !");
     _id_ = id_;
+    return;
   }
 
   int tracer::get_id() const
@@ -62,6 +64,7 @@ namespace datatools {
   void tracer::set_label(const std::string & label_)
   {
     _label_ = label_;
+    return;
   }
 
   const std::string & tracer::get_label() const
@@ -72,6 +75,7 @@ namespace datatools {
   void tracer::set_filename(const std::string & fn_)
   {
     _filename_ = fn_;
+    return;
   }
 
   const std::string &tracer::get_filename() const
@@ -82,6 +86,7 @@ namespace datatools {
   void tracer::set_preserved_file(bool pf_)
   {
     _preserved_file_ = pf_;
+    return;
   }
 
   bool tracer::is_preserved_file() const
@@ -104,6 +109,7 @@ namespace datatools {
       set_filename(oss_fn.str());
     }
     initialize();
+    return;
   }
 
   void tracer::initialize(int id_, const std::string & filename_)
@@ -112,6 +118,7 @@ namespace datatools {
     set_id(id_);
     set_filename(filename_);
     initialize();
+    return;
   }
 
   void tracer::initialize(int id_, const std::string & filename_, bool preserved_file_)
@@ -121,8 +128,8 @@ namespace datatools {
     set_filename(filename_);
     set_preserved_file(preserved_file_);
     initialize();
+    return;
   }
-
 
   void tracer::initialize()
   {
@@ -142,6 +149,7 @@ namespace datatools {
     *_fout_.get() << "#@tracer_label=" << _label_ << std::endl;
     *_fout_.get() << "#@tracer_filename=" << _filename_ << std::endl;
     _fout_.get()->precision(15);
+    return;
   }
 
   void tracer::reset()
@@ -152,6 +160,7 @@ namespace datatools {
     _label_.clear();
     _id_ = -1;
     _counter_ = 0;
+    return;
   }
 
   std::ofstream & tracer::out(bool increment_)
@@ -166,12 +175,12 @@ namespace datatools {
   }
 
   // static
-  typedef boost::shared_ptr<tracer> tracer_ptr;
+  typedef std::shared_ptr<tracer> tracer_ptr;
 
   std::map<int,tracer_ptr> & _get_global_tracers()
   {
     datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
-    static boost::scoped_ptr<std::map<int,tracer_ptr> > _g_tracers(0);
+    static std::unique_ptr<std::map<int,tracer_ptr> > _g_tracers;
     if (_g_tracers.get() == 0) {
       DT_LOG_NOTICE(logging, "Creating the global dictionnary of tracers...");
       _g_tracers.reset(new std::map<int, tracer_ptr>);

@@ -24,26 +24,27 @@ namespace datatools {
 
   /// Boost serialization template method
   template<class Archive>
-  void things::entry_type::serialize(Archive & archive, const unsigned int version __attribute__((unused)))
+  void things::entry_type::serialize(Archive & archive_, const unsigned int version_ __attribute__((unused)))
   {
-    archive & boost::serialization::make_nvp("description", description);
-    archive & boost::serialization::make_nvp("flags",       flags);
-    archive & boost::serialization::make_nvp("handle",      handle);
+    archive_ & boost::serialization::make_nvp("description", description);
+    archive_ & boost::serialization::make_nvp("flags",       flags);
+    archive_ & boost::serialization::make_nvp("handle",      handle);
+    return;
   }
 
   /// Boost serialization template method
   template<class Archive>
-  void things::serialize(Archive & archive, const unsigned int version)
+  void things::serialize(Archive & archive_, const unsigned int version_)
   {
-    if (version == 0) {
-      archive & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    if (version_ == 0) {
+      archive_ & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    } else {
+      archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     }
-    else {
-      archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    }
-    archive & boost::serialization::make_nvp("name",        name_);
-    archive & boost::serialization::make_nvp("description", description_);
-    archive & boost::serialization::make_nvp("things",      things_);
+    archive_ & boost::serialization::make_nvp("name",        _name_);
+    archive_ & boost::serialization::make_nvp("description", _description_);
+    archive_ & boost::serialization::make_nvp("things",      _things_);
+    return;
   }
 
 } // end of namespace datatools

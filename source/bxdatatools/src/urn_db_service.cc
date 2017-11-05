@@ -300,7 +300,7 @@ namespace datatools {
     DT_LOG_TRACE_ENTERING(get_logging_priority());
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Service is already initialized!");
-    base_service::common_initialize(config_);
+    base_service::_common_initialize(config_);
 
     if (config_.has_key("allow_mounted")) {
       set_allow_mounted(config_.fetch_boolean("allow_mounted"));

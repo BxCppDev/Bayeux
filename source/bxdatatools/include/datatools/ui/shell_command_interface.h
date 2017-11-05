@@ -36,7 +36,8 @@ namespace datatools {
     class basic_shell;
 
     //! \brief Base command interface for a shell
-    class shell_command_interface : public target_command_interface<basic_shell>
+    class shell_command_interface
+      : public target_command_interface<basic_shell>
     {
     public:
 
@@ -117,10 +118,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_SHELL_COMMAND_INTERFACE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

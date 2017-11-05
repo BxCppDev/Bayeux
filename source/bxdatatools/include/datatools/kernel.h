@@ -302,9 +302,9 @@ namespace datatools {
     bool is_variant_service_allowed() const;
 
     /// Smart print
-    void tree_dump(std::ostream& out_ = std::clog,
-                   const std::string& title_ = "",
-                   const std::string& indent_ = "",
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_ = "",
+                   const std::string & indent_ = "",
                    bool inherit_ = false) const;
 
     /// Registration of resource paths

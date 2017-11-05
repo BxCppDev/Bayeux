@@ -31,7 +31,8 @@ namespace datatools {
   namespace ui {
 
     //! \brief Shell tree command
-    struct shell_tree_command : public const_target_command<basic_shell>
+    struct shell_tree_command
+      : public const_target_command<basic_shell>
     {
       shell_tree_command(const basic_shell &);
       virtual ~shell_tree_command();
@@ -74,10 +75,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_SHELL_TREE_COMMAND_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

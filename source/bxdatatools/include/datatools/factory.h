@@ -4,6 +4,7 @@
  * Last modified : 2013-04-22
  *
  */
+
 #ifndef DATATOOLS_FACTORY_H
 #define DATATOOLS_FACTORY_H
 
@@ -29,15 +30,16 @@
 namespace datatools {
   /*! \brief The base class for all specialized template factory registration classes
    */
-  class base_factory_register {
+  class base_factory_register
+  {
   public:
     enum flag_type {
       verbose = 0x1
     };
 
-  public:
     /// Default constructor
     base_factory_register();
+
     /// Destructor
     virtual ~base_factory_register ();
   };
@@ -47,8 +49,9 @@ namespace datatools {
    */
   template <class BaseType>
   class factory_register
-    : public base_factory_register,
-      public datatools::i_tree_dumpable {
+    : public base_factory_register
+    ,  public datatools::i_tree_dumpable
+  {
   public:
 
     typedef BaseType                       base_type;
@@ -56,10 +59,10 @@ namespace datatools {
     // typedef boost::function<base_type*(const std::string &) > named_factory_type;
 
     /* Future addons:
-    struct factory_metadata {
-      std::string description;
-      std::string category;
-    };
+       struct factory_metadata {
+       std::string description;
+       std::string category;
+       };
     */
 
     /// \brief Dictionary of object factories
@@ -70,7 +73,7 @@ namespace datatools {
     factory_register();
 
     /// Constructor
-    factory_register(const std::string& label, unsigned int flags = 0x0);
+    factory_register(const std::string & label_, unsigned int flags_ = 0x0);
 
     /// Destructor
     virtual ~factory_register();
@@ -79,22 +82,22 @@ namespace datatools {
     datatools::logger::priority get_logging_priority() const;
 
     //! Set logging priority
-    void set_logging_priority(datatools::logger::priority logging);
+    void set_logging_priority(datatools::logger::priority logging_);
 
     //! Get the label associated to the factory
-    const std::string& get_label() const;
+    const std::string & get_label() const;
 
     //! Set the label associated to the factory
-    void set_label(const std::string& label);
+    void set_label(const std::string & label_);
 
     /// Copy factory IDs into supplied vector
-    void list_of_factories(std::vector<std::string>& ids) const;
+    void list_of_factories(std::vector<std::string> & ids_) const;
 
     /// Return true if factory with given ID is registered
-    bool has(const std::string& id) const;
+    bool has(const std::string & id_) const;
 
     /// Return true if factory with given ID is registered with given group
-    bool is_group(const std::string& id) const;
+    bool is_group(const std::string & id_) const;
 
     /// Clear all registered factories
     void clear();
@@ -103,41 +106,43 @@ namespace datatools {
     void reset();
 
     /// Return a mutable reference to a factory given by registration ID
-    factory_type& grab(const std::string& id);
+    factory_type & grab(const std::string & id_);
 
     /// Return a const reference to a factory given by registration ID
-    const factory_type& get(const std::string& id) const;
+    const factory_type & get(const std::string & id_) const;
 
     /// Register the supplied factory under the given ID
-    void registration(const std::string& id, const factory_type& factory);
+    void registration(const std::string & id_, const factory_type & factory_);
 
     /// Remove registration of the factory stored under supplied ID
     /// TODO : better naming "unregister" for example
     /// COMMENT: "register"/"unregister" would be fine names but "register"
     ///          is a reserved word
-    void unregistration(const std::string& id);
+    void unregistration(const std::string & id_);
 
     /// Import all registered factories from another factory register
-    void import(const factory_register & factory_register);
+    void import(const factory_register & factory_register_);
 
     /// Import only registered factories addressed by their registration names
     /// from another factory register
-    void import_some(const factory_register & factory_register,
-                     const std::vector<std::string> & imported_factories);
+    void import_some(const factory_register & factory_register_,
+                     const std::vector<std::string> & imported_factories_);
 
     /// Simple print
-    void print(std::ostream& out, const std::string & indent = "") const;
+    void print(std::ostream & out_, const std::string & indent_ = "") const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
-                           const std::string& title = "",
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string& title_ = "",
                            const std::string& indent_ = "",
-                           bool inherit = false) const;
+                           bool inherit_ = false) const;
 
   private:
-    std::string      label_;              //!< Label of the factory
-    datatools::logger::priority logging_; //!< Verbosity flag
-    factory_map_type registered_;         //!< Dictionary of registered factories
+
+    std::string                 _label_;      //!< Label of the factory
+    datatools::logger::priority _logging_;    //!< Verbosity flag
+    factory_map_type            _registered_; //!< Dictionary of registered factories
+
   };
 
 } // end of namespace datatools
@@ -145,66 +150,75 @@ namespace datatools {
 // Template definitions:
 #include <datatools/factory-inl.h>
 
-// Hmm, move this to a detail header?
-
+// Boost:
 #include <boost/type_traits/is_base_of.hpp>
 
 namespace datatools {
 
-  /* Utility to enable auto-(un)registration of the Type class in the
-   * the system factory register:
-   */
   /*! \brief Utility template class to enable auto-(un)registration of a derived class in a system factory register of a base class
    */
   template <class BaseType, class DerivedType>
-  class _system_factory_registrator {
+  class _system_factory_registrator
+  {
   public:
+
     // Constructor
-    _system_factory_registrator(const std::string& type_id) {
-      type_id_ = type_id;
-      this->_trigger_factory_registration_();
-    }
-    // Return registered type id
-    const std::string& get_type_id()const
+    _system_factory_registrator(const std::string & type_id_)
     {
-      return type_id_;
+      _type_id_ = type_id_;
+      this->_trigger_factory_registration_();
+      return;
     }
+
     // Destructor
-    ~_system_factory_registrator() {
+    ~_system_factory_registrator()
+    {
       this->_trigger_factory_unregistration_();
+      return;
+    }
+
+    /// Return registered type id
+    const std::string & get_type_id()const
+    {
+      return _type_id_;
     }
 
   private:
+
     // Factory registration
-    void _trigger_factory_registration_() {
+    void _trigger_factory_registration_()
+    {
       bool fatal = !boost::is_base_of<BaseType, DerivedType>::value;
-      DT_THROW_IF (fatal,
-                   std::logic_error,
-                   "Class ID '" << type_id_ << "' cannot be registered in register '"
-                   << BaseType::grab_system_factory_register().get_label() << "' !");
-      BaseType::grab_system_factory_register().registration(type_id_,
+      DT_THROW_IF(fatal,
+                  std::logic_error,
+                  "Class ID '" << _type_id_ << "' cannot be registered in register '"
+                  << BaseType::grab_system_factory_register().get_label() << "' !");
+      BaseType::grab_system_factory_register().registration(_type_id_,
                                                             boost::factory<DerivedType*>());
+      return;
     }
 
     // Factory unregistration
-    void _trigger_factory_unregistration_() {
-      if (BaseType::grab_system_factory_register().has(type_id_)) {
-        BaseType::grab_system_factory_register().unregistration(type_id_);
+    void _trigger_factory_unregistration_()
+    {
+      if (BaseType::grab_system_factory_register().has(_type_id_)) {
+        BaseType::grab_system_factory_register().unregistration(_type_id_);
       }
+      return;
     }
 
   private:
-    std::string type_id_; //!< The registration type unique identifier of the auto-registered class
+
+    std::string _type_id_; //!< The registration type unique identifier of the auto-registered class
+
   };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_FACTORY_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

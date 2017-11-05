@@ -41,14 +41,18 @@
 #include <datatools/object_configuration_description.h>
 
 namespace datatools {
+
   /// Nested private namespace of the Bayeux/datatools module library (detail)
   namespace detail {
+
     /// Nested private namespace of the Bayeux/datatools module library (OCD)
     namespace ocd {
+
       template <typename T>
       struct loader {};
       template <typename T>
       void implement_load(::datatools::object_configuration_description & ocd_);
+
     } // namespace ocd
   } // namespace detail
 } // namespace datatools
@@ -259,10 +263,8 @@ namespace datatools {
 
 #endif // DATATOOLS_DETAIL_OCD_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

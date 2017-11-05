@@ -133,10 +133,8 @@ DOCD_CLASS_DECLARATION(datatools::configuration::variant_registry_manager)
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_REGISTRY_MANAGER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
