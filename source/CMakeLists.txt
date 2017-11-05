@@ -438,26 +438,26 @@ if(BAYEUX_ENABLE_TESTING)
   # Use a STATIC lib for convenience (could use OBJECT library,
   # but that doesn't transmit usage requirements like include paths
   # to clients)
-  add_library(BXCatch STATIC bxcatch/catch.hpp bxcatch/bxcatch-main.cpp)
-  target_include_directories(BXCatch PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bxcatch)
+  #add_library(BXCatch STATIC bxcatch/catch.hpp bxcatch/bxcatch-main.cpp)
+  #target_include_directories(BXCatch PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bxcatch)
 
   # All submodules...
   foreach(_m ${BAYEUX_SUBMODULES} bayeux)
-    # - CATCH TESTS
-    foreach(_catchtestsource ${${_m}_MODULE_TESTS_CATCH})
-      get_filename_component(_testname "${_catchtestsource}" NAME_WE)
-      set(_testname "bx${_m}-${_testname}")
-      add_executable(${_testname} ${_catchtestsource})
-      # Output to testing subdirectory
-      set_property(TARGET ${_testname}
-        PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxtests"
-        )
-      target_link_libraries(${_testname} Bayeux BXCatch)
-      add_test(NAME ${_testname} COMMAND ${_testname})
-      set_property(TEST ${_testname}
-        APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
-        )
-    endforeach()
+    # # - CATCH TESTS
+    # foreach(_catchtestsource ${${_m}_MODULE_TESTS_CATCH})
+    #   get_filename_component(_testname "${_catchtestsource}" NAME_WE)
+    #   set(_testname "bx${_m}-${_testname}")
+    #   add_executable(${_testname} ${_catchtestsource})
+    #   # Output to testing subdirectory
+    #   set_property(TARGET ${_testname}
+    #     PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxtests"
+    #     )
+    #   target_link_libraries(${_testname} Bayeux BXCatch)
+    #   add_test(NAME ${_testname} COMMAND ${_testname})
+    #   set_property(TEST ${_testname}
+    #     APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
+    #     )
+    # endforeach()
 
     # - OLDSTYLE TESTS
     foreach(_testsource ${${_m}_MODULE_TESTS})
