@@ -3,13 +3,9 @@
  * Creation date: 2010-07-16
  * Last modified: 2010-07-16
  *
- * License:
- *
  * Description:
  *
  * rootcint brioDict.C -c include/brio/brio_record.h
- *
- * History:
  *
  */
 #ifndef BRIO_DETAIL_BRIO_RECORD_H
@@ -43,13 +39,17 @@
 #include <brio/detail/TArrayCMod.h>
 
 /// The internal ROOT I/O record class
-class brio_record : public TObject {
+class brio_record
+  : public TObject
+{
 public:
+
   TString    fSerialTag;  ///< The serialization tag of the data class
   UInt_t     fVersionTag; ///< The serialization version number of the data class
   TArrayCMod fDataBuffer; ///< The buffer of bytes that contains the Boost archive associated to the serialized data
 
 public:
+
   //! Constructor
   brio_record();
 
@@ -60,14 +60,13 @@ public:
   void reset();
 
   ClassDef(brio_record,1) // Basic BRIO record
+
 };
 
 #endif // BRIO_DETAIL_BRIO_RECORD_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
