@@ -121,6 +121,10 @@ namespace datatools {
     /// Common initialization of services
     void _common_initialize(const datatools::properties & config_);
 
+    /// Common initialization of services
+    /// \deprecated
+    void common_initialize(const datatools::properties & config_);
+
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service)
 

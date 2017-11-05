@@ -78,9 +78,16 @@ namespace datatools {
     return this->initialize(config_, dummy);
   }
 
+  void base_service::common_initialize(const datatools::properties & config_)
+  {
+    _common_initialize(config_);
+    return;
+  }
+
   void base_service::_common_initialize(const datatools::properties & config_)
   {
     this->enriched_base::initialize(config_, false);
+    return;
   }
 
   void base_service::tree_dump(std::ostream & out_,
