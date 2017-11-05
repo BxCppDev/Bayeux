@@ -27,13 +27,18 @@
 
 namespace brio {
 
-  reader::reader() : detail::base_io(RW_READ) {
+  reader::reader()
+    : detail::base_io(RW_READ)
+  {
     reader::_set_default();
+    return;
   }
 
 
-  reader::reader(const std::string& filename_, datatools::logger::priority p_)
-    : detail::base_io (RW_READ, p_) {
+  reader::reader(const std::string & filename_,
+                 datatools::logger::priority p_)
+    : detail::base_io (RW_READ, p_)
+  {
     reader::_set_default();
     std::string ext = boost::filesystem::extension(filename_);
     if (ext == store_info::constants::trio_file_extension()) {
@@ -42,49 +47,62 @@ namespace brio {
       this->set_format(detail::base_io::pba_label());
     }
     this->open(filename_);
+    return;
   }
 
 
-  reader::reader(const std::string& filename_, const std::string& format_str_,
+  reader::reader(const std::string & filename_,
+                 const std::string & format_str_,
                  datatools::logger::priority p_)
-    : detail::base_io (RW_READ, p_) {
+    : detail::base_io (RW_READ, p_)
+  {
     reader::_set_default();
     set_format(format_str_);
     open(filename_);
+    return;
   }
 
-
-  reader::~reader() {
+  reader::~reader()
+  {
     if (this->is_opened()) {
       this->close();
     }
     this->detail::base_io::_reset();
+    return;
   }
 
-  void reader::set_check_serial_tag(bool new_value_) {
+  void reader::set_check_serial_tag(bool new_value_)
+  {
     _check_serial_tag_ = new_value_;
+    return;
   }
 
-  bool reader::is_check_serial_tag() const {
+  bool reader::is_check_serial_tag() const
+  {
     return _check_serial_tag_;
   }
 
-  void reader::_set_default() {
+  void reader::_set_default()
+  {
     detail::base_io::_set_default();
     _allow_mixed_types_in_stores_ = false;
     _allow_automatic_store_ = true;
     _check_serial_tag_ = true;
     _automatic_store_ = 0;
+    return;
   }
 
-  void reader::print_info(std::ostream& out_) const {
+  void reader::print_info(std::ostream & out_) const
+  {
     this->tree_dump(out_, "brio::reader:");
+    return;
   }
 
-  void reader::tree_dump(std::ostream& out_,
-                         const std::string& title_,
-                         const std::string& indent_,
-                         bool inherit_) const {
+  void reader::tree_dump(std::ostream & out_,
+                         const std::string & title_,
+                         const std::string & indent_,
+                         bool inherit_) const
+  {
     std::string indent;
     if (!indent_.empty()) indent = indent_;
     detail::base_io::tree_dump(out_, title_, indent_, true);
@@ -105,9 +123,11 @@ namespace brio {
 
     out_ <<  indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
          << "Check serial tag: " << _check_serial_tag_ << std::endl;
+    return;
   }
 
-  bool reader::has_previous(const std::string& label_) const {
+  bool reader::has_previous(const std::string & label_) const
+  {
     const store_info *ptr_si = this->get_store_or_throw(label_);
     if (ptr_si->number_of_entries == 0){
       return false;
@@ -119,7 +139,8 @@ namespace brio {
     return false;
   }
 
-  bool reader::has_next(const std::string& label_) const {
+  bool reader::has_next(const std::string & label_) const
+  {
     const store_info *ptr_si = this->get_store_or_throw(label_);
     if (ptr_si->number_of_entries == 0) {
       return false;
@@ -131,17 +152,22 @@ namespace brio {
     return false;
   }
 
-  void reader::rewind_store(const std::string& label_) {
-    store_info* ptr_si = this->get_store_or_throw(label_);
+  void reader::rewind_store(const std::string & label_)
+  {
+    store_info * ptr_si = this->get_store_or_throw(label_);
     ptr_si->current_entry = -1;
+    return;
   }
 
-  void reader::unwind_store(const std::string& label_) {
-    store_info* ptr_si = this->get_store_or_throw(label_);
+  void reader::unwind_store(const std::string & label_)
+  {
+    store_info * ptr_si = this->get_store_or_throw(label_);
     ptr_si->current_entry = ptr_si->number_of_entries;
+    return;
   }
 
-  void reader::_at_open(const std::string& filename_) {
+  void reader::_at_open(const std::string & filename_)
+  {
     _filename = filename_;
     datatools::fetch_path_with_env(_filename);
     DT_THROW_IF(!boost::filesystem::exists(_filename),
@@ -262,24 +288,27 @@ namespace brio {
       _current_store = _automatic_store_;
     }
     DT_LOG_TRACE(this->get_logging_priority(),"Exiting." );
+    return;
   }
 
-  const store_info* reader::get_store_or_throw(const std::string& label) const {
+  const store_info * reader::get_store_or_throw(const std::string & label_) const
+  {
     DT_THROW_IF(!this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file is not opened !");
-    const store_info *ptr_si = this->_get_store_info(label);
+    const store_info *ptr_si = this->_get_store_info(label_);
     DT_THROW_IF(ptr_si == 0,
                 std::logic_error,
                 "Missing explicit and valid store label !");
     return ptr_si;
   }
 
-  store_info* reader::get_store_or_throw(const std::string& label) {
+  store_info * reader::get_store_or_throw(const std::string & label_)
+  {
     DT_THROW_IF(!this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file is not opened !");
-    store_info *ptr_si = this->_get_store_info(label);
+    store_info *ptr_si = this->_get_store_info(label_);
     DT_THROW_IF(ptr_si == 0,
                 std::logic_error,
                 "Missing explicit and valid store label !");

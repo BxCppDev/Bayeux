@@ -34,25 +34,30 @@
 #endif
 
 namespace brio {
+
   template<typename T>
-  int reader::load_next(T& data_, const std::string& label_) {
+  int reader::load_next(T & data_, const std::string & label_)
+  {
     int64_t entry = this->get_current_entry(label_);
     return this->load<T>(data_, label_, entry + 1);
   }
 
   template<typename T>
-  int reader::load_previous(T& data_, const std::string& label_) {
+  int reader::load_previous(T & data_, const std::string & label_)
+  {
     int64_t entry = this->get_current_entry(label_);
     return this->load<T>(data_, label_, entry - 1);
   }
 
   template<typename T>
-  int reader::load(T& data_, int64_t nentry_) {
+  int reader::load(T& data_, int64_t nentry_)
+  {
     return this->load<T>(data_, "", nentry_);
   }
 
   template<typename T>
-  int reader::load(T& data_, const std::string& label_, int64_t nentry_) {
+  int reader::load(T & data_, const std::string & label_, int64_t nentry_)
+  {
     DT_THROW_IF(!this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file is not opened !");
@@ -72,9 +77,10 @@ namespace brio {
   }
 
   template<class T>
-  int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
+  int reader::_at_load(T & data_, store_info * ptr_si_, int64_t nentry_)
+  {
     DT_LOG_TRACE(this->get_logging_priority(),"Entering...");
-    store_info& si = *ptr_si_;
+    store_info & si = *ptr_si_;
 
     if (_check_serial_tag_) {
       // We check if the serialization tag from the store matches the
@@ -172,13 +178,13 @@ namespace brio {
     DT_LOG_TRACE(this->get_logging_priority(),"Exiting.");
     return 0;
   }
+
 } // namespace brio
+
 #endif // BRIO_READER_INL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

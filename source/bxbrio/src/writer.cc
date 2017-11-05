@@ -24,15 +24,21 @@
 #include <datatools/utils.h>
 
 namespace brio {
-  void writer::lock() {
+
+  void writer::lock()
+  {
     _locked_ = true;
+    return;
   }
 
-  void writer::unlock() {
+  void writer::unlock()
+  {
     _locked_ = false;
+    return;
   }
 
-  bool writer::is_locked() const {
+  bool writer::is_locked() const
+  {
     return _locked_;
   }
 
@@ -56,55 +62,67 @@ namespace brio {
   //   }
   // }
 
-  bool writer::is_existing_file_protected() const {
+  bool writer::is_existing_file_protected() const
+  {
     return _existing_file_protected_;
   }
 
-  bool writer::is_allow_mixed_types_in_stores() const {
+  bool writer::is_allow_mixed_types_in_stores() const
+  {
     return _allow_mixed_types_in_stores_;
   }
 
-  bool writer::is_allow_automatic_store() const {
+  bool writer::is_allow_automatic_store() const
+  {
     return _allow_automatic_store_;
   }
 
-  void writer::set_allow_mixed_types_in_stores(bool new_value_) {
+  void writer::set_allow_mixed_types_in_stores(bool new_value_)
+  {
     DT_THROW_IF(this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file is opened !");
     _allow_mixed_types_in_stores_ = new_value_;
+    return;
   }
 
-  void writer::set_allow_automatic_store(bool new_value_) {
+  void writer::set_allow_automatic_store(bool new_value_)
+  {
     DT_THROW_IF(this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file is opened !");
     _allow_automatic_store_ = new_value_;
+    return;
   }
 
-  void writer::set_existing_file_protected(bool new_value_) {
+  void writer::set_existing_file_protected(bool new_value_)
+  {
     DT_THROW_IF(this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file is opened !");
     _existing_file_protected_ = new_value_;
+    return;
   }
 
-  void writer::_set_default() {
+  void writer::_set_default()
+  {
     _locked_ = false;
     _allow_mixed_types_in_stores_ = false;
     _allow_automatic_store_ = true;
     _existing_file_protected_ = false;
     _automatic_store_ = 0;
+    return;
   }
 
-  // ctor:
-  writer::writer() : detail::base_io(RW_WRITE) {
+  writer::writer() : detail::base_io(RW_WRITE)
+  {
     writer::_set_default();
+    return;
   }
 
-  // ctor:
-  writer::writer(const std::string& filename_, datatools::logger::priority p_)
-    : detail::base_io(RW_WRITE,p_) {
+  writer::writer(const std::string & filename_, datatools::logger::priority p_)
+    : detail::base_io(RW_WRITE, p_)
+  {
     writer::_set_default();
     std::string ext = boost::filesystem::extension(filename_);
     if (ext == store_info::constants::trio_file_extension()) {
@@ -113,31 +131,39 @@ namespace brio {
       this->set_format(detail::base_io::pba_label());
     }
     this->open(filename_);
+    return;
   }
 
-  // ctor:
-  writer::writer(const std::string& filename_, const std::string& format_str_,
+  writer::writer(const std::string & filename_,
+                 const std::string & format_str_,
                  datatools::logger::priority p_)
-    : detail::base_io (RW_WRITE, p_) {
+    : detail::base_io (RW_WRITE, p_)
+  {
     writer::_set_default();
     this->set_format(format_str_);
     this->open(filename_);
+    return;
   }
 
-  // dtor:
-  writer::~writer() {
+  writer::~writer()
+  {
     if (this->is_opened()) this->close();
     this->detail::base_io::_reset();
+    return;
   }
 
-  void writer::print_info(std::ostream& out_) const {
+  void writer::print_info(std::ostream & out_) const
+  {
     this->tree_dump(out_, "brio::writer:");
+    return;
+    return;
   }
 
-  void writer::tree_dump(std::ostream& out_,
-                         const std::string& title_,
-                         const std::string& indent_,
-                         bool inherit_) const {
+  void writer::tree_dump(std::ostream & out_,
+                         const std::string & title_,
+                         const std::string & indent_,
+                         bool inherit_) const
+  {
     using namespace datatools;
     std::string indent;
     if (!indent_.empty()) indent = indent_;
@@ -160,11 +186,13 @@ namespace brio {
     out_ <<  indent << i_tree_dumpable::inherit_tag (inherit_)
          << "Locked: " << _locked_
          << std::endl;
+    return;
   }
 
   int writer::add_store(const std::string& label_,
                         const std::string& serial_tag_,
-                        size_t buffer_size_) {
+                        size_t buffer_size_)
+  {
     DT_THROW_IF(serial_tag_.empty(),
                 std::logic_error,
                 "Missing serialization tag for store with label '"
@@ -176,7 +204,8 @@ namespace brio {
     return 0;
   }
 
-  int writer::add_store(const std::string& label_, size_t buffer_size_) {
+  int writer::add_store(const std::string & label_, size_t buffer_size_)
+  {
     store_info *si = this->_add_store(label_, store_info::constants::postponed_dedicated_serial_tag_label(), buffer_size_);
     if (si == 0) {
       return 1;
@@ -184,7 +213,8 @@ namespace brio {
     return 0;
   }
 
-  int writer::add_mixed_store(const std::string& label_, size_t buffer_size_) {
+  int writer::add_mixed_store(const std::string & label_, size_t buffer_size_)
+  {
     size_t buffer_size = buffer_size_;
     if (buffer_size == 0) {
       buffer_size = store_info::constants::default_store_buffer_size();
@@ -199,9 +229,10 @@ namespace brio {
     return 0;
   }
 
-  store_info* writer::_add_store(const std::string& label_,
-                                 const std::string& serial_tag_,
-                                 size_t buffer_size_) {
+  store_info* writer::_add_store(const std::string & label_,
+                                 const std::string & serial_tag_,
+                                 size_t buffer_size_)
+  {
     DT_THROW_IF(!this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file for store label '" << label_
@@ -261,7 +292,8 @@ namespace brio {
     return _current_store;
   }
 
-  void writer::_at_open (const std::string& filename_) {
+  void writer::_at_open (const std::string & filename_)
+  {
     _filename = filename_;
     datatools::fetch_path_with_env(_filename);
     if (this->is_existing_file_protected()) {
@@ -294,5 +326,7 @@ namespace brio {
       DT_THROW_IF(true, std::runtime_error, "File '" << _filename << "' is not opened !");
     }
     _file->cd();
+    return;
   }
+
 } // end of namespace brio

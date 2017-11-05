@@ -26,48 +26,60 @@
 // ClassImp is only needed for THtml docs, so comment it out.
 // ClassImp(TArrayCMod)
 
-TArrayCMod::TArrayCMod() {
+TArrayCMod::TArrayCMod()
+{
   fN = 0;
   fArray = 0;
   fCapacity = 0;
+  return;
 }
 
-TArrayCMod::~TArrayCMod() {
+TArrayCMod::~TArrayCMod()
+{
   if (fArray != 0) delete [] fArray;
   fArray = 0;
+  return;
 }
 
-void TArrayCMod::Clear() {
+void TArrayCMod::Clear()
+{
   fN = 0;
+  return;
 }
 
-void TArrayCMod::Reserve(Int_t n) {
-  if (n > fCapacity) {
+void TArrayCMod::Reserve(Int_t n_)
+{
+  if (n_ > fCapacity) {
     Char_t *temp = fArray;
-    fArray = new Char_t[n];
+    fArray = new Char_t[n_];
     memcpy(fArray, temp, fN * sizeof(Char_t));
-    memset(&fArray[fN], 0, (n - fN) * sizeof(Char_t));
-    fCapacity = n;
+    memset(&fArray[fN], 0, (n_ - fN) * sizeof(Char_t));
+    fCapacity = n_;
   }
+  return;
 }
 
-void TArrayCMod::Set(Int_t n) {
+void TArrayCMod::Set(Int_t n_)
+{
   // Set size of this array to n chars.
-  if (n < 0) return;
-  Reserve(n);
-  fN = n;
+  if (n_ < 0) return;
+  Reserve(n_);
+  fN = n_;
   memset(fArray, 0, fN * sizeof (Char_t));
+  return;
 }
 
-void TArrayCMod::Streamer(TBuffer &b) {
+void TArrayCMod::Streamer(TBuffer & buffer_)
+{
   // Stream a TArrayCMod object.
-  if (b.IsReading()) {
+  if (buffer_.IsReading()) {
     Int_t n;
-    b >> n;
+    buffer_ >> n;
     Set(n);
-    b.ReadFastArray(fArray,n);
+    buffer_.ReadFastArray(fArray,n);
   } else {
-    b << fN;
-    b.WriteFastArray(fArray, fN);
+    buffer_ << fN;
+    buffer_.WriteFastArray(fArray, fN);
   }
+  return;
 }

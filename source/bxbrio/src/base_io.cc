@@ -33,6 +33,7 @@
 #endif
 
 namespace brio {
+
   namespace detail {
 
     const std::string & base_io::pba_label()
@@ -49,16 +50,20 @@ namespace brio {
       return lbl;
     }
 
-    void base_io::set_logging_priority(datatools::logger::priority p) {
-      _logging_priority_ = p;
+    void base_io::set_logging_priority(datatools::logger::priority p_)
+    {
+      _logging_priority_ = p_;
+      return;
     }
 
-    datatools::logger::priority base_io::get_logging_priority() const {
+    datatools::logger::priority base_io::get_logging_priority() const
+    {
       return _logging_priority_;
     }
 
     // static :
-    int base_io::get_format (const std::string& format_str_) {
+    int base_io::get_format (const std::string & format_str_)
+    {
       if (format_str_ == pba_label()) return FORMAT_PBA;
       if (format_str_ == text_label()) return FORMAT_TEXT;
       DT_THROW_IF(true,
@@ -66,11 +71,13 @@ namespace brio {
                   "Invalid format label '" << format_str_ << "' !");
     }
 
-    int base_io::get_format() const {
+    int base_io::get_format() const
+    {
       return _format_;
     }
 
-    void base_io::set_format(int format_) {
+    void base_io::set_format(int format_)
+    {
       DT_THROW_IF(this->is_opened(),
                   std::logic_error,
                   "Operation prohibited; file is opened !");
@@ -91,51 +98,66 @@ namespace brio {
           }
         }
       }
+      return;
     }
 
-    void base_io::set_format(const std::string& format_str_) {
+    void base_io::set_format(const std::string & format_str_)
+    {
       this->set_format(base_io::get_format(format_str_));
+      return;
     }
 
-    bool base_io::is_debug() const {
+    bool base_io::is_debug() const
+    {
       return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
     }
 
-    void base_io::set_debug(bool new_value_) {
+    void base_io::set_debug(bool new_value_)
+    {
       if (new_value_) _logging_priority_ = datatools::logger::PRIO_DEBUG;
       else _logging_priority_ = datatools::logger::PRIO_FATAL;
+      return;
     }
 
-    bool base_io::is_verbose() const {
+    bool base_io::is_verbose() const
+    {
       return _logging_priority_ >= datatools::logger::PRIO_NOTICE;
     }
 
-    void base_io::set_verbose(bool new_value_) {
+    void base_io::set_verbose(bool new_value_)
+    {
       if (new_value_) _logging_priority_ = datatools::logger::PRIO_NOTICE;
       else _logging_priority_ = datatools::logger::PRIO_FATAL;
+      return;
     }
 
-    bool base_io::is_reading() const {
+    bool base_io::is_reading() const
+    {
       return _rw == RW_READ;
     }
 
-    bool base_io::is_writing() const {
+    bool base_io::is_writing() const
+    {
       return _rw == RW_WRITE;
     }
 
-    bool base_io::is_format_pba() const {
+    bool base_io::is_format_pba() const
+    {
       return _format_ == FORMAT_PBA;
     }
 
-    bool base_io::is_format_text() const {
+    bool base_io::is_format_text() const
+    {
       return _format_ == FORMAT_TEXT;
     }
 
-    bool base_io::is_opened() const {
+    bool base_io::is_opened() const
+    {
       return (_file != 0) && _file->IsOpen();
     }
 
-    void base_io::close() {
+    void base_io::close()
+    {
       DT_LOG_TRACE(this->get_logging_priority(),"Entering...");
       DT_THROW_IF(!this->is_opened(), std::logic_error, "Not opened !");
       if (_file != 0) {
@@ -145,9 +167,11 @@ namespace brio {
       }
       base_io::_reset();
       DT_LOG_TRACE(this->get_logging_priority(),"Exiting.");
+      return;
     }
 
-    void base_io::open(const std::string& filename_) {
+    void base_io::open(const std::string & filename_)
+    {
       DT_LOG_TRACE(this->get_logging_priority(),"Entering with filename '" << filename_ << "'");
       DT_THROW_IF(this->is_opened(),std::logic_error,"Already opened !");
 
@@ -164,21 +188,26 @@ namespace brio {
       }
       this->_at_open(filename_);
       DT_LOG_TRACE(this->get_logging_priority(),"Exiting.");
+      return;
     }
 
-    bool base_io::has_automatic_store() const {
+    bool base_io::has_automatic_store() const
+    {
       return has_store (store_info::constants::automatic_store_label());
     }
 
-    void base_io::select_automatic_store() {
+    void base_io::select_automatic_store()
+    {
       DT_THROW_IF(!this->has_automatic_store(),
                   std::logic_error,
                   "No automatic store (with label '"
                   << store_info::constants::automatic_store_label() << "') is available !");
       this->select_store(store_info::constants::automatic_store_label());
+      return;
     }
 
-    bool base_io::has_store(const std::string& label_) const {
+    bool base_io::has_store(const std::string & label_) const
+    {
       // accelerator:
       if (_current_store != 0 && _current_store->label == label_) return true;
 
@@ -187,8 +216,9 @@ namespace brio {
       return found != _store_infos.end();
     }
 
-    bool base_io::has_store_with_serial_tag(const std::string& label_,
-                                            const std::string& serial_tag_) const {
+    bool base_io::has_store_with_serial_tag(const std::string & label_,
+                                            const std::string & serial_tag_) const
+    {
       store_info_dict_type::const_iterator found = _store_infos.find(label_);
       if (found == _store_infos.end()) return false;
 
@@ -199,7 +229,8 @@ namespace brio {
       return false;
     }
 
-    bool base_io::has_mixed_store(const std::string& label_) const {
+    bool base_io::has_mixed_store(const std::string & label_) const
+    {
       store_info_dict_type::const_iterator found = _store_infos.find(label_);
       if (found == _store_infos.end()) return false;
       const store_info& the_si = found->second;
@@ -209,7 +240,8 @@ namespace brio {
       return false;
     }
 
-    const std::string& base_io::get_serialization_tag(const std::string& label_) const {
+    const std::string & base_io::get_serialization_tag(const std::string & label_) const
+    {
       DT_THROW_IF(!this->is_opened(),
                   std::logic_error,
                   "Operation prohibited; file is not opened !");
@@ -220,7 +252,8 @@ namespace brio {
       return si->serialization_tag;
     }
 
-    int64_t base_io::get_number_of_entries(const std::string& label_) const {
+    int64_t base_io::get_number_of_entries(const std::string & label_) const
+    {
       DT_THROW_IF(!this->is_opened(),
                   std::logic_error,
                   "Operation prohibited; file is not opened !");
@@ -231,7 +264,8 @@ namespace brio {
       return si->number_of_entries;
     }
 
-    int64_t base_io::get_current_entry(const std::string& label_) const {
+    int64_t base_io::get_current_entry(const std::string & label_) const
+    {
       DT_THROW_IF(!this->is_opened(),
                   std::logic_error,
                   "Operation prohibited; file is not opened !");
@@ -242,11 +276,14 @@ namespace brio {
       return si->current_entry;
     }
 
-    void base_io::unselect_store() {
+    void base_io::unselect_store()
+    {
       _current_store = 0;
+      return;
     }
 
-    void base_io::select_store(const std::string& label_) {
+    void base_io::select_store(const std::string & label_)
+    {
       DT_THROW_IF(!this->is_opened(),
                   std::logic_error,
                   "Operation prohibited; file is not opened !");
@@ -256,9 +293,11 @@ namespace brio {
                   "No store with label '" << label_
                   << "' nor default store available !");
       _current_store = si;
+      return;
     }
 
-    void base_io::_set_default() {
+    void base_io::_set_default()
+    {
       _logging_priority_ = datatools::logger::PRIO_FATAL;
       _format_ = FORMAT_UNDEFINED;
       _file = 0;
@@ -266,29 +305,32 @@ namespace brio {
       _current_store = 0;
       _locale = 0;
       _default_locale = 0;
+      return;
     }
 
-    // ctor:
-    base_io::base_io(int rw_) {
+    base_io::base_io(int rw_)
+    {
       _rw = rw_;
       _format_ = FORMAT_UNDEFINED;
       base_io::_set_default();
       _default_locale = 0;
       _locale = 0;
+      return;
     }
 
-    // ctor:
-    base_io::base_io(int rw_, datatools::logger::priority p_) {
+    base_io::base_io(int rw_, datatools::logger::priority p_)
+    {
       _rw = rw_;
       _format_ = FORMAT_UNDEFINED;
       base_io::_set_default();
       set_logging_priority(p_);
       _default_locale = 0;
       _locale = 0;
+      return;
     }
 
-    // ctor:
-    base_io::base_io (int rw_, int format_, datatools::logger::priority p_) {
+    base_io::base_io (int rw_, int format_, datatools::logger::priority p_)
+    {
       _rw = rw_;
       _format_ = FORMAT_UNDEFINED;
       base_io::_set_default ();
@@ -296,14 +338,17 @@ namespace brio {
       _default_locale = 0;
       _locale = 0;
       this->set_format(format_);
+      return;
     }
 
-    // dtor:
-    base_io::~base_io() {
+    base_io::~base_io()
+    {
       this->reset();
+      return;
     }
 
-    void base_io::reset() {
+    void base_io::reset()
+    {
       if (_locale != 0) {
         delete _locale;
         _locale = 0;
@@ -313,9 +358,11 @@ namespace brio {
         _default_locale = 0;
       }
       base_io::_reset();
+      return;
     }
 
-    void base_io::_reset () {
+    void base_io::_reset ()
+    {
       if (_file != 0) {
         if (_file->IsOpen()) {
           // 2012-12-19, FM: explicit write
@@ -331,19 +378,23 @@ namespace brio {
       }
       _store_infos.clear();
       base_io::_set_default();
+      return;
     }
 
 
-    void base_io::get_list_of_stores(std::list<std::string>& list_) const {
+    void base_io::get_list_of_stores(std::list<std::string>& list_) const
+    {
       list_.clear();
       for(store_info_dict_type::const_iterator i = _store_infos.begin();
           i != _store_infos.end();
           ++i) {
         list_.push_back(i->first);
       }
+      return;
     }
 
-    store_info* base_io::_get_store_info(const std::string& label_) {
+    store_info* base_io::_get_store_info(const std::string & label_)
+    {
       if (label_.empty()) {
         // if label is not specified, use the current store if it exists:
         if (_current_store != 0) {
@@ -363,7 +414,8 @@ namespace brio {
       return 0;
     }
 
-    const store_info* base_io::_get_store_info(const std::string& label_) const {
+    const store_info* base_io::_get_store_info(const std::string & label_) const
+    {
       const store_info* c_ptr_si = 0;
       base_io* ptr_io = const_cast<base_io *>(this);
       store_info* ptr_si = ptr_io->_get_store_info(label_);
@@ -371,8 +423,9 @@ namespace brio {
       return c_ptr_si;
     }
 
-    void base_io::tree_dump(std::ostream& out_, const std::string& title_,
-                            const std::string& indent_, bool inherit_) const {
+    void base_io::tree_dump(std::ostream& out_, const std::string & title_,
+                            const std::string & indent_, bool inherit_) const
+    {
       using namespace datatools;
       std::string indent;
       if (!indent_.empty()) indent = indent_;
@@ -449,6 +502,9 @@ namespace brio {
         }
         out_ << std::endl;
       }
+      return;
     }
+
   } // end of namespace detail
+
 } // end of namespace brio

@@ -2,8 +2,6 @@
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-28
  * Last modified: 2013-04-22
- *
- *
  */
 
 #ifndef BRIO_BRIO_H
@@ -15,10 +13,8 @@
 
 #endif // BRIO_BRIO_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

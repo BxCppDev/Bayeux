@@ -8,8 +8,6 @@
  * Description:
  *   Utilities for BRIO classes
  *
- * History:
- *
  */
 
 #ifndef BRIO_UTILS_H
@@ -32,8 +30,10 @@ class TTree;
 
 namespace brio {
   /// \brief A class that contains internal dynamic informations for a given store
-  struct store_info {
+  struct store_info
+  {
   public:
+
     struct constants {
       static const std::string & brio_file_extension();
       static const std::string & trio_file_extension();
@@ -59,18 +59,18 @@ namespace brio {
     static const int SUCCESS = 0;
     static const int ERROR   = 1;
 
-  public:
-
     store_info();
+
     virtual ~store_info();
 
     const std::string& get_label() const;
     const std::string& get_serialization_tag() const;
     bool has_dedicated_serialization_tag() const;
     bool has_entries() const;
-    static int guess_mode_from_filename (const std::string & a_filename, int & a_mode);
+    static int guess_mode_from_filename (const std::string & filename_, int & mode_);
 
   public:
+
     // make all attributes public:
     std::string  label; ///< the label (name) of the \e store
     std::string  serialization_tag; ///< the serialization tag associated to the object stored in the \e store
@@ -81,6 +81,7 @@ namespace brio {
     std::vector<char> buffer; ///< the input buffer (used only by the writer)
     int64_t      number_of_entries; ///< the number of entries in the \e store
     int64_t      current_entry; ///< the current entry number in the \e store
+
   };
 
   typedef std::map<std::string, store_info> store_info_dict_type;
@@ -89,10 +90,8 @@ namespace brio {
 
 #endif // BRIO_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

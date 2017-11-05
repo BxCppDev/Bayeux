@@ -44,23 +44,25 @@
 #endif
 
 namespace brio {
+
   template <typename T>
-  int writer::store(const T& a_data, const std::string& a_label) {
+  int writer::store(const T & data_, const std::string & label_)
+  {
     DT_THROW_IF(!this->is_opened(),
                 std::logic_error,
                 "Operation prohibited; file is not opened !");
-    store_info *ptr_si = this->_get_store_info(a_label);
+    store_info *ptr_si = this->_get_store_info(label_);
     if (!ptr_si) {
-      if (a_label.empty()) {
+      if (label_.empty()) {
         // if we do not allow automatic store, this is a critical error:
         DT_THROW_IF(!_allow_automatic_store_,
                     std::logic_error,
                     "No target store is selected nor target !");
         ptr_si = this->_add_store(store_info::constants::automatic_store_label(),
-                                  a_data.get_serial_tag(),
+                                  data_.get_serial_tag(),
                                   store_info::constants::default_store_buffer_size());
       } else {
-        ptr_si = this->_add_store(a_label, a_data.get_serial_tag(),
+        ptr_si = this->_add_store(label_, data_.get_serial_tag(),
                                   store_info::constants::default_store_buffer_size());
       }
     }
@@ -75,26 +77,27 @@ namespace brio {
     if (this->get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
       ptr_si->tree->Print ();
     }
-    return this->_at_store<T>(a_data, ptr_si);
+    return this->_at_store<T>(data_, ptr_si);
   }
 
   template <typename T>
-  int writer::_at_store(const T& a_data, store_info *a_store_info) {
+  int writer::_at_store(const T & data_, store_info * store_info_)
+  {
     DT_LOG_TRACE(this->get_logging_priority(),"Entering...");
-    store_info *ptr_si = a_store_info;
+    store_info *ptr_si = store_info_;
     // First serialized object sets the serialization tag for this store:
     if (ptr_si->serialization_tag ==
         store_info::constants::postponed_dedicated_serial_tag_label()) {
-      ptr_si->serialization_tag = a_data.get_serial_tag();
+      ptr_si->serialization_tag = data_.get_serial_tag();
     }
     // Else if the store has a dedicated serialization tag:
     else if (ptr_si->has_dedicated_serialization_tag()) {
       // Check the data serialization tag matches that requested by the store:
-      DT_THROW_IF(a_data.get_serial_tag() != ptr_si->get_serialization_tag(),
+      DT_THROW_IF(data_.get_serial_tag() != ptr_si->get_serialization_tag(),
                   std::logic_error,
                   "Serialization tag mismatch ! "
                   << "Attempt to store an object with `"
-                  << a_data.get_serial_tag ()
+                  << data_.get_serial_tag ()
                   << "' serialization tag "
                   << "in the store labelled '"
                   << ptr_si->label
@@ -126,12 +129,12 @@ namespace brio {
     if (this->is_format_pba()) {
       //boost::archive::portable_binary_oarchive oa (output_stream);
       eos::portable_oarchive oa(output_stream);
-      oa << a_data;
+      oa << data_;
     }
     if (is_format_text()) {
       output_stream.imbue(*_locale);
       boost::archive::text_oarchive oa(output_stream);
-      oa << a_data;
+      oa << data_;
     }
     output_stream.flush();
 
@@ -143,7 +146,7 @@ namespace brio {
                  << "   buffer capacity = "
                  << ptr_si->buffer.capacity());
     // Prepare the container interface to be streamed using the ROOT I/O system:
-    ptr_si->record.fSerialTag  = a_data.get_serial_tag().c_str();
+    ptr_si->record.fSerialTag  = data_.get_serial_tag().c_str();
     ptr_si->record.fVersionTag = 0; // not used
     ptr_si->record.fDataBuffer.fN     = ptr_si->buffer.size();
     ptr_si->record.fDataBuffer.fArray =  &(ptr_si->buffer[0]);
@@ -165,10 +168,8 @@ namespace brio {
 
 #endif // BRIO_READER_INL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

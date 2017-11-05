@@ -9,8 +9,6 @@
  *
  *   A Boost archive from ROOT file reader
  *
- * History:
- *
  */
 
 #ifndef BRIO_READER_H
@@ -46,7 +44,9 @@
 
 namespace brio {
   //! \brief The brio generic reader class
-  class reader : public detail::base_io {
+  class reader
+    : public detail::base_io
+  {
   public:
     //! Default constructor
     reader();
@@ -146,10 +146,8 @@ namespace brio {
 
 #endif // BRIO_READER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

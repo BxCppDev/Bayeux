@@ -24,25 +24,25 @@
 // Standard Library
 #include <sstream>
 
-// Third Party
-// - A
-
-// This Project
-
 namespace brio {
-  int version::get_major() {
+
+  int version::get_major()
+  {
     return static_cast<int>(BRIO_VERSION_MAJOR);
   }
 
-  int version::get_minor() {
+  int version::get_minor()
+  {
     return static_cast<int>(BRIO_VERSION_MINOR);
   }
 
-  int version::get_patch() {
+  int version::get_patch()
+  {
     return static_cast<int>(BRIO_VERSION_PATCH);
   }
 
-  std::string version::get_version() {
+  std::string version::get_version()
+  {
     static std::string version("");
 
     if (version.empty()) {
@@ -56,16 +56,18 @@ namespace brio {
     return version;
   }
 
-  bool version::is_at_least(int major, int minor, int patch) {
-    if (BRIO_VERSION_MAJOR < major) return false;
-    if (BRIO_VERSION_MAJOR > major) return true;
-    if (BRIO_VERSION_MINOR < minor) return false;
-    if (BRIO_VERSION_MINOR > minor) return true;
-    if (BRIO_VERSION_PATCH < patch) return false;
+  bool version::is_at_least(int major_, int minor_, int patch_)
+  {
+    if (BRIO_VERSION_MAJOR < major_) return false;
+    if (BRIO_VERSION_MAJOR > major_) return true;
+    if (BRIO_VERSION_MINOR < minor_) return false;
+    if (BRIO_VERSION_MINOR > minor_) return true;
+    if (BRIO_VERSION_PATCH < patch_) return false;
     return true;
   }
 
-  bool version::has_feature(const std::string&) {
+  bool version::has_feature(const std::string &)
+  {
     /// - If you want to add features, then the following implementation
     ///   provides one example based on string features cached in a set.
     ///
@@ -79,7 +81,7 @@ namespace brio {
     /// }
     ///
     /// return features.find(name) != features.end();
-
     return false;
   }
+
 } // namespace brio

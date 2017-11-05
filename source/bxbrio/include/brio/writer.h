@@ -9,8 +9,6 @@
  *
  *   A Boost archive to ROOT file writer
  *
- * History:
- *
  */
 
 #ifndef BRIO_WRITER_H
@@ -46,19 +44,22 @@
 #include <brio/detail/base_io.h>
 
 namespace brio {
+
   //! \brief The brio generic writer class
-  class writer : public detail::base_io {
+  class writer
+    : public detail::base_io
+  {
   public:
     //! Default constructor
     writer();
 
     //! Constructor
-    writer(const std::string& a_filename,
+    writer(const std::string & filename_,
            datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Constructor
-    writer(const std::string& a_filename,
-           const std::string& a_format_str,
+    writer(const std::string & filename_,
+           const std::string & format_str_,
            datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Destructor
@@ -88,83 +89,81 @@ namespace brio {
      *  several object's types (ex: potato and carot) within the same branch
      *  Default at construction is false.
      */
-    void set_allow_mixed_types_in_stores(bool a_new_value = true);
+    void set_allow_mixed_types_in_stores(bool new_value_ = true);
 
     /** Enables the use of some automatic store (with
      *  standard label == store_info::AUTOMATIC_STORE_LABEL)
      *  within the writer.
      *  Default at construction is true.
      */
-    void set_allow_automatic_store(bool a_new_value = true);
+    void set_allow_automatic_store(bool new_value_ = true);
 
     //! Set the protection against file overwriting
-    void set_existing_file_protected(bool a_new_value = true);
+    void set_existing_file_protected(bool new_value_ = true);
 
     /** Add a new store with label 'label_'
      *  to store objects with a dedicated serialization tag 'serial_tag_'
      */
-    int add_store(const std::string& a_label,
-                  const std::string& a_serial_tag,
-                  size_t a_buffer_size = 256000);
+    int add_store(const std::string & label_,
+                  const std::string & serial_tag_,
+                  size_t buffer_size_ = 256000);
 
     /** Add a new store with label 'label_'
      *  to store objects with a dedicated serialization tag 'serial_tag_'
      */
-    int add_store(const std::string& a_label,
-                  size_t a_buffer_size = 256000);
+    int add_store(const std::string & label_,
+                  size_t buffer_size_ = 256000);
 
     /** Add a new store with label 'label_'
      *  to store objects with arbitrary serialization tags
      */
-    int add_mixed_store(const std::string& a_label,
-                        size_t a_buffer_size = 0);
+    int add_mixed_store(const std::string & label_,
+                        size_t buffer_size_ = 0);
 
     // Store template method
     template <typename T>
-    int store(const T& a_data, const std::string& a_label = "");
+    int store(const T & data_, const std::string & label_ = "");
 
     //! Smart print
-    virtual void tree_dump(std::ostream& a_out = std::clog,
-                           const std::string& a_title = "",
-                           const std::string& a_indent = "",
-                           bool a_inherit = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
     //! Print
-    void print_info(std::ostream& a_out = std::clog) const;
+    void print_info(std::ostream & out_ = std::clog) const;
 
   protected:
+
     void _set_default();
 
-    store_info* _add_store(const std::string& a_label,
-                           const std::string& a_serial_tag,
-                           size_t a_buffer_size);
+    store_info* _add_store(const std::string & label_,
+                           const std::string & serial_tag_,
+                           size_t buffer_size_);
 
     template <typename T>
-    int _at_store(const T& a_data, store_info *a_store_info);
+    int _at_store(const T & dat, store_info * store_info_);
 
-    virtual void _at_open(const std::string& a_filename);
-
-    /* private: */
-    /*  void _only_if_unlocked_(const std::string& a_where) const; */
-    /*  void _only_if_locked_(const std::string& a_where) const; */
+    virtual void _at_open(const std::string & filename_);
 
   private:
-    bool _locked_; ///< Flag to lock the writer storage structure
+
+    bool _locked_;                      ///< Flag to lock the writer storage structure
     bool _allow_mixed_types_in_stores_; ///< Flag to allow stores with mixed types
     bool _allow_automatic_store_;       ///< Flag to allow an default automatic store
     bool _existing_file_protected_;     ///< Flag to protect existing output data file
     store_info *_automatic_store_;      ///< A handle to the automatic store (if any)
+
   };
+
 } // end of namespace brio
 
 #include <brio/writer-inl.h>
 
 #endif // BRIO_WRITER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

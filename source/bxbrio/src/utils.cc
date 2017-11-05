@@ -105,7 +105,9 @@ namespace brio {
     return ext;
   }
 
-  store_info::store_info() : record() {
+  store_info::store_info()
+    : record()
+  {
     serialization_tag = constants::postponed_dedicated_serial_tag_label();
     bufsize = constants::default_store_buffer_size();
     // pointers:
@@ -117,44 +119,51 @@ namespace brio {
     current_entry = -1;
   }
 
-  store_info::~store_info() {
+  store_info::~store_info()
+  {
     p_record = 0;
     return;
   }
 
-  const std::string& store_info::get_label() const {
+  const std::string& store_info::get_label() const
+  {
     return label;
   }
 
-  const std::string& store_info::get_serialization_tag() const {
+  const std::string& store_info::get_serialization_tag() const
+  {
     return serialization_tag;
   }
 
-  bool store_info::has_dedicated_serialization_tag() const {
+  bool store_info::has_dedicated_serialization_tag() const
+  {
     if (serialization_tag.empty()) return false;
     if (serialization_tag == constants::no_dedicated_serial_tag_label()) return false;
     if (serialization_tag == constants::postponed_dedicated_serial_tag_label()) return false;
     return true;
   }
 
-  bool store_info::has_entries() const {
+  bool store_info::has_entries() const
+  {
     return number_of_entries > 0;
   }
 
-  int store_info::guess_mode_from_filename(const std::string& a_filename,
-                                           int& a_mode) {
+  int store_info::guess_mode_from_filename(const std::string & filename_,
+                                           int & mode_)
+  {
     int status = store_info::SUCCESS;
     int mode = 0x0;
-    if (boost::filesystem::extension(a_filename) ==
+    if (boost::filesystem::extension(filename_) ==
         constants::brio_file_extension()) {
       mode |= store_info::MODE_BRIO;
-    } else if (boost::filesystem::extension (a_filename) ==
+    } else if (boost::filesystem::extension (filename_) ==
                constants::trio_file_extension()) {
       mode |= store_info::MODE_TRIO;
     } else {
       status = store_info::ERROR;
     }
-    a_mode = mode;
+    mode_ = mode;
     return status;
   }
+
 } // end of namespace brio

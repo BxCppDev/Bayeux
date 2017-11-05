@@ -24,7 +24,9 @@
 #endif
 
 //! \brief The internal ROOT I/O buffer of bytes
-class TArrayCMod : public TArray {
+class TArrayCMod
+  : public TArray
+{
 public:
   Char_t *fArray;    //!< Array of bytes
   Int_t   fCapacity; //!< Do not store the capacity
@@ -48,10 +50,8 @@ private:
 
 #endif // BRIO_DETAIL_TARRAYCMOD_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
