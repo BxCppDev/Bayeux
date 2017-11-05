@@ -98,7 +98,7 @@ namespace dpp {
   {
     DT_THROW_IF(is_initialized(),std::logic_error,"Service '" << get_name() << "' is already initialized !");
 
-    base_service::common_initialize(config_);
+    base_service::_common_initialize(config_);
 
     if(config_.has_key("output_files")) {
       std::vector<std::string> output_files;

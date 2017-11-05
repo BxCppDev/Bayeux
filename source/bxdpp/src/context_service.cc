@@ -82,7 +82,7 @@ namespace dpp {
                 std::logic_error,
                 "Service '" << get_name() << "' is already initialized !");
 
-    this->datatools::base_service::common_initialize(a_config);
+    this->datatools::base_service::_common_initialize(a_config);
 
     if (load_filename_.empty()) {
       if (a_config.has_key("load.file")) {

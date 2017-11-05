@@ -86,7 +86,7 @@ namespace cuts {
                 std::logic_error,
                 "Service '" << get_name() << "' is already initialized !");
 
-    datatools::base_service::common_initialize(a_config);
+    datatools::base_service::_common_initialize(a_config);
 
     if(_cut_manager_ == 0) {
       DT_THROW_IF(! a_config.has_key("cut_manager.config"),
