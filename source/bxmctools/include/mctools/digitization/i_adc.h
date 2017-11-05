@@ -24,8 +24,6 @@
  *
  *   Interface class for ADC (Analog Digital Converter).
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_DIGITIZATION_I_ADC_H

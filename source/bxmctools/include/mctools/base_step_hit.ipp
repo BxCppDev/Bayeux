@@ -19,52 +19,51 @@
 namespace mctools {
 
   template<class Archive>
-  void base_step_hit::serialize (Archive            & ar,
-                                 const unsigned int  version)
+  void base_step_hit::serialize (Archive            & ar_,
+                                 const unsigned int  version_)
   {
-    // inherit from the 'base_hit' mother class:
-    ar & boost::serialization::make_nvp("geomtools__base_hit",
-                                        boost::serialization::base_object<geomtools::base_hit>(*this));
+    // Inherit from the 'base_hit' mother class:
+    ar_ & boost::serialization::make_nvp("geomtools__base_hit",
+                                         boost::serialization::base_object<geomtools::base_hit>(*this));
 
-    // the '_store' field member from the 'base_hit' mother class
-    // knows about the field to be stored/loaded
-    // from the archive.
+    // The '_store' field member from the 'base_hit' mother class
+    // knows about the field to be stored/loaded from the archive.
     if (_store & STORE_POSITION_START)
       {
-        ar & boost::serialization::make_nvp ("position_start", _position_start_);
+        ar_ & boost::serialization::make_nvp ("position_start", _position_start_);
       }
     if (_store & STORE_POSITION_STOP)
       {
-        ar & boost::serialization::make_nvp ("position_stop",  _position_stop_);
+        ar_ & boost::serialization::make_nvp ("position_stop",  _position_stop_);
       }
     if (_store & STORE_TIME_START)
       {
-        ar & boost::serialization::make_nvp ("time_start",     _time_start_);
+        ar_ & boost::serialization::make_nvp ("time_start",     _time_start_);
       }
     if (_store & STORE_TIME_STOP)
       {
-        ar & boost::serialization::make_nvp ("time_stop",      _time_stop_);
+        ar_ & boost::serialization::make_nvp ("time_stop",      _time_stop_);
       }
     if (_store & STORE_MOMENTUM_START)
       {
-        ar & boost::serialization::make_nvp ("momentum_start", _momentum_start_);
+        ar_ & boost::serialization::make_nvp ("momentum_start", _momentum_start_);
       }
     if (_store & STORE_MOMENTUM_STOP)
       {
-        ar & boost::serialization::make_nvp ("momentum_stop",  _momentum_stop_);
+        ar_ & boost::serialization::make_nvp ("momentum_stop",  _momentum_stop_);
       }
     if (_store & STORE_ENERGY_DEPOSIT)
       {
-        ar & boost::serialization::make_nvp ("energy_deposit", _energy_deposit_);
+        ar_ & boost::serialization::make_nvp ("energy_deposit", _energy_deposit_);
       }
     if (_store & STORE_PARTICLE_NAME)
       {
-        ar & boost::serialization::make_nvp ("particle_name",  _particle_name_);
+        ar_ & boost::serialization::make_nvp ("particle_name",  _particle_name_);
       }
 
-    if (version>=1) {
+    if (version_ >= 1) {
       if (_store & STORE_BIASING_WEIGHT) {
-        ar & boost::serialization::make_nvp ("biasing_weight",  _biasing_weight_);
+        ar_ & boost::serialization::make_nvp ("biasing_weight",  _biasing_weight_);
       }
     }
     return;

@@ -24,8 +24,6 @@
  *
  *   Simple linear ADC (Analog/Digital Converter).
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_DIGITIZATION_SIMPLE_LINEAR_ADC_H
@@ -48,8 +46,8 @@ namespace mctools {
 
     //! \brief A simple linear ADC (Analog/Digital Converter)
     class simple_linear_adc
-      : public i_adc,
-        public datatools::i_tree_dumpable
+      : public i_adc
+      , public datatools::i_tree_dumpable
     {
     public:
 

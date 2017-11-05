@@ -9,8 +9,6 @@
  *
  *   Simulated data reflection code.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_SIMULATED_DATA_REFLECT_H
@@ -29,7 +27,9 @@ DR_CLASS_EXPORT (::mctools::simulated_data, "mctools::simulated_data")
 
 // Mandatory namespace is datatools::detail::reflection :
 namespace datatools {
+
   namespace detail {
+
     namespace reflection {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::mctools::simulated_data, tag_)
@@ -82,15 +82,15 @@ namespace datatools {
       }
 
     } // end of namespace reflection
+
   } // end of namespace detail
+
 } // end of namespace datatools
 
 #endif // MCTOOLS_SIMULATED_DATA_REFLECT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

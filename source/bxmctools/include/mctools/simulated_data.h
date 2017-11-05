@@ -9,8 +9,6 @@
  *   Simulation data based on the 'genbb::primary_event'
  *   class from the 'genbb_help' package.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_SIMULATED_DATA_H
@@ -41,24 +39,22 @@
 namespace mctools {
 
   /// The container of collections of MC hits
-  class simulated_data :
-    public datatools::i_serializable,
-    public datatools::i_tree_dumpable,
-    public datatools::i_clear
+  class simulated_data
+    : public datatools::i_serializable
+    , public datatools::i_tree_dumpable
+    , public datatools::i_clear
   {
   public:
 
     /// Type of the memory layout of the collection of MC hits
-    enum collection_type
-      {
+    enum collection_type {
         INVALID_HIT_COLLECTION_TYPE = -1, //!< Invalid type of hit collection
         PLAIN_HIT_COLLECTION_TYPE   =  0, //!< @deprecated Collection of plain hits
         HANDLE_HIT_COLLECTION_TYPE  =  1 //!< Collection of hit handles
       };
 
     /// Categories of MC hits
-    enum hit_category_type
-      {
+    enum hit_category_type {
         HIT_CATEGORY_TYPE_PUBLIC  = datatools::bit_mask::bit00,
         HIT_CATEGORY_TYPE_PRIVATE = datatools::bit_mask::bit01,
         HIT_CATEGORY_TYPE_PREFIX  = datatools::bit_mask::bit02,
@@ -79,13 +75,11 @@ namespace mctools {
 
     typedef ::genbb::primary_event primary_event_type;
 
-  public:
-
     /// Reset the memory layout for hit storage
     void reset_collection_type ();
 
     /// Set the memory layout for hit storage (collection of plain MC hits/collections of MC hits handles)
-    void set_collection_type (int a_collection_type);
+    void set_collection_type (int collection_type_);
 
     /// Check if the memory layout for hit storage uses collection of plain MC hits
     bool use_plain_hit_collection () const;
@@ -148,45 +142,45 @@ namespace mctools {
     const plain_step_hits_dict_type & get_plain_step_hits_dict () const;
 
     /// Get a list of categories associated to existing collections of MC hits
-    void get_step_hits_categories (std::vector<std::string> & the_categories,
-                                   unsigned int a_mode = HIT_CATEGORY_TYPE_ALL,
-                                   const std::string & a_prefix = "") const;
+    void get_step_hits_categories (std::vector<std::string> & categories_,
+                                   unsigned int mode_ = HIT_CATEGORY_TYPE_ALL,
+                                   const std::string & prefix_ = "") const;
 
     /// Add a new collection of MC hits with some given category and a default capacity for memory allocation
-    simulated_data & add_step_hits (const std::string & a_category, size_t a_capacity = 0);
+    simulated_data & add_step_hits (const std::string & category_, size_t capacity_ = 0);
 
     /// Remove a collection of MC hits with some given category
-    simulated_data & remove_step_hits (const std::string & a_category);
+    simulated_data & remove_step_hits (const std::string & category_);
 
     /// Add/append a new MC hit in a collection of MC hits with some given category
-    base_step_hit & add_step_hit (const std::string & a_category);
+    base_step_hit & add_step_hit (const std::string & category_);
 
     /// Check is some MC hits exists in some given category
-    bool has_step_hits (const std::string & a_category) const;
+    bool has_step_hits (const std::string & category_) const;
 
     /// Get the number of MC hits within a given category
-    size_t get_number_of_step_hits (const std::string & a_category) const;
+    size_t get_number_of_step_hits (const std::string & category_) const;
 
     /// Get a reference to the non mutable MC hit within a given category and index
-    const base_step_hit & get_step_hit (const std::string & a_category, int a_hit_index) const;
+    const base_step_hit & get_step_hit (const std::string & category_, int hit_index_) const;
 
     /// Get a reference to the mutable MC hit within a given category and index
-    base_step_hit & grab_step_hit (const std::string & a_category, int a_hit_index);
+    base_step_hit & grab_step_hit (const std::string & category_, int hit_index_);
 
     /// Get a reference to the mutable collection of MC hits handles with a given category
-    hit_handle_collection_type & grab_step_hits (const std::string & a_category);
+    hit_handle_collection_type & grab_step_hits (const std::string & category_);
 
     /// Get a reference to the non mutable collection of MC hits handles with a given category
-    const hit_handle_collection_type & get_step_hits (const std::string & a_category) const;
+    const hit_handle_collection_type & get_step_hits (const std::string & category_) const;
 
     /// Get a reference to the mutable collection of plain MC hits with a given category
-    hit_collection_type & grab_plain_step_hits (const std::string & a_category);
+    hit_collection_type & grab_plain_step_hits (const std::string & category_);
 
     /// Get a reference to the non mutable collection of plain MC hits with a given category
-    const hit_collection_type & get_plain_step_hits (const std::string & a_category) const;
+    const hit_collection_type & get_plain_step_hits (const std::string & category_) const;
 
     /// \deprecated Reset the internal data
-    simulated_data & reset(bool a_reset_collection_type);
+    simulated_data & reset(bool reset_collection_type_);
 
     /// Reset data
     void reset();
@@ -195,7 +189,7 @@ namespace mctools {
     simulated_data();
 
     /// Constructor
-    simulated_data(int a_collection_type);
+    simulated_data(int collection_type_);
 
     /// Destructor
     virtual ~simulated_data();
@@ -204,10 +198,10 @@ namespace mctools {
     virtual void clear();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
-                           const std::string & a_title  = "",
-                           const std::string & a_indent = "",
-                           bool a_inherit          = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_          = false) const;
 
   protected:
 
@@ -250,10 +244,8 @@ BOOST_CLASS_VERSION(mctools::simulated_data, 3)
 
 #endif // MCTOOLS_SIMULATED_DATA_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

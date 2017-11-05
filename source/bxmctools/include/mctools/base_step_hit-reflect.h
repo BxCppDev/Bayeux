@@ -9,8 +9,6 @@
  *
  *   Base step hit reflection code.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_BASE_STEP_HIT_REFLECT_H
@@ -29,7 +27,9 @@ DR_CLASS_EXPORT (::mctools::base_step_hit, "mctools::base_step_hit")
 
 // Mandatory namespace is datatools::detail::reflection :
 namespace datatools {
+
   namespace detail {
+
     namespace reflection {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::mctools::base_step_hit, tag_)
@@ -115,15 +115,15 @@ namespace datatools {
       }
 
     } // end of namespace reflection
+
   } // end of namespace detail
+
 } // end of namespace datatools
 
 #endif // GEOMTOOLS_BASE_STEP_HIT_REFLECT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

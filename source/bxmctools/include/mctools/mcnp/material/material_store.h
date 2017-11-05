@@ -94,10 +94,8 @@ namespace mctools {
 
 #endif // MCTOOLS_MCNP_MATERIAL_MATERIAL_STORE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

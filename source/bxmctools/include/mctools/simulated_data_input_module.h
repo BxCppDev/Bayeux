@@ -26,7 +26,8 @@ namespace mctools {
   class simulated_data_reader;
 
   /// \brief Simulation data input module
-  class simulated_data_input_module : public dpp::base_module
+  class simulated_data_input_module
+    : public dpp::base_module
   {
   public:
 
@@ -34,7 +35,7 @@ namespace mctools {
     static const std::string & default_sd_bank_label();
 
     // Constructor :
-    simulated_data_input_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
+    simulated_data_input_module(datatools::logger::priority logging_priority_ = datatools::logger::PRIO_FATAL);
 
     // Destructor :
     virtual ~simulated_data_input_module();
@@ -72,7 +73,7 @@ namespace mctools {
 
   protected:
 
-    dpp::base_module::process_status _load(datatools::things & a_event_record);
+    dpp::base_module::process_status _load(datatools::things & event_record_);
 
   private:
 
@@ -94,10 +95,8 @@ DOCD_CLASS_DECLARATION(mctools::simulated_data_input_module)
 
 #endif // MCTOOLS_SIMULATED_DATA_INPUT_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

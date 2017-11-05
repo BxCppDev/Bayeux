@@ -23,8 +23,6 @@
  *  Should delta rays energy deposit along the track of an alpha particle
  *  be clusterized within the parent alpha clusterized hit (quenching effect) ?
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H
@@ -50,7 +48,8 @@
 
 namespace mctools {
 
-  class calorimeter_step_hit_processor : public base_step_hit_processor
+  class calorimeter_step_hit_processor
+    : public base_step_hit_processor
   {
   public:
 
@@ -77,12 +76,12 @@ namespace mctools {
                             ::datatools::service_manager & service_mgr_);
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                         ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_);
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                         ::mctools::simulated_data::hit_collection_type & the_plain_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_collection_type & plain_hits_);
 
     /** Check if a step hit in a candidate for clusterization within
      * the proposed scintillation hit
@@ -107,8 +106,6 @@ namespace mctools {
     void _init(const ::datatools::properties & config_,
                ::datatools::service_manager & service_mgr_);
 
-    // void _reset();
-
     /// Main non-public algorithm
     void _process(const base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
                   simulated_data::hit_handle_collection_type * calo_hits_,
@@ -116,42 +113,48 @@ namespace mctools {
 
   private:
 
-    double _scintillation_cluster_time_range_;  /** the time range for step hit
-                                                 * clusterization:
-                                                 * typical value is 1 ns
-                                                 */
+    /** the time range for step hit
+     * clusterization:
+     * typical value is 1 ns
+     */
+    double _scintillation_cluster_time_range_;
 
-    double _scintillation_cluster_space_range_; /** the space range for clusterization:
-                                                 * typical value is 1 cm
-                                                 */
+    /** the space range for clusterization:
+     * typical value is 1 cm
+     */
+    double _scintillation_cluster_space_range_;
 
-    std::string _mapping_category_; /** the name of the mapping
-                                     * category of volumes
-                                     * that should be considered
-                                     * as a sensitive volume
-                                     */
+    /** the name of the mapping
+     * category of volumes
+     * that should be considered
+     * as a sensitive volume
+     */
+    std::string _mapping_category_;
 
-    std::vector<int> _mapping_category_any_addresses_; /** List of subaddress
-                                                        * of the geometry category marked
-                                                        * as 'any' for matching and saving MC hits;
-                                                        * Used in case of partioned sensitive
-                                                        * volumes.
-                                                        */
+    /** List of subaddress
+     * of the geometry category marked
+     * as 'any' for matching and saving MC hits;
+     * Used in case of partioned sensitive
+     * volumes.
+     */
+    std::vector<int> _mapping_category_any_addresses_;
+
     // internals:
-    const geomtools::mapping * _mapping_; /** The reference geometry ID mapping */
+    const geomtools::mapping * _mapping_; ///< The reference geometry ID mapping
 
-    const geomtools::id_mgr::categories_by_name_col_type * _categories_; /// Handle to a dictionary of categories keyed by name
+    const geomtools::id_mgr::categories_by_name_col_type * _categories_; ///< Handle to a dictionary of categories keyed by name
 
-    uint32_t _calo_block_type_; /// the unique ID of the geometry category
+    uint32_t _calo_block_type_; ///< the unique ID of the geometry category
 
-    geomtools::smart_id_locator _calo_block_locator_; /** a locator to
-                                                       * compute the geometry
-                                                       * ID of the detector
-                                                       * block where some hit
-                                                       * lies in.
-                                                       */
+    /** a locator to
+     * compute the geometry
+     * ID of the detector
+     * block where some hit
+     * lies in.
+     */
+    geomtools::smart_id_locator _calo_block_locator_;
 
-    bool _alpha_quenching_; /// Flag to take into account quenching of alpha particle at low energy
+    bool _alpha_quenching_; ///< Flag to take into account quenching of alpha particle at low energy
 
     // Registration macro :
     MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(calorimeter_step_hit_processor)
@@ -165,10 +168,8 @@ DOCD_CLASS_DECLARATION(mctools::calorimeter_step_hit_processor)
 
 #endif // MCTOOLS_CALORIMETER_STEP_HIT_PROCESSOR_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

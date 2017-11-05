@@ -8,8 +8,6 @@
  * Description:
  *   Simulation data reader.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_SIMULATED_DATA_READER_H
@@ -41,8 +39,8 @@ namespace mctools {
   class simulated_data;
 
   /// Reader class for simulated data record
-  class simulated_data_reader :
-    public datatools::i_tree_dumpable
+  class simulated_data_reader
+    : public datatools::i_tree_dumpable
   {
   public:
 
@@ -72,7 +70,7 @@ namespace mctools {
     int get_max_files() const;
 
     /// Set the input filenames
-    void set_filenames (const datatools::properties & a_setup);
+    void set_filenames (const datatools::properties & setup_);
 
     /// Get logging priority threshold
     datatools::logger::priority get_logging_priority() const;
@@ -143,10 +141,10 @@ namespace mctools {
     int get_record_counter() const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
-                           const std::string & a_title  = "",
-                           const std::string & a_indent = "",
-                           bool a_inherit               = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
   protected:
 
@@ -188,10 +186,8 @@ DOCD_CLASS_DECLARATION(mctools::simulated_data_reader)
 
 #endif // MCTOOLS_SIMULATED_DATA_READER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

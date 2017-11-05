@@ -26,32 +26,32 @@
 namespace mctools {
 
   template<class Archive>
-  void simulated_data::serialize(Archive & ar, const unsigned int version)
+  void simulated_data::serialize(Archive & ar_, const unsigned int version_)
   {
-    if (version > 0) {
-      ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    if (version_ > 0) {
+      ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     }
-    ar & boost::serialization::make_nvp("vertex", _vertex_);
+    ar_ & boost::serialization::make_nvp("vertex", _vertex_);
     //>>> Handle the new _time_ attribute for version >= 3:
     if (Archive::is_loading::value) {
       // Default time is invalid:
       datatools::invalidate(_time_);
     }
-    if (Archive::is_saving::value || version >= 3) {
-      ar & boost::serialization::make_nvp("time", _time_);
+    if (Archive::is_saving::value || version_ >= 3) {
+      ar_ & boost::serialization::make_nvp("time", _time_);
     }
     //<<<
-    ar & boost::serialization::make_nvp("primary_event",   _primary_event_);
-    ar & boost::serialization::make_nvp("properties",      _properties_);
-    ar & boost::serialization::make_nvp("collection_type", _collection_type_);
-    if (version < 2) {
-      ar & boost::serialization::make_nvp("step_hits_dict", _step_hits_dict_);
+    ar_ & boost::serialization::make_nvp("primary_event",   _primary_event_);
+    ar_ & boost::serialization::make_nvp("properties",      _properties_);
+    ar_ & boost::serialization::make_nvp("collection_type", _collection_type_);
+    if (version_ < 2) {
+      ar_ & boost::serialization::make_nvp("step_hits_dict", _step_hits_dict_);
     } else {
       if (_collection_type_ == HANDLE_HIT_COLLECTION_TYPE) {
-        ar & boost::serialization::make_nvp("step_hits_dict", _step_hits_dict_);
+        ar_ & boost::serialization::make_nvp("step_hits_dict", _step_hits_dict_);
       }
       if (_collection_type_ == PLAIN_HIT_COLLECTION_TYPE) {
-        ar & boost::serialization::make_nvp("plain_step_hits_dict", _plain_step_hits_dict_);
+        ar_ & boost::serialization::make_nvp("plain_step_hits_dict", _plain_step_hits_dict_);
       }
     }
     return;
@@ -61,10 +61,8 @@ namespace mctools {
 
 #endif // MCTOOLS_SIMULATED_DATA_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

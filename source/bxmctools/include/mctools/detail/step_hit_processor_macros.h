@@ -24,8 +24,6 @@
  *
  *  Factory registration macros for step hit processor classes.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_DETAIL_STEP_HIT_PROCESSOR_H
@@ -45,10 +43,8 @@
 
 #endif // MCTOOLS_DETAIL_STEP_HIT_PROCESSOR_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

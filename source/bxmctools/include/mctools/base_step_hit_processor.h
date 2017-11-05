@@ -9,8 +9,6 @@
  *
  *   Abstract MC base step hit processor.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_BASE_STEP_HIT_PROCESSOR_H
@@ -49,7 +47,8 @@ namespace mctools {
   /** Base step hit processor. The 'process' pure abstract method must be
    *  implemented.
    */
-  class base_step_hit_processor : public datatools::i_tree_dumpable
+  class base_step_hit_processor
+    : public datatools::i_tree_dumpable
   {
   public:
 
@@ -75,9 +74,9 @@ namespace mctools {
 
     bool using_private_pool() const;
 
-    void setup_private_pool(size_t a_capacity = DEFAULT_POOL_CAPACITY);
+    void setup_private_pool(size_t capacity_ = DEFAULT_POOL_CAPACITY);
 
-    void add_new_hit(simulated_data::hit_handle_collection_type & the_hits);
+    void add_new_hit(simulated_data::hit_handle_collection_type & hits_);
 
     const std::string & get_name() const;
 
@@ -91,15 +90,15 @@ namespace mctools {
 
     const std::string & get_hit_category() const;
 
-    void set_hit_category(const std::string & a_hc);
+    void set_hit_category(const std::string & hc_);
 
     const std::string & get_sensitive_category() const;
 
-    void set_sensitive_category(const std::string & a_sc);
+    void set_sensitive_category(const std::string & sc_);
 
     bool has_geom_manager() const;
 
-    void set_geom_manager(const geomtools::manager & a_gmgr);
+    void set_geom_manager(const geomtools::manager & gmgr_);
 
     const geomtools::manager & get_geom_manager() const;
 
@@ -109,14 +108,14 @@ namespace mctools {
 
     virtual bool accept_external_rng() const;
 
-    virtual void set_external_rng(mygsl::rng & a_rng);
+    virtual void set_external_rng(mygsl::rng & rng_);
 
     /// Initialization from a set of configuration properties
-    void initialize(const datatools::properties & a_config);
+    void initialize(const datatools::properties & config_);
 
     /// Main setup routine:
-    virtual void initialize(const datatools::properties & a_config,
-                            datatools::service_manager & a_service_mgr);
+    virtual void initialize(const datatools::properties & config_,
+                            datatools::service_manager & service_mgr_);
 
     /** High level routine:
      * Given the input 'the_base_step_hits' collection of pointers to MC step hits,
@@ -124,19 +123,19 @@ namespace mctools {
      * instance. This method uses one of both 'process' virtual methods below depending on the
      * type of output collection.
      */
-    void process(const step_hit_ptr_collection_type & the_base_step_hits,
-                 simulated_data & a_sim_data);
+    void process(const step_hit_ptr_collection_type & base_step_hits_,
+                 simulated_data & sim_data_);
 
     /** Main processing routine:
      *  Given the input 'the_base_step_hits' collection of pointers to simulated step hits,
      *  this method builds the output 'the_hits' collection, typically by clusterization
      *  of original step hits.
      */
-    virtual void process(const step_hit_ptr_collection_type         & the_base_step_hits,
-                         simulated_data::hit_handle_collection_type & the_hits) = 0;
+    virtual void process(const step_hit_ptr_collection_type         & base_step_hits_,
+                         simulated_data::hit_handle_collection_type & hits_) = 0;
 
-    virtual void process(const step_hit_ptr_collection_type  & the_base_step_hits,
-                         simulated_data::hit_collection_type & the_plain_hits);
+    virtual void process(const step_hit_ptr_collection_type  & base_step_hit_s,
+                         simulated_data::hit_collection_type & plain_hits_);
 
     /// Smart print
     virtual void tree_dump(std::ostream & out_         = std::clog,
@@ -155,8 +154,8 @@ namespace mctools {
 
   protected:
 
-    void _initialize(const datatools::properties & a_config,
-                     datatools::service_manager & a_service_mgr);
+    void _initialize(const datatools::properties & config_,
+                     datatools::service_manager & service_mgr_);
 
     /*
    /// Main hidden algorithm
@@ -199,7 +198,8 @@ namespace mctools {
   /** A step hit processor that pushes the simulated base step hits
    *  as is in an output list, just cleaning the 'user data' pointer.
    */
-  class push_all_step_hit_processor : public base_step_hit_processor
+  class push_all_step_hit_processor
+    : public base_step_hit_processor
   {
   public:
 
@@ -214,12 +214,12 @@ namespace mctools {
                             ::datatools::service_manager & service_mgr_);
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                         ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_);
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                         ::mctools::simulated_data::hit_collection_type & the_plain_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_collection_type & plain_hits_);
 
     void set_visu_highlighted_hits(bool);
 
@@ -245,7 +245,8 @@ namespace mctools {
   /** A step hit processor that does nothing with the available step hits
    *  and let the output list empty.
    */
-  class kill_all_step_hit_processor : public base_step_hit_processor
+  class kill_all_step_hit_processor
+    : public base_step_hit_processor
   {
   public:
 
@@ -260,12 +261,12 @@ namespace mctools {
                             ::datatools::service_manager & service_mgr_);
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                         ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_);
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                         ::mctools::simulated_data::hit_collection_type & the_plain_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_collection_type & plain_hits_);
 
     // Registration macro :
     MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(kill_all_step_hit_processor)
@@ -280,10 +281,8 @@ DOCD_CLASS_DECLARATION(mctools::kill_all_step_hit_processor)
 
 #endif // MCTOOLS_BASE_STEP_HIT_PROCESSOR_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

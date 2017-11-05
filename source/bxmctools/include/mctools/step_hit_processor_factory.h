@@ -9,8 +9,6 @@
  *
  *   Step hit processor factory
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H
@@ -51,7 +49,7 @@ namespace mctools {
   {
   public:
 
-    typedef datatools::handle<base_step_hit_processor>       processor_handle_type;
+    typedef datatools::handle<base_step_hit_processor> processor_handle_type;
 
     /// \brief A processor entry in the factory's embedded dictionary
     struct processor_entry_type {
@@ -219,10 +217,8 @@ DOCD_CLASS_DECLARATION(mctools::step_hit_processor_factory)
 
 #endif // MCTOOLS_STEP_HIT_PROCESSOR_FACTORY_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

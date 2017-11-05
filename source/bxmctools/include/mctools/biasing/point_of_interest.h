@@ -9,8 +9,6 @@
  *
  *   A point of interest in the geometry
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_BIASING_POINT_OF_INTEREST_H
@@ -158,10 +156,8 @@ namespace mctools {
 
 #endif // MCTOOLS_BIASING_POINT_OF_INTEREST_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

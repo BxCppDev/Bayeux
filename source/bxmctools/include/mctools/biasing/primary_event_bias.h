@@ -9,8 +9,6 @@
  *
  *   An algorithm that implements some biasing techniques at primary event generation
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_BIASING_PRIMARY_EVENT_BIAS_H
@@ -51,7 +49,8 @@ namespace mctools {
     class primary_generator;
 
     /// \brief Biasing algorithm used at primary event generation
-    class primary_event_bias : public datatools::i_tree_dumpable
+    class primary_event_bias
+      : public datatools::i_tree_dumpable
     {
     public:
 
@@ -87,7 +86,7 @@ namespace mctools {
         BES_UNDEFINED   = 0, //!< Undefined status
         BES_NORMAL      = 1, //!< Normal status (event is preserved as is and tracked)
         BES_TRUNCATED   = 2, //!< Normal status (event is preserved but some particles are not tracked)
-        BES_KILLED      = 3 //!< Event should be killed (not tracked at all)
+        BES_KILLED      = 3  //!< Event should be killed (not tracked at all)
       };
 
       /// \brief Biasing information associated to a biased primary event
@@ -305,10 +304,8 @@ DOCD_CLASS_DECLARATION(mctools::biasing::primary_event_bias)
 
 #endif // MCTOOLS_BIASING_PRIMARY_EVENT_BIAS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

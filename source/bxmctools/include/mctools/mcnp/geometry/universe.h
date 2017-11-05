@@ -88,10 +88,8 @@ namespace mctools {
 
 #endif // MCTOOLS_MCNP_GEOMETRY_UNIVERSE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
