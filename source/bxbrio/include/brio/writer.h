@@ -3,7 +3,7 @@
  * Creation date: 2010-11-01
  * Last modified: 2013-04-22
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *

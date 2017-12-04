@@ -8,6 +8,7 @@
  * rootcint brioDict.C -c include/brio/brio_record.h
  *
  */
+
 #ifndef BRIO_DETAIL_BRIO_RECORD_H
 #define BRIO_DETAIL_BRIO_RECORD_H 1
 
