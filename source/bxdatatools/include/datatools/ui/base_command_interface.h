@@ -25,6 +25,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <memory>
 
 // Third Party:
 // - Boost:
@@ -180,7 +181,7 @@ namespace datatools {
       struct pimpl_type;
       pimpl_type & _grab_pimpl();
       const pimpl_type & _get_pimpl() const;
-      boost::scoped_ptr<pimpl_type> _pimpl_; //!< Pimpl-ized data
+      std::unique_ptr<pimpl_type> _pimpl_; //!< Pimpl-ized data
 
       // Factory stuff :
       DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_command_interface)

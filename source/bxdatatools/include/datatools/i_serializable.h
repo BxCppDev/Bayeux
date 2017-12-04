@@ -346,7 +346,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  */
 #define DATATOOLS_SERIALIZATION_IMPLEMENTATION(ClassName,ClassSerialTag) \
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (ClassName,ClassSerialTag) \
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag) \
   /**/
 
 

@@ -33,12 +33,12 @@
 // Standard Library:
 #include <iostream>
 #include <string>
+#include <memory>
 
 // Third Party:
 // - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/utility.hpp>
-#include <boost/scoped_ptr.hpp>
 
 // This Project:
 #include <datatools/datatools_config.h>
@@ -119,7 +119,7 @@ namespace datatools {
 
     datatools::multi_properties _config_; //!< Configuration
     class LibraryCollection;
-    boost::scoped_ptr<LibraryCollection> _lib_entries_;
+    std::unique_ptr<LibraryCollection> _lib_entries_; //!< Register of loadable dynamic library descriptions
 
   };
 

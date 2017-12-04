@@ -200,8 +200,8 @@ namespace datatools {
     template<typename Q = T>
     typename std::enable_if<
       std::is_same<Q, T>::value &&
-      !std::is_const<Q>::value &&
-      !std::is_const<T>::value,
+    !std::is_const<Q>::value &&
+    !std::is_const<T>::value,
       Q&>::type grab()
     {
       DT_THROW_IF(_sp_.get() == nullptr, std::logic_error, "Handle holds no data!");
@@ -219,8 +219,8 @@ namespace datatools {
     template<typename Q = T>
     typename std::enable_if<
       std::is_same<Q, T>::value &&
-      !std::is_const<Q>::value &&
-      !std::is_const<T>::value,
+    !std::is_const<Q>::value &&
+    !std::is_const<T>::value,
       handle<const Q> >::type to_const() const
     {
       boost::shared_ptr<const T> csp = boost::const_pointer_cast<const T, T>(_sp_);
@@ -341,10 +341,8 @@ namespace boost {
 // define macro to let users of these compilers do this
 #define BOOST_SERIALIZATION_DATATOOLS_HANDLE(T)             \
   BOOST_SERIALIZATION_SHARED_PTR(T)                         \
-  BOOST_CLASS_TRACKING(                                     \
-                       ::datatools::handle< T >,            \
-                       ::boost::serialization::track_never  \
-                                  )                         \
+  BOOST_CLASS_TRACKING(::datatools::handle< T >,            \
+                       ::boost::serialization::track_never) \
   /**/
 #endif
 

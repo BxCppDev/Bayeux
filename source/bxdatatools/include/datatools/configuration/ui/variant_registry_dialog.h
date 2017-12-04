@@ -24,8 +24,6 @@
  *
  *    A dialog box for configuration variant registry.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_DIALOG_H
@@ -132,10 +130,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_DIALOG_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

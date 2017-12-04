@@ -7,7 +7,7 @@
 #include <datatools/things.h>
 
 // Third Party:
-#include <boost/scoped_ptr.hpp>
+// #include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/detail/reflection_macros.h>
@@ -142,10 +142,8 @@ namespace datatools {
 
 #endif // DATATOOLS_THINGS_REFLECT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

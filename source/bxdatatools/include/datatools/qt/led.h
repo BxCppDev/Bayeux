@@ -150,14 +150,14 @@ namespace datatools {
       led_color_type _on_color; //!< On color
       led_color_type _off_color; //!< Off color
       // int            _id_timer;
-      led_shape_type _shape; //!< Current shape of the LED
+      led_shape_type _shape;  //!< Current shape of the LED
       QStringList    _shapes; //!< List of supported shapes
       QStringList    _colors; //!< List of supported colors
 
     private:
 
-      QSvgRenderer * _on_renderer_ ; //!< The On value SVG renderer
-      QSvgRenderer * _off_renderer_ ; //!< The Off value SVG renderer
+      QSvgRenderer * _on_renderer_;  //!< The On value SVG renderer
+      QSvgRenderer * _off_renderer_; //!< The Off value SVG renderer
 
     };
 
@@ -167,10 +167,8 @@ namespace datatools {
 
 #endif // DATATOOLS_QT_LED_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

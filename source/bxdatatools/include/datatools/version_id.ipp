@@ -17,7 +17,7 @@ namespace datatools {
   /// Boost serialization template method
   template<class Archive>
   void version_id::serialize(Archive & archive_,
-                             const unsigned int /* version */)
+                             const unsigned int /* version_ */)
   {
     archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     archive_ & boost::serialization::make_nvp("major", _major_);

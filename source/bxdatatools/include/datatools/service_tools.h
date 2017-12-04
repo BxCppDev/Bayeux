@@ -25,6 +25,7 @@
  *   Service tools, typedefs.
  *
  */
+
 #ifndef DATATOOLS_SERVICE_TOOLS_H
 #define DATATOOLS_SERVICE_TOOLS_H
 

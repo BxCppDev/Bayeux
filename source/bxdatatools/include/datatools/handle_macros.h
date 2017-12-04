@@ -20,36 +20,34 @@
 
 // Macros:
 
-#define DATATOOLS_HANDLE_DECLARE(HandleVar,Type)	\
-  ::datatools::handle<Type> HandleVar;			\
-							\
+#define DATATOOLS_HANDLE_DECLARE(HandleVar,Type)  \
+  ::datatools::handle<Type> HandleVar;      \
+              \
   /**/
 
-#define DATATOOLS_HANDLE_DECLARE_NEW(HandleVar,Type)	\
-  ::datatools::handle<Type> HandleVar(new Type);	\
-							\
+#define DATATOOLS_HANDLE_DECLARE_NEW(HandleVar,Type)  \
+  ::datatools::handle<Type> HandleVar(new Type);  \
+              \
   /**/
 
-#define DATATOOLS_HANDLE_GET_REF(RefVar,HandleVar,Type)			\
-  DT_THROW_IF (! HandleVar,						\
-	       std::logic_error,					\
-	       "Handle '" << BOOST_PP_STRINGIZE(HandleVar) << "' has no data !"); \
+#define DATATOOLS_HANDLE_GET_REF(RefVar,HandleVar,Type)     \
+  DT_THROW_IF (! HandleVar,           \
+         std::logic_error,          \
+         "Handle '" << BOOST_PP_STRINGIZE(HandleVar) << "' has no data !"); \
   const Type& RefVar = HandleVar.get();
 /**/
 
-#define DATATOOLS_HANDLE_GRAB_REF(RefVar,HandleVar,Type)		\
-  DT_THROW_IF (! HandleVar,						\
-	       std::logic_error,					\
-	       "Handle '" << BOOST_PP_STRINGIZE(HandleVar) << "' has no data !"); \
+#define DATATOOLS_HANDLE_GRAB_REF(RefVar,HandleVar,Type)    \
+  DT_THROW_IF (! HandleVar,           \
+         std::logic_error,          \
+         "Handle '" << BOOST_PP_STRINGIZE(HandleVar) << "' has no data !"); \
   Type& RefVar = HandleVar.grab();
 /**/
 
 #endif // DATATOOLS_HANDLE_MACROS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -55,19 +55,19 @@ namespace datatools {
 
   /// Boost serialization template method
   template<class Archive>
-  void properties::serialize(Archive & archive, const unsigned int version)
+  void properties::serialize(Archive & archive_, const unsigned int version_)
   {
-    if (version == 1 ) {
+    if (version_ == 1 ) {
       /* from version 1 we inherit explicitely from the
        * 'datatools::serialization::i_serializable' abstract class
        */
-      archive & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
+      archive_ & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
     }
-    else if (version >= 2) {
-      archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    else if (version_ >= 2) {
+      archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     }
-    archive & boost::serialization::make_nvp("description", _description_);
-    archive & boost::serialization::make_nvp("properties",  _props_);
+    archive_ & boost::serialization::make_nvp("description", _description_);
+    archive_ & boost::serialization::make_nvp("properties",  _props_);
   }
 
 } // end of namespace datatools

@@ -25,8 +25,6 @@
  *
  *   The physical instance of a configuration variant.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_VARIANT_PHYSICAL_H

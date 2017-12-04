@@ -32,10 +32,11 @@
 // Standard Library:
 #include <iostream>
 #include <typeinfo>
+#include <memory>
 
 // Third Party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
+// #include <boost/scoped_ptr.hpp>
 
 namespace datatools {
 
@@ -79,18 +80,17 @@ namespace datatools {
 /// Macro to declare a caster class
 #define DATATOOLS_CASTER_DECLARATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
   private:                                                              \
-  static boost::scoped_ptr<datatools::caster<From,ToBase,ToDaughter> > CasterId; \
+  static std::unique_ptr<datatools::caster<From,ToBase,ToDaughter> > CasterId; \
 public:                                                                 \
  virtual datatools::i_caster<From,ToBase>* CasterGetter() const;        \
  /**/
 
 /// Macro to implement a caster class
 #define DATATOOLS_CASTER_IMPLEMENTATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
-  boost::scoped_ptr<datatools::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
+  std::unique_ptr<datatools::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
   datatools::i_caster<From,ToBase>* ToDaughter::CasterGetter() const {  \
     if (ToDaughter::CasterId.get() == 0) {                              \
-      ToDaughter::CasterId.reset(                                       \
-                                 new datatools::caster<From,ToBase,ToDaughter>); \
+      ToDaughter::CasterId.reset(new datatools::caster<From,ToBase,ToDaughter>); \
     }                                                                   \
     return ToDaughter::CasterId.get();                                  \
   }                                                                     \

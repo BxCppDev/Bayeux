@@ -24,8 +24,6 @@
  *
  *   A viewer/editor widget for configuration variant registry.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_UI_VARIANT_REPOSITORY_VIEWER_H
@@ -34,11 +32,11 @@
 // Standard library:
 #include <string>
 #include <map>
+#include <memory>
 
 // Third party:
 // - Boost:
 #include <boost/cstdint.hpp>
-#include <boost/scoped_ptr.hpp>
 // - Qt:
 #include <QWidget>
 #include <QObject>
@@ -243,7 +241,7 @@ namespace datatools {
         QComboBox *   _logging_combo_;            //!< Combo to select the logging prority
         QIcon *       _unaccomplished_icon_;      //!< Unaccomplished icon
         QIcon *       _null_icon_;                //!< Null icon
-        boost::scoped_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
+        std::unique_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
 
       };
 
@@ -255,10 +253,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_UI_VARIANT_REPOSITORY_VIEWER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

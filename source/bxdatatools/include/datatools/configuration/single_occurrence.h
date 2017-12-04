@@ -24,8 +24,6 @@
  *
  *   Some utilities for the description of configuration variants and parameters.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_SINGLE_OCCURRENCE_H

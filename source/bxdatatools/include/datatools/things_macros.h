@@ -22,7 +22,7 @@
     DT_THROW_IF (!ThingsVar.is_a<BankType>(BankName),                   \
                  std::logic_error,                                      \
                  "No bank named '" << BankName << "' in '" << BOOST_PP_STRINGIZE(HandleVar) << "' !"); \
-  }									\
+  }                 \
     const BankType& BankVar = ThingsVar.get<BankType>(BankName);
 /**/
 
@@ -37,10 +37,8 @@
 
 #endif // DATATOOLS_THINGS_MACROS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

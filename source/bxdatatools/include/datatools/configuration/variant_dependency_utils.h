@@ -41,9 +41,9 @@ namespace datatools {
     // Type alias for smart pointer on base_dependency_logic objects;
     typedef std::shared_ptr<base_dependency_logic> dependency_logic_ptr_type;
 
-  }  // end of namespace configuration
+  } // end of namespace configuration
 
-}  // end of namespace datatools
+} // end of namespace datatools
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_DEPENDENCY_UTILS_H
 

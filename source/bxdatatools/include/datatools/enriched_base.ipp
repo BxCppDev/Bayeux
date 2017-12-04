@@ -18,15 +18,15 @@
 namespace datatools {
 
   template<class Archive>
-  void enriched_base::serialize (Archive & archive,
-                                 const unsigned int /*version*/)
+  void enriched_base::serialize (Archive & archive_,
+                                 const unsigned int /*version_*/)
   {
-    archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    archive & boost::serialization::make_nvp("name",              _name_);
-    archive & boost::serialization::make_nvp("display_name",      _display_name_);
-    archive & boost::serialization::make_nvp("terse_description", _terse_description_);
-    archive & boost::serialization::make_nvp("logging_priority",  _logging_priority_);
-    archive & boost::serialization::make_nvp("auxiliaries",       _auxiliaries_);
+    archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    archive_ & boost::serialization::make_nvp("name",              _name_);
+    archive_ & boost::serialization::make_nvp("display_name",      _display_name_);
+    archive_ & boost::serialization::make_nvp("terse_description", _terse_description_);
+    archive_ & boost::serialization::make_nvp("logging_priority",  _logging_priority_);
+    archive_ & boost::serialization::make_nvp("auxiliaries",       _auxiliaries_);
     return;
   }
 

@@ -342,8 +342,8 @@ namespace datatools {
 
     private:
 
-      std::string    _scheme_;    //!< Optinal scheme associated to the path format
-      node_dict_type _nodes_;     //!< Dictionary of nodes in the IHS
+      std::string    _scheme_; //!< Optinal scheme associated to the path format
+      node_dict_type _nodes_;  //!< Dictionary of nodes in the IHS
 
     };
 
