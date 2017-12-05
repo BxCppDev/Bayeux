@@ -6,6 +6,7 @@
 #  Bayeux_CMAKE_CONFIG_DIR - Bayeux CMake config directory
 #  Bayeux_qt_FOUND         - Bayeux Qt usage flag
 #  Bayeux_geant4_FOUND     - Bayeux Geant4 module availability flag
+#  Bayeux_root_FOUND       - Bayeux ROOT usage flag
 #  Bayeux_mcnp_FOUND       - Bayeux MCNP module availability flag
 #  Bayeux_lahague_FOUND    - Bayeux lahague module availability flag
 #  Bayeux_developer_tools_FOUND
@@ -42,6 +43,7 @@ set(Bayeux_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}")
 set(Bayeux_qt_FOUND     "@Bayeux_WITH_QT@")
 set(Bayeux_geant4_FOUND "@BAYEUX_WITH_GEANT4_MODULE@")
 set(Bayeux_mcnp_FOUND   "@BAYEUX_WITH_MCNP_MODULE@")
+set(Bayeux_root_FOUND   "@Bayeux_WITH_ROOT@")
 set(Bayeux_lahague_FOUND "@BAYEUX_WITH_LAHAGUE@")
 set(Bayeux_developer_tools_FOUND "@BAYEUX_WITH_DEVELOPER_TOOLS@")
 set(Bayeux_docs_FOUND "@BAYEUX_WITH_DOCS@")
@@ -49,7 +51,7 @@ set(Bayeux_docs_FOUND "@BAYEUX_WITH_DOCS@")
 #-----------------------------------------------------------------------
 # Start of CMake Generated
 @PACKAGE_INIT@
-# END OF CMAKE GENERATED
+# End of Cmake Generated
 
 #-----------------------------------------------------------------------
 # set_and_check(Bayeux_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/@PROJECT_CMAKEDIR_TO_INCLUDEDIR@")
@@ -66,10 +68,11 @@ set(Bayeux_docs_FOUND "@BAYEUX_WITH_DOCS@")
 #   (to avoid spurious collision with system Boost in client packages)
 set(BOOST_ROOT @Bayeux_BOOST_ROOT@)
 set(BAYEUX_BOOST_VERSION @Boost_MAJOR_VERSION@.@Boost_MINOR_VERSION@)
+set(BAYEUX_BOOST_COMPONENTS @BAYEUX_BOOST_COMPONENTS@)
 set(Boost_NO_BOOST_CMAKE ON)
 message( STATUS "Searching Boost ${BAYEUX_BOOST_VERSION} from ${BOOST_ROOT} ...")
 find_package(Boost ${BAYEUX_BOOST_VERSION} EXACT REQUIRED
-  COMPONENTS @BAYEUX_BOOST_COMPONENTS@
+  COMPONENTS ${BAYEUX_BOOST_COMPONENTS}
   )
 
 # - CAMP
@@ -89,14 +92,14 @@ set(BAYEUX_GSL_VERSION @GSL_VERSION@)
 find_package(GSL ${BAYEUX_GSL_VERSION} EXACT REQUIRED)
 
 # - ROOT
-set(BAYEUX_WITH_ROOT @Bayeux_WITH_ROOT@)
-if(BAYEUX_WITH_ROOT)
+set(Bayeux_root_FOUND @Bayeux_WITH_ROOT@)
+if(Bayeux_root_FOUND)
   # ROOT can F-up the module path and insert it's own
   # modules. Prevent it doing this.
   set(ROOT_DIR @ROOT_DIR@)
   set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
   set(BAYEUX_ROOT_VERSION @ROOT_VERSION@)
-  set(BAYEUX_ROOT_COMPONENTS RIO Tree)
+  set(BAYEUX_ROOT_COMPONENTS @BAYEUX_ROOT_COMPONENTS@)
   find_package(ROOT ${BAYEUX_ROOT_VERSION} EXACT REQUIRED
     COMPONENTS ${BAYEUX_ROOT_COMPONENTS}
     )
@@ -113,8 +116,8 @@ if(Bayeux_qt_FOUND)
   set(Qt5Widgets_DIR @Qt5Widgets_DIR@)
   set(Qt5Gui_DIR     @Qt5Gui_DIR@)
   set(Qt5Svg_DIR     @Qt5Svg_DIR@)
-  find_package(Qt5Core    @Qt5Core_VERSION@     EXACT REQUIRED)
-  find_package(Qt5Widgets @Qt5Widgets_VERSION@     EXACT REQUIRED)
+  find_package(Qt5Core    @Qt5Core_VERSION@    EXACT REQUIRED)
+  find_package(Qt5Widgets @Qt5Widgets_VERSION@ EXACT REQUIRED)
   find_package(Qt5Gui     @Qt5Gui_VERSION@     EXACT REQUIRED)
   find_package(Qt5Svg     @Qt5Svg_VERSION@     EXACT REQUIRED)
 endif()
@@ -137,3 +140,5 @@ include("${CMAKE_CURRENT_LIST_DIR}/BayeuxDocs.cmake" OPTIONAL)
 # Component validation
 #
 check_required_components(Bayeux)
+
+#-----------------------------------------------------------------------
