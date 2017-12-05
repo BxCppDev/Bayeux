@@ -491,13 +491,13 @@ namespace datatools {
 
     private:
 
-      std::string           _name_;           //!< Unit name
-      std::set<std::string> _symbols_;        //!< Unit symbols
-      std::string           _main_symbol_;    //!< The main unit symbol
+      std::string           _name_;            //!< Unit name
+      std::set<std::string> _symbols_;         //!< Unit symbols
+      std::string           _main_symbol_;     //!< The main unit symbol
       std::string           _dimension_label_; //!< Label of the unit dimension
-      std::string           _dimension_meta_; //!< Meta information about the unit dimension
-      bool                  _SI_main_;        //!< Flag the SI main unit
-      double                _value_;          //!< Unit value (CLHEP convention)
+      std::string           _dimension_meta_;  //!< Meta information about the unit dimension
+      bool                  _SI_main_;         //!< Flag the SI main unit
+      double                _value_;           //!< Unit value (CLHEP convention)
 
     };
 
@@ -520,7 +520,8 @@ namespace datatools {
         BD_AMOUNT               =  6, // [N]
         BD_AMOUNT_OF_SUBSTANCE  =  6, // [N]
         BD_LUMINOUS_INTENSITY   =  7, // [J]
-        BD_LAST                 =  8
+        BD_PROCEDURE_DEFINED    =  8, // [?] For "arbitrary/procedure defined" units
+        BD_LAST                 =  BD_PROCEDURE_DEFINED + 1
       };
 
       static std::string base_dimension_to_symbol(base_dimension_type);
@@ -612,10 +613,10 @@ namespace datatools {
 
     private:
 
-      std::string           _label_;               //!< Label of the unit dimension
-      std::set<std::string> _unit_names_;          //!< Set of names of the units in this dimension
-      std::string           _default_unit_name_;   //!< Default unit name
-      int                   _dimensional_powers_[8]; //!< Powers of base units (dimensional analysis)
+      std::string           _label_;                 //!< Label of the unit dimension
+      std::set<std::string> _unit_names_;            //!< Set of names of the units in this dimension
+      std::string           _default_unit_name_;     //!< Default unit name
+      int                   _dimensional_powers_[9]; //!< Powers of base units (dimensional analysis)
 
     };
 

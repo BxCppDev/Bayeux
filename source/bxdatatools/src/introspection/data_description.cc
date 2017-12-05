@@ -218,7 +218,7 @@ namespace datatools {
 
     const std::string & data_description::get_type_id() const
     {
-     DT_THROW_IF(!has_type_id(), std::logic_error, "No type identifier is available!");
+      DT_THROW_IF(!has_type_id(), std::logic_error, "No type identifier is available!");
       return _type_id_.get();
     }
 
@@ -249,6 +249,16 @@ namespace datatools {
       if (_layout_ == DATA_LAYOUT_VECTOR_WITH_FIXED_SIZE) {
         // Fixed size for vector must be set:
         if (! has_vector_fixed_size()) {
+          return false;
+        }
+      }
+
+      if (has_type_id()) {
+        if (! ::datatools::introspection::is_enum(_type_)
+            && ! ::datatools::introspection::is_user(_type_)) {
+          return false;
+        }
+        if (get_type_id().empty()) {
           return false;
         }
       }
@@ -300,6 +310,7 @@ namespace datatools {
       }
 
       if (::datatools::introspection::is_real(_type_)) {
+        // Unit support is only for real variables:
         if (!has_unit_info()) {
           unit_info ui;
           datatools::properties ui_config;

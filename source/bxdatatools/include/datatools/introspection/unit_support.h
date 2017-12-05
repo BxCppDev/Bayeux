@@ -125,6 +125,25 @@ namespace datatools {
                                         const std::string & preferred_unit_symbol_ = "");
 
       //! Initialize from a set of properties
+      //!
+      //! Examples:
+      //! a) No unit support:
+      //! \code
+      //! support : string = "none"
+      //! \endcode
+      //!
+      //! b) Implicit unit support:
+      //! \code
+      //! support       : string = "implicit_unit"
+      //! implicit_unit : string = "second"
+      //! \endcode
+      //!
+      //! c) Explicit unit dimension support:
+      //! \code
+      //! support                 : string = "explicit_unit_dimension"
+      //! explicit_unit_dimension : string = "time"
+      //! preferred_unit          : string = "ms"
+      //! \endcode
       void initialize(const datatools::properties &);
 
       //! Reset
@@ -163,7 +182,7 @@ namespace datatools {
       //! That's fine but is not true with Boost 1.55.
       //!
       //! The use of "boost::none" semantic was introduced to prepare the support for recent C++
-      //! compilers (with C++11 support) that seem to not support anymore the following semantics:
+      //! compilers (with C++11 support) that seems to not support anymore the following semantics:
       //! \code
       //! boost::optional<unit_info> opt;
       //! ...
@@ -176,15 +195,15 @@ namespace datatools {
       //! if (opt != boost::none) { /* do something */ }
       //! \endcode
       //! However, for builtin types (int, float...), it works.
-      //! This must be clarified in the near future.
+      //! This must be clarified in the future.
       bool operator==(const unit_info & ui_) const;
 
     private:
 
-      unit_support_type _us_; //!< Type of unit support
-      std::string _implicit_unit_symbol_; //!< Implicit unit symbol for real data
+      unit_support_type _us_;                      //!< Type of unit support
+      std::string _implicit_unit_symbol_;          //!< Implicit unit symbol for real data
       std::string _explicit_unit_dimension_label_; //!< Explicit unit dimension label for real data
-      std::string _preferred_unit_symbol_; //!< Preferred unit symbol for real data
+      std::string _preferred_unit_symbol_;         //!< Preferred unit symbol for real data
 
     };
 

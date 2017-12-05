@@ -993,6 +993,7 @@ namespace datatools {
       case BD_TEMPERATURE        : return "theta";
       case BD_AMOUNT             : return "N";
       case BD_LUMINOUS_INTENSITY : return "J";
+      case BD_PROCEDURE_DEFINED  : return "?";
       default                    : break;
       }
       return "";
@@ -1009,6 +1010,7 @@ namespace datatools {
       case BD_TEMPERATURE        : return "temperature";
       case BD_AMOUNT             : return "amount";
       case BD_LUMINOUS_INTENSITY : return "luminous_intensity";
+      case BD_PROCEDURE_DEFINED  : return "procedure_defined";
       default                    : break;
       }
       return "";
@@ -1039,6 +1041,9 @@ namespace datatools {
       if (symbol_ == base_dimension_to_symbol(BD_LUMINOUS_INTENSITY)) {
         return BD_LUMINOUS_INTENSITY;
       }
+      if (symbol_ == base_dimension_to_symbol(BD_PROCEDURE_DEFINED)) {
+        return BD_PROCEDURE_DEFINED;
+      }
       return BD_INVALID;
     }
 
@@ -1066,6 +1071,9 @@ namespace datatools {
       }
       if (label_ == base_dimension_to_label(BD_LUMINOUS_INTENSITY)) {
         return BD_LUMINOUS_INTENSITY;
+      }
+      if (label_ == base_dimension_to_label(BD_PROCEDURE_DEFINED)) {
+        return BD_PROCEDURE_DEFINED;
       }
       return BD_INVALID;
     }
@@ -1223,7 +1231,7 @@ namespace datatools {
     void unit_dimension::reset_dimensional_powers()
     {
       _dimensional_powers_[BD_INVALID] = 1;
-      for (int i = BD_MASS; i <= BD_LUMINOUS_INTENSITY; i++) {
+      for (int i = BD_MASS; i < BD_LAST; i++) {
         _dimensional_powers_[i] = 0;
       }
       return;
@@ -1351,6 +1359,20 @@ namespace datatools {
       return true;
     }
 
+    // void unit_dimension::make_arbitrary()
+    // {
+    //   _label_ = "procedure_defined";
+    //   _unit_names_.insert("AU");
+    //   _unit_names_.insert("arb.unit");
+    //   _unit_names_.insert("pdu");
+    //   _unit_names_.insert("p.d.u.");
+    //   _default_unit_name_ = "AU";
+    //   for (int i = 0; i < 9; i++) {
+    //     _dimensional_powers_[i] = 0;
+    //   }
+    //   _dimensional_powers_[9] = 1;
+    //   return;
+    // }
 
     void unit_dimension::tree_dump(std::ostream & out_,
                                    const std::string & title_,
@@ -1658,6 +1680,11 @@ namespace datatools {
 
     void registry::register_standard_units()
     {
+      // Arbitrary unit [?]:
+      registration(unit("arb.unit",  "procedure_defined;[?]", 1.0, true));
+      registration(unit("pdu",       "procedure_defined", 1.0));
+      registration(unit("p.d.u.",    "procedure_defined", 1.0));
+
       // Length [L]:
       registration(unit("meter",       "m",  "length;[L]",         CLHEP::meter, true));
       registration(unit("angstrom",   "AA",  "length",             CLHEP::angstrom));
@@ -1673,7 +1700,7 @@ namespace datatools {
       registration(unit("hectometer", "hm",  "length",      100. * CLHEP::meter));
       registration(unit("kilometer",  "km",  "length",             CLHEP::kilometer));
       registration(unit("astronomical_unit", "au"
-                        /**/          "AU",  "length", 1.4960e11 * CLHEP::meter));
+                        /**/          "AU",  "length", 149597870700. * CLHEP::meter)); // BIPM + IAU2012
       const double light_year = 9.4607e15 * CLHEP::meter;
       registration(unit("light_year",      "ly",  "length", light_year));
       registration(unit("kilolight_year", "kly",  "length", kilo() * light_year));

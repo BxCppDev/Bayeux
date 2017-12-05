@@ -52,10 +52,10 @@ namespace datatools {
         case DATA_TYPE_INT64   : return typeid(int64_t);
         case DATA_TYPE_UINT64  : return typeid(uint64_t);
         case DATA_TYPE_FLOAT   : return typeid(float);
-        case DATA_TYPE_DOUBLE   : return typeid(double);
-        case DATA_TYPE_STRING :
-        case DATA_TYPE_PATH : return typeid(std::string);
-        case DATA_TYPE_ENUM : return typeid(std::string);
+        case DATA_TYPE_DOUBLE  : return typeid(double);
+        case DATA_TYPE_STRING  : return typeid(std::string);
+        case DATA_TYPE_PATH    : return typeid(std::string);
+        case DATA_TYPE_ENUM    : return typeid(std::string);
         default :
           DT_THROW(std::logic_error, "Unsupported scalar data type '" << to_string(dt_) << "'!");
         }
@@ -72,9 +72,9 @@ namespace datatools {
         case DATA_TYPE_UINT64  : return typeid(std::vector<uint64_t>);
         case DATA_TYPE_FLOAT   : return typeid(std::vector<float>);
         case DATA_TYPE_DOUBLE  : return typeid(std::vector<double>);
-        case DATA_TYPE_STRING :
-        case DATA_TYPE_PATH : return typeid(std::vector<std::string>);
-        case DATA_TYPE_ENUM : return typeid(std::vector<std::string>);
+        case DATA_TYPE_STRING  : return typeid(std::vector<std::string>);
+        case DATA_TYPE_PATH    : return typeid(std::vector<std::string>);
+        case DATA_TYPE_ENUM    : return typeid(std::vector<std::string>);
         default :
           DT_THROW(std::logic_error, "Unsupported vector data type '" << to_string(dt_) << "'!");
         }
@@ -136,9 +136,9 @@ namespace datatools {
         case DATA_TYPE_UINT64  : value_ = uint64_t(0); return;
         case DATA_TYPE_FLOAT   : value_ = std::numeric_limits<float>::quiet_NaN(); return;
         case DATA_TYPE_DOUBLE  : value_ = std::numeric_limits<double>::quiet_NaN(); return;
-        case DATA_TYPE_STRING :
-        case DATA_TYPE_PATH : value_ = std::string(); return;
-        case DATA_TYPE_ENUM : value_ = std::string(); return;
+        case DATA_TYPE_STRING  : value_ = std::string(); return;
+        case DATA_TYPE_PATH    : value_ = std::string(); return;
+        case DATA_TYPE_ENUM    : value_ = std::string(); return;
         case DATA_TYPE_VOID :
         default : return;
         }
@@ -155,9 +155,9 @@ namespace datatools {
         case DATA_TYPE_UINT64  : value_ = std::vector<uint64_t>(); return;
         case DATA_TYPE_FLOAT   : value_ = std::vector<float>(); return;
         case DATA_TYPE_DOUBLE  : value_ = std::vector<double>(); return;
-        case DATA_TYPE_STRING :
-        case DATA_TYPE_PATH : value_ = std::vector<std::string>(); return;
-        case DATA_TYPE_ENUM : value_ = std::vector<std::string>(); return;
+        case DATA_TYPE_STRING  : value_ = std::vector<std::string>(); return;
+        case DATA_TYPE_PATH    : value_ = std::vector<std::string>(); return;
+        case DATA_TYPE_ENUM    : value_ = std::vector<std::string>(); return;
         default : return;
         }
       } else if (layout_label_ == "list") {
@@ -173,7 +173,7 @@ namespace datatools {
         case DATA_TYPE_UINT64  : value_ = std::list<uint64_t>(); return;
         case DATA_TYPE_FLOAT   : value_ = std::list<float>(); return;
         case DATA_TYPE_DOUBLE  : value_ = std::list<double>(); return;
-        case DATA_TYPE_STRING :
+        case DATA_TYPE_STRING : value_ = std::list<std::string>(); return;
         case DATA_TYPE_PATH : value_ = std::list<std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::list<std::string>(); return;
         default : return;
@@ -191,7 +191,7 @@ namespace datatools {
         case DATA_TYPE_UINT64  : value_ = std::map<std::string,uint64_t>(); return;
         case DATA_TYPE_FLOAT   :  value_ = std::map<std::string,float>(); return;
         case DATA_TYPE_DOUBLE  :  value_ = std::map<std::string,double>(); return;
-        case DATA_TYPE_STRING :
+        case DATA_TYPE_STRING : value_ = std::map<std::string,std::string>(); return;
         case DATA_TYPE_PATH : value_ = std::map<std::string,std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::map<std::string,std::string>(); return;
         default : return;

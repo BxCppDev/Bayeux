@@ -142,6 +142,20 @@ namespace datatools {
       void initialize();
 
       //! Initialization
+      /**
+       *  Example:
+       *  \code
+       *  type   : string = "real"
+       *  layout : string = "scalar"
+       *  unit.support                 : string = "explicit_unit_dimension"
+       *  unit.explicit_unit_dimension : string = "mass"
+       *  unit.preferred_unit          : string = "kg"
+       *  \endcode
+       *
+       *
+       *
+       *
+       */
       void initialize(const datatools::properties &);
 
       //! Reset

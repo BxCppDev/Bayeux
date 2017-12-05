@@ -289,7 +289,11 @@ namespace datatools {
         }
       }
 
-      DT_THROW_IF(!is_valid(), std::logic_error, "Invalid unit info!");
+      if (_us_ == UNIT_SUPPORT_INVALID) {
+        // Default: no unit support
+        _us_ = UNIT_SUPPORT_NONE;
+      }
+      // DT_THROW_IF(!is_valid(), std::logic_error, "Invalid unit info!");
       return;
     }
 
