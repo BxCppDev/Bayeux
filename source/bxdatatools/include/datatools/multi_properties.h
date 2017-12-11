@@ -2,11 +2,11 @@
 /* multi_properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009
- * Last modified: 2016-05-20
+ * Last modified: 2017-12-10
  *
  * License:
  *
- * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,7 +356,8 @@ namespace datatools {
         DONT_CLEAR            = bit_mask::bit07, ///< Don't clear before parsing bit (read)
         REQUESTED_TOPIC       = bit_mask::bit08, ///< Requested topic (read/write)
         RESOLVE_PATH          = bit_mask::bit09, ///< Resolve path for input filename (read/write)
-        START_WITHOUT_LABELS  = bit_mask::bit10  ///< Start without key/meta labels and let the reader set them
+        START_WITHOUT_LABELS  = bit_mask::bit10, ///< Start without key/meta labels and let the reader set them
+        WITHOUT_DECORATION    = bit_mask::bit11  ///< Do not use decoration
       };
 
       /// Default constructor
@@ -418,6 +419,7 @@ namespace datatools {
       std::string _topic_;            ///< Topic to be validated
       bool _resolve_path_;            ///< Explicitely resolve path for input/output filenames (read/write)
       bool _start_without_labels_;    ///< Start without labels (read)
+      bool _without_decoration_;      ///< Flag to disable decoration (write)
 
       // Working parsing data:
       std::string _current_filename_;    ///< Current filename

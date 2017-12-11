@@ -39,6 +39,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <memory>
 
 // Third Party:
 // - Boost:
@@ -347,7 +348,8 @@ namespace datatools {
     };
 
     //! \brief Default abstract class for key validator.
-    class default_key_validator : public basic_key_validator
+    class default_key_validator
+      : public basic_key_validator
     {
     public:
       static const std::string & allowed_chars();
@@ -455,7 +457,7 @@ namespace datatools {
 
       /// Set the section info
       void set_section_info(const std::string & section_name_,
-                            int section_start_line_number);
+                            int section_start_line_number_);
 
       /// Reset the section info
       void reset_section_info();
@@ -755,7 +757,7 @@ namespace datatools {
     void export_all(properties & props_) const;
 
     //! Export all properties into another properties container adding a prefix
-    void export_all_adding_prefix(properties & props_, const std::string & prefix) const;
+    void export_all_adding_prefix(properties & props_, const std::string & prefix_) const;
 
     //! Export all properties with key/name starting with a given prefix to another properties container
     void export_starting_with(properties & props_,
@@ -901,7 +903,7 @@ namespace datatools {
                const std::string & desc_ = "", bool lock_ = false);
 
     //! Store a integer vector property with a given key/name and value
-    void store(const std::string & prop_key_, const data::vint & value,
+    void store(const std::string & prop_key_, const data::vint & value_,
                const std::string & desc_ = "", bool lock_ = false);
 
     //! Store a real vector property with a given key/name and value
@@ -1180,6 +1182,7 @@ namespace datatools {
     static default_key_validator & global_default_key_validator();
 
   private:
+
     void _check_nokey_(const std::string & prop_key_) const;
 
     void _check_key_(const std::string & prop_key_, data ** data_);
@@ -1191,9 +1194,15 @@ namespace datatools {
     void _clear_key_validator_();
 
   private:
+
+    // Management:
     bool                        _debug_;                  //!< Debug flag
+
+    // Internal data:
     std::string                 _description_;            //!< Description string
     pmap                        _props_;                  //!< Internal list of properties
+
+    // Not serialized:
     const basic_key_validator * _key_validator_;          //!< Reference to the embedded key validator
     bool                        _key_validator_deletion_; //!< Ownership flag for the embedded key validator
 

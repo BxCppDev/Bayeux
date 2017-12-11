@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
+#include <iomanip>
 
 // - Boost:
 #include <boost/algorithm/string.hpp>
@@ -618,6 +619,9 @@ namespace datatools {
     if (options_ & START_WITHOUT_LABELS) {
       _start_without_labels_ = true;
     }
+    if (options_ & WITHOUT_DECORATION) {
+      _without_decoration_ = true;
+    }
     if (!topic_.empty()) {
       set_topic(topic_);
     }
@@ -646,6 +650,7 @@ namespace datatools {
     _resolve_path_ = false;
     _current_line_number_ = -1;
     _start_without_labels_ = false;
+    _without_decoration_ = false;
     return;
   }
 
@@ -751,6 +756,12 @@ namespace datatools {
     if (_skip_private_properties_) {
       pcfg_options |= properties::config::SKIP_PRIVATE;
     }
+
+    if (!_without_decoration_) {
+      out_ << "# -*- mode: conf-unix; -*-" << std::endl;
+      out_ << std::endl;
+    }
+
     properties::config pcfg(pcfg_options);
     if (_header_footer_) {
       out_ << _format::COMMENT_CHAR << _format::SPACE_CHAR
@@ -790,15 +801,22 @@ namespace datatools {
         continue;
       }
 
-      out_ << _format::OPEN_CHAR
+      std::ostringstream entry_head_oss;
+      entry_head_oss << _format::OPEN_CHAR
             << target_.get_key_label() << _format::ASSIGN_CHAR
             << _format::QUOTES_CHAR << name << _format::QUOTES_CHAR;
       if (an_entry.has_meta()) {
-        out_ << _format::SPACE_CHAR
+        entry_head_oss << _format::SPACE_CHAR
               << target_.get_meta_label() << _format::ASSIGN_CHAR
               << _format::QUOTES_CHAR << an_entry.get_meta() << _format::QUOTES_CHAR;
       }
-      out_ << _format::CLOSE_CHAR << std::endl << std::endl;
+      entry_head_oss << _format::CLOSE_CHAR;
+
+      if (!_without_decoration_) {
+        std::size_t len = entry_head_oss.str().length();
+        out_ << std::setfill('#') << std::setw(len) << "" << std::endl;
+      }
+      out_ << entry_head_oss.str() << std::endl << std::endl;
 
       pcfg.write(out_, an_entry.get_properties());
       out_ << std::endl;

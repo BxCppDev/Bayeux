@@ -28,7 +28,6 @@
 // - Boost:
 #include <boost/optional.hpp>
 #include <boost/any.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/program_options.hpp>
 // - Bayeux/datatools:
 #include <datatools/properties.h>
