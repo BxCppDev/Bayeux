@@ -23,6 +23,7 @@
 
 // Standard libraries:
 #include <string>
+#include <list>
 
 namespace datatools {
 
@@ -85,28 +86,10 @@ namespace datatools {
       //! Check if an absolute path if a child of another absolute path
       bool is_child_of(const std::string & child_candidate_, const std::string & parent_path_);
 
+      //! Return the parent interface path of a command or interface path
+      std::string build_path(const std::list<std::string> & segments_);
+
     } // namespace path
-
-    namespace ansi_colors {
-
-      const std::string & black();
-      const std::string & red();
-      const std::string & bright_red();
-      const std::string & green();
-      const std::string & bright_green();
-      const std::string & yellow();
-      const std::string & blue();
-      const std::string & bright_blue();
-      const std::string & magenta();
-      const std::string & bright_magenta();
-      const std::string & cyan();
-      const std::string & white();
-      const std::string & blink_slow();
-      const std::string & blink_fast();
-      const std::string & blink_off();
-      const std::string & reset();
-
-    } // namespace ansi_colors
 
   } // namespace ui
 

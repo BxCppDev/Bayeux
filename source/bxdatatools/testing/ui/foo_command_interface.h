@@ -27,7 +27,8 @@
 #include "foo_commands.h"
 
 //! \brief Foo command interface
-struct foo_command_interface : public datatools::ui::target_command_interface<foo>
+struct foo_command_interface
+  : public datatools::ui::target_command_interface<foo>
 {
   //! Default constructor
   foo_command_interface(foo & target_,
@@ -117,10 +118,8 @@ struct foo_command_interface : public datatools::ui::target_command_interface<fo
 
 #endif // DATATOOLS_TESTING_UI_FOO_COMMAND_INTERFACE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

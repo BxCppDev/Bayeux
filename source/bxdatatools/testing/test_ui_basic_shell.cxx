@@ -31,6 +31,7 @@
 #include <datatools/logger.h>
 #include <datatools/command_utils.h>
 #include <datatools/ui/utils.h>
+#include <datatools/ui/traits.h>
 #include "ui/foo_command_interface.h"
 
 int main(int argc_, char * argv_[])
@@ -48,6 +49,7 @@ int main(int argc_, char * argv_[])
     foo bar;
     foo joe;
     foo james;
+    foo gnu;
 
     // The command interfaces:
     foo_command_interface barCmdInter(bar, "bar", "The bar object interface");
@@ -58,6 +60,11 @@ int main(int argc_, char * argv_[])
     foo_command_interface joeCmdInter(joe, "joe", "The joe object interface");
     joeCmdInter.initialize_simple();
     joeCmdInter.tree_dump(std::clog, "Joe command interface: ");
+    std::clog << std::endl;
+
+    foo_command_interface gnuCmdInter(gnu, "gnu", "The gnu object interface");
+    gnuCmdInter.initialize_simple();
+    gnuCmdInter.tree_dump(std::clog, "Gnu command interface: ");
     std::clog << std::endl;
 
     foo_command_interface jamesCmdInter(james, "james", "The james object interface");
@@ -75,25 +82,36 @@ int main(int argc_, char * argv_[])
     fooIHS.add_interface("/", "test");
     fooIHS.add_interface("/test", joeCmdInter);
     fooIHS.add_interface("/", "dummy");
+    fooIHS.add_interface("/", "baz");
+    fooIHS.add_interface("/baz", "gnat");
+    fooIHS.add_interface("/baz/gnat", gnuCmdInter);
     fooIHS.add_interface("/", "void");
-    // fooIHS.add_interface("/", "-bad");
     fooIHS.add_interface("/dummy", ".what");
     fooIHS.add_interface("/dummy/.what", jamesCmdInter);
     fooIHS.tree_dump(std::clog, fooIHS.get_display_name());
     std::clog << std::endl;
 
+    // Add specific traits:
+    fooIHS.set_trait("/dummy/.what/james/set_value", datatools::ui::traits::disabled_label());
+    fooIHS.set_trait("/bar/set_sum", datatools::ui::traits::broken_label());
+    fooIHS.set_trait("/baz/gnat/gnu", datatools::ui::traits::broken_label());
+    fooIHS.set_trait("/test/joe", datatools::ui::traits::hidden_label());
+    fooIHS.set_trait("/void", datatools::ui::traits::disabled_label());
+
     // The foo shell:
     datatools::ui::basic_shell fooShell;
     fooShell.set_name("fooShell"); // Mandatory
+    fooShell.set_title("foo shell"); // Mandatory
     fooShell.set_logging(datatools::logger::PRIO_NOTICE);
     fooShell.set_version(datatools::version_id(1,0));
     fooShell.set_prompt("%n:%W> ");
     fooShell.set_continuation_prompt("> ");
-    fooShell.set_exit_on_error(false);
+    fooShell.set_exit_on_error(true);
     fooShell.set_using_splash(true);
     fooShell.set_using_readline(false);
     if (interactive) {
-      fooShell.set_using_readline(interactive);
+      fooShell.set_exit_on_error(false);
+      fooShell.set_using_readline(true);
       fooShell.set_using_history(true);
       fooShell.set_history_add_only_on_success(true);
       fooShell.set_history_filename("fooShell.history");
@@ -102,6 +120,11 @@ int main(int argc_, char * argv_[])
     fooShell.set_ihs(fooIHS);
     fooShell.set_default_path("/dummy");
     fooShell.initialize_simple();
+    {
+      boost::property_tree::ptree popts;
+      popts.put("title", "Shell: ");
+      fooShell.print_tree(std::cerr, popts);
+    }
 
     // Batch mode uses a dedicated input stream:
     std::ostringstream omacro;
@@ -129,18 +152,17 @@ int main(int argc_, char * argv_[])
     } else {
       std::clog << "NOTICE: Batch mode..." << std::endl;
     }
+
     // Run the shell session:
     error_code = fooShell.run(in);
 
     // Terminate the shell:
     fooShell.reset();
 
-  }
-  catch (std::exception & error) {
+  } catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, error.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Unexpected error!");
     error_code = EXIT_FAILURE;
   }

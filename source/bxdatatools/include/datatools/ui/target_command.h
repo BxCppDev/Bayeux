@@ -43,7 +43,7 @@ namespace datatools {
       //! Default constructor
       target_command()
         : base_command(),
-          _target_(0)
+          _target_(nullptr)
       {
         return;
       }
@@ -54,7 +54,7 @@ namespace datatools {
                      const std::string & description_ = "",
                      const version_id & vid_ = version_id::invalid())
         : base_command(name_, description_, vid_),
-          _target_(0)
+          _target_(nullptr)
       {
         _set_target(target_);
         return;
@@ -74,7 +74,7 @@ namespace datatools {
 
       bool has_target() const
       {
-        return _target_ != 0;
+        return _target_ != nullptr;
       }
 
       //! Return the target
@@ -120,20 +120,21 @@ namespace datatools {
 
     private:
 
-      Type * _target_; //!< The reference to the target object
+      Type * _target_ = nullptr; //!< The reference to the target object
 
     };
 
     //! \brief Base command for a const target object
     template <typename Type>
-    class const_target_command : public base_command
+    class const_target_command
+      : public base_command
     {
     public:
 
       //! Default constructor
       const_target_command()
         : base_command(),
-          _target_(0)
+          _target_(nullptr)
       {
         return;
       }
@@ -144,7 +145,7 @@ namespace datatools {
                            const std::string & description_ = "",
                            const version_id & vid_ = version_id::invalid())
         : base_command(name_, description_, vid_),
-          _target_(0)
+          _target_(nullptr)
       {
         _set_target(target_);
         return;
@@ -164,7 +165,7 @@ namespace datatools {
 
       bool has_target() const
       {
-        return _target_ != 0;
+        return _target_ != nullptr;
       }
 
       //! Return the target
@@ -204,7 +205,7 @@ namespace datatools {
 
     private:
 
-      const Type * _target_; //!< The reference to the const target object
+      const Type * _target_ = nullptr; //!< The reference to the const target object
 
     };
 

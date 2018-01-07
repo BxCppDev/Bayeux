@@ -22,6 +22,12 @@
 
 #define DATATOOLS_ENV_RESOURCE_DIR "DATATOOLS_RESOURCE_DIR"
 
+//! Evaluates to true if datatools supports some UNICODE symbols
+#cmakedefine01 DATATOOLS_WITH_UNICODE_SYMBOLS
+
+//! Evaluates to true if datatools supports ANSI color codes
+#cmakedefine01 DATATOOLS_WITH_ANSI_COLORS
+
 #endif // DATATOOLS_DATATOOLS_CONFIG_H
 
 // Local Variables: --

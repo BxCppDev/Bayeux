@@ -76,26 +76,23 @@ namespace datatools {
         const basic_shell & shell = _get_target();
         if (_grab_vmap().count("path") == 0) {
           DT_COMMAND_RETURNED_ERROR(cri_,
-                                  datatools::command::CEC_FAILURE,
+                                    datatools::command::CEC_FAILURE,
                                     get_name() + ": " + "Missing command path!");
         }
         path = _grab_vmap()["path"].as<std::string>();
         std::string full_path = shell.canonical_path(path);
-
         if (! shell.get_ihs().is_command(full_path)) {
           DT_COMMAND_RETURNED_ERROR(cri_,
-                                  datatools::command::CEC_FAILURE,
+                                    datatools::command::CEC_FAILURE,
                                     get_name() + ": " + "Cannot find command with path '" << path << "'!");
         }
         const base_command & cmd = shell.get_ihs().get_command(full_path);
         cmd.print_usage(std::cout);
-      }
-      catch (std::exception & error) {
+      } catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,
                                   get_name() + ": " + error.what());
       }
-
       DT_LOG_TRACE(get_logging_priority(), "End of command '" << get_name() << "'.");
       return;
     }

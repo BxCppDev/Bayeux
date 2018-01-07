@@ -33,6 +33,12 @@
 
 namespace datatools {
 
+  // const boost::property_tree::ptree & empty_options()
+  // {
+  //   static const boost::property_tree::ptree _empty;
+  //   return _empty;
+  // }
+
   /* Single precision utility functions */
 
   void invalidate(float& x) {

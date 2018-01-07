@@ -7,6 +7,17 @@ if(NOT MODULE_HEADER_ROOT)
   message(FATAL_ERROR "MODULE_HEADER_ROOT not specified")
 endif()
 
+#-----------------------------------------------------------------------
+# Special settings
+set(DATATOOLS_WITH_UNICODE_SYMBOLS 0)
+if (Bayeux_WITH_UNICODE_SYMBOLS)
+  set(DATATOOLS_WITH_UNICODE_SYMBOLS 1)
+endif()
+set(DATATOOLS_WITH_ANSI_COLORS 0)
+if (Bayeux_WITH_ANSI_COLORS)
+  set(DATATOOLS_WITH_ANSI_COLORS 1)
+endif()
+
 # - Module
 set(module_name datatools)
 set(module_root_dir     "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
@@ -177,6 +188,9 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/introspection/method.h
   ${module_include_dir}/${module_name}/introspection/builder.h
 
+  ${module_include_dir}/${module_name}/ui/ansi_colors.h
+  ${module_include_dir}/${module_name}/ui/special_symbols.h
+  ${module_include_dir}/${module_name}/ui/traits.h
   ${module_include_dir}/${module_name}/ui/utils.h
   ${module_include_dir}/${module_name}/ui/ihs.h
   ${module_include_dir}/${module_name}/ui/base_command.h
@@ -337,10 +351,24 @@ ${module_source_dir}/ui/shell_help_command.cc
 ${module_source_dir}/ui/ihs.cc
 ${module_source_dir}/ui/base_command_interface.cc
 ${module_source_dir}/ui/base_command.cc
+${module_source_dir}/ui/traits.cc
 ${module_source_dir}/ui/utils.cc
 ${module_source_dir}/ui/validators.cc
 ${module_source_dir}/ui/wrappers.cc
+${module_source_dir}/ui/ansi_colors.cc
+${module_source_dir}/ui/special_symbols.cc
 )
+
+if(DATATOOLS_WITH_UNICODE_SYMBOLS)
+  list(APPEND
+    ${module_name}_MODULE_HEADERS
+    ${module_include_dir}/${module_name}/ui/unicode_symbols.h
+    )
+  list(APPEND
+    ${module_name}_MODULE_SOURCES
+    ${module_source_dir}/ui/unicode_symbols.cc
+    )
+endif()
 
 set(DATATOOLS_WITH_QT_GUI 0)
 if (BAYEUX_WITH_QT_GUI)
@@ -485,11 +513,13 @@ ${module_test_dir}/test_configuration_variant_service.cxx
 ${module_test_dir}/test_configuration_variant_service_2.cxx
 ${module_test_dir}/test_configuration_variant_dependency.cxx
 ${module_test_dir}/test_configuration_parsers.cxx
+${module_test_dir}/test_i_tree_dump.cxx
 )
 
 # Catastrophically broken on Mac
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   list(APPEND ${module_name}_MODULE_TESTS
+    ${module_test_dir}/test_ui_ansi_colors.cxx
     ${module_test_dir}/test_ui_utils.cxx
     ${module_test_dir}/test_ui_ihs.cxx
     ${module_test_dir}/test_ui_base_command.cxx

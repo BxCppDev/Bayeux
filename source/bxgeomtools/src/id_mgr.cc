@@ -282,15 +282,15 @@ namespace geomtools {
     return _addresses_;
   }
 
-  void id_mgr::category_info::tree_dump(std::ostream & out_,
-                                        const std::string & title_,
-                                        const std::string & indent_,
-                                        bool inherit_) const
+  void id_mgr::category_info::print_tree(std::ostream & out_,
+                                         const boost::property_tree::ptree & options_) const
   {
-    std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) {
-      out_ << indent << title_ << std::endl;
+    datatools::i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+
+    const std::string & indent = popts.indent;
+    if (! popts.title.empty ()) {
+      out_ << indent << popts.title << std::endl;
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
@@ -342,17 +342,7 @@ namespace geomtools {
     }
     out_ << std::endl;
 
-    /*
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-      << "Nbits [" << _nbits_.size() << "] :";
-      for (size_t i = 0; i < _nbits_.size(); i++)
-      {
-      out_ << ' ' << '"' << _nbits_[i] << '"';
-      }
-      out_ << std::endl;
-    */
-
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(popts.inherit)
          << "Locked    : " << is_locked() << std::endl;
 
     return;
@@ -360,7 +350,7 @@ namespace geomtools {
 
   void id_mgr::category_info::dump(std::ostream & out_) const
   {
-    tree_dump (out_, "id_mgr::category_info: ");
+    tree_dump(out_, "id_mgr::category_info: ");
     return;
   }
 
@@ -702,14 +692,16 @@ namespace geomtools {
     return;
   }
 
-  void id_mgr::tree_dump(std::ostream & out_,
-                         const std::string & title_,
-                         const std::string & indent_,
-                         bool inherit_) const
+  void id_mgr::print_tree(std::ostream & out_,
+                          const boost::property_tree::ptree & options_) const
   {
-    std::string indent;
-    if (! indent_.empty()) indent = indent_;
-    if (! title_.empty ())   out_ << indent << title_ << std::endl;
+    datatools::i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    bool categories_list  = options_.get<bool>("list_categories", false);
+    bool categories_full  = options_.get<bool>("full_categories", false);
+
+    const std::string & indent = popts.indent;
+    if (! popts.title.empty ())   out_ << indent << popts.title << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Logging priority  : " <<  datatools::logger::get_priority_label(_logging_priority_) << std::endl;
@@ -726,7 +718,7 @@ namespace geomtools {
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Force plain category : '" << _force_plain_ << "'" << std::endl;
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(popts.inherit)
          << "Categories      : ";
     if (_categories_by_name_.size () == 0) {
       out_ << "<empty>";
@@ -734,28 +726,32 @@ namespace geomtools {
       out_ << "[" << _categories_by_name_.size () << "]";
     }
     out_ << std::endl;
-    for (categories_by_name_col_type::const_iterator i = _categories_by_name_.begin ();
-         i != _categories_by_name_.end () ;
-         i++) {
-      const std::string & name = i->first;
-      const category_info & a_entry = i->second;
-      out_ << indent;
-      std::ostringstream indent_oss;
-      indent_oss << indent;
-      categories_by_name_col_type::const_iterator j = i;
-      j++;
-      out_ << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-      indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-      if (j == _categories_by_name_.end ()) {
-        out_ << datatools::i_tree_dumpable::last_tag;
-        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-      } else {
-        out_ << datatools::i_tree_dumpable::tag;
-        indent_oss << datatools::i_tree_dumpable::skip_tag;
+    if (categories_list) {
+      for (categories_by_name_col_type::const_iterator i = _categories_by_name_.begin ();
+           i != _categories_by_name_.end () ;
+           i++) {
+        const std::string & name = i->first;
+        const category_info & a_entry = i->second;
+        out_ << indent;
+        std::ostringstream indent_oss;
+        indent_oss << indent;
+        categories_by_name_col_type::const_iterator j = i;
+        j++;
+        out_ << datatools::i_tree_dumpable::inherit_skip_tag(popts.inherit);
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(popts.inherit);
+        if (j == _categories_by_name_.end ()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+          indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(popts.inherit);
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
+        }
+        out_ << "Category : " << '"' << name << '"';
+        out_ << std::endl;
+        if (categories_full) {
+          a_entry.tree_dump (out_, "", indent_oss.str ());
+        }
       }
-      out_ << "Category : " << '"' << name << '"';
-      out_ << std::endl;
-      a_entry.tree_dump (out_, "", indent_oss.str ());
     }
     return;
   }

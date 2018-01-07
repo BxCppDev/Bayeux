@@ -22,7 +22,9 @@
 
 // This project:
 #include <datatools/ui/utils.h>
+#include <datatools/ui/traits.h>
 #include <datatools/detail/command_macros.h>
+#include <datatools/ui/ansi_colors.h>
 
 namespace datatools {
 
@@ -116,70 +118,88 @@ namespace datatools {
           colored = true;
         }
         std::string full_path = shell.canonical_path(path);
+
         std::vector<std::string> children;
         shell.get_ihs().build_children_paths(full_path, children);
         for (int i = 0; i < (int) children.size(); i++) {
           bool list_it = true;
+          std::string child_full_path = shell.canonical_path(children[i]);
           std::string child_path = datatools::ui::path::basename(children[i]);
-          if (datatools::ui::path::is_hidden(child_path) && !all) {
+          bool child_interface = false;
+          bool child_command   = false;
+          bool child_disabled = false;
+          bool child_broken = false;
+          bool child_hidden = false;
+          if (shell.get_ihs().is_trait(child_full_path, traits::hidden_label())) {
+            child_hidden = true;
+          }
+          if (child_hidden && !all) {
             list_it = false;
           }
           if (list_it) {
-            std::string classification_suffix;
-            std::string color_tag;
-            std::string reset_tag = ::datatools::ui::ansi_colors::reset();
-            bool interface = false;
-            bool command = false;
-            if (shell.get_ihs().is_interface(children[i])) {
-              interface = true;
-            } else if (shell.get_ihs().is_command(children[i])) {
-              command = true;
+            if (shell.get_ihs().is_trait(child_full_path, traits::disabled_label())) {
+              child_disabled = true;
             }
-            if (interface) {
-              if (classify) {
-                classification_suffix = ::datatools::ui::path::sep();
-              }
-              if (colored) {
-                color_tag = ::datatools::ui::ansi_colors::bright_blue();
-              }
-            } else if (command) {
-              if (classify) {
-                classification_suffix = ::datatools::ui::path::exec();
-              }
-              if (colored) {
-                color_tag = ::datatools::ui::ansi_colors::green();
-              }
+            if (shell.get_ihs().is_trait(child_full_path, traits::broken_label())) {
+              child_broken = true;
+            }
+            if (shell.get_ihs().is_interface(child_full_path)) {
+              child_interface = true;
+
+            } else {
+              child_command = true;
             }
             if (colored) {
-              std::cout << color_tag;
+              if (child_interface) {
+                if (child_broken) {
+                  std::cout << ::datatools::ui::ansi_colors::color_8bits(5,0,0);
+                } else if (child_disabled) {
+                  std::cout << ::datatools::ui::ansi_colors::color_8bits(datatools::ui::ansi_colors::color_8bits::MODE_GRAYSCALE, 12);
+                } else {
+                  std::cout << ::datatools::ui::ansi_colors::color_8bits(0,0,5);
+                }
+              } else if (child_command) {
+                if (child_broken) {
+                  std::cout << ::datatools::ui::ansi_colors::color_8bits(5,0,0);
+                } else if (child_disabled) {
+                  std::cout << ::datatools::ui::ansi_colors::color_8bits(datatools::ui::ansi_colors::color_8bits::MODE_GRAYSCALE, 12);
+                } else {
+                  std::cout << ::datatools::ui::ansi_colors::color_8bits(0,5,0);
+                }
+              }
             }
             std::cout << child_path;
             if (colored) {
-              std::cout << reset_tag;
+              std::cout << datatools::ui::ansi_colors::reset();
             }
             if (classify) {
-              std::cout << classification_suffix;
+              if (child_interface) {
+               std::cout << ::datatools::ui::path::sep();
+              } else if (child_command) {
+               std::cout << ::datatools::ui::path::exec();
+              }
             }
             if (longf) {
-              if (shell.get_ihs().has_command(children[i])) {
-                const base_command & cmd = shell.get_ihs().get_command(children[i]);
+              if (shell.get_ihs().is_command(child_full_path) &&
+                  shell.get_ihs().has_command(child_full_path)) {
+                const base_command & cmd = shell.get_ihs().get_command(child_full_path);
                 if (cmd.has_terse_description()) {
                   std::cout << " - " << cmd.get_terse_description();
                 }
               }
-              if (shell.get_ihs().has_interface(children[i])) {
-                const base_command_interface & cmdInter = shell.get_ihs().get_interface(children[i]);
+              if (shell.get_ihs().is_interface(child_full_path) &&
+                  shell.get_ihs().has_interface(child_full_path)) {
+                const base_command_interface & cmdInter = shell.get_ihs().get_interface(child_full_path);
                 if (cmdInter.has_terse_description()) {
                   std::cout << " - " << cmdInter.get_terse_description();
                 }
               }
             }
             std::cout << std::endl;
-          }
+          } // list_it
         }
 
-      }
-      catch (std::exception & error) {
+      } catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,
                                   get_name() + ": " + error.what());

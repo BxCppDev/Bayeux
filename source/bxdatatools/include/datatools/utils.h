@@ -8,11 +8,17 @@
 #include <list>
 #include <string>
 
+// Third party:
+// - Boost:
+// #include <boost/property_tree/ptree.hpp>
+
 // This Project:
 #include <datatools/exception.h>
 #include <datatools/bit_mask.h>
 
 namespace datatools {
+
+  // const boost::property_tree::ptree & empty_options();
 
   /// \brief Return codes
   enum return_code_type {

@@ -29,6 +29,9 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
+// This project:
+#include <datatools/exception.h>
+
 namespace datatools {
 
   namespace ui {
@@ -132,6 +135,7 @@ namespace datatools {
         if (path_ == "../") return true;
         if (path_ == "/") return true;
         if (path_ == "~") return true;
+        if (path_ == "~/") return true;
         if (path_.find("//") != path_.npos) return false;
         return true;
       }
@@ -162,108 +166,26 @@ namespace datatools {
         return parent_path_ == ccp_pathname;
       }
 
+      std::string build_path(const std::list<std::string> & segments_)
+      {
+        std::ostringstream pout;
+        pout << root_path();
+        for (std::list<std::string>::const_iterator i = segments_.begin();
+             i != segments_.end();
+             i++) {
+          const std::string & segment = *i;
+          DT_THROW_IF(segment.empty(), std::logic_error, "Invalid empty path segment!");
+          DT_THROW_IF(segment.find(sep()) != std::string::npos, std::logic_error, "Path segment contains a path separator!");
+          if (i != segments_.begin()) {
+            pout << sep();
+          }
+          // std::cerr << "DEVEL: datatools::ui::path::build_path: segment = '" << segment << "'" << std::endl;
+          pout << segment;
+        }
+        return pout.str();
+      }
+
     } // namespace path
-
-    namespace ansi_colors {
-
-      const std::string & black()
-      {
-        static const std::string _black("\x1b[30m");
-        return _black;
-      }
-
-      const std::string & red()
-      {
-        static const std::string _red("\x1b[31m");
-        return _red;
-      }
-
-      const std::string & bright_red()
-      {
-        static const std::string _bright_red("\x1b[91m");
-        return _bright_red;
-      }
-
-      const std::string & green()
-      {
-        static const std::string _green("\x1b[32m");
-        return _green;
-      }
-
-      const std::string & bright_green()
-      {
-        static const std::string _bright_green("\x1b[92m");
-        return _bright_green;
-      }
-
-      const std::string & yellow()
-      {
-        static const std::string _yellow("\x1b[33m");
-        return _yellow;
-      }
-
-      const std::string & blue()
-      {
-        static const std::string _blue("\x1b[34m");
-        return _blue;
-      }
-
-      const std::string & bright_blue()
-      {
-        static const std::string _bright_blue("\x1b[94m");
-        return _bright_blue;
-      }
-
-      const std::string & magenta()
-      {
-        static const std::string _magenta("\x1b[35m");
-        return _magenta;
-      }
-
-      const std::string & bright_magenta()
-      {
-        static const std::string _bright_magenta("\x1b[95m");
-        return _bright_magenta;
-      }
-
-      const std::string & cyan()
-      {
-        static const std::string _cyan("\x1b[36m");
-        return _cyan;
-      }
-
-      const std::string & white()
-      {
-        static const std::string _white("\x1b[37m");
-        return _white;
-      }
-
-      const std::string & blink_slow()
-      {
-        static const std::string _blink_slow("\x1b[5m");
-        return _blink_slow;
-      }
-
-      const std::string & blink_fast()
-      {
-        static const std::string _blink_fast("\x1b[6m");
-        return _blink_fast;
-      }
-
-      const std::string & blink_off()
-      {
-        static const std::string _blink_off("\x1b[25m");
-        return _blink_off;
-      }
-
-      const std::string & reset()
-      {
-        static const std::string _reset("\x1b[0m");
-        return _reset;
-      }
-
-    } // namespace ansi_colors
-
 
   } // namespace ui
 

@@ -27,7 +27,8 @@
 #include "foo.h"
 
 //! Command
-class foo_test : public datatools::ui::target_command<foo>
+class foo_test
+  : public datatools::ui::target_command<foo>
 {
 public:
 
@@ -56,8 +57,7 @@ protected:
     try {
       DT_LOG_TRACE(get_logging_priority(), "Test...");
       _grab_target().test();
-    }
-    catch (std::exception & error) {
+    } catch (std::exception & error) {
       DT_COMMAND_RETURNED_ERROR(cri_,
                                 datatools::command::CEC_FAILURE,
                                 get_name() + ": " + error.what());
@@ -70,11 +70,13 @@ protected:
 };
 
 //! Command
-class foo_set_value : public datatools::ui::target_command<foo>
+class foo_set_value
+  : public datatools::ui::target_command<foo>
 {
 public:
 
-  foo_set_value(foo & foo_) : datatools::ui::target_command<foo>(foo_, "set_value", "Set the value", datatools::version_id(1, 0))
+  foo_set_value(foo & foo_)
+    : datatools::ui::target_command<foo>(foo_, "set_value", "Set the value", datatools::version_id(1, 0))
   {
     return;
   }
@@ -143,8 +145,7 @@ protected:
         _grab_target().set_value(value);
       }
 
-    }
-    catch (std::exception & error) {
+    } catch (std::exception & error) {
       DT_COMMAND_RETURNED_ERROR(cri_,
                                 datatools::command::CEC_FAILURE,
                                 get_name() + ": " + error.what());
@@ -157,11 +158,13 @@ protected:
 };
 
 //! Command
-class foo_set_sum : public datatools::ui::target_command<foo>
+class foo_set_sum
+  : public datatools::ui::target_command<foo>
 {
 public:
 
-  foo_set_sum(foo & foo_) : datatools::ui::target_command<foo>(foo_, "set_sum", "Set the value to the sum of values", datatools::version_id(1, 0))
+  foo_set_sum(foo & foo_)
+    : datatools::ui::target_command<foo>(foo_, "set_sum", "Set the value to the sum of values", datatools::version_id(1, 0))
   {
     return;
   }
@@ -231,8 +234,7 @@ protected:
         _grab_target().set_sum(values.get());
       }
 
-    }
-    catch (std::exception & error) {
+    } catch (std::exception & error) {
       DT_COMMAND_RETURNED_ERROR(cri_,
                                 datatools::command::CEC_FAILURE,
                                 get_name() + ": " + error.what());
@@ -245,14 +247,16 @@ protected:
 };
 
 //! Command
-class foo_get_value : public datatools::ui::const_target_command<foo>
+class foo_get_value
+  : public datatools::ui::const_target_command<foo>
 {
 public:
 
-  foo_get_value(foo & foo_) : datatools::ui::const_target_command<foo>(foo_,
-                                                                 "get_value",
-                                                                 "Get the value",
-                                                                 datatools::version_id(1, 0))
+  foo_get_value(foo & foo_)
+    : datatools::ui::const_target_command<foo>(foo_,
+                                               "get_value",
+                                               "Get the value",
+                                               datatools::version_id(1, 0))
   {
     return;
   }
@@ -288,8 +292,7 @@ protected:
       DT_LOG_TRACE(get_logging_priority(), "Getting the value...");
       int the_value = _get_target().get_value();
       std::cout << the_value << std::endl;
-    }
-    catch (std::exception & error) {
+    } catch (std::exception & error) {
       DT_COMMAND_RETURNED_ERROR(cri_,
                                 datatools::command::CEC_FAILURE,
                                 get_name() + ": " + error.what());
@@ -302,7 +305,8 @@ protected:
 };
 
 //! Command
-class foo_zero : public datatools::ui::target_command<foo>
+class foo_zero
+  : public datatools::ui::target_command<foo>
 {
 public:
 
@@ -331,8 +335,7 @@ protected:
     try {
       DT_LOG_TRACE(get_logging_priority(), "Zero the value...");
       _grab_target().zero();
-    }
-    catch (std::exception & error) {
+    } catch (std::exception & error) {
       DT_COMMAND_RETURNED_ERROR(cri_,
                                 datatools::command::CEC_FAILURE,
                                 get_name() + ": " + error.what());

@@ -120,6 +120,26 @@ if (BAYEUX_WITH_QT_GUI)
 endif()
 
 #-----------------------------------------------------------------------
+# Option for enabling UNICODE symbols
+#
+set(Bayeux_WITH_UNICODE_SYMBOLS 0)
+option(BAYEUX_WITH_UNICODE_SYMBOLS "Bayeux supports UNICODE symbols" ON)
+mark_as_advanced(BAYEUX_WITH_UNICODE_SYMBOLS)
+if (BAYEUX_WITH_UNICODE_SYMBOLS)
+  set(Bayeux_WITH_UNICODE_SYMBOLS 1)
+endif()
+
+#-----------------------------------------------------------------------
+# Option for enabling ANSI colors
+#
+set(Bayeux_WITH_ANSI_COLORS 0)
+option(BAYEUX_WITH_ANSI_COLORS "Bayeux supports ANSI colors" ON)
+mark_as_advanced(BAYEUX_WITH_ANSI_COLORS)
+if (BAYEUX_WITH_ANSI_COLORS)
+  set(Bayeux_WITH_ANSI_COLORS 1)
+endif()
+
+#-----------------------------------------------------------------------
 # Configure testing if required
 #
 option(BAYEUX_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)

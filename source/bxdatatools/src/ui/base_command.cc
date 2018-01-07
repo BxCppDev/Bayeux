@@ -23,6 +23,7 @@
 // This project:
 #include <datatools/ui/base_command_interface.h>
 #include <datatools/detail/command_macros.h>
+// #include <datatools/ui/traits.h>
 #include <datatools/utils.h>
 
 namespace datatools {
@@ -116,27 +117,33 @@ namespace datatools {
       return _version_.get();
     }
 
-    bool base_command::is_valid() const
-    {
-      return has_name() && is_initialized();
-    }
-
     bool base_command::is_initialized() const
     {
       return _initialized_;
     }
 
-    bool base_command::is_active() const
+    bool base_command::is_valid() const
     {
-      if (!is_valid()) return false;
-      base_command * mutable_this = const_cast<base_command *>(this);
-      return mutable_this->_is_active();
+      return _is_valid();
+    }
+
+    bool base_command::is_disabled() const
+    {
+      DT_THROW_IF(!is_valid(), std::logic_error,
+                  "Command '" << get_name() << "' is not valid!");
+      return this->_is_disabled();
     }
 
     // virtual
-    bool base_command::_is_active() const
+    bool base_command::_is_valid() const
     {
-      return true;
+      return has_name() && is_initialized();
+    }
+
+    // virtual
+    bool base_command::_is_disabled() const
+    {
+      return false;
     }
 
     void base_command::initialize_simple()
@@ -207,7 +214,7 @@ namespace datatools {
     void base_command::print_version(std::ostream & out_,
                                      uint32_t /* flags_ */) const
     {
-      DT_THROW_IF(!is_active(), std::logic_error, "Command is not active!");
+      DT_THROW_IF(is_disabled(), std::logic_error, "Command is disabled!");
       if (has_version()) {
         out_ << get_name() << " " << get_version() << std::endl;
       }
@@ -217,7 +224,7 @@ namespace datatools {
     void base_command::print_usage(std::ostream & out_,
                                    uint32_t /* flags_ */) const
     {
-      DT_THROW_IF(!is_active(), std::logic_error, "Command is not active!");
+      DT_THROW_IF(is_disabled(), std::logic_error, "Command is disabled!");
       out_ << "NAME : " << std::endl;
       out_ << "\t" << get_name();
       if (has_terse_description()) {
@@ -458,7 +465,7 @@ namespace datatools {
                                  datatools::command::returned_info & cri_,
                                  uint32_t flags_)
     {
-      DT_THROW_IF(!is_active(), std::logic_error, "Command '" << get_name() << "' is not active!");
+      DT_THROW_IF(is_disabled(), std::logic_error, "Command '" << get_name() << "' is disabled!");
 
       DT_LOG_TRACE(get_logging_priority(), "Running command '" << get_name() << "'...");
       for (auto arg : argv_) {

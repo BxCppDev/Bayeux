@@ -9,8 +9,6 @@
  *
  *   Geometry ID manager
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_ID_MGR_H
@@ -36,7 +34,8 @@ namespace geomtools {
    *  and their relationship described through objects of 'category_info'
    * class
    */
-  class id_mgr : public datatools::i_tree_dumpable
+  class id_mgr
+    : public datatools::i_tree_dumpable
   {
 
   public:
@@ -56,7 +55,8 @@ namespace geomtools {
      *  - inheritance (parent category), ancestor (+grand-parents)
      *  - addressing fields with labels
      */
-    class category_info : public datatools::i_tree_dumpable
+    class category_info
+      : public datatools::i_tree_dumpable
     {
 
     public:
@@ -158,10 +158,19 @@ namespace geomtools {
       void dump(std::ostream & = std::clog) const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_ = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+     //!
+      //! Supported options:
+      //! \code
+      //! {
+      //!   "title"    : "My title: ",
+      //!   "indent"   : "[debug] ",
+      //!   "inherit"  : false,
+      //!   "list_categories" : true,
+      //!   "full_categories" : true
+      //! }
+      //! \endcode
+     virtual void print_tree(std::ostream & out_ = std::clog,
+                             const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
 
       /// Check lock status
       bool is_locked() const;
@@ -234,11 +243,15 @@ namespace geomtools {
     /// Load manager configuration from a file
     void load(const std::string & filename_);
 
+    // /// Smart print
+    // virtual void tree_dump(std::ostream & out_         = std::clog,
+    //                        const std::string & title_  = "",
+    //                        const std::string & indent_ = "",
+    //                        bool inherit_               = false) const;
+
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+    virtual void print_tree(std::ostream & out_ = std::clog,
+                            const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
 
     /// Check if some category's description exists for a given type
     bool has_category_info(int type_) const;

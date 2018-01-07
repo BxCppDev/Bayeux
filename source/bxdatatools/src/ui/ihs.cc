@@ -26,24 +26,12 @@
 
 // This project:
 #include <datatools/ui/utils.h>
+#include <datatools/ui/traits.h>
 #include <datatools/exception.h>
 
 namespace datatools {
 
   namespace ui {
-
-    // // static
-    // bool ihs::path_validation(const std::string & path_)
-    // {
-    //   std::size_t found = path_.find(':');
-    //   if (found != std::string::npos) {
-    //  if (found == 0 || found >= path_.length() - 1) return false;
-    //   }
-    //   std::string bare_path = path_.substr(found + 1);
-    //   if (bare_path[0] != datatools::ui::path::root_path()) return false;
-    //   // check for "/a/b/c/.../d" format
-    //   return true;
-    // }
 
     // static
     void ihs::path_remove_scheme(const std::string & path_, std::string & out_)
@@ -126,6 +114,7 @@ namespace datatools {
       _ihs_ = nullptr;
       reset_interface();
       reset_command();
+      _description_.clear();
       return;
     }
 
@@ -184,19 +173,25 @@ namespace datatools {
       return _type_ == NODE_INTERFACE;
     }
 
-    bool ihs::node::has_interface() const
-    {
-      return _interface_ != nullptr;
-    }
-
     bool ihs::node::is_command() const
     {
       return _type_ == NODE_COMMAND;
     }
 
-    bool ihs::node::has_command() const
+    bool ihs::node::has_description() const
     {
-      return _command_ != nullptr;
+      return !_description_.empty();
+    }
+
+    void ihs::node::set_description(const std::string & desc_)
+    {
+      _description_ = desc_;
+      return;
+    }
+
+    const std::string & ihs::node::get_description() const
+    {
+      return _description_;
     }
 
     datatools::properties & ihs::node::grab_metadata()
@@ -235,6 +230,16 @@ namespace datatools {
       _owned_interface_ = false;
       _interface_ = &ci_;
       return;
+    }
+
+    bool ihs::node::has_command() const
+    {
+      return _command_ != nullptr;
+    }
+
+    bool ihs::node::has_interface() const
+    {
+      return _interface_ != nullptr;
     }
 
     void ihs::node::set_interface(base_command_interface * ci_)
@@ -458,6 +463,42 @@ namespace datatools {
       return;
     }
 
+    void ihs::node::set_trait(const std::string & trait_label_, const bool set_)
+    {
+      const std::string key = datatools::ui::traits::key_prefix() + trait_label_;
+      if (set_) {
+        if (grab_metadata().has_key(key)) {
+          grab_metadata().change_boolean(key, true);
+        } else {
+          grab_metadata().store_boolean(key, true);
+        }
+      } else if (grab_metadata().has_key(key)) {
+        grab_metadata().erase(key);
+      }
+      return;
+    }
+
+    void ihs::node::reset_trait(const std::string & trait_label_)
+    {
+      const std::string key = datatools::ui::traits::key_prefix() + trait_label_;
+      if (grab_metadata().has_key(key)) {
+        grab_metadata().erase(key);
+      }
+      return;
+    }
+
+    bool ihs::node::is_trait(const std::string & trait_label_) const
+    {
+      const std::string key = datatools::ui::traits::key_prefix() + trait_label_;
+      if (get_metadata().has_key(key)) {
+        bool value = get_metadata().fetch_boolean(key);
+        if (value) return true;
+      }
+      return false;
+    }
+
+    /* IHS */
+
     ihs::ihs(const std::string & scheme_)
     {
       _set_scheme_(scheme_);
@@ -542,6 +583,161 @@ namespace datatools {
       return found->second.is_command();
     }
 
+    void ihs::set_trait(const std::string & path_,
+                        const std::string & trait_label_,
+                        const bool set_)
+    {
+      node_dict_type::iterator found = _nodes_.find(path_);
+      DT_THROW_IF(found == _nodes_.end(), std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      node & n = found->second;
+      n.set_trait(trait_label_, set_);
+      return;
+    }
+
+    void ihs::reset_trait(const std::string & path_,
+                          const std::string & trait_label_)
+    {
+      node_dict_type::iterator found = _nodes_.find(path_);
+      DT_THROW_IF(found == _nodes_.end(), std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      node & n = found->second;
+      n.reset_trait(trait_label_);
+      return;
+    }
+
+    bool ihs::is_trait(const std::string & path_,
+                       const std::string & trait_label_) const
+    {
+      node_dict_type::const_iterator found = _nodes_.find(path_);
+      DT_THROW_IF(found == _nodes_.end(), std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      const node & n = found->second;
+      return n.is_trait(trait_label_);
+    }
+
+    /*
+    bool ihs::is_interface_active(const std::string & path_) const
+    {
+      node_dict_type::const_iterator found = _nodes_.find(path_);
+      if (found == _nodes_.end()) return false;
+      DT_THROW_IF(found == _nodes_.end(),
+                  std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      const node & n = found->second;
+      DT_THROW_IF(!n.is_interface(),
+                  std::logic_error,
+                  "Node with path '" << path_ << "' is not a command interface!");
+      if (n.has_interface()) {
+        if (!n.get_interface().is_active()) {
+          return false;
+        }
+      }
+      if (!n.is_active()) return false;
+      return true;
+    }
+
+    bool ihs::is_interface_broken(const std::string & path_) const
+    {
+      node_dict_type::const_iterator found = _nodes_.find(path_);
+      if (found == _nodes_.end()) return false;
+      DT_THROW_IF(found == _nodes_.end(),
+                  std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      const node & n = found->second;
+      DT_THROW_IF(!n.is_interface(),
+                  std::logic_error,
+                  "Node with path '" << path_ << "' is not a command interface!");
+      if (n.has_interface()) {
+        if (n.get_interface().is_broken()) {
+          return true;
+        }
+      }
+      if (n.is_broken()) return true;
+      return false;
+    }
+
+    bool ihs::is_interface_hidden(const std::string & path_) const
+    {
+      node_dict_type::const_iterator found = _nodes_.find(path_);
+      if (found == _nodes_.end()) return false;
+      DT_THROW_IF(found == _nodes_.end(),
+                  std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      const node & n = found->second;
+      DT_THROW_IF(!n.is_interface(),
+                  std::logic_error,
+                  "Node with path '" << path_ << "' is not a command interface!");
+      if (n.has_interface()) {
+        if (n.get_interface().is_hidden()) {
+          return true;
+        }
+      }
+      if (n.is_hidden()) return true;
+      return false;
+    }
+
+    bool ihs::is_command_active(const std::string & path_) const
+    {
+      node_dict_type::const_iterator found = _nodes_.find(path_);
+      if (found == _nodes_.end()) return false;
+      DT_THROW_IF(found == _nodes_.end(),
+                  std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      const node & n = found->second;
+      DT_THROW_IF(!n.is_command(),
+                  std::logic_error,
+                  "Node with path '" << path_ << "' is not a command!");
+      if (n.has_command()) {
+        if (!n.get_command().is_active()) {
+          return false;
+        }
+      }
+      if (!n.is_active()) return false;
+      return true;
+    }
+
+    bool ihs::is_command_broken(const std::string & path_) const
+    {
+      node_dict_type::const_iterator found = _nodes_.find(path_);
+      if (found == _nodes_.end()) return false;
+      DT_THROW_IF(found == _nodes_.end(),
+                  std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      const node & n = found->second;
+      DT_THROW_IF(!n.is_command(),
+                  std::logic_error,
+                  "Node with path '" << path_ << "' is not a command!");
+      if (n.has_command()) {
+        if (n.get_command().is_broken()) {
+          return true;
+        }
+      }
+      if (n.is_broken()) return true;
+      return false;
+    }
+
+    bool ihs::is_command_hidden(const std::string & path_) const
+    {
+      node_dict_type::const_iterator found = _nodes_.find(path_);
+      if (found == _nodes_.end()) return false;
+      DT_THROW_IF(found == _nodes_.end(),
+                  std::logic_error,
+                  "No node with path '" << path_ << "'!");
+      const node & n = found->second;
+      DT_THROW_IF(!n.is_command(),
+                  std::logic_error,
+                  "Node with path '" << path_ << "' is not a command!");
+      if (n.has_command()) {
+        if (n.get_command().is_hidden()) {
+          return true;
+        }
+      }
+      if (n.is_hidden()) return true;
+      return false;
+    }
+    */
+
     bool ihs::has_command(const std::string & path_) const
     {
       node_dict_type::const_iterator found = _nodes_.find(path_);
@@ -551,6 +747,7 @@ namespace datatools {
 
     const base_command & ihs::get_command(const std::string & path_) const
     {
+      DT_THROW_IF(path_.empty(), std::logic_error, "Node with empty path!");
       node_dict_type::const_iterator found = _nodes_.find(path_);
       DT_THROW_IF(found == _nodes_.end(), std::logic_error,
                   "Node with path '" << path_ << "' does not exists!");
@@ -561,6 +758,7 @@ namespace datatools {
 
     base_command & ihs::grab_command(const std::string & path_)
     {
+      DT_THROW_IF(path_.empty(), std::logic_error, "Node with empty path!");
       node_dict_type::iterator found = _nodes_.find(path_);
       DT_THROW_IF(found == _nodes_.end(), std::logic_error,
                   "Node with path '" << path_ << "' does not exists!");
@@ -736,7 +934,8 @@ namespace datatools {
     }
 
     void ihs::add_interface(const std::string & parent_path_,
-                            const std::string & interface_name_)
+                            const std::string & interface_name_,
+                            const std::string & description_)
     {
       DT_THROW_IF(! exists(parent_path_), std::logic_error,
                   "Node with path '" << parent_path_ << "' does not exists!");
@@ -759,6 +958,9 @@ namespace datatools {
       node & interface_node = _nodes_.find(interface_full_path)->second;;
       interface_node.set_type(NODE_INTERFACE);
       interface_node.set_full_path(interface_full_path);
+      if (!description_.empty()) {
+        interface_node.set_description(description_);
+      }
       interface_node.set_parent_node(const_cast<node&>(parent_node));
       interface_node.set_ihs(*this);
       return;
@@ -859,8 +1061,8 @@ namespace datatools {
       for (std::set<node *>::iterator inode = the_node._children_.begin();
            inode != the_node._children_.end();
            inode++) {
-        node * the_local_node = *inode;
-        children_paths_.push_back(the_local_node->get_full_path());
+        node * the_child_node = *inode;
+        children_paths_.push_back(the_child_node->get_full_path());
       }
       return;
     }
@@ -909,6 +1111,18 @@ namespace datatools {
         cp = cp.substr(2);
       }
       return cp;
+    }
+
+    void ihs::build_path(std::set<std::string> & paths_, const uint32_t /* flags_ */) const
+    {
+      paths_.clear();
+      for (const auto & p : _nodes_) {
+        bool select = true;
+        if (select) {
+          paths_.insert(p.first);
+        }
+      }
+      return;
     }
 
     void ihs::tree_dump(std::ostream & out_,

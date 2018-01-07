@@ -1,7 +1,7 @@
 //! \file  datatools/ui/ihs.h
 //! \brief The interface hierachical system
 //
-// Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2015-2017 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
 // This file is part of datatools.
 //
@@ -47,14 +47,14 @@ namespace datatools {
 
     //! \brief Interface Hierarchy System
     class ihs
-      : public enriched_base
+      : public datatools::enriched_base
     {
     public:
 
       //! \brief Node type
       enum node_type {
         NODE_INVALID   = -1, //!< Invalid node type
-        NODE_INTERFACE =  0, //!< Interface node (directory)
+        NODE_INTERFACE =  0, //!< Interface node (directory populated)
         NODE_COMMAND   =  1  //!< Command node   (file/leaf)
       };
 
@@ -76,8 +76,7 @@ namespace datatools {
       //!
       //! Examples:
       //!   "/path/to/resource"     -> has no scheme
-      //!   "foo:/path/to/resource" -> has scheme
-      //!   "bar:/path/to/resource" -> has scheme
+      //!   "foo:/path/to/resource" -> has scheme "foo"
       //!   "bar:/path/to/resource" -> has scheme "bar"
       static bool path_has_scheme(const std::string & path_, const std::string & scheme_ = "");
 
@@ -87,7 +86,7 @@ namespace datatools {
 
       //! \brief A node in the IHS
       class node
-        : public i_tree_dumpable
+      : public datatools::i_tree_dumpable
       {
       public:
 
@@ -118,14 +117,8 @@ namespace datatools {
         //! Check if node is an interface node (directory)
         bool is_interface() const;
 
-        //! Check if node has an interface set
-        bool has_interface() const;
-
         //! Check if node is a command node (file)
         bool is_command() const;
-
-        //! Check if node has a command set
-        bool has_command() const;
 
         //! Return the mutable metadata
         datatools::properties & grab_metadata();
@@ -138,6 +131,21 @@ namespace datatools {
 
         //! Set the full path
         void set_full_path(const std::string &);
+
+        //! Check if node has a description
+        bool has_description() const;
+
+        //! Set the description
+        void set_description(const std::string &);
+
+        //! Return the description
+        const std::string & get_description() const;
+
+        //! Check if node has a command interface set
+        bool has_interface() const;
+
+        //! Check if node has a command set
+        bool has_command() const;
 
         //! Set the command interface
         void set_interface(base_command_interface *);
@@ -208,12 +216,22 @@ namespace datatools {
                                const std::string & indent_ = "",
                                bool inherit = false) const;
 
+        //! Set trait flag
+        void set_trait(const std::string & trait_label_, const bool set_ = true);
+
+        //! Reset trait flag
+        void reset_trait(const std::string & trait_label_);
+
+        //! Check if a trait id set
+        bool is_trait(const std::string & trait_label_) const;
+
       private:
 
-        ihs                    * _ihs_ = nullptr;           //!< Host IHS
+        ihs                    * _ihs_ = nullptr;           //!< Hosting IHS
         node_type                _type_;                    //!< Node type
         datatools::properties    _metadata_;                //!< Metadata associated to the node
         std::string              _full_path_;               //!< Full path
+        std::string              _description_;             //!< Description
         bool                     _owned_interface_ = false; //!< Interface ownership flag
         base_command_interface * _interface_ = nullptr;     //!< Handle to an external command interface
         bool                     _owned_command_ = false;   //!< Command ownership flag
@@ -245,9 +263,10 @@ namespace datatools {
       //! Return the scheme
       const std::string & get_scheme() const;
 
-      //! Add a command interface given its parent's full path and its basename
+      //! Add an interface given its parent's full path and its basename
       void add_interface(const std::string & parent_path_,
-                         const std::string & interface_name_);
+                         const std::string & interface_name_,
+                         const std::string & description_ = "");
 
       //! Add a command interface given its parent's full path
       void add_interface(const std::string & parent_path_,
@@ -285,6 +304,19 @@ namespace datatools {
 
       //! Check if a path is associated to a command interface
       bool is_command(const std::string & path_) const;
+
+      //! Set trait flag
+      void set_trait(const std::string & path_,
+                     const std::string & trait_label_,
+                     const bool set_ = true);
+
+      //! Reset trait flag
+      void reset_trait(const std::string & path_,
+                       const std::string & trait_label_);
+
+      //! Check if a trait id set
+      bool is_trait(const std::string & path_,
+                    const std::string & trait_label_) const;
 
       //! Check if a path has an associated command
       bool has_command(const std::string & path_) const;
@@ -327,6 +359,9 @@ namespace datatools {
                              const std::string & indent_ = "",
                              bool inherit = false) const;
 
+      //! Build a set of paths
+      void build_path(std::set<std::string> & paths_, const uint32_t flags_ = 0) const;
+
     protected:
 
       //! Return the mutable node at given full path
@@ -342,7 +377,7 @@ namespace datatools {
 
     private:
 
-      std::string    _scheme_; //!< Optinal scheme associated to the path format
+      std::string    _scheme_; //!< Optional scheme associated to the path format
       node_dict_type _nodes_;  //!< Dictionary of nodes in the IHS
 
     };

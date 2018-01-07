@@ -58,7 +58,7 @@ namespace datatools {
          "  load ~/config/commands.mac"
          )
 
-        ("exit-on-error",
+        ("exit-on-error,x",
          "Exit the macro on first error"
          )
 
@@ -97,8 +97,7 @@ namespace datatools {
           }
           shell.load_macro(macro, flags);
         }
-      }
-      catch (std::exception & error) {
+      } catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,
                                   get_name() + ": " + error.what());

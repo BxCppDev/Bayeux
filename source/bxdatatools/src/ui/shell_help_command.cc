@@ -56,9 +56,9 @@ namespace datatools {
          "Do not print title"
          )
 
-        ("color",
-         "Use colored output"
-         )
+        // ("color",
+        //  "Use colored output"
+        //  )
 
         ; // end of options description
 
@@ -82,9 +82,9 @@ namespace datatools {
         if (_grab_vmap().count("no-description")) {
           no_description = true;
         }
-        if (_grab_vmap().count("color")) {
-          colored = true;
-        }
+        // if (_grab_vmap().count("color")) {
+        //   colored = true;
+        // }
         std::vector<std::string> builtin_commands;
         shell.builtin_command_names(builtin_commands);
         if (!no_title) {
@@ -100,32 +100,31 @@ namespace datatools {
           std::string desc_color_tag;
           std::string reset_tag;
           if (colored) {
-            cmd_color_tag = ::datatools::ui::ansi_colors::green();
-            desc_color_tag = ::datatools::ui::ansi_colors::magenta();
-            reset_tag = ::datatools::ui::ansi_colors::reset();
+            //cmd_color_tag = ::datatools::ui::ansi_colors::green();
+            //desc_color_tag = ::datatools::ui::ansi_colors::magenta();
+            //reset_tag = ::datatools::ui::ansi_colors::reset();
           }
           if (colored) {
-            std::cout << cmd_color_tag;
+            // std::cout << cmd_color_tag;
           }
           std::cout << buildin_cmdname;
           if (colored) {
-            std::cout << reset_tag;
+            //std::cout << reset_tag;
           }
           if (! no_description && builtin_cmd.has_terse_description()) {
             std::cout << " - ";
             if (colored) {
-              std::cout << desc_color_tag;
+              //std::cout << desc_color_tag;
             }
             std::cout << builtin_cmd.get_terse_description();
             if (colored) {
-              std::cout << reset_tag;
+              //std::cout << reset_tag;
             }
           }
           std::cout << std::endl;
         }
 
-      }
-      catch (std::exception & error) {
+      } catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,
                                   get_name() + ": " + error.what());

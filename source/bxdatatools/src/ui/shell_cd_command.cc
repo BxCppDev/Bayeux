@@ -22,6 +22,7 @@
 
 // This project:
 #include <datatools/ui/utils.h>
+#include <datatools/ui/traits.h>
 #include <datatools/detail/command_macros.h>
 
 namespace datatools {
@@ -52,12 +53,13 @@ namespace datatools {
         ("path",
          boost::program_options::value<std::string>()
          ->value_name("path"),
-         "Path to be listed\n"
+         "Path to be moved in\n"
          "Examples: \n"
          "  cd --path / \n"
          "  cd ~ \n"
          "  cd ./ \n"
          "  cd /"
+         "  cd "
          )
 
         ; // end of options description
@@ -81,14 +83,37 @@ namespace datatools {
           path = _grab_vmap()["path"].as<std::string>();
         }
         std::string full_path = shell.canonical_path(path);
+        if (!shell.get_ihs().is_interface(full_path)) {
+          DT_COMMAND_RETURNED_ERROR(cri_,
+                                    datatools::command::CEC_PARAMETER_INVALID_TYPE,
+                                    get_name() + ": " + "Path '" << path << "' is not an interface!");
+        }
+        if (shell.get_ihs().is_trait(full_path, traits::disabled_label())) {
+          DT_COMMAND_RETURNED_ERROR(cri_,
+                                    datatools::command::CEC_PARAMETER_INVALID_CONTEXT,
+                                    get_name() + ": " + "Cannot move to disabled interface '" << path << "'!");
+        } else {
+          if (shell.get_ihs().is_trait(full_path, datatools::ui::traits::broken_label())) {
+            // Attempt to cd a broken interface...
+            std::cerr << get_name() << ": warning: "
+                      << "Interface '" << full_path << "' is broken!" << std::endl;
+          }
+         if (shell.get_ihs().has_interface(full_path)) {
+            const base_command_interface & bci = shell.get_ihs().get_interface(full_path);
+            if (bci.is_disabled()) {
+              DT_COMMAND_RETURNED_ERROR(cri_,
+                                        datatools::command::CEC_PARAMETER_INVALID_CONTEXT,
+                                        get_name() + ": " + "Cannot move to disabled command interface '" << path << "'!");
+
+            }
+          }
+        }
         shell.set_current_path(full_path);
-      }
-      catch (std::exception & error) {
+      } catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,
                                   get_name() + ": " + error.what());
       }
-
       DT_LOG_TRACE(get_logging_priority(), "End of command '" << get_name() << "'.");
       return;
     }

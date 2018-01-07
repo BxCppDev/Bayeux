@@ -199,14 +199,11 @@ public:
 
   void set_sum(const std::vector<int> & values_)
   {
-    std::cerr << "DEVEL: foo::set_sum: Entering...\n";
     int sum = 0;
     for (int i = 0; i < (int) values_.size(); i++) {
       sum += values_[i];
     }
     set_value(sum);
-    std::cerr << "DEVEL: foo::set_sum: sum=" << sum << "\n";
-    std::cerr << "DEVEL: foo::set_sum: Exiting.\n";
     return;
   }
 

@@ -122,11 +122,11 @@ namespace datatools {
       //! Reset
       virtual void reset() = 0;
 
-      //! Check if the command interface is active
-      bool is_active() const;
-
       //! Check if the command interface is valid
       bool is_valid() const;
+
+      //! Check if the command interface is disabled
+      bool is_disabled() const;
 
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -168,8 +168,9 @@ namespace datatools {
       //! Check the validity (this can be overloaded)
       virtual bool _is_valid() const;
 
-      //! Check the activity (this can be overloaded)
-      virtual bool _is_active() const;
+      //! Check the active status (default: true, this can be overloaded)
+      virtual bool _is_disabled() const;
+
 
     private:
 

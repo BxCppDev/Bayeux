@@ -22,6 +22,8 @@
 
 // This project:
 #include <datatools/ui/utils.h>
+#include <datatools/ui/traits.h>
+#include <datatools/ui/ansi_colors.h>
 #include <datatools/detail/command_macros.h>
 
 namespace datatools {
@@ -184,8 +186,7 @@ namespace datatools {
             }
           }
         }
-      }
-      catch (std::exception & error) {
+      } catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,
                                   get_name() + ": " + error.what());
@@ -209,53 +210,71 @@ namespace datatools {
       }
       std::string parent_path = datatools::ui::path::parent_path(full_path);
       std::string base_path   = datatools::ui::path::basename(full_path);
-      // bool hidden    = false;
       bool interface = false;
       bool command   = false;
-      // if (datatools::ui::path::is_hidden(base_path)) {
-      //   hidden = true;
-      // }
+      bool disabled  = false;
+      bool broken    = false;
+      bool hidden    = false;
+      std::ostringstream out;
+      if (shell.get_ihs().is_trait(full_path, traits::hidden_label())) {
+        hidden = true;
+      }
       if (shell.get_ihs().is_interface(full_path)) {
         interface = true;
       } else {
         command = true;
       }
-      std::ostringstream out;
+      if (shell.get_ihs().is_trait(full_path, traits::disabled_label())) {
+        disabled = true;
+      }
+      if (shell.get_ihs().is_trait(full_path, traits::broken_label())) {
+        broken = true;
+      }
       std::string classification_suffix;
-      std::string color_tag;
-      std::string reset_tag = ::datatools::ui::ansi_colors::reset();
       if (interface) {
         if (_classify_) {
           if (full_path != ::datatools::ui::path::root_path()) {
             classification_suffix = ::datatools::ui::path::sep();
           }
         }
-        if (_colored_) {
-          color_tag = ::datatools::ui::ansi_colors::bright_blue();
-        }
       } else if (command) {
         if (_classify_) {
           classification_suffix = ::datatools::ui::path::exec();
         }
+      }
+      if (!hidden) {
         if (_colored_) {
-          color_tag = ::datatools::ui::ansi_colors::bright_green();
+          if (interface) {
+            if (broken) {
+              out << ::datatools::ui::ansi_colors::color_8bits(5,0,0);
+            } else if (disabled) {
+              out << ::datatools::ui::ansi_colors::color_8bits(datatools::ui::ansi_colors::color_8bits::MODE_GRAYSCALE, 12);
+            } else {
+              out << ::datatools::ui::ansi_colors::color_8bits(0,0,5);
+            }
+          } else if (command) {
+            if (broken) {
+              out << ::datatools::ui::ansi_colors::color_8bits(5,0,0);
+            } else if (disabled) {
+              out << ::datatools::ui::ansi_colors::color_8bits(datatools::ui::ansi_colors::color_8bits::MODE_GRAYSCALE, 12);
+            } else {
+              out << ::datatools::ui::ansi_colors::color_8bits(0,5,0);
+            }
+          }
         }
-      }
-      if (_colored_) {
-        out << color_tag;
-      }
-      if (fm_ == FM_BASENAME) {
-        out << base_path;
-      } else if (fm_ == FM_FULLPATH) {
-        out << full_path;
-      } else if (fm_ == FM_ORIGINAL) {
-        out << orig_path;
-      }
-      if (_colored_) {
-        out << reset_tag;
-      }
-      if (_classify_) {
-        out << classification_suffix;
+        if (fm_ == FM_BASENAME) {
+          out << base_path;
+        } else if (fm_ == FM_FULLPATH) {
+          out << full_path;
+        } else if (fm_ == FM_ORIGINAL) {
+          out << orig_path;
+        }
+        if (_colored_) {
+          out << ::datatools::ui::ansi_colors::reset();
+        }
+        if (_classify_) {
+          out << classification_suffix;
+        }
       }
       return out.str();
     }
@@ -272,13 +291,14 @@ namespace datatools {
       std::map<std::string, bool> listed_children;
       std::size_t nb_child_interfaces = 0;
       for (int i = 0; i < (int) children.size(); i++) {
+        // std::cerr << "DEVEL: full_path = '" << full_path << "' : child = '" << children[i] << "'" << std::endl;
         bool list_it = true;
         std::string child_full_path = shell.canonical_path(children[i]);
         std::string child_path = datatools::ui::path::basename(children[i]);
         bool child_hidden    = false;
         bool child_interface = false;
         bool child_command   = false;
-        if (datatools::ui::path::is_hidden(child_path)) {
+        if (shell.get_ihs().is_trait(child_full_path, traits::hidden_label())) {
           child_hidden = true;
         }
         if (shell.get_ihs().is_interface(child_full_path)) {
@@ -312,22 +332,24 @@ namespace datatools {
           fm = FM_FULLPATH;
         }
         std::string child_formated_path = _format_full_path(child_full_path, fm);
-        std::string indent2;
-        if (!_full_path_) {
-          out_ << indent_;
-          indent2 = indent_;
-          if (child_counter == listed_children.size()) {
-            indent2 += "    ";
-            out_ << "`-- ";
-          } else {
-            indent2 += "|   ";
-            out_ << "|-- ";
+        if (!child_formated_path.empty()) {
+          std::string indent2;
+          if (!_full_path_) {
+            out_ << indent_;
+            indent2 = indent_;
+            if (child_counter == listed_children.size()) {
+              indent2 += "    ";
+              out_ << "`-- ";
+            } else {
+              indent2 += "|   ";
+              out_ << "|-- ";
+            }
           }
-        }
-        out_ << child_formated_path;
-        out_ << std::endl;
-        if (interface) {
-          _tree_print_children(out_, child_full_path, indent2);
+          out_ << child_formated_path;
+          out_ << std::endl;
+          if (interface) {
+            _tree_print_children(out_, child_full_path, indent2);
+          }
         }
       }
       _level_--;

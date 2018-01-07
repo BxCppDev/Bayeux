@@ -25,11 +25,11 @@ namespace datatools {
         DR_CLASS_DECLARE (::datatools::i_tree_dumpable)
           .DR_CLASS_VOID_METHOD2_CONST("tree_print",
                                        ::datatools::i_tree_dumpable,
-                                       ::datatools::i_tree_dumpable::tree_print,
+                                       ::datatools::i_tree_dumpable::tree_print_id,
                                        int, const std::string &)
           .DR_CLASS_VOID_METHOD3_CONST("smart_print",
                                        ::datatools::i_tree_dumpable,
-                                       ::datatools::i_tree_dumpable::smart_print,
+                                       ::datatools::i_tree_dumpable::smart_print_id,
                                        int, const std::string &, const std::string &)
           ;
         return;

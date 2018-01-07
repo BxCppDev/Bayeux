@@ -44,6 +44,7 @@
 #include <datatools/handle.h>
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/bit_mask.h>
 #include <datatools/ui/ihs.h>
 #include <datatools/ui/target_command_interface.h>
 
@@ -65,9 +66,9 @@ namespace datatools {
       //! Special flags for run core
       enum run_core_flags {
         RC_NONE             = 0, //!< Normal run
-        RC_INHIBIT_HISTORY  = 1, //!< Inhibit the history
-        RC_INHIBIT_READLINE = 2, //!< Inhibit readline (only interactive session)
-        RC_EXIT_ON_ERROR    = 3  //!< Force the shell to exit when an error is met
+        RC_INHIBIT_HISTORY  = datatools::bit_mask::bit00, //!< Inhibit the history
+        RC_INHIBIT_READLINE = datatools::bit_mask::bit01, //!< Inhibit readline (only interactive session)
+        RC_EXIT_ON_ERROR    = datatools::bit_mask::bit02  //!< Force the shell to exit when an error is met
       };
 
       static const unsigned int DEFAULT_HISTORY_TRUNCATE = 200;
@@ -101,6 +102,15 @@ namespace datatools {
 
       //! Return the name
       const std::string & get_name() const;
+
+      //! Check is the title is set
+      bool has_title() const;
+
+      //! Set the title:
+      void set_title(const std::string &);
+
+      //! Return the title
+      const std::string & get_title() const;
 
       //! Check if version identifier is set
       bool has_version() const;
@@ -277,6 +287,9 @@ namespace datatools {
       //! Build the canonical full path associated to a given relative or absolute path
       std::string canonical_path(const std::string & path_) const;
 
+      //! Check if a path is an absolute existing path
+      bool is_absolute_path(const std::string & path_) const;
+
       //! Check if stop is requested
       bool is_stop_requested() const;
 
@@ -298,10 +311,18 @@ namespace datatools {
       void set_system_interface(shell_command_interface_type &);
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_  = "",
-                             const std::string & indent_ = "",
-                             bool inherit = false) const;
+      //!
+      //! Supported options:
+      //! \code
+      //! {
+      //!   "title"    : "My title: ",
+      //!   "indent"   : "[debug] ",
+      //!   "inherit"  : true,
+      //!   "ihs"      : false
+      //! }
+      //! \endcode
+      virtual void print_tree(std::ostream & out_ = std::clog,
+                              const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
 
     protected:
 
@@ -342,6 +363,10 @@ namespace datatools {
       //! Return the system interface
       const shell_command_interface_type & _get_system_interface() const;
 
+      //! Compute continuation condition
+      //! @return false if the shell should stop at the end of a loop
+      virtual bool _compute_continue_condition();
+
     private:
 
       // Control/management:
@@ -349,7 +374,8 @@ namespace datatools {
       datatools::logger::priority _logging_; //!< Logging priority threshold
 
       // Configuration:
-      std::string _name_;                    //!< Name of the shell (%s)
+      std::string _name_;                    //!< Name of the shell (%n)
+      std::string _title_;                   //!< Title of the shell
       boost::optional<version_id> _version_; //!< Version identifier of the shell (optional)
       std::string _prompt_;                  //!< Prompt string (PS1)
       std::string _continuation_prompt_;     //!< Continuation prompt string (PS2)

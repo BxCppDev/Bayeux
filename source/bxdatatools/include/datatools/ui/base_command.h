@@ -30,7 +30,6 @@
 // - Boost:
 #include <boost/optional.hpp>
 #include <boost/program_options.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/cstdint.hpp>
 
 // This project:
@@ -130,8 +129,8 @@ namespace datatools {
       //! Reset
       void reset();
 
-      //! Check if the command is active
-      bool is_active() const;
+       //! Check if the command is disabled
+      bool is_disabled() const;
 
       //! Main execution operator
       int operator()(const std::vector<std::string> & argv_,
@@ -171,8 +170,11 @@ namespace datatools {
       virtual void _run(datatools::command::returned_info &,
                         uint32_t flags_ = 0) = 0;
 
-      //! Check the activity flag
-      virtual bool _is_active() const;
+      //! Check the validity (this can be overloaded)
+      virtual bool _is_valid() const;
+
+      //! Check the disabled status (default: false)
+      virtual bool _is_disabled() const;
 
       void _base_run(datatools::command::returned_info &,
                      uint32_t flags_ = 0);
@@ -219,7 +221,7 @@ namespace datatools {
       base_command_interface * _parent_interface_ = nullptr; //!< Reference to the parent interface (optional)
 
       // Working data:
-      boost::scoped_ptr<vmap_type> _vmap_; //!< Description of variables map
+      std::unique_ptr<vmap_type> _vmap_; //!< Description of variables map
 
     };
 

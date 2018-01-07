@@ -211,13 +211,17 @@ namespace datatools {
 
     void shell_command_interface::_remove_shell_commands()
     {
-      remove_command("cd");
+      if (! is_inhibit_cd()) {
+        remove_command("cd");
+      }
       remove_command("exit");
       remove_command("man");
       remove_command("pwd");
       remove_command("ls");
       remove_command("tree");
-      remove_command("load");
+      if (! is_inhibit_load()) {
+        remove_command("load");
+      }
       remove_command("help");
       return;
     }

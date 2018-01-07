@@ -42,7 +42,7 @@ namespace datatools {
       //! Default constructor
       target_command_interface()
         : base_command_interface(),
-          _target_(0)
+          _target_(nullptr)
       {
         return;
       }
@@ -52,7 +52,7 @@ namespace datatools {
                                const std::string & description_ = "",
                                const version_id & vid_ = version_id::invalid())
         : base_command_interface(name_, description_, vid_),
-          _target_(0)
+          _target_(nullptr)
       {
         return;
       }
@@ -63,7 +63,7 @@ namespace datatools {
                                const std::string & description_ = "",
                                const version_id & vid_ = version_id::invalid())
         : base_command_interface(name_, description_, vid_),
-          _target_(0)
+          _target_(nullptr)
       {
         _set_target(target_);
         return;
@@ -78,7 +78,7 @@ namespace datatools {
       //! Check if the target is set
       bool has_target() const
       {
-        return _target_ != 0;
+        return _target_ != nullptr;
       }
 
       //! Set the target object
@@ -143,14 +143,15 @@ namespace datatools {
     //! cannot be set after the command interface object
     //! has been initialized.
     template <typename Type>
-    class const_target_command_interface : public base_command_interface
+    class const_target_command_interface
+      : public base_command_interface
     {
     public:
 
       //! Default constructor
       const_target_command_interface()
         : base_command_interface(),
-          _target_(0)
+          _target_(nullptr)
       {
         return;
       }

@@ -46,6 +46,7 @@
 #include <datatools/ui/shell_command_interface.h>
 #include <datatools/ui/ihs.h>
 #include <datatools/ui/utils.h>
+#include <datatools/ui/traits.h>
 
 namespace datatools {
 
@@ -120,7 +121,7 @@ namespace datatools {
     // static
     const std::string & basic_shell::default_prompt()
     {
-      static const std::string _p("%s:%W> ");
+      static const std::string _p("%n:%W> ");
       return _p;
     }
 
@@ -174,8 +175,12 @@ namespace datatools {
 
     void basic_shell::set_current_path(const std::string & p_)
     {
-      DT_THROW_IF(! has_ihs(), std::logic_error, "Cannot change current path for no IHS is set!");
-      DT_THROW_IF(! _ihs_->is_interface(p_), std::logic_error, "Path '" << p_ << "' is not an interface path!");
+      DT_THROW_IF(! has_ihs(),
+                  std::logic_error,
+                  "Cannot change current path because no IHS is set!");
+      DT_THROW_IF(! _ihs_->is_interface(p_),
+                  std::logic_error,
+                  "Path '" << p_ << "' is not an interface path!");
       _current_working_path_ = p_;
       return;
     }
@@ -234,6 +239,23 @@ namespace datatools {
     const std::string & basic_shell::get_name() const
     {
       return _name_;
+    }
+
+    void basic_shell::set_title(const std::string & title_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
+      _title_ = title_;
+      return;
+    }
+
+    bool basic_shell::has_title() const
+    {
+      return !_title_.empty();
+    }
+
+    const std::string & basic_shell::get_title() const
+    {
+      return _title_;
     }
 
     bool basic_shell::has_version() const
@@ -365,7 +387,7 @@ namespace datatools {
 
     void basic_shell::_expand_prompt(const std::string & prompt_rule_, std::string & expanded_prompt_) const
     {
-      std::string tmp_prompt = boost::algorithm::replace_all_copy(prompt_rule_, "%s", get_name());
+      std::string tmp_prompt = boost::algorithm::replace_all_copy(prompt_rule_, "%n", get_name());
       tmp_prompt = boost::algorithm::replace_all_copy(tmp_prompt, "%w", _current_working_path_);
       std::string cwd_basename = datatools::ui::path::basename(_current_working_path_);
       tmp_prompt = boost::algorithm::replace_all_copy(tmp_prompt, "%W", cwd_basename);
@@ -538,7 +560,7 @@ namespace datatools {
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _ihs_ = &ihs_;
-      if (!_ihs_->is_interface(_default_path_)) {
+      if (! _default_path_.empty() && !_ihs_->is_interface(_default_path_)) {
         DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS,
                      "IHS has no interface with path '" << _default_path_ << "'! Fall back to root path!");
         _default_path_ = ::datatools::ui::path::root_path();
@@ -804,24 +826,34 @@ namespace datatools {
       return;
     }
 
+    bool basic_shell::is_absolute_path(const std::string & path_) const
+    {
+      if (!_ihs_->exists(path_)) return false;
+      return true;
+    }
+
     std::string basic_shell::canonical_path(const std::string & path_) const
     {
+      bool devel = false;
       std::string full_path;
 
       if (path_.empty()) {
 
         // "" -> "/path/to/default/interface"
         full_path = _default_path_;
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 1" << std::endl;
 
       } else if (path_ == datatools::ui::path::root_path()) {
         // "/" -> ""
         full_path = path_;
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 2" << std::endl;
 
       } else if (path_ == datatools::ui::path::home_interface_path()
                  || path_ == (datatools::ui::path::home_interface_path() + datatools::ui::path::sep())) {
 
         // "~" | "~/" -> "/path/to/default/interface"
         full_path = _default_path_;
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 3" << std::endl;
 
       } else if (boost::starts_with(path_,
                                     datatools::ui::path::home_interface_path() + datatools::ui::path::sep())) {
@@ -832,12 +864,14 @@ namespace datatools {
                                                          datatools::ui::path::home_interface_path(),
                                                          _default_path_);
 
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 4" << std::endl;
 
       } else if (path_ == datatools::ui::path::current_interface_path()
                  || path_ == (datatools::ui::path::current_interface_path() + datatools::ui::path::sep())) {
 
         // "." | "./" -> "/path/to/cwi"
         full_path = _current_working_path_;
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 5" << std::endl;
 
       } else if (boost::starts_with(path_,
                                     datatools::ui::path::current_interface_path() + datatools::ui::path::sep())) {
@@ -847,6 +881,7 @@ namespace datatools {
         full_path = boost::algorithm::replace_first_copy(path_,
                                                          datatools::ui::path::current_interface_path(),
                                                          _current_working_path_);
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 6" << std::endl;
 
       } else if (path_ == datatools::ui::path::current_parent_interface_path()
                  || path_ == (datatools::ui::path::current_parent_interface_path() + datatools::ui::path::sep())) {
@@ -856,6 +891,7 @@ namespace datatools {
         // ".." | "../" -> "/path/to"
         full_path = datatools::ui::path::parent_path(_current_working_path_);
         // std::cerr << "DEVEL: canonical_path:  full_path = '" << full_path << "'" << std::endl;
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 7" << std::endl;
 
       } else if (boost::starts_with(path_,
                                     datatools::ui::path::current_parent_interface_path() + datatools::ui::path::sep())) {
@@ -865,28 +901,32 @@ namespace datatools {
         full_path = boost::algorithm::replace_first_copy(path_,
                                                          datatools::ui::path::current_parent_interface_path(),
                                                          datatools::ui::path::parent_path(_current_working_path_));
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 8" << std::endl;
 
       } else if (datatools::ui::path::is_absolute_path(path_)) {
 
         // "/foo/bar" -> "/foo/bar"
         full_path = path_;
+        if (devel) std::cerr << "DEVEL: canonical_path: CASE 9" << std::endl;
 
       } else {
 
         if (_current_working_path_ != datatools::ui::path::root_path()) {
 
           // "foo/bar" -> "/path/to/cwi/foo/bar"
-          full_path = _current_working_path_ + "/" + path_;
+          full_path = _current_working_path_ + datatools::ui::path::sep() + path_;
+          if (devel) std::cerr << "DEVEL: canonical_path: CASE 10" << std::endl;
 
         } else {
 
           // "foo/bar" -> "/foo/bar"
           full_path = _current_working_path_ + path_;
+          if (devel) std::cerr << "DEVEL: canonical_path: CASE 11" << std::endl;
 
         }
       }
 
-      // std::cerr << "DEVEL: canonical_path: pre full_path      = '" << full_path << "'" << std::endl;
+      if (devel) std::cerr << "DEVEL: canonical_path: pre full_path      = '" << full_path << "'" << std::endl;
       if (full_path != datatools::ui::path::root_path()) {
         std::vector<std::string> tokens;
         boost::algorithm::split(tokens, full_path, boost::is_any_of("/"));
@@ -901,7 +941,17 @@ namespace datatools {
               // ignore token:
             }
           } else {
-            tokens2.push_back(tokens[itok]);
+            if (!tokens[itok].empty()) {
+              tokens2.push_back(tokens[itok]);
+            }
+          }
+          // We test for each iteration of the partial path exists in this shell interface:
+          std::string testpath = datatools::ui::path::build_path(tokens2);
+          if (devel) std::cerr << "DEVEL: canonical_path: testpath = '" << testpath << "'" << std::endl;
+          if (testpath.empty() || !is_absolute_path(testpath)) {
+            // DT_THROW(std::logic_error, "Invalid path '" << path_ << "!");
+            full_path.clear();
+            return full_path;
           }
         }
         std::string expanded_path;
@@ -913,13 +963,14 @@ namespace datatools {
             expanded_path += *itok;
           }
         }
+        if (devel) std::cerr << "DEVEL: canonical_path: expanded_path    = '" << expanded_path << "'" << std::endl;
         full_path = expanded_path;
         if (full_path.empty()) {
           full_path = datatools::ui::path::root_path();
         }
       }
       full_path = datatools::ui::path::remove_trailing_sep(full_path);
-      // std::cerr << "DEVEL: canonical_path: final full_path    = '" << full_path << "'" << std::endl;
+      if (devel) std::cerr << "DEVEL: canonical_path: final full_path    = '" << full_path << "'" << std::endl;
       return full_path;
     }
 
@@ -941,7 +992,11 @@ namespace datatools {
     {
       out_ << "\n";
       std::string upper;
-      make_title_upper(_name_, upper);
+      std::string title = _title_;
+      if (title.empty()) {
+        title = _name_;
+      }
+      make_title_upper(title, upper);
       out_ << "\t" << upper << "\n";
       if (has_version()) {
         out_ << "\tVersion " << get_version() << "\n";
@@ -965,12 +1020,13 @@ namespace datatools {
       _at_run_start();
       std::istream * in = in_;
       uint32_t rc_flags = RC_NONE;
-      if (in != 0) {
+      if (in != nullptr) {
         // Force readline/history inhibition:
         rc_flags |= RC_INHIBIT_READLINE;
         rc_flags |= RC_INHIBIT_HISTORY;
       }
       if (is_exit_on_error()) {
+        DT_LOG_DEBUG(get_logging(), "Flag RC_EXIT_ON_ERROR");
         rc_flags |= RC_EXIT_ON_ERROR;
       }
       if (!is_using_readline()) {
@@ -1099,6 +1155,7 @@ namespace datatools {
 #endif // DATATOOLS_WITH_READLINE
       bool exit_on_error = false;
       if (flags_ & RC_EXIT_ON_ERROR) {
+        DT_LOG_TRACE(_logging_, "exit_on_error = " << exit_on_error);
         exit_on_error = true;
       }
 #if DATATOOLS_WITH_READLINE == 1
@@ -1113,7 +1170,7 @@ namespace datatools {
       // Default input stream:
       std::istream * input = &std::cin;
       // Using an external input stream:
-      if (in_ != nullptr) {
+      if (in_ != nullptr && in_ != &std::cin) {
         // Special input stream: inhibit readline and prompt
         using_readline = false;
         using_prompt = false;
@@ -1128,7 +1185,7 @@ namespace datatools {
       // std::size_t line_counter = 0;
       // Main loop :
       while (go_on) {
-
+        // DT_LOG_TRACE(get_logging(), "Main loop...");
         if (! using_readline) {
           if (! *input || input->eof()) {
             std::cerr << std::flush;
@@ -1137,9 +1194,10 @@ namespace datatools {
           }
         }
         std::string line;
-
         // Read a line:
 #if DATATOOLS_WITH_READLINE == 1
+        // DT_LOG_TRACE(get_logging(),
+        //              "Using readline with effective prompt : '" << get_effective_prompt() << "'");
         if (using_readline) {
           char * readline_line = nullptr;
           go_on = false;
@@ -1244,6 +1302,8 @@ namespace datatools {
             } else {
               std::cerr << "Command failed !";
             }
+            // std::cerr << " CRI code = [" << cri.get_error_code() << "] ";
+            // std::cerr << " Exit-on-error = [" << exit_on_error << "] ";
             if (exit_on_error || cri.get_error_code() == datatools::command::CEC_ABORT) {
               // Special kind of error occured: we abort the shell:
               go_on = false;
@@ -1282,7 +1342,12 @@ namespace datatools {
           DT_LOG_TRACE(get_logging(), "Stop is requested.");
           go_on = false;
         }
-        DT_LOG_TRACE(get_logging(), "go_on = " << go_on);
+
+        if (go_on) {
+          go_on = _compute_continue_condition();
+        }
+
+        DT_LOG_DEBUG(get_logging(), "go_on = " << go_on);
         if (! go_on) {
           break;
         }
@@ -1291,6 +1356,11 @@ namespace datatools {
 
       DT_LOG_TRACE_EXITING(get_logging());
       return cri;
+    }
+
+    bool basic_shell::_compute_continue_condition()
+    {
+      return true;
     }
 
     datatools::command::returned_info basic_shell::_run_command(const std::string & command_line_)
@@ -1333,13 +1403,25 @@ namespace datatools {
             DT_LOG_TRACE(get_logging(), "cmd_full_path = '" << cmd_full_path << "'");
             // Check if the path correspond to an IHS command:
             if (_ihs_->is_command(cmd_full_path)) {
-              DT_LOG_TRACE(get_logging(), "Found IHS command = '" << cmd_full_path << "'");
-              // Then call the command with its vector of options/argument:
-              std::vector<std::string> cmd_argv = argv;
-              cmd_argv.erase(cmd_argv.begin());
-              base_command & cmd = _ihs_->grab_command(cmd_full_path);
-              call_done = true;
-              cmd.call(cmd_argv, cri);
+              if (_ihs_->is_trait(cmd_full_path,datatools::ui::traits::disabled_label())) {
+                call_done = true;
+                DT_COMMAND_RETURNED_ERROR(cri,
+                                          datatools::command::CEC_COMMAND_INVALID_CONTEXT,
+                                          "Disabled command '" << cmd_name << "'!");
+              } else {
+                if (_ihs_->is_trait(cmd_full_path,datatools::ui::traits::broken_label())) {
+                  // Attempt to run a broken command...
+                  std::cerr << get_name() << ": warning: "
+                            << "Attempt to run the broken command '" << cmd_name << "'!" << std::endl;
+                }
+                DT_LOG_TRACE(get_logging(), "Found IHS command = '" << cmd_full_path << "'");
+                // Then call the command with its vector of options/argument:
+                std::vector<std::string> cmd_argv = argv;
+                cmd_argv.erase(cmd_argv.begin());
+                base_command & cmd = _ihs_->grab_command(cmd_full_path);
+                call_done = true;
+                cmd.call(cmd_argv, cri);
+              }
             } else {
               DT_LOG_TRACE(get_logging(), "Not a IHS command!");
             }
@@ -1366,61 +1448,70 @@ namespace datatools {
       return cri;
     }
 
-    void basic_shell::tree_dump(std::ostream & out_,
-                                const std::string & title_,
-                                const std::string & indent_,
-                                bool inherit_) const
+    void basic_shell::print_tree(std::ostream & out_,
+                                 const boost::property_tree::ptree & options_) const
     {
-      if (! title_.empty()) {
-        out_ << indent_ << title_ << std::endl;
-      }
+      datatools::i_tree_dumpable::base_print_options popts;
+      popts.configure_from(options_);
+      bool print_ihs = options_.get<bool>("ihs", false);
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Logging : '" << datatools::logger::get_priority_label(_logging_) << "'" << std::endl;
+      if (!popts.title.empty()) out_ << popts.indent << popts.title << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Name    : '" << _name_ << "'" << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Logging  : '" << datatools::logger::get_priority_label(_logging_) << "'" << std::endl;
+
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Name     : '" << _name_ << "'" << std::endl;
+
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Title    : '" << _title_ << "'" << std::endl;
 
       if (has_version()) {
-        out_ << indent_ << i_tree_dumpable::tag
+        out_ << popts.indent << i_tree_dumpable::tag
              << "Version  : '" << get_version() << "'" << std::endl;
       }
 
-      out_ << indent_ << i_tree_dumpable::tag
+      out_ << popts.indent << i_tree_dumpable::tag
            << "Prompt   : '" << _prompt_ << "'"  << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
+      out_ << popts.indent << i_tree_dumpable::tag
            << "Continuation prompt : '" << _continuation_prompt_ << "'"  << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Default path : '" << _default_path_ << "'"  << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Default path  : '" << _default_path_ << "'"  << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Exit on error : " << _exit_on_error_ << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "User           : '" << _user_ << "'"  << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Using splash : " << _using_splash_ << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Host           : '" << _host_ << "'"  << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Using readline : " << _using_readline_ << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Exit on error  : " << std::boolalpha << _exit_on_error_ << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Using history : " << _using_history_ << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Using splash   : " << std::boolalpha << _using_splash_ << std::endl;
+
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Using readline : " << std::boolalpha << _using_readline_ << std::endl;
+
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Using history  : " << std::boolalpha << _using_history_ << std::endl;
 
       if (_using_history_) {
 
-        out_ << indent_ << i_tree_dumpable::tag
-             << "History add only on success : " << _history_add_only_on_success_ << std::endl;
+        out_ << popts.indent << i_tree_dumpable::tag
+             << "History add only on success : " << std::boolalpha << _history_add_only_on_success_ << std::endl;
 
-        out_ << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::tag
+        out_ << popts.indent << i_tree_dumpable::skip_tag << i_tree_dumpable::tag
              << "History filename : '" << _history_filename_  << "'" << std::endl;
 
-        out_ << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::last_tag
+        out_ << popts.indent << i_tree_dumpable::skip_tag << i_tree_dumpable::last_tag
              << "History truncate : [#" << _history_truncate_ << ']' << std::endl;
 
       }
 
-      out_ << indent_ << i_tree_dumpable::tag << "System interface : ";
+      out_ << popts.indent << i_tree_dumpable::tag << "System interface : ";
       if (has_system_interface()) {
         out_ << "'" << _get_system_interface().get_name() << "'";
       } else {
@@ -1429,29 +1520,31 @@ namespace datatools {
       out_ << std::endl;
       if (has_system_interface()) {
         std::ostringstream indent2;
-        indent2 << indent_ << i_tree_dumpable::skip_tag;
+        indent2 << popts.indent << i_tree_dumpable::skip_tag;
         _get_system_interface().tree_dump(out_, "", indent2.str());
       }
 
-      out_ << indent_ << i_tree_dumpable::tag
+      out_ << popts.indent << i_tree_dumpable::tag
            << "IHS : " << "[@" << _ihs_ << "]" << std::endl;
-      if (has_ihs()) {
-        std::ostringstream indent2;
-        indent2 << indent_ << i_tree_dumpable::skip_tag;
-        _ihs_->tree_dump(out_, "", indent2.str());
+      if (print_ihs) {
+        if (has_ihs()) {
+          std::ostringstream indent2;
+          indent2 << popts.indent << i_tree_dumpable::skip_tag;
+          _ihs_->tree_dump(out_, "", indent2.str());
+        }
       }
 
-      out_ << indent_ << i_tree_dumpable::tag
+      out_ << popts.indent << i_tree_dumpable::tag
            << "Current working path : '" << _current_working_path_ << "'"  << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Services : [@" << _services_ << ']' << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Services       : [@" << _services_ << ']' << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "Stop requested : " << _get_pimpl().stop_requested << std::endl;
+      out_ << popts.indent << i_tree_dumpable::tag
+           << "Stop requested : " << std::boolalpha << _get_pimpl().stop_requested << std::endl;
 
-      out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-           << "Initialized : " << _initialized_ << std::endl;
+      out_ << popts.indent << i_tree_dumpable::inherit_tag(popts.inherit)
+           << "Initialized    : " << std::boolalpha << _initialized_ << std::endl;
 
       return;
     }

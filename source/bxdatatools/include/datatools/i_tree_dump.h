@@ -6,6 +6,10 @@
 #include <iostream>
 #include <string>
 
+// Third party:
+// - Boost:
+#include <boost/property_tree/ptree.hpp>
+
 // This project:
 #include <datatools/datatools_config.h>
 #ifndef Q_MOC_RUN
@@ -14,7 +18,7 @@
 
 namespace datatools {
 
-  /// \brief An abstract interface with utilities for printable objects.
+  /// \brief An interface with utilities for printable objects.
   class i_tree_dumpable
   {
   public:
@@ -24,7 +28,28 @@ namespace datatools {
       static const std::string & last_item();
       static const std::string & skip_item();
       static const std::string & last_skip_item();
+      static const std::string & item(bool last_, bool skip_);
     };
+
+    static const boost::property_tree::ptree & empty_options();
+
+    struct base_print_options {
+
+      bool inherit = false;
+      std::string title;
+      std::string indent;
+
+      void configure_from(const boost::property_tree::ptree &);
+      void export_to(boost::property_tree::ptree &);
+      void reset();
+
+      static const std::string & inherit_key();
+      static const std::string & title_key();
+      static const std::string & indent_key();
+      static boost::property_tree::ptree force_inheritance(const boost::property_tree::ptree &);
+
+    };
+
 
     enum ostream_type {
       OSTREAM_COUT=1,
@@ -38,31 +63,43 @@ namespace datatools {
     /// Destructor
     virtual ~i_tree_dumpable();
 
-    static std::ostream & last_skip_tag(std::ostream& out_);
+    static std::ostream & last_skip_tag(std::ostream & out_);
 
-    static std::ostream & skip_tag(std::ostream& out_);
+    static std::ostream & skip_tag(std::ostream & out_);
 
-    static std::ostream & last_tag(std::ostream& out_);
+    static std::ostream & last_tag(std::ostream & out_);
 
-    static std::ostream & tag(std::ostream& out_);
+    static std::ostream & tag(std::ostream & out_);
 
-    /// Main interface method for smart dump
-    virtual void tree_dump(std::ostream& out_ = std::clog,
-                           const std::string& title_  = "",
-                           const std::string& indent_ = "",
-                           bool inherit_ = false) const = 0;
+    /// Main new interface method for printing
+    virtual void print_tree(std::ostream & out_ = std::clog,
+                            const boost::property_tree::ptree & options_ = empty_options()) const;
 
-    void tree_dump(int out_type_ = OSTREAM_CLOG,
-                   const std::string& title_  = "",
-                   const std::string& indent_ = "",
-                   bool inherit_ = false) const;
+    /// Main old interface method for printing
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
-    void tree_print(int out_type_ = OSTREAM_CLOG,
-                    const std::string& title_ = "") const;
+    /// Printing with jsonized options
+    void print_tree_json(std::ostream & out_ = std::clog,
+                         const std::string & json_options_ = "") const;
 
-    void smart_print(int out_type_ = OSTREAM_CLOG,
-                     const std::string& title_  = "",
-                     const std::string& indent_ = "") const;
+    /// Printing with jsonized options
+    void print_tree_json(std::ostream & out_ = std::clog,
+                         const char * json_options_ = nullptr) const;
+
+    void tree_dump_id(const int out_type_ = OSTREAM_CLOG,
+                      const std::string & title_ = "",
+                      const std::string & indent_ = "",
+                      const bool inherit_ = false) const;
+
+    void tree_print_id(const int out_type_ = OSTREAM_CLOG,
+                       const std::string & title_ = "") const;
+
+    void smart_print_id(const int out_type_ = OSTREAM_CLOG,
+                        const std::string & title_  = "",
+                        const std::string & indent_ = "") const;
 
     /// Output stream manipulator
     class inherit_tag

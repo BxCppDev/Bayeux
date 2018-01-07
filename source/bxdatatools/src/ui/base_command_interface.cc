@@ -29,6 +29,7 @@
 #include <datatools/service_manager.h>
 #include <datatools/properties.h>
 #include <datatools/detail/command_macros.h>
+#include <datatools/ui/traits.h>
 
 namespace datatools {
 
@@ -156,28 +157,28 @@ namespace datatools {
       return _version_.get();
     }
 
-    bool base_command_interface::is_active() const
+    bool base_command_interface::is_disabled() const
     {
-      if (!is_valid()) return false;
-      base_command_interface * mutable_this = const_cast<base_command_interface *>(this);
-      return mutable_this->_is_active();
-    }
-
-    // virtual
-    bool base_command_interface::_is_active() const
-    {
-      return true;
-    }
-
-    bool base_command_interface::is_valid() const
-    {
-      return _is_valid();
+      DT_THROW_IF(!is_valid(), std::logic_error,
+                  "Command interface '" << get_name() << "' is not valid!");
+      return this->_is_disabled();
     }
 
     // virtual
     bool base_command_interface::_is_valid() const
     {
       return has_name() && is_initialized();
+    }
+
+    // virtual
+    bool base_command_interface::_is_disabled() const
+    {
+      return false;
+    }
+
+    bool base_command_interface::is_valid() const
+    {
+      return _is_valid();
     }
 
     std::size_t base_command_interface::size() const
@@ -351,12 +352,12 @@ namespace datatools {
                                            uint32_t /*flags_*/)
     {
       DT_LOG_TRACE_ENTERING(get_logging_priority());
-      DT_THROW_IF(!is_active(), std::logic_error, "Command interface '" << get_name() << "' is not active!");
+      DT_THROW_IF(is_disabled(), std::logic_error, "Command interface '" << get_name() << "' is disabled!");
       cri_.reset();
       cri_.set_error_code(datatools::command::CEC_SUCCESS);
 
       if (! argv_.size()) {
-        DT_THROW_IF(!is_active(), std::logic_error, "Missing command name in command interface '" << get_name() << "'!");
+        DT_THROW(std::logic_error, "Missing command name in command interface '" << get_name() << "'!");
       } else {
         std::string cmd_name = argv_[0];
         DT_LOG_TRACE(get_logging_priority(), "About to call command '" << cmd_name << "'...");
@@ -368,10 +369,10 @@ namespace datatools {
           command_entry_type & cmd_entry
             = _grab_pimpl().commands.find(cmd_name)->second;
           base_command & cmd = cmd_entry.grab_command();
-          if (!cmd.is_active()) {
+          if (cmd.is_disabled()) {
             DT_COMMAND_RETURNED_ERROR(cri_,
                                       datatools::command::CEC_COMMAND_INVALID_CONTEXT,
-                                      "Command '" << cmd_name << "' is not active in command interface '" << get_name() << "'!");
+                                      "Command '" << cmd_name << "' is disabled in command interface '" << get_name() << "'!");
           } else {
             // Extract the list of arguments:
             std::vector<std::string> argv = argv_;
@@ -407,7 +408,7 @@ namespace datatools {
              << "Version     : '" << _version_.get() << "'" << std::endl;
       }
 
-      if (_pimpl_ != 0) {
+      if (_pimpl_ != nullptr) {
         out_ << indent_ << i_tree_dumpable::tag
              << "Commands : [" << _pimpl_->commands.size() << "]" << std::endl;
         std::size_t counter = 0;
@@ -427,7 +428,7 @@ namespace datatools {
       }
 
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-           << "Initialized : " << is_initialized() << std::endl;
+           << "Initialized : " << std::boolalpha << is_initialized() << std::endl;
 
       return;
     }
