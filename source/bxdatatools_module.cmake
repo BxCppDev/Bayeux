@@ -109,6 +109,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/service_manager.h
   ${module_include_dir}/${module_name}/service_manager-inl.h
   ${module_include_dir}/${module_name}/service_tools.h
+  ${module_include_dir}/${module_name}/service_tools-inl.h
   ${module_include_dir}/${module_name}/smart_filename.h
   ${module_include_dir}/${module_name}/smart_ref.h
   ${module_include_dir}/${module_name}/temporary_files.h
