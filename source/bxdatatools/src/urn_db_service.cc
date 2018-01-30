@@ -1131,7 +1131,7 @@ namespace datatools {
         } else {
           DT_LOG_DEBUG(_logging_, "Dependee node '" << comp_urn << "' has been already processed.");
         }
-        DT_LOG_DEBUG(_logging_, "Adding dependency out-edge from '" << uinfo.get_urn() << "' to '" << comp_urn << "' has been already processed.");
+        DT_LOG_DEBUG(_logging_, "Adding dependency out-edge from '" << uinfo.get_urn() << "' to '" << comp_urn << "'...");
         deps_.add_out_edge(uinfo.get_urn(), comp_urn, topic);
       }
     }
@@ -1183,7 +1183,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::urn_db_service, ocd_)
   ocd_.set_class_description("URN information database service");
   ocd_.set_class_library("datatools");
   ocd_.set_class_documentation("A *service* which host a dictionary of items addressed  \n"
-                               "though their unique URNs and classified in *categories* \n");
+                               "through their unique URNs and classified in *categories* \n");
 
 
   // Invoke OCD support from parent class :

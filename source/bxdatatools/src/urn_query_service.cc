@@ -627,7 +627,16 @@ namespace datatools {
       _dependency_graph_process_db(db, processed_dbs);
       processed_dbs.insert(db);
     }
-    DT_THROW_IF(_dg_ptr_->has_cycle(), std::logic_error, "Found cycles in the dependency graph!");
+    if (_dg_ptr_->has_cycle()) {
+      std::set<dependency_graph::vertex_t> cvtx;
+      _dg_ptr_->find_vertices_in_cycles(cvtx);
+      for (auto vtx : cvtx) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS,
+                     "Cycle detected at vertex '" << vtx << "'...");
+      }
+      DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Found cycles in the dependency graph!");
+      //DT_THROW(std::logic_error, "Found cycles in the dependency graph!");
+    }
     DT_LOG_DEBUG(get_logging_priority(), "Dependency graph is built.");
     return;
   }

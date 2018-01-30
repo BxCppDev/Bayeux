@@ -161,6 +161,7 @@ namespace datatools {
       {
         // Once a cycle is detected (we pass through a back-edge), tag the cycle:
         if (_vertices != nullptr) {
+          std::cerr << "[devel] Discovered cycle at back edge [" << e_<< "]" << std::endl;
           _vertices->insert(boost::source(e_, g_));
           _vertices->insert(boost::target(e_, g_));
         }
