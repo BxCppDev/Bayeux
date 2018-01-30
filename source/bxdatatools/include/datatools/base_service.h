@@ -133,6 +133,8 @@ namespace datatools {
 
 } // end of namespace datatools
 
+#include <datatools/service_tools-inl.h>
+
 #ifndef Q_MOC_RUN
 // Activate reflection layer:
 DR_CLASS_INIT(datatools::base_service)
