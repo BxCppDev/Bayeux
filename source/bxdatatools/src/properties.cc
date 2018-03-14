@@ -2389,12 +2389,10 @@ namespace datatools {
     double unit_value = 1.0;
     std::string unit_symbol;
     std::string unit_label;
-    if (!units::find_unit(get_unit_symbol(a_key), unit_value, unit_label)) {
-      DT_THROW_IF(unit_label != a_dimension,
-                  std::logic_error,
-                  "Property '" << a_key << "' has no '" << a_dimension << "' unit; found '" << unit_label << "'!");
-      unit_value = 1.0;
-    }
+    DT_THROW_IF(!units::find_unit(get_unit_symbol(a_key), unit_value, unit_label), std::logic_error, "Missing unit !");
+    DT_THROW_IF(unit_label != a_dimension,
+                std::logic_error,
+                "Property '" << a_key << "' has no '" << a_dimension << "' unit; found '" << unit_label << "'!");
     return q;
   }
 
