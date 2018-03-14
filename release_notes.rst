@@ -23,7 +23,6 @@ Additions
 
 * Add a new smart printing interface method in the ``datatools::i_tree_dumpable`` interface class.
 
-
   The new method is:
 
   .. code::
@@ -88,5 +87,8 @@ Changes
 
 Fixes
 =====
+
+* Fix issue #13: add dedicated pragmas to inhibit some "shadow" warnings from Boost headers
+  used by the new interface of ``datatools::i_tree_dumpable``.
 
 * Fix issue #11: remove a cyclic dependency (ea99c5a, merged from the release 3.1.X).
