@@ -21,6 +21,8 @@ or macOS 10.
 Additions
 =========
 
+* Add explicit release notes and archived notes.
+
 * Add ``cmake/BayeuxDependencies.cmake`` file for the description of Bayeux's dependencies.
 
 Removals
