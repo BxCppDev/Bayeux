@@ -21,6 +21,47 @@ or macOS 10.
 Additions
 =========
 
+* Add a new smart printing interface method in the ``datatools::i_tree_dumpable`` interface class.
+
+
+  The new method is:
+
+  .. code::
+
+     virtual void print_tree(std::ostream & out_ = std::clog,
+                             const boost::property_tree::ptree & options_ = empty_options()) const;
+..
+
+  The method is passed a property tree object which hosts formatting rules and/or options
+  as key/value pairs (see http://www.boost.org/doc/libs/1_63_0/doc/html/property_tree.html).
+  Supported legacy keyed parameters are:
+
+  - "indent" : a character string used to indent each line of the printed output,
+  - "title" : a character string that will add an explicit title before the printed output,
+  - "inherit" : a boolean flag that indicates that the printed output of a daughter
+    class should use an adapted format of the format of its mother class.
+
+  These parameters are the ones historically used by the  "tree_dump" method as normal
+  arguments. With the new interface, it is now possible to add more formatting parameters
+  depending of the complexity of the instance to be printed.
+  For example, one could add a "expand" boolean flag coupled to a "max-level" integer
+  to control recursively printed output of an internal hierachical data structure.
+  Of course, such additional formatting parameters should be documented.
+
+  The old interface, using plain title and indentation string and inherit flag,
+  is preserved :
+
+  .. code::
+
+     virtual void tree_dump(std::ostream & out_ = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_ = false) const;
+..
+
+  But each new classes inheriting the ``datatools::i_tree_dumpable`` should now favour
+  the new interface method.
+
 * Add explicit release notes and archived notes.
 
 * Add ``cmake/BayeuxDependencies.cmake`` file for the description of Bayeux's dependencies.
