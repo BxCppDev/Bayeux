@@ -557,6 +557,7 @@ namespace genbb {
       angle_unit = datatools::units::get_angle_unit_from(angle_unit_str);
     }
 
+    // Cone direction:
     if (is_cone_direction()) {
       if (config_.has_key("cone.max_angle")) {
         double cone_max_angle = config_.fetch_real("cone.max_angle");
@@ -597,13 +598,33 @@ namespace genbb {
                       "Invalid format for phi and/or theta angles !");
           phi *= angle_unit2;
           theta *= angle_unit2;
-          cone_axis.set(0.0,0.0,1.0);
+          cone_axis.set(0.0, 0.0, 1.0);
           cone_axis.setTheta(theta);
           cone_axis.setPhi(phi);
         }
         set_cone_axis(cone_axis);
       }
-    }
+
+      if (! geomtools::is_valid(_cone_axis_)) {
+        double theta = 0.0;
+        double phi = 0.0;
+        if (config_.has_key("cone.axis.colatitude")) {
+          theta = config_.fetch_real_with_explicit_dimension("cone.axis.colatitude", "angle");
+          DT_THROW_IF(theta < 0.0 || theta > M_PI, std::domain_error,
+                      "Invalid value for theta/colatitude angle !");
+        }
+        if (config_.has_key("cone.axis.longitude")) {
+          phi = config_.fetch_real_with_explicit_dimension("cone.axis.longitude", "angle");
+          DT_THROW_IF((phi < -2. * M_PI) || (phi > 2. * M_PI), std::domain_error,
+                      "Invalid value for phi/longitude angle !");
+        }
+        geomtools::vector_3d cone_axis;
+        cone_axis.set(0.0, 0.0, 1.0);
+        cone_axis.setTheta(theta);
+        cone_axis.setPhi(phi);
+        set_cone_axis(cone_axis);
+      }
+    } // Cone direction
 
     DT_THROW_IF(! config_.has_key("mode"), std::logic_error, "Missing 'mode' property !");
     std::string mode_str = config_.fetch_string("mode");
