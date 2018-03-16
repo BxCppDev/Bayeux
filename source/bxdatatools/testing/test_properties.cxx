@@ -16,6 +16,8 @@
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 
+void test_more();
+
 int main(int argc_, char ** argv_)
 {
   using namespace std;
@@ -317,6 +319,10 @@ int main(int argc_, char ** argv_)
     datatools::properties cfg("Configuration set;author=John Doe;date=2016-11-15;group=admin");
     cfg.tree_dump(std::clog, "Cfg");
 
+    std::clog << "\n";
+    test_more();
+    std::clog << "\n";
+
   } catch (std::exception & x) {
     std::clog << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
@@ -325,4 +331,27 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
   return error_code;
+}
+
+
+void test_more()
+{
+  std::clog << "Test the datatools::properties::fetch_real_with_explicit_dimension method...\n";
+  datatools::properties setup;
+
+  std::string setup_file = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample.conf";
+  datatools::fetch_path_with_env(setup_file);
+  datatools::properties::read_config(setup_file, setup);
+  setup.tree_dump
+    (std::cout, "Setup: ");
+
+  if (setup.has_key("x")) {
+    double x = setup.fetch_real_with_explicit_dimension("x", "length");
+    std::clog << "x (naked) = "<< x << std::endl;
+    std::clog << "x (mm)    = "<< x / CLHEP::mm << std::endl;
+    std::clog << "x (cm)    = "<< x / CLHEP::cm << std::endl;
+    std::clog << "x (m)     = "<< x / CLHEP::m << std::endl;
+  }
+
+  return;
 }
