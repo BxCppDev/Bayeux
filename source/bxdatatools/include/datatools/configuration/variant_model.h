@@ -68,6 +68,7 @@ namespace datatools {
       struct parameter_record {
         parameter_physical physical;
         std::string        description;
+        // Overriden default value(s) with respect to the parameter model ?
         int                rank = -1;
       };
 
