@@ -31,7 +31,7 @@ Additions
                              const boost::property_tree::ptree & options_ = empty_options()) const;
 ..
 
-  The method is passed a property tree object which hosts formatting rules and/or options
+  The method is passed a Boost property tree object which hosts formatting rules and/or options
   as key/value pairs (see http://www.boost.org/doc/libs/1_63_0/doc/html/property_tree.html).
   Supported legacy keyed parameters are:
 
@@ -40,12 +40,15 @@ Additions
   - "inherit" : a boolean flag that indicates that the printed output of a daughter
     class should use an adapted format of the format of its mother class.
 
-  These parameters are the ones historically used by the  "tree_dump" method as normal
-  arguments. With the new interface, it is now possible to add more formatting parameters
-  depending of the complexity of the instance to be printed.
-  For example, one could add a "expand" boolean flag coupled to a "max-level" integer
-  to control recursively printed output of an internal hierachical data structure.
-  Of course, such additional formatting parameters should be documented.
+  These   parameters   are  the   ones   historically   used  by   the
+  ``datatools::i_tree_dumpable::tree_dump``  virtual method  as normal
+  arguments. With  the new interface, it  is now possible to  add more
+  formatting parameters depending of the complexity of the instance to
+  be  printed.  For  example, one  could add  a "expand"  boolean flag
+  coupled  to a  "max-level"  integer to  control recursively  printed
+  output of an  internal hierarchical data structure.   Of course, such
+  additional formatting parameters should be documented, typically in the
+  class' header file.
 
   The old interface, using plain title and indentation string and inherit flag,
   is preserved :
@@ -83,12 +86,12 @@ Changes
   ``datatools::base_service::_common_initialize(...)``  and should  be
   used  by  daughter  service  classes  in  place  of  the  deprecated
   ``datatools::base_service::common_initialize(...)``. See  an example
-  in the ``cuts::cut_service::initialize`` method.
+  of this migration in the ``cuts::cut_service::initialize`` method.
 
 Fixes
 =====
 
 * Fix issue #13: add dedicated pragmas to inhibit some "shadow" warnings from Boost headers
-  used by the new interface of ``datatools::i_tree_dumpable``.
+  (*property tree*) used by the new interface of ``datatools::i_tree_dumpable``.
 
 * Fix issue #11: remove a cyclic dependency (ea99c5a, merged from the release 3.1.X).
