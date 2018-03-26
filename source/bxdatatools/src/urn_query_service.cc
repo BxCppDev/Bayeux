@@ -397,6 +397,14 @@ namespace datatools {
     return _pimpl_->dbs.count(name_) > 0;
   }
 
+  const urn_db_service & urn_query_service::get_db(const std::string & name_) const
+  {
+    auto found = _pimpl_->dbs.find(name_);
+    DT_THROW_IF(found == _pimpl_->dbs.end(), std::logic_error,
+                "No URN Db service named '" << name_ << "'!");
+    return *(found->second);
+  }
+
   bool urn_query_service::has_db(const urn_db_service & dbs_) const
   {
     for (auto dbsp : _pimpl_->dbs) {
@@ -491,12 +499,20 @@ namespace datatools {
   bool urn_query_service::has_path_resolver(const urn_to_path_resolver_service & prs_) const
   {
     for (const auto & prsp : _pimpl_->resolvers) {
-      // std::cerr << "devel **** urn_query_service::has_path_resolver **** checking: '" << prsp.second << "'" << std::endl;
       if (prsp.second == &prs_) {
         return true;
       }
     }
     return false;
+  }
+
+  const urn_to_path_resolver_service &
+  urn_query_service::get_path_resolver(const std::string & name_) const
+  {
+    auto found = _pimpl_->resolvers.find(name_);
+    DT_THROW_IF(found == _pimpl_->resolvers.end(), std::logic_error,
+                "No URN path resolver service named '" << name_ << "'!");
+    return *(found->second);
   }
 
   void urn_query_service::add_path_resolver(const urn_to_path_resolver_service & prs_)

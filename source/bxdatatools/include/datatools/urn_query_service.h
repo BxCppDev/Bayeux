@@ -1,11 +1,11 @@
 /// \file datatools/urn_query_service.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2017-03-07
- * Last modified: 2017-03-07
+ * Last modified: 2018-03-23
  *
  * License:
  *
- * Copyright (C) 2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2017-2018 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ namespace datatools {
     virtual int reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
+    virtual void tree_dump(std::ostream & out = std::clog,
                            const std::string & title = "",
                            const std::string & indent = "",
                            bool inherit = false) const;
@@ -123,6 +123,9 @@ namespace datatools {
     /// Check if an URN database is registered
     bool has_db(const urn_db_service &) const;
 
+    /// Return an URN db service
+    const urn_db_service & get_db(const std::string & name_) const;
+
     /// Build the list of URN databases
     void build_list_of_dbs(std::set<std::string> & dbs_) const;
 
@@ -146,6 +149,9 @@ namespace datatools {
 
     /// Check if an URN path resolver is registered
     bool has_path_resolver(const urn_to_path_resolver_service &) const;
+
+    /// Return an URN path resolver service
+    const urn_to_path_resolver_service & get_path_resolver(const std::string & name_) const;
 
     /// Register an URN path resolver
     void add_path_resolver(const urn_to_path_resolver_service &);
@@ -180,8 +186,8 @@ namespace datatools {
 
     // Private implementation:
     struct pimpl_type;
-    std::unique_ptr<pimpl_type> _pimpl_;    //!< Private implementation
-    std::unique_ptr<dependency_graph> _dg_ptr_; //!< Private implementation
+    std::unique_ptr<pimpl_type>       _pimpl_;  //!< Private implementation
+    std::unique_ptr<dependency_graph> _dg_ptr_; //!< Cached dependency graph
 
     // Service registration
     DATATOOLS_SERVICE_REGISTRATION_INTERFACE(urn_query_service)
