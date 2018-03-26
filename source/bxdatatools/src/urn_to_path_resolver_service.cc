@@ -368,6 +368,14 @@ namespace datatools {
     return;
   }
 
+  bool urn_to_path_resolver_service::is_kernel_pushed() const
+  {
+    if (datatools::kernel::is_instantiated()) {
+      return datatools::kernel::instance().get_urn_query().has_path_resolver(*this);
+    }
+    return false;
+  }
+
   void urn_to_path_resolver_service::kernel_push(const std::string & name_)
   {
     datatools::logger::priority logging = get_logging_priority();

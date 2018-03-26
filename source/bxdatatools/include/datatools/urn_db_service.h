@@ -288,6 +288,11 @@ namespace datatools {
                                  std::string & external_db_,
                                  std::string & mounted_urn_);
 
+    // //! Parse mount rule
+    // static bool parse_mount_rule(const std::string & rule_,
+    //                              std::string & external_db_,
+    //                              std::set<std::string> & mounted_urns_);
+
     //! Add a mounted URN
     void add_mounted(const std::string & external_db_,
                      const std::string & mounted_urn_);
@@ -373,10 +378,13 @@ namespace datatools {
     void unlock();
 
     //! Add to system
-    void kernel_push(const std::string & = "");
+    void kernel_push(const std::string & name_ = "");
 
     //! Remove from system
     void kernel_pop();
+
+    //! Check if the service is pushed (registered) in the kernel
+    bool is_kernel_pushed() const;
 
     //! Populated a dependency graph
     struct dependency_graph_builder

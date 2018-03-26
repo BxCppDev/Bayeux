@@ -123,7 +123,7 @@ namespace datatools {
     /// Check if an URN database is registered
     bool has_db(const urn_db_service &) const;
 
-    /// Return an URN db service
+    /// Return an URN db service with a given name
     const urn_db_service & get_db(const std::string & name_) const;
 
     /// Build the list of URN databases
@@ -150,7 +150,7 @@ namespace datatools {
     /// Check if an URN path resolver is registered
     bool has_path_resolver(const urn_to_path_resolver_service &) const;
 
-    /// Return an URN path resolver service
+    /// Return an URN path resolver service with a given name
     const urn_to_path_resolver_service & get_path_resolver(const std::string & name_) const;
 
     /// Register an URN path resolver

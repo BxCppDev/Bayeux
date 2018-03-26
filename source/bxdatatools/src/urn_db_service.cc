@@ -351,6 +351,15 @@ namespace datatools {
         connect_db(db);
       }
 
+      // if (config_.has_key("mounted_urn_regex")) {
+      //   DT_THROW_IF(!is_allow_mounted(), std::logic_error,
+      //               "Mounted URN from external URN database services is not allowed!");
+      //   /*
+      //    * mounted_urns_regex : string = "@UrnDb1:urn:datatools:(.*):1"
+      //    */
+      //   std::string mounted_urn_regex = config_.fetch("mounted_urn_regex");
+      // }
+
       if (config_.has_key("mounted_urns")) {
         DT_THROW_IF(!is_allow_mounted(), std::logic_error,
                     "Mounted URN from external URN database services is not allowed!");
@@ -709,6 +718,24 @@ namespace datatools {
     return true;
   }
 
+  // // static
+  // bool urn_db_service::parse_mount_rule(const std::string & rule_,
+  //                                       std::string & external_db_,
+  //                                       std::set<std::string> & mounted_urns_)
+  // {
+  //   external_db_.clear();
+  //   mounted_urns_.clear();
+  //   if (rule_.empty()) return false;
+  //   if (rule_[0] != '@') return false;
+  //   std::size_t cpos = rule_.find(':');
+  //   if (cpos == rule_.npos) return false;
+  //   std::string extdb = rule_.substr(1, cpos - 1);
+  //   std::string murnregex = rule_.substr(cpos + 1);
+  //   external_db_ = extdb;
+  //   mounted_urn_ = murn;
+  //   return true;
+  // }
+
   void urn_db_service::add_mounted(const std::string & external_db_,
                                    const std::string & mounted_urn_)
   {
@@ -1066,6 +1093,14 @@ namespace datatools {
       }
     }
     return;
+  }
+
+  bool urn_db_service::is_kernel_pushed() const
+  {
+    if (datatools::kernel::is_instantiated()) {
+      return datatools::kernel::instance().get_urn_query().has_db(*this);
+    }
+    return false;
   }
 
   void urn_db_service::kernel_push(const std::string & name_)

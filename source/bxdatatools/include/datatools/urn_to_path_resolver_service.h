@@ -172,6 +172,9 @@ namespace datatools {
     //! Remove from system
     void kernel_pop();
 
+    //! Check if the service is pushed (registered) in the kernel
+    bool is_kernel_pushed() const;
+
   private:
 
     void _init_();
