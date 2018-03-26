@@ -549,41 +549,42 @@ namespace bayeux {
       DT_LOG_TRACE_ENTERING(_logging_);
       if (_services_.is_initialized()) {
 
-      // Activate an URN info DB service:
-      {
-        datatools::urn_db_service & urnSetupDb =
-          dynamic_cast<datatools::urn_db_service &>(_services_.load_no_init(bx_resource_db_name(),
-                                                                            "datatools::urn_db_service"));
-        urnSetupDb.set_logging_priority(_logging_);
-        urnSetupDb.set_terse_description("URN informations about Bayeux resource files");
+        // Activate an URN info DB service:
         {
-          std::string fdef = "@bxbayeux:urn/db/bayeux_logos_infos.def";
-          datatools::fetch_path_with_env(fdef);
-          urnSetupDb.load(fdef);
-        }
+          datatools::urn_db_service & urnSetupDb =
+            dynamic_cast<datatools::urn_db_service &>(_services_.load_no_init(bx_resource_db_name(),
+                                                                              "datatools::urn_db_service"));
+          urnSetupDb.set_logging_priority(_logging_);
+          urnSetupDb.set_terse_description("URN informations about Bayeux resource files");
+          {
+            std::string fdef = "@bxbayeux:urn/db/bayeux_logos_infos.def";
+            datatools::fetch_path_with_env(fdef);
+            urnSetupDb.load(fdef);
+          }
 #if BAYEUX_WITH_MATERIALS == 1
-        {
-          std::string fdef = "@bxmaterials:urn/db/basic_materials_infos.def";
-          datatools::fetch_path_with_env(fdef);
-          urnSetupDb.load(fdef);
-        }
+          {
+            std::string fdef = "@bxmaterials:urn/db/basic_materials_infos.def";
+            datatools::fetch_path_with_env(fdef);
+            urnSetupDb.load(fdef);
+          }
 #endif // BAYEUX_WITH_MATERIALS == 1
 
-        // {
-        // std::string urn_db_conf_file = "@bxbayeux:urn/db/bayeux_resource_db.conf";
-        // datatools::fetch_path_with_env(urn_db_conf_file);
-        // datatools::properties urn_db_conf;
-        // urn_db_conf.read_configuration(urn_db_conf_file);
-        // urnSetupDb.initialize_standalone(urn_db_conf);
-        // }
-        urnSetupDb.initialize_simple();
-        if (datatools::logger::is_debug(_logging_)) {
-          urnSetupDb.tree_dump(std::cerr, urnSetupDb.get_name() + ": ", "[debug] ");
+          // {
+          // std::string urn_db_conf_file = "@bxbayeux:urn/db/bayeux_resource_db.conf";
+          // datatools::fetch_path_with_env(urn_db_conf_file);
+          // datatools::properties urn_db_conf;
+          // urn_db_conf.read_configuration(urn_db_conf_file);
+          // urnSetupDb.initialize_standalone(urn_db_conf);
+          // }
+          urnSetupDb.initialize_simple();
+          if (datatools::logger::is_debug(_logging_)) {
+            urnSetupDb.tree_dump(std::cerr, urnSetupDb.get_name() + ": ", "[debug] ");
+          }
+          DT_LOG_TRACE(_logging_, "Publishing the URN info DB '" << urnSetupDb.get_name() << "' to the kernel...");
+          urnSetupDb.lock();
+          urnSetupDb.kernel_push();
+          DT_LOG_TRACE(_logging_, "URN info DB has been plugged in the kernel.");
         }
-        DT_LOG_TRACE(_logging_, "Publishing the URN info DB '" << urnSetupDb.get_name() << "' to the kernel...");
-        urnSetupDb.kernel_push();
-        DT_LOG_TRACE(_logging_, "URN info DB has been plugged in the kernel.");
-      }
 
         // Activate an URN resolver service:
         {
@@ -632,6 +633,7 @@ namespace bayeux {
             _services_.grab<datatools::urn_db_service &>(bx_resource_db_name());
           DT_LOG_TRACE(_logging_, "Removing URN info setup DB '" << urnSetupDb.get_name() << "' from the kernel...");
           urnSetupDb.kernel_pop();
+          urnSetupDb.unlock();
           DT_LOG_TRACE(_logging_, "URN info setup DB has been removed from the kernel.");
           urnSetupDb.reset();
         }
