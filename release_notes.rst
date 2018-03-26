@@ -21,7 +21,9 @@ or macOS 10.
 Additions
 =========
 
-None.
+* Fix issue #17 : Add query methods in the ``datatools::urn_db_service`` and
+  ``datatools::urn_to_path_resolver_service`` classes.
+
 
 
 Removals
@@ -39,4 +41,9 @@ None.
 Fixes
 =====
 
-None.
+* Fix issue #16 : In the ``bayeux::detail::bayeux_library`` singleton,
+  the system URN Database Service cannot be mounted by any client URN Database Service
+  if it is not locked. The fix consists in
+  explicitly locking(unlocking) the system URN Databasec service of the Bayeux's library
+  before(after) the *kernel push*(*pop*) call (registration in/deregistration from
+  the Bayeux's kernel URN Query Singleton Service).
