@@ -21,9 +21,8 @@ or macOS 10.
 Additions
 =========
 
-* Fix issue #17 : Add query methods in the ``datatools::urn_db_service`` and
+* Issue #17 : Add query methods in the ``datatools::urn_db_service`` and
   ``datatools::urn_to_path_resolver_service`` classes.
-
 
 
 Removals
@@ -40,6 +39,9 @@ None.
 
 Fixes
 =====
+
+* Fix issue #18 : Fix initialization stage which mount external URN Database
+  Service instances.
 
 * Fix issue #16 : In the ``bayeux::detail::bayeux_library`` singleton,
   the system URN Database Service cannot be mounted by any client URN Database Service

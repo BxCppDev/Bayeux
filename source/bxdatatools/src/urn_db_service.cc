@@ -327,28 +327,45 @@ namespace datatools {
     }
 
     {
+      // std::cerr << "[DEVEL] " << "urn_db_service::initialize: "
+      //           << "external URN database services..."
+      //           << std::endl;
       std::vector<std::string> dbs;
       if (config_.has_key("external_databases")) {
+        // std::cerr << "[DEVEL] " << "urn_db_service::initialize: "
+        //           << "found 'external_databases' key..."
+        //           << std::endl;
         DT_THROW_IF(!is_allow_mounted(), std::logic_error,
                     "Connections to external URN database services are not allowed!");
         config_.fetch("external_databases", dbs);
       }
-      std::vector<std::string> db_names;
-      DT_THROW_IF(dbs.size() &&
-                  !find_service_names_with_id(services_,
-                                              "datatools::urn_db_service",
-                                              db_names),
-                  std::logic_error,
-                  "Cannot find URN database services!");
-      for (std::size_t idb = 0; idb < dbs.size(); idb++) {
-        std::string db_name = dbs[idb];
-        if (std::find(db_names.begin(), db_names.end(), db_name) == db_names.end()) {
-          DT_THROW(std::logic_error,
-                   "Cannot find URN database service named '" << db_name << "'!");
+      // std::cerr << "[DEVEL] " << "urn_db_service::initialize: "
+      //           << "Number of requested external URN database services :" << dbs.size()
+      //           << std::endl;
+      // for (auto name : dbs) {
+      //   std::cerr << "[DEVEL] " << "urn_db_service::initialize: "
+      //             << " - URN database service: '" << name << "'"
+      //             << std::endl;
+      // }
+      if (dbs.size()) {
+        // We need to explore the dictionary of external services only
+        // if some external databases are explicitely required above:
+        std::vector<std::string> db_names;
+        DT_THROW_IF(!find_service_names_with_id(services_,
+                                                "datatools::urn_db_service",
+                                                db_names),
+                    std::logic_error,
+                    "Cannot find URN database services!");
+        for (std::size_t idb = 0; idb < dbs.size(); idb++) {
+          std::string db_name = dbs[idb];
+          if (std::find(db_names.begin(), db_names.end(), db_name) == db_names.end()) {
+            DT_THROW(std::logic_error,
+                     "Cannot find URN database service named '" << db_name << "'!");
+          }
+          const urn_db_service & db
+            = datatools::get<datatools::urn_db_service>(services_, db_name);
+          connect_db(db);
         }
-        const urn_db_service & db
-          = datatools::get<datatools::urn_db_service>(services_, db_name);
-        connect_db(db);
       }
 
       // if (config_.has_key("mounted_urn_regex")) {
@@ -439,7 +456,10 @@ namespace datatools {
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Service is not initialized!");
-    kernel_pop();
+
+    if (is_kernel_pushed()) {
+      kernel_pop();
+    }
     if (is_locked()) {
       unlock();
     }
