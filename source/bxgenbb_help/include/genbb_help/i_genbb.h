@@ -24,8 +24,6 @@
  * Description:
  *   GENBB generator abstract class
  *
- * History:
- *
  */
 
 #ifndef GENBB_HELP_I_GENBB_H

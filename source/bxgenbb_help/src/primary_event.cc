@@ -155,7 +155,7 @@ namespace genbb {
 
   bool primary_event::is_genbb_weighted() const
   {
-    return _genbb_weight_ == 1.0;
+    return _genbb_weight_ != 1.0;
   }
 
   const primary_event::particles_col_type & primary_event::get_particles() const
@@ -287,6 +287,11 @@ namespace genbb {
     return *i;
   }
 
+  bool primary_event::has_label() const
+  {
+    return !_label_.empty();
+  }
+
   const std::string & primary_event::get_label() const
   {
     return _label_;
@@ -302,6 +307,11 @@ namespace genbb {
   {
     _label_ = "";
     return;
+  }
+
+  bool primary_event::has_classification() const
+  {
+    return !_classification_.empty();
   }
 
   const std::string & primary_event::get_classification() const

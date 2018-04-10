@@ -252,9 +252,9 @@ namespace genbb {
           pge.cumul_prob = 0.0;
         }
         detail::pg_entry_type & pet = found->second;
-        // Intialize the entry :
+        // Initialize the entry :
         if (! pet.is_initialized()) {
-          datatools::factory_register<i_genbb> * facreg = 0;
+          datatools::factory_register<i_genbb> * facreg = nullptr;
           // Check if a manager can provide a factory object :
           if (pet.has_manager()) {
             facreg = &pet.grab_manager().grab_factory_register();
@@ -263,7 +263,7 @@ namespace genbb {
                              &service_manager_,
                              &dictionary_,
                              facreg,
-                             (has_external_random()? &grab_external_random() : 0));
+                             (has_external_random()? &grab_external_random() : nullptr));
         } // if (! pet.is_initialized()) {
           //pet.tree_dump(std::cerr, "genbb::combined_particle_generator::initialize: PET: ", "DEVEL: ");
         pge.pg = &(pet.grab());

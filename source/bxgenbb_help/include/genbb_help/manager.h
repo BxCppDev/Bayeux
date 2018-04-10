@@ -66,7 +66,8 @@ namespace genbb {
   /*! \brief GENBB particle manager management class
    *
    */
-  class manager : public ::datatools::i_tree_dumpable
+  class manager
+    : public ::datatools::i_tree_dumpable
   {
   public:
     enum flag_type {
@@ -93,7 +94,7 @@ namespace genbb {
     bool is_debug() const;
 
     /// Set the debug flag
-    void set_debug(bool debug = true);
+    void set_debug(bool debug_ = true);
 
     /// Check the use of some external PRNG
     bool has_external_prng() const;
@@ -138,79 +139,79 @@ namespace genbb {
     bool is_initialized() const;
 
     /// Initialize the manager from a container of properties
-    void initialize(const datatools::properties& config);
+    void initialize(const datatools::properties & config_);
 
     /// Reset the manager
     void reset();
 
     /// Check if the factory has a given type
-    bool has_pg_type(const std::string& id) const;
+    bool has_pg_type(const std::string & id_) const;
 
     /// Register a given type in the factory
     template <class PgClass>
-    void register_pg_type(const std::string& id);
+    void register_pg_type(const std::string & id_);
 
     /// Unregister a given type from the factory
-    void unregister_pg_type(const std::string& id);
+    void unregister_pg_type(const std::string & id_);
 
     /**  @param name The name of the PG to be checked
      *   @return true if the manager hosts the PG requested by name
      */
-    bool has(const std::string& name) const;
+    bool has(const std::string & name_) const;
 
     /**  @param name The name of the PG to be checked
      *   @return true if the PG is initialized
      */
-    bool is_initialized(const std::string& name) const;
+    bool is_initialized(const std::string & name_) const;
 
     /**  Check if a given PG can be removed
      *   @param name The name of the PG to be completely removed
      */
-    bool can_drop(const std::string& name) const;
+    bool can_drop(const std::string & name_) const;
 
     /**  @param name The name of the PG to be completely removed
      */
-    void drop(const std::string& name);
+    void drop(const std::string & name_);
 
     /**  @param name The name of the PG to be reset
      */
-    void reset(const std::string& name);
+    void reset(const std::string & name_);
 
     /**  @param name The name of the PG to be reset
      *   @return the registration ID of the PG
      */
-    const std::string & get_id(const std::string& name) const;
+    const std::string & get_id(const std::string & name_) const;
 
     /**  @param name The name of the PG to be returned
      *   @return a non-mutable reference to the PG
      */
-    const i_genbb & get(const std::string& name) const;
+    const i_genbb & get(const std::string & name_) const;
 
     /**  @param name The name of the PG to be returned
      *   @return a mutable reference to the PG
      */
-    i_genbb & grab(const std::string& name);
+    i_genbb & grab(const std::string & name_);
 
-    void load(const std::string& name,
-              const std::string& id,
-              const datatools::properties& config);
+    void load(const std::string & name_,
+              const std::string & id_,
+              const datatools::properties & config_);
 
-    void load(const datatools::multi_properties& config);
+    void load(const datatools::multi_properties & config_);
 
-    void dump_particle_generators(std::ostream& out = std::clog,
-                                  const std::string& title  = "",
-                                  const std::string& indent = "") const;
+    void dump_particle_generators(std::ostream &      out_ = std::clog,
+                                  const std::string & title_  = "",
+                                  const std::string & indent_ = "") const;
 
-    void print_particle_generators(std::ostream& out = std::clog,
-                                   const std::string& title  = "",
-                                   const std::string& indent = "",
-                                   const std::string& mode = "") const;
+    void print_particle_generators(std::ostream &      out_ = std::clog,
+                                   const std::string & title_  = "",
+                                   const std::string & indent_ = "",
+                                   const std::string & mode_ = "") const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out         = std::clog,
-                           const std::string& title  = "",
-                           const std::string& indent = "",
-                           bool inherit              = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
     const datatools::factory_register<i_genbb> & get_factory_register() const;
 
@@ -218,32 +219,32 @@ namespace genbb {
 
     datatools::logger::priority get_logging_priority() const;
 
-    void set_logging_priority(datatools::logger::priority p);
+    void set_logging_priority(datatools::logger::priority p_);
 
   protected:
 
     // Note: move to private ASAP
 
-    void _load_pg(const std::string& name,
-                  const std::string& id,
-                  const datatools::properties& config);
+    void _load_pg(const std::string & name_,
+                  const std::string & id_,
+                  const datatools::properties & config_);
 
     void _preload_global_dict();
 
-    void _create_pg(detail::pg_entry_type& entry);
+    void _create_pg(detail::pg_entry_type & entry_);
 
-    void _initialize_pg(detail::pg_entry_type& entry);
+    void _initialize_pg(detail::pg_entry_type & entry_);
 
-    void _reset_pg(detail::pg_entry_type& entry);
+    void _reset_pg(detail::pg_entry_type & entry_);
 
   private:
 
     /// Set the factory preload flag
-    void _set_preload_(bool preload);
+    void _set_preload_(bool preload_);
 
   private:
 
-    datatools::service_manager * _service_mgr_;     ///< Handle to a service manager
+    datatools::service_manager * _service_mgr_ = nullptr; ///< Handle to a service manager
 
     bool         _initialized_;                     ///< Initialization flag
     datatools::logger::priority _logging_priority_; ///< Logging priority threshold
@@ -262,8 +263,9 @@ namespace genbb {
 
 
   template <class PgClass>
-  void manager::register_pg_type(const std::string& id) {
-    _factory_register_.registration(id, boost::factory<PgClass*>());
+  void manager::register_pg_type(const std::string & id_)
+  {
+    _factory_register_.registration(id_, boost::factory<PgClass*>());
   }
 
 }  // end of namespace genbb

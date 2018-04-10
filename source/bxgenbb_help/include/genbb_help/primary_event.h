@@ -129,6 +129,9 @@ namespace genbb {
     /// Remove particle
     void remove_particle(int type_, int occurence_ = 0);
 
+    /// Check if label is set
+    bool has_label() const;
+
     /// Return the label
     const std::string & get_label() const;
 
@@ -137,6 +140,9 @@ namespace genbb {
 
     /// Reset the label
     void reset_label();
+
+    /// Check if classification is set
+    bool has_classification() const;
 
     /// Return the classification string
     const std::string & get_classification() const;

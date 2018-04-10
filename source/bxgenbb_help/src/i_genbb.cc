@@ -1,6 +1,6 @@
 // i_genbb.cc
 /*
- * Copyright 2007-2014 F. Mauger
+ * Copyright 2007-2018 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Publi * License as published by
@@ -58,12 +58,12 @@ namespace genbb {
     _name_ = name_;
   }
 
-  void i_genbb::reset_name ()
+  void i_genbb::reset_name()
   {
     _name_.clear();
   }
 
-  bool i_genbb::is_debug () const
+  bool i_genbb::is_debug() const
   {
     return _logging_priority >= datatools::logger::PRIO_DEBUG;
   }
@@ -78,93 +78,93 @@ namespace genbb {
     _logging_priority = p;
   }
 
-  i_genbb::i_genbb ()
+  i_genbb::i_genbb()
   {
     _logging_priority = datatools::logger::PRIO_FATAL;
-    _external_random_ = 0;
+    _external_random_ = nullptr;
     _assign_generation_ids_ = false;
     return;
   }
 
-  i_genbb::~i_genbb ()
+  i_genbb::~i_genbb()
   {
     return;
   }
 
-  void i_genbb::load_next (primary_event & event_,
-                           bool compute_classification_)
+  void i_genbb::load_next(primary_event & event_,
+                          bool compute_classification_)
   {
-    _load_next (event_, compute_classification_);
+    _load_next(event_, compute_classification_);
     if (_assign_generation_ids_) {
       event_.assign_generation_ids();
     }
     return;
   }
 
-  bool i_genbb::has_external_random () const
+  bool i_genbb::has_external_random() const
   {
-    return _external_random_ != 0;
+    return _external_random_ != nullptr;
   }
 
-  bool i_genbb::can_external_random () const
+  bool i_genbb::can_external_random() const
   {
     return false;
   }
 
-  void i_genbb::reset_external_random ()
+  void i_genbb::reset_external_random()
   {
-    _external_random_ = 0;
+    _external_random_ = nullptr;
     return;
   }
 
-  void i_genbb::set_external_random (mygsl::rng & r_)
+  void i_genbb::set_external_random(mygsl::rng & r_)
   {
-    DT_THROW_IF (! can_external_random (), std::logic_error, "This event generator does not accept external PRNG !");
-    DT_THROW_IF (! r_.is_initialized (), std::logic_error, "External PRNG is not initialized !");
+    DT_THROW_IF(! can_external_random(), std::logic_error, "This event generator does not accept external PRNG !");
+    DT_THROW_IF(! r_.is_initialized(), std::logic_error, "External PRNG is not initialized !");
     _external_random_ = &r_;
     return;
   }
 
-  mygsl::rng & i_genbb::grab_external_random ()
+  mygsl::rng & i_genbb::grab_external_random()
   {
-    DT_THROW_IF (! has_external_random (), std::logic_error, "No available external PRNG !");
+    DT_THROW_IF(! has_external_random(), std::logic_error, "No available external PRNG !");
     return *_external_random_;
   }
 
-  const mygsl::rng & i_genbb::get_external_random () const
+  const mygsl::rng & i_genbb::get_external_random() const
   {
-    DT_THROW_IF (! has_external_random (), std::logic_error, "No available external PRNG !");
+    DT_THROW_IF(! has_external_random(), std::logic_error, "No available external PRNG !");
     return *_external_random_;
   }
 
-  void i_genbb::initialize_simple ()
+  void i_genbb::initialize_simple()
   {
     datatools::properties dummy_setup;
-    initialize_standalone (dummy_setup);
+    initialize_standalone(dummy_setup);
     return;
   }
 
-  void i_genbb::initialize_standalone (const datatools::properties & setup_)
+  void i_genbb::initialize_standalone(const datatools::properties & setup_)
   {
     datatools::service_manager dummy_srvcmgr;
     detail::pg_dict_type dummy_dict;
-    initialize (setup_, dummy_srvcmgr, dummy_dict);
+    initialize(setup_, dummy_srvcmgr, dummy_dict);
     return;
   }
 
-  void i_genbb::initialize_with_dictionary_only (const datatools::properties & setup_,
-                                                 detail::pg_dict_type & dictionary_)
+  void i_genbb::initialize_with_dictionary_only(const datatools::properties & setup_,
+                                                detail::pg_dict_type & dictionary_)
   {
     datatools::service_manager dummy_srvcmgr;
-    initialize (setup_, dummy_srvcmgr, dictionary_);
+    initialize(setup_, dummy_srvcmgr, dictionary_);
     return;
   }
 
-  void i_genbb::initialize_with_service_only (const datatools::properties & setup_,
-                                              datatools::service_manager & service_manager_)
+  void i_genbb::initialize_with_service_only(const datatools::properties & setup_,
+                                             datatools::service_manager & service_manager_)
   {
     detail::pg_dict_type dummy_dict;
-    initialize (setup_, service_manager_, dummy_dict);
+    initialize(setup_, service_manager_, dummy_dict);
     return;
   }
 
@@ -181,7 +181,7 @@ namespace genbb {
 
     // Name of the generator (only if not already set) :
     if (_name_.empty()) {
-      if (setup_.has_key ("name")) {
+      if (setup_.has_key("name")) {
         set_name(setup_.fetch_string("name"));
       }
     }
@@ -205,10 +205,10 @@ namespace genbb {
     return _assign_generation_ids_;
   }
 
-  void i_genbb::tree_dump (std::ostream& a_out,
-                           const std::string& a_title,
-                           const std::string& a_indent,
-                           bool a_inherit) const
+  void i_genbb::tree_dump(std::ostream & a_out,
+                          const std::string & a_title,
+                          const std::string & a_indent,
+                          bool a_inherit) const
   {
     std::string indent;
     if (! a_indent.empty()) indent = a_indent;
@@ -226,10 +226,10 @@ namespace genbb {
           << "Assign generation Ids : '" << _assign_generation_ids_ << "'" << std::endl;
 
     a_out << indent << datatools::i_tree_dumpable::tag
-          << "Can use external PRNG : " << can_external_random ()  << std::endl;
+          << "Can use external PRNG : " << can_external_random()  << std::endl;
 
     a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
-          << "Has external PRNG     : " << has_external_random ()  << std::endl;
+          << "Has external PRNG     : " << has_external_random()  << std::endl;
 
     return;
   }
@@ -247,12 +247,12 @@ namespace genbb {
         = ocd_.add_property_info();
       cpd.set_name_pattern("assign_generation_ids")
         .set_from("genvtx::i_genbb")
-        .set_terse_description("Set the flag to assign generation ids to primary particles")
+        .set_terse_description("Set the flag to assign generation IDs to primary particles")
         .set_traits(datatools::TYPE_BOOLEAN)
         .set_mandatory(false)
         .set_default_value_boolean(false)
         .set_long_description("The flag to assign generation ids to primary particles \n"
-                              "Particles are given unique Ids from 0 to N-1 where N-1 \n"
+                              "Particles are given unique Ids from 0 to N-1 where N   \n"
                               "is the total number of primary particles in the event. \n"
                               )
         .add_example("Activate the assignment of unique generation ids:    \n"

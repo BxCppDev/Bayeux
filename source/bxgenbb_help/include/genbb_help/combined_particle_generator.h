@@ -51,7 +51,8 @@
 namespace genbb {
 
   /// Generator for combined generators
-  class combined_particle_generator : public i_genbb
+  class combined_particle_generator
+    : public i_genbb
   {
   public:
 

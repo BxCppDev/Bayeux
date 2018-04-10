@@ -28,7 +28,7 @@ int main (int argc_, char ** argv_)
 
     bool debug = false;
     std::string pg_name;
-    int nevents = 22000;
+    std::size_t nevents = 22000;
 #if GENBB_HELP_WITH_FORTRAN == 1
     bool use_fortran_lib = false;
 #endif // GENBB_HELP_WITH_FORTRAN == 1
@@ -92,15 +92,16 @@ int main (int argc_, char ** argv_)
                 << pg_name << "'" << std::endl;
       genbb::i_genbb & PG = PGMgr.grab(pg_name);
 
-      int count = 0;
+      std::size_t count = 0;
+      std::size_t maxcount = 10;
       while (PG.has_next()) {
         genbb::primary_event decay_event;
         PG.load_next(decay_event, false);
-        decay_event.set_label (pg_name);
-        if (count < 1) decay_event.tree_dump (std::clog,
-                                              "Generated primary event : ",
-                                              "NOTICE: ");
-        hEc.fill (decay_event.get_particles().front().get_kinetic_energy ());
+        decay_event.set_label(pg_name);
+        if (count < maxcount) decay_event.tree_dump(std::clog,
+                                             "Generated primary event : ",
+                                             "NOTICE: ");
+        hEc.fill(decay_event.get_particles().front().get_kinetic_energy());
         count++;
         if (count >= nevents) break;
       }
@@ -121,12 +122,12 @@ int main (int argc_, char ** argv_)
                 << pg_name << "'" << std::endl;
       genbb::i_genbb & PG = PGMgr.grab(pg_name);
       nevents = 100000;
-      int count = 0;
+      std::size_t count = 0;
       while (PG.has_next())  {
         genbb::primary_event decay_event;
         PG.load_next(decay_event, false);
-        decay_event.set_label (pg_name);
-        hEc.fill (decay_event.get_particles().front().get_kinetic_energy ());
+        decay_event.set_label(pg_name);
+        hEc.fill(decay_event.get_particles().front().get_kinetic_energy ());
         count++;
         if (count >= nevents) break;
       }
