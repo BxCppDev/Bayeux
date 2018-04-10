@@ -23,6 +23,7 @@ Additions
 
 * Issue #17 : Add query methods in the ``datatools::urn_db_service`` and
   ``datatools::urn_to_path_resolver_service`` classes.
+* Add the ``genbb::time_slicer_generator`` class.
 
 
 Removals
