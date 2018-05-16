@@ -9,8 +9,6 @@
  *
  *  Utilities.
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_UTILS_H
@@ -91,7 +89,6 @@ namespace geomtools {
   void set_vector_2d(const std::vector<double> & source_, vector_2d & target_);
 
   void set_vector_3d(const std::vector<double> & source_, vector_3d & target_);
-
 
   //! \brief Parse a vector 3D object from an input stream
   //!
@@ -538,6 +535,14 @@ namespace geomtools {
   //! Create a vector 3D object from spherical angular coordinates (magnitude is set to 1)
   void make_phi_theta(vector_3d & vec_, double phi_, double theta_);
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnoexcept-type"
+#endif
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnoexcept-type"
+#endif
   //! \brief Isotropically randomize the direction of an unit vector
   //!
   //! @arg ran_ a function or object-function (functor) with the following operator defined:
@@ -548,7 +553,7 @@ namespace geomtools {
   //! like drand48 does.
   //! @arg ran_dir_ the unit vector to be randomized
   template <class ran_func>
-  void randomize_direction(ran_func & ran_, vector_3d & ran_dir_)
+  void randomize_direction(ran_func & ran_, vector_3d & ran_dir_) 
   {
     double phi = 2. * M_PI * ran_();
     double cos_theta = -1 + 2 * ran_();
@@ -558,6 +563,12 @@ namespace geomtools {
     double z = cos_theta;
     ran_dir_.set(x, y, z);
   }
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
   //! \brief Isotropically randomize the direction of an unit vector
   //!
