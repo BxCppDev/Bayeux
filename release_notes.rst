@@ -41,12 +41,21 @@ None.
 Fixes
 =====
 
-* Fix issue #18 : Fix initialization stage which mount external URN Database
-  Service instances.
+* Fix issue  #18 : Fix  initialization stage which mount  external URN
+  Database Service instances.
 
 * Fix issue #16 : In the ``bayeux::detail::bayeux_library`` singleton,
-  the system URN Database Service cannot be mounted by any client URN Database Service
-  if it is not locked. The fix consists in
-  explicitly locking(unlocking) the system URN Databasec service of the Bayeux's library
-  before(after) the *kernel push*(*pop*) call (registration in/deregistration from
-  the Bayeux's kernel URN Query Singleton Service).
+  the system URN Database Service cannot  be mounted by any client URN
+  Database Service if it is not locked. The fix consists in explicitly
+  locking(unlocking) the system URN  Databasec service of the Bayeux's
+  library  before(after) the  *kernel push*(*pop*)  call (registration
+  in/deregistration  from  the  Bayeux's kernel  URN  Query  Singleton
+  Service).
+
+* Fix warning issues:
+
+  * Add ``-Wno-error=noexcept-type`` in global settings
+  * ``geomtools/utils.h``:       add        pragma       for       the
+    ``geomtools::randomize_direction`` template function which emits a
+    warning with GCC 7 on Ubuntu 18.04.
+
