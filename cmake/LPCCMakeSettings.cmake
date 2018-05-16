@@ -133,7 +133,7 @@
 #
 # - ``<PROJECT_NAME_UC>_COMPILER_ERROR_ON_WARNING`` : (default ``ON``)
 #
-#   - Escalates compiler warnings to errors and attemptes to fail at first error.
+#   - Escalates compiler warnings to errors and attempts to fail at first error.
 #
 #
 # C++ Standard Selection
@@ -300,7 +300,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|(Apple)+Clang")
   # makes use of unsupported type by ISO C++ 98 ([unsigned] long long int) and
   # the 'pragma GCC diagnostic ignored "-Wlong-long"' does not work
   if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wno-long-long")
+    set(PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wno-long-long -Wno-error=noexcept-type")
   endif()
 
   # Disable C99 extension warnings on Clang
