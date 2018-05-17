@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2017-10-20
+:Date:    2018-05-17
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -60,7 +60,7 @@ geomtools
 emfield
   Electromagnetic field modelling and management.
 
-genbb_help
+genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
 
@@ -113,7 +113,7 @@ software tools are distributed under an open source software license.
 
 This  authorization  is explicitely  granted  to  the
 `Laboratoire de Physique Corpusculaire de Caen`_
-(UMR6534,  CNRS/IN2P3,  ENSICAEN, Normandie Université).
+(UMR6534,  CNRS/IN2P3,  UNICAEN, ENSICAEN, Normandie Univ.).
 
 .. _`Laboratoire de Physique Corpusculaire de Caen`: http://www.lpc-caen.in2p3.fr/
 
@@ -150,18 +150,18 @@ environment.  Other  UNIX-like OSes  (Linux, BSD, macOS)  **may** work
 with some work of adapting.
 
 Bayeux now uses the C++11 standard  by default so this implies the use
-of a modern C++ compiler.
+of a modern C++ compiler (example: GCC version >= 4.9).
 
 Using  the `bxcppdev/bxtap`_  `Linuxbrew`_ *tap*  provided by  the
-BxCppDev_  group  should help  you  to  guarantee a  suitable  working
+BxCppDev_  group  should help  you  to  provide a  suitable  working
 environment on your system.
 
 Releases
 --------
 
-* Latest release: Bayeux-3.1.0
+* Latest release: `Bayeux-3.2.0`_
 
-
+.. _`Bayeux-3.2.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.2.0
 
 .. raw:: pdf
 
@@ -184,7 +184,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.1.0, you may use, assuming a
+For example, to download Bayeux version 3.2.0, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -192,16 +192,16 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.1.0.tar.gz
-   $ mkdir Bayeux-3.1.0 && tar xvzf Bayeux-3.1.0.tar.gz -C Bayeux-3.1.0 --strip-components 1
-   $ cd Bayeux-3.1.0/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.2.0.tar.gz
+   $ mkdir Bayeux-3.2.0 && tar xvzf Bayeux-3.2.0.tar.gz -C Bayeux-3.2.0 --strip-components 1
+   $ cd Bayeux-3.2.0/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.1.0/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.2.0/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.1.0
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.2.0
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -217,6 +217,7 @@ Git:
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
    $ git clone https://github.com/BxCppDev/Bayeux Bayeux.git
+   $ git checkout develop
 ..
 
 .. raw:: pdf
@@ -242,7 +243,7 @@ distributions  derived from  Fedora(RedHat)  and  Debian provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
--  Ubuntu 12.04LTS, 14.04LTS, 16.04LTS (current development system):
+-  Ubuntu 16.04LTS, 18.04LTS (current development system):
    http://www.ubuntu.com
 -  Scientific Linux 5/6.X/7.X: http://www.scientificlinux.org
 
@@ -301,13 +302,23 @@ will  provide,  for  Linux  and macOS  systems,  an  uniform  software
 environment with  a selected set  of blessed software,  including the
 C++ compiler if needed.
 
+
+**Note:** We  have experienced that  the use  of Linuxbrew is  not the
+definitive robust  solution to solve the  software dependency problem.
+Linuxbrew sometimes fails  to provide a proper  and stable environment
+to host  and use  Bayeux, due  to rapidly  changing brew  formulas and
+their dependencies from the homebrew core  tap.  We try to provide the
+proper formulas for Ubuntu Linux. However you could be forced to adapt
+some formulas to your own system.
+
+
 Additional Software Required
 ............................
 
 * Bayeux/datatools requires the Qt5 library when the ``BAYEUX_WITH_QT_GUI``
   option is set (experimental).
 
-  On Ubuntu 16.04, this implies the installation of the following packages:
+  On Ubuntu 16.04/18.04, this implies the installation of the following packages:
 
   .. code:: sh
 
@@ -316,9 +327,11 @@ Additional Software Required
 	    qt5-default
   ..
 
+  **Note:** bxcppdev/bxtap provides a ``qt5-base`` formula.
+  
 * Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
 
-  On Ubuntu 16.04, this implies the installation of the following packages:
+  On Ubuntu 16.04/18.04, this implies the installation of the following packages:
 
   .. code:: sh
 
@@ -337,10 +350,19 @@ Additional Software Required
      $ sudo apt-get install libreadline6-dev readline-common
   ..
 
+  On Ubuntu 18.04, this implies the installation of the following packages:
+
+  .. code:: sh
+
+     $ sudo apt-get install libreadline7-dev readline-common
+  ..
+
+  **Note:** Linuxbrew provides a ``readline`` formula.
+
 * pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
   documentation in user friendly format:
 
-  On Ubuntu 16.04, this implies  the installation of the following
+  On Ubuntu, this implies  the installation of the following
   packages:
 
   .. code:: sh
@@ -351,7 +373,7 @@ Additional Software Required
 * docutils  (http://docutils.sourceforge.net/)  is also  useful  to
   generate documentation from ReST format in user friendly format:
 
-  On Ubuntu 16.04, this implies the installation of the following packages:
+  On Ubuntu, this implies the installation of the following packages:
 
   .. code:: sh
 
@@ -603,7 +625,8 @@ To do
   the Bayeux/genbb_help module.
 * Implement  the  Bayeux/mctools  MCNP extension  library  module  and
   companion tools.
-
+* Split the historical GENBB/Decay0 C++ port into a external standalone project
+  and make Bayeux/genbb depends on it.
 
 .. raw:: pdf
 
