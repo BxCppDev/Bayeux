@@ -620,6 +620,7 @@ though many scientific software projects (badly mis)use it.
 To do
 =====
 
+* Provide official example code for many classes.
 * Migrate some deprecated Boost classes to some C++11 classes (smart pointers...)
 * Implement support for radioactive decays  using ENSDF files from Geant4 in
   the Bayeux/genbb_help module.
