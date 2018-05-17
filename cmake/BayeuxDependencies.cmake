@@ -35,7 +35,7 @@ get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 # - Camp
 set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
 find_package(CAMP ${BAYEUX_CAMP_MIN_VERSION} REQUIRED NO_MODULE)
-message(STATUS "Found CAMP at CAMP_DIR = '${CAMP_DIR}'")
+message(STATUS "Found CAMP at CAMP_DIR      = '${CAMP_DIR}'")
 
 # - CLHEP
 # Find this at the end because ROOT/Geant4 may depend on it
@@ -43,7 +43,7 @@ message(STATUS "Found CAMP at CAMP_DIR = '${CAMP_DIR}'")
 # found version for compatibility reasons.
 set(BAYEUX_CLHEP_MIN_VERSION "2.1.3.1")
 find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
-message(STATUS "Found CLHEP at CLHEP_DIR = '${CLHEP_DIR}'")
+message(STATUS "Found CLHEP at CLHEP_DIR    = '${CLHEP_DIR}'")
 
 # - GSL
 set(BAYEUX_GSL_MIN_VERSION "2.4")
@@ -61,7 +61,7 @@ if(Bayeux_WITH_ROOT)
     include(${ROOT_DIR}/modules/RootNewMacros.cmake)
   endif()
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
-  message(STATUS "Found ROOT at ROOT_DIR = '${ROOT_DIR}'")
+  message(STATUS "Found ROOT at ROOT_DIR    = '${ROOT_DIR}'")
 endif()
 
 if(Bayeux_WITH_QT)
@@ -95,7 +95,7 @@ if(Bayeux_WITH_GEANT4_MODULE)
   # message(STATUS "Geant4_DEFINITIONS  = '${Geant4_DEFINITIONS}'")
   # message(STATUS "Geant4_INCLUDE_DIRS = '${Geant4_INCLUDE_DIRS}'")
   # message(STATUS "Geant4_LIBRARIES    = '${Geant4_LIBRARIES}'")
-  message(STATUS "Geant4_DIR          = '${Geant4_DIR}'")
+  message(STATUS "Geant4_DIR                  = '${Geant4_DIR}'")
 endif()
 
 # - Core Includes for Bayeux + Third Party
