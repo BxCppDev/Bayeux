@@ -56,13 +56,20 @@ namespace geomtools {
 
   uint32_t geom_id::get (int i_) const
   {
-    return _addresses_.at (i_);
+    // DT_THROW_IF(_type_ == INVALID_TYPE,
+    //             std::logic_error,
+    //             "Invalid type geometry ID!");
+    // DT_THROW_IF(i_ < 0 || i_ >= _addresses_.size(),
+    //             std::range_error,
+    //             "Invalid address index [" << i_ << "] from geom ID = " << *this << "!");
+    // return _addresses_[i_];
+    return addresses_.at(i);
   }
 
   void geom_id::reset_address ()
   {
     for (size_t i = 0; i < _addresses_.size (); i++) {
-      _addresses_.at (i) = geom_id::INVALID_ADDRESS;
+      _addresses_.at(i) = geom_id::INVALID_ADDRESS;
     }
     return;
   }
