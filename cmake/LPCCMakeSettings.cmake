@@ -300,7 +300,14 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|(Apple)+Clang")
   # makes use of unsupported type by ISO C++ 98 ([unsigned] long long int) and
   # the 'pragma GCC diagnostic ignored "-Wlong-long"' does not work
   if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set(PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wno-long-long -Wno-error=noexcept-type")
+    #message( STATUS "************ CMAKE_CXX_COMPILER_ID      = ${CMAKE_CXX_COMPILER_ID}")
+    #message( STATUS "************ CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
+    set(PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wno-long-long")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 7)
+      message( STATUS "[info] Inhibit errors on 'noexcept-type' warnings (-Wno-error=noexcept-type)")
+      string(APPEND PROJECT_CXX_FLAGS " -Wno-error=noexcept-type")
+    endif()
+    #message( STATUS "************ PROJECT_CXX_FLAGS = ${PROJECT_CXX_FLAGS}")
   endif()
 
   # Disable C99 extension warnings on Clang

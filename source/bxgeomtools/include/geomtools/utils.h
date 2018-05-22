@@ -535,11 +535,7 @@ namespace geomtools {
   //! Create a vector 3D object from spherical angular coordinates (magnitude is set to 1)
   void make_phi_theta(vector_3d & vec_, double phi_, double theta_);
 
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnoexcept-type"
-#endif
-#ifdef __GNUC__
+#if __GNUC__ >= 7
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnoexcept-type"
 #endif
@@ -563,11 +559,8 @@ namespace geomtools {
     double z = cos_theta;
     ran_dir_.set(x, y, z);
   }
-#ifdef __GNUC__
+#if __GNUC__ >= 7
 #pragma GCC diagnostic pop
-#endif
-#ifdef __clang__
-#pragma clang diagnostic pop
 #endif
 
   //! \brief Isotropically randomize the direction of an unit vector
