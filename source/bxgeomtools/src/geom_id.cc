@@ -63,7 +63,7 @@ namespace geomtools {
     //             std::range_error,
     //             "Invalid address index [" << i_ << "] from geom ID = " << *this << "!");
     // return _addresses_[i_];
-    return addresses_.at(i);
+    return _addresses_.at(i);
   }
 
   void geom_id::reset_address ()
