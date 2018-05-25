@@ -56,8 +56,24 @@ namespace datatools {
    *
    *  A handle object is given the responsability to
    *  handle a class instance through its pointer using the shared pointer
-   *  mechanism from Boost. The inner hidden pointer can be null.
-   *  It must be initialized with the 'new' construction operator.
+   *  mechanism from Boost. The inner hidden pointer can be null, but accessors
+   *  will throw exceptions if called when this is the case.
+   *  The held instance must be initialized with the 'new' construction operator,
+   *  or you can use the make_handle() free function.
+   *
+   *  Given `handle` and held type `T` (no additional qualifiers), an instance of `handle<T>` has the following
+   *  access behaviour in different `const` contexts:
+   *
+   *  `handle<T>`: all members of `handle` and `T` accessible
+   *
+   *  `const handle<T>`: can only access const members of both
+   *
+   *  `const handle<const T>`: can only access const members of both
+   *
+   *  `handle<const T>`: can access all methods of handle, only `const` members of `T`
+   *
+   *  Access attempts outside these contexts will give a compile-time error.
+   *
    *  The handle class is copyable and can be used within STL containers.
    *
    *  \b Example:
@@ -80,6 +96,15 @@ namespace datatools {
    *    }
    *    cout << "h1 = " << h1.get () << endl; // print it through the
    *                                          // first handle
+   *
+   *    auto h3 = make_handle<std::string>("foo"); // construction via make_handle
+   *
+   *    cout << (*h3) << endl;      // access via dereference
+   *    cout << h3->size() << endl; // access via dereference
+   *
+   *    h3.reset();
+   *    h3->size(); // Throws std::logic_error
+   *
    *  };
    *  \endcode
    *
@@ -185,6 +210,7 @@ namespace datatools {
     }
 
     //! Return a const reference to the hosted instance.
+    //! \exception std::logic_error when managed instance is null
     const T & get() const
     {
       DT_THROW_IF(_sp_.get() == nullptr, std::logic_error, "Handle holds no data!");
@@ -199,6 +225,7 @@ namespace datatools {
     // }
 
     //! Return a non-const reference to the hosted instance.
+    //! \exception std::logic_error when managed instance is null
     template<typename Q = T>
     typename std::enable_if<
       std::is_same<Q, T>::value &&
@@ -208,6 +235,39 @@ namespace datatools {
     {
       DT_THROW_IF(_sp_.get() == nullptr, std::logic_error, "Handle holds no data!");
       return *_sp_;
+    }
+
+    //! Dereferences the stored pointer
+    //! \exception std::logic_error when managed instance is null
+    T* operator->()
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return _sp_.get();
+    }
+
+    //! Dereferences the stored pointer in const context
+    //! \exception std::logic_error when managed instance is null
+    T const* operator->() const
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return _sp_.get();
+    }
+
+
+    //! Dereferences the stored pointer
+    //! \exception std::logic_error when managed instance is null
+    T& operator*()
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return *(_sp_.get());
+    }
+
+    //! Dereferences the stored pointer in const context
+    //! \exception std::logic_error when managed instance is null
+    T const& operator*() const
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return *(_sp_.get());
     }
 
     //! Reset the internal shared pointer with a new instance.
