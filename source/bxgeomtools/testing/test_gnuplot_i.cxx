@@ -260,7 +260,7 @@ int main(/*int argc, char* argv[]*/)
         if (interactive) wait_for_key();
         usleep(200);
     }
-    catch (GnuplotException ge)
+    catch (GnuplotException& ge)
     {
         std::clog << ge.what() << std::endl;
     }

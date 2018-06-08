@@ -733,7 +733,7 @@ namespace geomtools {
           _rendering_options_depth_++;
         }
       }
-    } catch (GnuplotException ge) {
+    } catch (GnuplotException& ge) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << ge.what());
     } catch (std::exception & x) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << x.what());
