@@ -18,8 +18,6 @@
 
 namespace datatools {
 
-  // const boost::property_tree::ptree & empty_options();
-
   /// \brief Return codes
   enum return_code_type {
     SUCCESS = EXIT_SUCCESS, //!< Returned code in case of success
