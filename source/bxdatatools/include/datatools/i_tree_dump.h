@@ -37,6 +37,7 @@ namespace datatools {
   {
   public:
 
+    /// \brief Default tags for tree-formated print
     struct tags {
       static const std::string & item();
       static const std::string & last_item();
@@ -47,6 +48,7 @@ namespace datatools {
 
     static const boost::property_tree::ptree & empty_options();
 
+    /// \brief Default print options POD
     struct base_print_options {
 
       bool inherit = false;
@@ -63,12 +65,12 @@ namespace datatools {
       static boost::property_tree::ptree force_inheritance(const boost::property_tree::ptree &);
 
     };
-
-
+    
+    /// \brief Enumeration for standard output streams
     enum ostream_type {
-      OSTREAM_COUT=1,
-      OSTREAM_CERR=2,
-      OSTREAM_CLOG=3
+      OSTREAM_COUT = 1,
+      OSTREAM_CERR = 2,
+      OSTREAM_CLOG = 3
     };
 
     /// Constructor
