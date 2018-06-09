@@ -108,6 +108,15 @@ namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(properties,"datatools::properties")
 
+  const properties & empty_config()
+  {
+    static std::unique_ptr<properties> _empty;
+    if (_empty.get() == nullptr) {
+      _empty.reset(new properties);
+    }
+    return *_empty.get();
+  }
+  
   properties::default_key_validator & properties::global_default_key_validator()
   {
     static std::unique_ptr<properties::default_key_validator> dkv;

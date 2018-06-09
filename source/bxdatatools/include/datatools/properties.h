@@ -1220,6 +1220,9 @@ namespace datatools {
 
   };
 
+  /// \brief Return a singleton on a empty properties dictionary
+  const properties & empty_config();
+
   //----------------------------------------------------------------------
   // properties class template method definitions
   //
