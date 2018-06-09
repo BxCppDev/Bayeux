@@ -88,7 +88,7 @@ namespace datatools {
               }
             }
           }
-        } catch (boost::bad_lexical_cast) {
+        } catch (boost::bad_lexical_cast&) {
           DT_THROW(std::logic_error, "Bad parameter in occurrence definition '" << def_ << "'");
         }
 
