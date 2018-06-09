@@ -74,7 +74,7 @@ namespace datatools {
             _argv_ = (char **) malloc( 1 * sizeof(char *));
             _argv_[0] = (char *) malloc((std::strlen(name_) + 2) * sizeof(char));
             _arg_owned_ = true;
-            std::strncpy(_argv_[0], name_, std::strlen(name_) + 1);
+           std::memcpy(_argv_[0], name_, std::strlen(name_) + 1);
           }
           // QApplication::setStyle(QStyleFactory::create(QString::fromStdString(_gui_style_)));
           _qt_app_ = new QApplication(_argc_, _argv_);
