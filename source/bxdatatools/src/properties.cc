@@ -107,15 +107,6 @@ namespace {
 namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(properties,"datatools::properties")
-
-  const properties & empty_config()
-  {
-    static std::unique_ptr<properties> _empty;
-    if (_empty.get() == nullptr) {
-      _empty.reset(new properties);
-    }
-    return *_empty.get();
-  }
   
   properties::default_key_validator & properties::global_default_key_validator()
   {
@@ -4240,6 +4231,7 @@ namespace datatools {
     return;
   }
 
+  // static
   std::string properties::build_property_key(const std::string & prefix_,
                                              const std::string & subkey_)
   {
@@ -4247,6 +4239,13 @@ namespace datatools {
     s += '.';
     s += subkey_;
     return s;
+  }
+
+  // static
+  const properties & empty_config()
+  {
+    static const properties _empty;
+    return _empty;
   }
 
   void properties::export_to_string_based_dictionary(std::map<std::string, std::string> & dict_,

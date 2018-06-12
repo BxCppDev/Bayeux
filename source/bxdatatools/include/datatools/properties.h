@@ -61,7 +61,17 @@ namespace datatools {
   /**
    *  The properties class provides a serializable container that holds
    *  many different data of different types (bool, int, double, string)
-   *  as well as fixed size arrays (std::vector) of these build-in types.
+   *  as well as size arrays (std::vector) of these build-in types.
+   *
+   * Additional features are available for some types of properties:
+   *
+   * - explicit support for units with real parameters
+   * - string parameters marked as file path
+   * 
+   * The properties class is provided with different I/O mechnisms:
+   *
+   * - Boost/Serialization I/O (text, binary, XML archives)
+   * - I/O to/from plain ASCII files (with 'variant' support)
    *
    */
   class properties
@@ -71,6 +81,7 @@ namespace datatools {
     , public datatools::i_cloneable
   {
   public:
+    
     //----------------------------------------------------------------------
     //
     //! \brief Internal data stored within the dictionary of the properties class.
@@ -114,6 +125,7 @@ namespace datatools {
       };
 
     public:
+      
       typedef std::vector<bool>        vbool;   ///< Container for boolean data
       typedef std::vector<int32_t>     vint;    ///< Container for integer data
       typedef std::vector<double>      vdouble; ///< Container for real data
@@ -147,13 +159,13 @@ namespace datatools {
       bool has_description() const;
 
       /// Set the description string associated to the stored data
-      void set_description(const std::string &);
+      void set_description(const std::string & description_);
 
       /// Get the description string associated to the stored data
       const std::string & get_description() const;
 
       /// Set the unit symbol associated to the stored real data
-      int set_unit_symbol(const std::string &);
+      int set_unit_symbol(const std::string & symbol_);
 
       /// Get the unit symbol associated to the stored real data
       const std::string & get_unit_symbol() const;
@@ -228,55 +240,55 @@ namespace datatools {
       bool empty() const;
 
       /// Check if array index is valid
-      bool index_is_valid(int) const;
+      bool index_is_valid(int index_) const;
 
       /// Get the boolean value stored at a given rank
-      bool get_boolean_value(int = 0) const;
+      bool get_boolean_value(int index_ = 0) const;
 
       /// Get the integer value stored at a given rank
-      int get_integer_value(int = 0) const;
+      int get_integer_value(int index_ = 0) const;
 
       /// Get the real value stored at a given rank
-      double get_real_value(int = 0) const;
+      double get_real_value(int index_ = 0) const;
 
       /// Get the string value stored at a given rank
-      std::string get_string_value(int = 0) const;
+      std::string get_string_value(int index_ = 0) const;
 
       /// Set the boolean value at a given rank
-      int set_value(bool, int = 0);
+      int set_value(bool value_, int index_ = 0);
 
       /// Set the integer value at a given rank
-      int set_value(int, int = 0);
+      int set_value(int value_, int index_ = 0);
 
       /// Set the real value at a given rank
-      int set_value(double, int = 0, bool explicit_unit_ = false);
+      int set_value(double value_, int index_ = 0, bool explicit_unit_ = false);
 
       /// Set the real value at a given rank
-      int set_value_with_unit(double, int = 0, const std::string & unit_symbol_ = "");
+      int set_value_with_unit(double value_, int index_ = 0, const std::string & unit_symbol_ = "");
 
       /// Set the explicit unit flag
-      int set_explicit_unit(bool);
+      int set_explicit_unit(bool explicit_unit_flag_);
 
       /// Set the explicit path flag
-      int set_explicit_path(bool);
+      int set_explicit_path(bool explicit_path_flag_);
 
       /// Set the string value at a given rank
-      int set_value(const std::string &, int = 0, bool explicit_path_ = false);
+      int set_value(const std::string & value_, int index_ = 0, bool explicit_path_flag_ = false);
 
       /// Set the string value at a given rank
-      int set_value(const char*, int = 0, bool explicit_path_ = false);
+      int set_value(const char * value_, int index_ = 0, bool explicit_path_flag_ = false);
 
       /// Get the boolean value by reference stored at a given rank
-      int get_value(bool &, int = 0) const;
+      int get_value(bool & value_, int index_ = 0) const;
 
       /// Get the integer value by reference stored at a given rank
-      int get_value(int &, int = 0) const;
+      int get_value(int & value_, int index_ = 0) const;
 
       /// Get the real value by reference stored at a given rank
-      int get_value(double &, int = 0) const;
+      int get_value(double & value_, int index_ = 0) const;
 
       /// Get the string value by reference stored at a given rank
-      int get_value(std::string &, int = 0) const;
+      int get_value(std::string & value_, int index_ = 0) const;
 
       /// Get a string label associated to the type of the stored data
       std::string get_type_label() const;
@@ -285,16 +297,16 @@ namespace datatools {
       std::string get_vector_label() const;
 
       /// Check if a string contains a forbidden character
-      static bool has_forbidden_char(const std::string &);
+      static bool has_forbidden_char(const std::string & checked_);
 
       /// Basic print
-      void dump(std::ostream &) const;
+      void dump(std::ostream & out_) const;
 
       /// Convert to string and print in an output stream
       void to_string(std::ostream & out_) const;
 
       /// Returns an error message from an integer error code
-      static std::string get_error_message(int);
+      static std::string get_error_message(int error_code_);
 
       //! Method for smart printing (from the datatools::i_tree_dump interface).
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -530,12 +542,17 @@ namespace datatools {
     static const std::string & private_property_prefix();
 
     // Typedefs declarations:
+    
   protected:
+
     typedef std::map<std::string, data> pmap;
+
   public:
+
     typedef std::vector<std::string>    keys_col_type;
 
   public:
+    
     /// Default constructor with embedded default key validator
     properties();
 
@@ -1176,6 +1193,7 @@ namespace datatools {
     static std::string build_property_key(const std::string & prefix_,
                                           const std::string & subkey_);
 
+     
   protected:
 
     /// Default global key validator (singleton)
@@ -1220,7 +1238,7 @@ namespace datatools {
 
   };
 
-  /// \brief Return a singleton on a empty properties dictionary
+  //! Return a non mutable reference to a singleton empty configuration container (can be used as default empty set of configuration parameters)
   const properties & empty_config();
 
   //----------------------------------------------------------------------
