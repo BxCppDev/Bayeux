@@ -1083,6 +1083,9 @@ namespace datatools {
     //! Fetch a set of string values from the vector value stored with a given key/name
     void fetch(const std::string & key_, std::set<std::string> & values_, bool allow_duplication_ = false) const;
 
+    //! Fetch a list of unique string values from the vector value stored with a given key/name
+    void fetch_unique_ordered(const std::string & key_, std::vector<std::string> & values_) const;
+
     //! Fetch a set of integer values from the vector value stored with a given key/name
     void fetch(const std::string & key_, std::set<int> & values, bool allow_duplication_ = false) const;
 

@@ -2575,6 +2575,24 @@ namespace datatools {
     return;
   }
 
+  void properties::fetch_unique_ordered(const std::string & key_,
+                                        std::vector<std::string> & values_) const
+  {
+    values_.clear();
+    std::vector<std::string> vvalues;
+    this->fetch(key_, vvalues);
+    values_.reserve(vvalues.size());
+    std::set<std::string> records;
+    for (int i = 0; i < (int) vvalues.size(); i++) {
+      const std::string & value = vvalues[i];
+      DT_THROW_IF(records.count(value), std::logic_error,
+                  "Duplicated string value [" << value << "] at key '" << key_ << "'!");
+      records.insert(value);
+      values_.push_back(value);
+    }
+    return;
+  }
+
   void properties::fetch_positive(const std::string & a_key,
                                   std::set<unsigned int>& values,
                                   bool allow_duplication_) const
