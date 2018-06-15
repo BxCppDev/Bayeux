@@ -150,11 +150,15 @@ namespace datatools {
     void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_ = false) const;
-
+    void print_tree(std::ostream & out_ = std::clog,
+                    const boost::property_tree::ptree & options_ = empty_options()) const override;
+    
+    /// Smart print
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_ = false) const override;
+    
     /// Initialization from a container of properties
     void initialize(const datatools::properties & config_, bool clear_ = false);
 

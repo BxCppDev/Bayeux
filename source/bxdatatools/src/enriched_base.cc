@@ -205,11 +205,66 @@ namespace datatools {
     clear();
     return;
   }
+  
+  void enriched_base::print_tree(std::ostream & out_,
+                                 const boost::property_tree::ptree & options_) const
+  {
+    i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    if (! popts.title.empty ()) {
+      out_ << popts.indent << popts.title << std::endl;
+    }
 
+    out_ << popts.indent << i_tree_dumpable::tag
+         << "Name              : ";
+    if (! _name_.empty()) {
+      out_ << "'" << _name_ << "'";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+
+    out_ << popts.indent << i_tree_dumpable::tag
+         << "Display name      : ";
+    if (! _display_name_.empty()) {
+      out_ << "'" << _display_name_ << "'";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+
+    out_ << popts.indent << i_tree_dumpable::tag
+         << "Terse description : ";
+    if (! _terse_description_.empty()) {
+      out_ << "'" << _terse_description_ << "'";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+
+    out_ << popts.indent << i_tree_dumpable::tag
+         << "Logging priority  : '"
+         << logger::get_priority_label(_logging_priority_) << "'" << std::endl;
+
+    out_ << popts.indent << i_tree_dumpable::inherit_tag(popts.inherit)
+         << "Auxiliaries       : ";
+    if (! has_auxiliaries()) {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+    if (has_auxiliaries()) {
+      std::ostringstream indent2;
+      indent2 << popts.indent << i_tree_dumpable::inherit_skip_tag(popts.inherit);
+      get_auxiliaries().tree_dump(out_, "", indent2.str());
+    }
+    return;    
+  }
+  
   void enriched_base::tree_dump(std::ostream& out_,
                                 const std::string& title_,
                                 const std::string& indent_,
-                                bool inherit_) const {
+                                bool inherit_) const
+  {
     std::string indent;
     if (! indent_.empty()) indent = indent_;
     if (! title_.empty()) out_ << indent << title_ << std::endl;
