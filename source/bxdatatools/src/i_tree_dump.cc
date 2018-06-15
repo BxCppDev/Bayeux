@@ -32,6 +32,24 @@ namespace datatools {
     return _empty;
   }
 
+  // static
+  boost::property_tree::ptree i_tree_dumpable::make_base_print_options(const std::string & title_,
+                                                                       const std::string & indent_,
+                                                                       const bool inherit_)
+  {
+    boost::property_tree::ptree opts;
+    if (!title_.empty()) {
+      opts.put(i_tree_dumpable::base_print_options::title_key(), title_);
+    }
+    if (!indent_.empty()) {
+      opts.put(i_tree_dumpable::base_print_options::indent_key(), indent_);
+    }
+    if (inherit_) {
+      opts.put(i_tree_dumpable::base_print_options::inherit_key(), inherit_);
+    }
+    return opts;
+  }
+
   void i_tree_dumpable::base_print_options::configure_from(const boost::property_tree::ptree & options_)
   {
     inherit = options_.get<bool>(base_print_options::inherit_key(), false);

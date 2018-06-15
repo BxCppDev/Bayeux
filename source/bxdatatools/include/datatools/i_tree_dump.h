@@ -47,7 +47,10 @@ namespace datatools {
     };
 
     static const boost::property_tree::ptree & empty_options();
-
+    static boost::property_tree::ptree make_base_print_options(const std::string & title_,
+                                                               const std::string & indent_ = "",
+                                                               const bool inherit_ = false);
+    
     /// \brief Default print options POD
     struct base_print_options {
 
