@@ -44,6 +44,8 @@
 #include <QObject>
 #include <QWidget>
 #include <QStringList>
+// - Boost:
+#include <boost/logic/tribool.hpp>
 
 // Forward declarations:
 class QColor;
@@ -53,7 +55,7 @@ namespace datatools {
 
   namespace qt {
 
-    /// \brief A LED widget with ON/OFF status
+    /// \brief A LED widget with ON/OFF(/INDETERMINATE) status
     class led : public QWidget
     {
       Q_OBJECT
@@ -62,6 +64,7 @@ namespace datatools {
       Q_PROPERTY(bool value READ get_value WRITE set_value)
       Q_PROPERTY(led_color_type on_color READ get_on_color WRITE set_on_color)
       Q_PROPERTY(led_color_type off_color READ get_off_color WRITE set_off_color)
+      Q_PROPERTY(led_color_type indeterminate_color READ get_indeterminate_color WRITE set_indeterminate_color)
       Q_PROPERTY(led_shape_type shape READ get_shape WRITE set_shape)
 
     public:
@@ -85,14 +88,27 @@ namespace datatools {
         Rounded
       };
 
+      enum value_type {
+        ValueOff = 0,
+        ValueOn  = 1,
+        ValueIndeterminate = 2
+      };
+
       /// Default constructor
-      led(QWidget *parent = 0);
+      led(QWidget * parent = 0);
 
       /// Default constructor
       led(led_shape_type shape_,
           led_color_type on_color_,
           led_color_type off_color_,
-          QWidget *parent = 0);
+          QWidget * parent = 0);
+
+      /// Default constructor
+      led(led_shape_type shape_,
+          led_color_type on_color_,
+          led_color_type off_color_,
+          led_color_type indeterminate_color_,
+          QWidget * parent = 0);
 
       /// Destructor
       virtual ~led();
@@ -106,6 +122,9 @@ namespace datatools {
       /// Return the OFF color
       led_color_type get_off_color() const { return _off_color; }
 
+      /// Return the indeterminate color
+      led_color_type get_indeterminate_color() const { return _indeterminate_color; }
+
       /// Return the shape
       led_shape_type get_shape() const { return _shape; }
 
@@ -114,11 +133,20 @@ namespace datatools {
       /// Set the value
       void set_value(bool);
 
+      /// Set the inderminate value
+      void set_indeterminate();
+
+      /// Set the value
+      void set(const boost::logic::tribool t_);
+
       /// Set the ON color
       void set_on_color(led_color_type);
 
       /// Set the OFF color
       void set_off_color(led_color_type);
+
+      /// Set the indeterminate color
+      void set_indeterminate_color(led_color_type);
 
       /// Set the shape
       void set_shape(led_shape_type);
@@ -141,23 +169,25 @@ namespace datatools {
 
     private:
 
-      /// Relaod the SVG file in the SVG renderer
+      /// Reload the SVG file in the SVG renderer
       void _reload_svg_();
 
     protected:
 
-      bool           _value;    //!< Current value (On/Off)
+      bool           _three_states_ = false;
+      value_type     _value;    //!< Current value (On/Off)
       led_color_type _on_color; //!< On color
       led_color_type _off_color; //!< Off color
-      // int            _id_timer;
+      led_color_type _indeterminate_color; //!< Indeterminate color
       led_shape_type _shape;  //!< Current shape of the LED
       QStringList    _shapes; //!< List of supported shapes
       QStringList    _colors; //!< List of supported colors
 
     private:
 
-      QSvgRenderer * _on_renderer_;  //!< The On value SVG renderer
-      QSvgRenderer * _off_renderer_; //!< The Off value SVG renderer
+      QSvgRenderer * _on_renderer_ = nullptr;  //!< The On value SVG renderer
+      QSvgRenderer * _off_renderer_ = nullptr; //!< The Off value SVG renderer
+      QSvgRenderer * _indeterminate_renderer_ = nullptr; //!< The Indeterminate value SVG renderer
 
     };
 
