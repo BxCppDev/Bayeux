@@ -89,6 +89,22 @@ namespace datatools {
     this->enriched_base::initialize(config_, false);
     return;
   }
+  
+  void base_service::print_tree(std::ostream & out_,
+                                const boost::property_tree::ptree & options_) const
+  {
+    i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+
+    this->enriched_base::print_tree(out_,
+                                    base_print_options::force_inheritance(options_));
+                                    
+    out_ << popts.indent << i_tree_dumpable::inherit_tag(popts.inherit)
+          << "Service is initialized  : "
+          << std::boolalpha << this->is_initialized() << std::endl;
+   
+    return;
+  }
 
   void base_service::tree_dump(std::ostream & out_,
                                const std::string & title_,

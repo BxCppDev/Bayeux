@@ -108,10 +108,15 @@ namespace datatools {
     virtual std::string service_class_id() const = 0;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
-                           const std::string & title_ = "",
-                           const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+    void print_tree(std::ostream & out_ = std::clog,
+                    const boost::property_tree::ptree & options_ = empty_options()) const override;
+
+    /// Smart print
+    /// @deprecated
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_ = "",
+                   const std::string & indent_ = "",
+                   bool inherit_ = false) const override;
 
     /// Basic OCD support shared by all inherited modules
     static void common_ocd(datatools::object_configuration_description & ocd_);
