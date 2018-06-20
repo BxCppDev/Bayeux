@@ -223,36 +223,6 @@ namespace datatools {
   const base_service & get_service(const service_dict_type & services_,
                                    const std::string & service_name_);
 
-  // /** Return a mutable reference to a typed service object with given name from a dictionary of services
-  //  *   @param services_ The dictionary of service entries
-  //  *   @param service_name_ The name of the service to be checked
-  //  *   @return a mutable reference to the service instance requested by name and type
-  //  */
-  // template<class T>
-  // T& grab(service_dict_type & services_, const std::string& service_name_)
-  // {
-  //   base_service & srvc = grab_service(services_, service_name_);
-  //   const std::type_info& ti = typeid(T);
-  //   const std::type_info& tf = typeid(srvc);
-  //   DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
-  //   return dynamic_cast<T&>(srvc);
-  // }
-
-  // /** Return a non mutable reference to a typed service object with given name from a dictionary of services
-  //  *   @param services_ The dictionary of service entries
-  //  *   @param service_name_ The name of the service to be checked
-  //  *   @return a const reference to the service instance requested by name and type
-  //  */
-  // template<class T>
-  // const T& get(const service_dict_type & services_, const std::string& service_name_)
-  // {
-  //   const base_service & srvc = get_service(services_, service_name_);
-  //   const std::type_info& ti = typeid(T);
-  //   const std::type_info& tf = typeid(srvc);
-  //   DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
-  //   return dynamic_cast<const T&>(srvc);
-  // }
-
 }  // end of namespace datatools
 
 #endif // DATATOOLS_SERVICE_TOOLS_H
