@@ -33,6 +33,30 @@
 
 namespace datatools {
 
+  const std::string & empty_string()
+  {
+    static const std::string _e;
+    return _e;
+  }
+  
+  const std::string & none_label()
+   {
+     static const std::string _l("none");
+    return _l;
+  }
+ 
+  const std::string & yes_label()
+    {
+    static const std::string _l("yes");
+    return _l;
+  }
+
+  const std::string & no_label()
+  {
+    static const std::string _l("no");
+    return _l;
+  }
+
   // const boost::property_tree::ptree & empty_options()
   // {
   //   static const boost::property_tree::ptree _empty;

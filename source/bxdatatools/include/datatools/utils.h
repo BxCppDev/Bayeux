@@ -33,6 +33,16 @@ namespace datatools {
     COMPARE_GREATER   =  1  //!< Greater than
   };
 
+  /* String constants */
+
+  const std::string & empty_string();
+
+  const std::string & none_label();
+
+  const std::string & yes_label();
+
+  const std::string & no_label();
+  
   /* Single precision utility functions */
 
   /// Invalidate a float (set at NaN):
