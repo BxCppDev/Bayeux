@@ -27,6 +27,28 @@ Additions
 * Add support for regexp for logical volumes' name in Geant4 region (detector construction
   and the ``mctools::g4::region_info`` class.
 
+  Example:
+  
+.. code:: 
+	  
+   #@description List of regions
+   regions.names : string[1] = "MyRegion"
+
+   #@description Explicit list of attached volumes/models for region "MyRegion"
+   regions.MyRegion.volumes  : string[2] = "block1.log" "block2.log"
+
+   #@description List of regex for volumes/models for region "MyRegion"
+   regions.MyRegion.volumes_regexp : string[2] = \
+      "^sub_block_(.*)_front\.log$" \
+      "^sub_block_(.*)_back\.log$" 
+
+..
+
+  This is a request from Falaise_ development team to support a large number of logical volumes (>200)
+  of which names use a regular pattern but which does not share the same material and thus cannot be
+  aggregated in the same region using such a criterion.
+
+.. _Falaise: https://github.com/SuperNEMO-DBD/Falaise   
   
 Removals
 =========
