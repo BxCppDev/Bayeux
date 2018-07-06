@@ -7,6 +7,8 @@
 #include <sstream>
 
 // Third party:
+//- Boost:
+#include <boost/regex.hpp>
 //- Geant4:
 #include <G4LogicalVolumeStore.hh>
 #include <G4RegionStore.hh>
@@ -61,6 +63,8 @@ namespace mctools {
                   "Region is already initialized !");
       this->datatools::enriched_base::initialize(config_);
 
+      std::set<std::string> the_log_volumes_regexp;
+
       // Fetch the explicit list of volumes belonging to this region:
       if (config_.has_key("volumes")) {
         std::vector<std::string> the_log_volumes;
@@ -73,6 +77,11 @@ namespace mctools {
         }
       }
 
+      // Fetch a list of regexps on volume names belonging to this region:
+      if (config_.has_key("volumes_regexp")) {
+        config_.fetch("volumes_regexp", the_log_volumes_regexp);
+      }
+ 
       if (geom_manager_ != nullptr) {
         // Additional criteria to determine which volumes are in the region:
         // Only one of these criteria can be used:
@@ -133,7 +142,7 @@ namespace mctools {
           }
         }
 
-        const materials::manager * mat_mgr_ref = 0;
+        const materials::manager * mat_mgr_ref = nullptr;
         {
           // Attempt to access to some embedded material manager from the geometry manager:
           std::string materials_plugin_name;
@@ -168,8 +177,19 @@ namespace mctools {
              ilogical != geom_manager_->get_factory().get_logicals().end();
              ++ilogical) {
           // Get a reference to the associated logical volume :
-          const geomtools::logical_volume & log = *(ilogical->second);
+          const std::string &               log_name = ilogical->first;         
+          const geomtools::logical_volume & log      = *(ilogical->second);
           bool add_it = false;
+
+          // Process regex on logical volume names:
+          for (const std::string & log_name_regex : the_log_volumes_regexp) {
+            boost::regex e1(log_name_regex, boost::regex::extended);
+            if (boost::regex_match(log_name, e1)) {
+              // std::cerr << " ************* DEVEL ************ Logical '" << log_name << "' matches the region regex '" << log_name_regex << "' \n";
+              add_it = true;
+            }
+          }
+          
           // Check if it is tagged with a material :
           std::string mr;
           if (log.has_material_ref()) {
@@ -250,6 +270,9 @@ namespace mctools {
       DT_THROW_IF(_logical_ids_.size() == 0,
                   std::logic_error,
                   "The region '" << get_name() << "' has no logical volumes !");
+      
+      // std::cerr << " ************* DEVEL ************ Region '" << get_name() << "' has '" << _logical_ids_.size() << "' logical volume(s). \n";
+     
       /*
       if (_logical_ids_.size() == 0) {
         DT_LOG_WARNING(get_logging_priority(),
