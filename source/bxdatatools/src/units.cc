@@ -1202,7 +1202,7 @@ namespace datatools {
     {
       return _unit_names_;
     }
-
+ 
     bool unit_dimension::has_default_unit() const
     {
       return !_default_unit_name_.empty();
@@ -1568,6 +1568,25 @@ namespace datatools {
       DT_THROW_IF(!has_dimension(dimension_label_), std::logic_error, "No unit dimension with label '"
                   << dimension_label_ << "' is registered!");
       return _dimensions_.find(dimension_label_)->second;
+    }
+
+    bool registry::build_ordered_unit_symbols(const std::string & dimension_label_,
+                                              std::list<std::string> & symbols_) const
+    {
+      symbols_.clear();
+      if (has_dimension(dimension_label_)) {
+        const unit_dimension & ud = get_dimension(dimension_label_);
+        const std::set<std::string> & unames = ud.get_unit_names();
+        std::map<double, std::string> work;
+        for (const auto & uname : unames) {
+          const unit & u = get_unit_from_any(uname);
+          work[u.get_value()] = u.get_main_symbol();
+        }
+        for (const auto & p : work) {
+          symbols_.push_back(p.second);
+        }
+      }
+      return symbols_.size() > 0;
     }
 
     void registry::clear()
@@ -1940,17 +1959,23 @@ namespace datatools {
       registration(unit("mg/cm3",            "density",         CLHEP::milligram / CLHEP::cm3));
 
       // Frequency:
-      registration(unit("hertz",        "Hz",   "frequency;[T-1]",    CLHEP::hertz, true));
+      registration(unit("hertz",
+                        "Hz",
+                        "cps",   "frequency;[T-1]",    CLHEP::hertz, true));
       registration(unit("millihertz",  "mHz",   "frequency",  milli() * CLHEP::hertz));
       registration(unit("kilohertz",   "kHz",   "frequency",          CLHEP::kilohertz));
       registration(unit("megahertz",   "MHz",   "frequency",          CLHEP::megahertz));
       registration(unit("gigahertz",   "GHz",   "frequency",   kilo() * CLHEP::megahertz));
+      double cpm =  CLHEP::hertz / 60; // Counts per minute
+      registration(unit("cpm", "frequency", cpm));
 
       // Angular velocity/frequency:
       registration(unit("rad/s",       "angular_frequency;[T-1]",   CLHEP::radian / CLHEP::second, true));
 
       // Activity:
-      registration(unit("becquerel",       "Bq",    "activity;[T-1]",     CLHEP::becquerel, true));
+      registration(unit("becquerel",
+                        "Bq",
+                        "dps",    "activity;[T-1]",     CLHEP::becquerel, true));
       registration(unit("millibecquerel", "mBq",    "activity", milli() * CLHEP::becquerel));
       registration(unit("microbecquerel", "uBq",    "activity", micro() * CLHEP::becquerel));
       registration(unit("kilobecquerel",  "kBq",    "activity", kilo()  * CLHEP::becquerel));
@@ -1963,7 +1988,7 @@ namespace datatools {
       registration(unit("picocurie",     "pCi",     "activity", pico()  * CLHEP::curie));
       registration(unit("kilocurie",     "kCi",     "activity", kilo()  * CLHEP::curie));
       registration(unit("megacurie",     "MCi",     "activity", mega()  * CLHEP::curie));
-      const double dpm = CLHEP::becquerel / 60.0;
+      const double dpm = CLHEP::becquerel / 60.0; // Decays per minute
       registration(unit("dpm",                      "activity", dpm));
 
       // Volume activity:

@@ -19,6 +19,7 @@
 #include <set>
 #include <map>
 #include <limits>
+#include <list>
 
 // Third party:
 // - Boost:
@@ -687,6 +688,10 @@ namespace datatools {
 
       //! Return the non mutable dictionary of registered unit dimensions
       const dimension_dict_type & get_dimensions() const;
+
+      //! Build the list of unit symbols associated to a given dimension with units ordered by values (i.e. for the "time" dimension: "fs", "ps", "ns", "us", "ms", "s", ..., "year", "century"... "eon" ...)
+      bool build_ordered_unit_symbols(const std::string & dimension_label_,
+                                      std::list<std::string> & symbols_) const;
 
       //! Register standard units
       void register_standard_units();
