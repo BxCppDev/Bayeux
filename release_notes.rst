@@ -41,8 +41,8 @@ Additions
    regions.MyRegion.volumes_regexp : string[2] = \
       "^sub_block_(.*)_front\.log$" \
       "^sub_block_(.*)_back\.log$" 
-
 ..
+
 
   This is a request from Falaise_ development team to support a large number of logical volumes (>200)
   of which names use a regular pattern but which does not share the same material and thus cannot be
