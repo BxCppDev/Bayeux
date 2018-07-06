@@ -24,8 +24,10 @@ Additions
 * Issue #17 : Add query methods in the ``datatools::urn_db_service`` and
   ``datatools::urn_to_path_resolver_service`` classes.
 * Add the ``genbb::time_slicer_generator`` class.
+* Add support for regexp for logical volumes' name in Geant4 region (detector construction
+  and the ``mctools::g4::region_info`` class.
 
-
+  
 Removals
 =========
 
