@@ -29,19 +29,19 @@ Additions
 
   Example:
   
-.. code:: 
+  .. code:: 
 	  
-   #@description List of regions
-   regions.names : string[1] = "MyRegion"
+     #@description List of regions
+     regions.names : string[1] = "MyRegion"
+     
+     #@description Explicit list of attached volumes/models for region "MyRegion"
+     regions.MyRegion.volumes  : string[2] = "block1.log" "block2.log"
 
-   #@description Explicit list of attached volumes/models for region "MyRegion"
-   regions.MyRegion.volumes  : string[2] = "block1.log" "block2.log"
-
-   #@description List of regex for volumes/models for region "MyRegion"
-   regions.MyRegion.volumes_regexp : string[2] = \
-      "^sub_block_(.*)_front\.log$" \
-      "^sub_block_(.*)_back\.log$" 
-..
+     #@description List of regex for volumes/models for region "MyRegion"
+     regions.MyRegion.volumes_regexp : string[2] = \
+       "^sub_block_(.*)_front\.log$" \
+       "^sub_block_(.*)_back\.log$" 
+  ..
 
 
   This is a request from Falaise_ development team to support a large number of logical volumes (>200)
