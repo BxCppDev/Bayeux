@@ -156,15 +156,15 @@ namespace datatools {
 
   bool dependency_graph::has_cycle() const
   {
-    bool has_cycle = false;
-    cycle_detector vis(has_cycle);
+    bool cycle_detected = false;
+    cycle_detector vis(cycle_detected);
     // vertex_t root_vertex_descriptor = boost::vertices(_g_).first;
     // boost::depth_first_search(_g_,
     //                           boost::visitor(vis).root_vertex(root_vertex_descriptor));
     // graph_t * g = const_cast<graph_t *>(&_g_);
     // boost::depth_first_search(*g, boost::visitor(vis));
     boost::depth_first_search(_g_, boost::visitor(vis));
-    return has_cycle;
+    return cycle_detected;
   }
 
   std::set<std::string>
