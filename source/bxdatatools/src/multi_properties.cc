@@ -1272,8 +1272,11 @@ namespace datatools {
                                                              variant_section_only_reverse);
             DT_THROW_IF(cri.is_failure(), std::logic_error,
                         "Cannot preprocess variant section only directive from '"
-                        << variant_section_only << "' with key='" << current_key << "' and meta='" << current_meta << "' : " << cri.get_error_message() << "\n"
-                        << "Block : \n" << current_block_oss.str() << '\n');
+                        << variant_section_only << "' with key='" << current_key << "' and meta='" << current_meta << "' : \n"
+                        << cri.get_error_message() << "\n"
+                        << "Block : \n" << current_block_oss.str() << '\n'
+                        << "Hint : maybe you should add a missing default boolean value that will be used when no variant service is enabled.\n"
+                        << "Example: #@variant_section_only " << variant_section_only << "|[true or false]");
             if (variant_section_devel) {
               DT_LOG_TRACE(_logging_,
                            "VPP ==> variant_section_only_found='"
