@@ -1272,7 +1272,8 @@ namespace datatools {
                                                              variant_section_only_reverse);
             DT_THROW_IF(cri.is_failure(), std::logic_error,
                         "Cannot preprocess variant section only directive from '"
-                        << variant_section_only << "' : " << cri.get_error_message());
+                        << variant_section_only << "' with key='" << current_key << "' and meta='" << current_meta << "' : " << cri.get_error_message() << "\n"
+                        << "Block : \n" << current_block_oss.str() << '\n');
             if (variant_section_devel) {
               DT_LOG_TRACE(_logging_,
                            "VPP ==> variant_section_only_found='"
