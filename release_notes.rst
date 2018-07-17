@@ -32,7 +32,10 @@ Additions
   - Factory macros have been updated to this new interface.
   - Several client classes using the factory registration system
     have been updated too.
-    
+
+* The ``datatools::handle`` class is enriched by a standard smart pointer
+  interfaces, including a ``datatools::make_handle`` template method (PR #21).
+  
   
 Removals
 =========
