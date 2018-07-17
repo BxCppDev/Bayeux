@@ -26,12 +26,14 @@ Options:
 
    --help               : print help
    --debug              : activate debug mode
+   --dry-run            : dry run
    --only-configure     : perform configuration stage only
 
 EOF
     return
 }
 
+dry_run=False
 rebuild=0
 only_configure=0
 debug=0
@@ -49,6 +51,8 @@ function cl_parse()
 	    my_exit 0
 	elif [ "${arg}" = "--debug" ]; then
 	    debug=1
+	elif [ "${arg}" = "--dry-run" ]; then
+	    dry_run=True
 	elif [ "${arg}" = "--rebuild" ]; then
 	    rebuild=1
 	elif [ "${arg}" = "--only-configure" ]; then
@@ -58,7 +62,6 @@ function cl_parse()
     done
     return 0
 }
-
 
 echo >&2 "[info] Bayeux source dir : '${bayeux_source_dir}'"
 
@@ -134,6 +137,17 @@ qt_option1="-DQt5Core_DIR=${qt5dir}/Qt5Core"
 qt_option2="-DQt5Gui_DIR=${qt5dir}/Qt5Gui"
 qt_option3="-DQt5Widgets_DIR=${qt5dir}/Qt5Widgets"
 qt_option4="-DQt5Svg_DIR=${qt5dir}/Qt5Svg"
+
+echo >&2 "Bayeux build context: "
+echo >&2 " - bayeux_version   = ${bayeux_version}"
+echo >&2 " - linuxbrew_prefix = ${linuxbrew_prefix}"
+echo >&2 " - build_dir        = ${build_dir}"
+echo >&2 " - install_dir      = ${install_dir}"
+echo >&2 " - Qt5 dir          = ${qt5dir}"
+
+if [ ${dry_run} = True ]; then
+      my_exit 0
+fi
 
 cd ${build_dir}
 echo >&2 ""

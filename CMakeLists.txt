@@ -49,7 +49,7 @@ include(BxVersionManager)
 
 # - Versioning only giving major and minor. Patch number is
 #   automatically deduced from an external file.
-bx_version_set(Bayeux 3 3)
+bx_version_set(Bayeux 3 4)
 message(STATUS "[info] Project version = '${PROJECT_VERSION}'")
 
 #-----------------------------------------------------------------------
