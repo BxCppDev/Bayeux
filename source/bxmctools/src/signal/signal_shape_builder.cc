@@ -161,8 +161,14 @@ namespace mctools {
         DT_THROW_IF(!system_freg.has(id), std::logic_error,
                     "No factory with identifier '" << id
                     << "' is registered from the system factory register!");
-        const freg_type::factory_type & the_out_factory = system_freg.get(id);
-        _freg_.registration(id, the_out_factory);
+        const freg_type::factory_record_type & the_out_factory_record = system_freg.get_record(id);
+        const freg_type::factory_type & the_out_factory = the_out_factory_record.fact;
+        const std::type_info * the_out_tinfo = the_out_factory_record.tinfo;
+        _freg_.registration(id,
+                            the_out_factory,
+                            *the_out_tinfo,
+                            the_out_factory_record.description,
+                            the_out_factory_record.category);
       }
       return;
     }

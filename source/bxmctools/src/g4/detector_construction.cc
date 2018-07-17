@@ -10,6 +10,7 @@
 // - Boost:
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/regex.hpp>
 // - Bayeux/datatools :
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
@@ -1373,23 +1374,47 @@ namespace mctools {
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
 
-      std::vector<std::string> log_volumes;
+      std::set<std::string> log_volumes;
       if (_limits_config_.has_key("limits.list_of_volumes")) {
         _limits_config_.fetch("limits.list_of_volumes", log_volumes);
       }
 
-      std::vector<std::string> regions;
+      /*
+      std::set<std::string> log_volumes_regexp;
+      if (_limits_config_.has_key("limits.volume_regexps")) {
+        _limits_config_.fetch("limits.volume_regexps", log_volume_regexps);
+      }
+
+      if (log_volumes_regexp.size()) {
+        for (geomtools::logical_volume::dict_type::const_iterator ilogical
+               = _geom_manager_->get_factory().get_logicals().begin();
+             ilogical != _geom_manager_->get_factory().get_logicals().end();
+             ++ilogical) {
+          bool add_it = false;
+          const std::string & log_name = ilogical->first;     
+          for (const std::string & log_name_regex : log_volumes_regexp) {
+            boost::regex e1(log_name_regex, boost::regex::extended);
+            if (boost::regex_match(log_name, e1)) {
+              add_it = true;
+            }
+          }
+          if (add_it) {
+            log_volumes.insert(log_name);
+          }
+        }
+      }
+      */
+      
+      std::set<std::string> regions;
       if (_limits_config_.has_key("limits.list_of_regions")) {
         _limits_config_.fetch("limits.list_of_regions", regions);
       }
 
       std::map<std::string, std::string> targets;
-      for (unsigned int i = 0; i < regions.size(); ++i) {
-        const std::string & region_name = regions[i];
+      for (const std::string & region_name : regions) {
         targets[region_name] = "region";
       }
-      for (unsigned int i = 0; i < log_volumes.size(); ++i) {
-        const std::string & log_name = log_volumes[i];
+      for (const std::string & log_name : log_volumes) {
         targets[log_name] = "logical_volume";
       }
 

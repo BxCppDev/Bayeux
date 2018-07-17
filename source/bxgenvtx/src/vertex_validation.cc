@@ -29,12 +29,17 @@ namespace genvtx {
     if (!_vv_factory) {
       _vv_factory.reset(new datatools::factory_register<cuts::i_cut>("vertex_validator/_system_"));
       // No automatic import, but manual registration of cut classes of interest:
+      _vv_factory->registration<genvtx::not_in_daughters_vertex_validator>(not_in_daughters_vertex_validator::system_factory_auto_registration_id());
+      _vv_factory->registration<genvtx::in_materials_vertex_validator>(in_materials_vertex_validator::system_factory_auto_registration_id());
+      /*
       _vv_factory->registration(not_in_daughters_vertex_validator::system_factory_auto_registration_id(),
-                                boost::factory<genvtx::not_in_daughters_vertex_validator*>()
+                                boost::factory<genvtx::not_in_daughters_vertex_validator*>(),
+                                typeid(genvtx::not_in_daughters_vertex_validator)
                                 );
       _vv_factory->registration(in_materials_vertex_validator::system_factory_auto_registration_id(),
                                 boost::factory<genvtx::in_materials_vertex_validator*>()
                                 );
+      */
     }
     return *_vv_factory;
   }

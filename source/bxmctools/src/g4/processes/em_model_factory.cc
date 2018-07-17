@@ -167,7 +167,8 @@ namespace mctools {
 
       void em_model_factory::_registration_base()
       {
-        _reg_.registration("Dummy", boost::factory<G4DummyModel*>());
+        _reg_.registration<G4DummyModel>("Dummy");
+        // , boost::factory<G4DummyModel*>(), typeid(G4DummyModel));
         return;
       }
 
@@ -201,39 +202,39 @@ namespace mctools {
           @encode
         */
         // List of standard EM models:
-        _reg_.registration("BraggIon", boost::factory<G4BraggIonModel*>());
-        _reg_.registration("ICRU73QO", boost::factory<G4ICRU73QOModel*>());
-        _reg_.registration("BetheBlochIonGas", boost::factory<G4BetheBlochIonGasModel*>());
-        _reg_.registration("hCoulombScattering", boost::factory<G4hCoulombScatteringModel*>());
-        _reg_.registration("WentzelVIRel", boost::factory<G4WentzelVIRelModel*>());
-        _reg_.registration("BetheBloch", boost::factory<G4BetheBlochModel*>());
-        _reg_.registration("UrbanMsc93", boost::factory<G4UrbanMscModel93*>());
-        _reg_.registration("eBremParametrized", boost::factory<G4eBremParametrizedModel*>());
-        _reg_.registration("PAI", boost::factory<G4PAIModel*>());
-        _reg_.registration("WentzelVI", boost::factory<G4WentzelVIModel*>());
-        _reg_.registration("UrbanMsc96", boost::factory<G4UrbanMscModel96*>());
-        _reg_.registration("XrayRayleigh", boost::factory<G4XrayRayleighModel*>());
-        _reg_.registration("BetheHeitler", boost::factory<G4BetheHeitlerModel*>());
-        _reg_.registration("eBremsstrahlungRel", boost::factory<G4eBremsstrahlungRelModel*>());
-        _reg_.registration("UrbanMsc92", boost::factory<G4UrbanMscModel92*>());
-        _reg_.registration("KleinNishina", boost::factory<G4KleinNishinaModel*>());
-        _reg_.registration("eBremsstrahlung", boost::factory<G4eBremsstrahlungModel*>());
-        _reg_.registration("IonCoulombScattering", boost::factory<G4IonCoulombScatteringModel*>());
-        _reg_.registration("PairProductionRel", boost::factory<G4PairProductionRelModel*>());
-        _reg_.registration("eeToTwoGamma", boost::factory<G4eeToTwoGammaModel*>());
-        _reg_.registration("eCoulombScattering", boost::factory<G4eCoulombScatteringModel*>());
-        _reg_.registration("MollerBhabha", boost::factory<G4MollerBhabhaModel*>());
-        _reg_.registration("BraggIonGas", boost::factory<G4BraggIonGasModel*>());
-        _reg_.registration("UrbanMsc95", boost::factory<G4UrbanMscModel95*>());
-        _reg_.registration("Bragg", boost::factory<G4BraggModel*>());
-        _reg_.registration("GoudsmitSaundersonMsc", boost::factory<G4GoudsmitSaundersonMscModel*>());
-        _reg_.registration("PAIPhoton", boost::factory<G4PAIPhotonModel*>());
-        _reg_.registration("SeltzerBerger", boost::factory<G4SeltzerBergerModel*>());
-        _reg_.registration("PEEffect", boost::factory<G4PEEffectModel*>());
-        _reg_.registration("UrbanMsc90", boost::factory<G4UrbanMscModel90*>());
-        _reg_.registration("ICRU49NuclearStopping", boost::factory<G4ICRU49NuclearStoppingModel*>());
-        _reg_.registration("PEEffectFluo", boost::factory<G4PEEffectFluoModel*>());
-        _reg_.registration("eSingleCoulombScattering", boost::factory<G4eSingleCoulombScatteringModel*>());
+        _reg_.registration<G4BraggIonModel>("BraggIon");
+        _reg_.registration<G4ICRU73QOModel>("ICRU73QO");
+        _reg_.registration<G4BetheBlochIonGasModel>("BetheBlochIonGas");
+        _reg_.registration<G4hCoulombScatteringModel>("hCoulombScattering");
+        _reg_.registration<G4WentzelVIRelModel>("WentzelVIRel");
+        _reg_.registration<G4BetheBlochModel>("BetheBloch");
+        _reg_.registration<G4UrbanMscModel93>("UrbanMsc93");
+        _reg_.registration<G4eBremParametrizedModel>("eBremParametrized");
+        _reg_.registration<G4PAIModel>("PAI");
+        _reg_.registration<G4WentzelVIModel>("WentzelVI");
+        _reg_.registration<G4UrbanMscModel96>("UrbanMsc96");
+        _reg_.registration<G4XrayRayleighModel>("XrayRayleigh");
+        _reg_.registration<G4BetheHeitlerModel>("BetheHeitler");
+        _reg_.registration<G4eBremsstrahlungRelModel>("eBremsstrahlungRel");
+        _reg_.registration<G4UrbanMscModel92>("UrbanMsc92");
+        _reg_.registration<G4KleinNishinaModel>("KleinNishina");
+        _reg_.registration<G4eBremsstrahlungModel>("eBremsstrahlung");
+        _reg_.registration<G4IonCoulombScatteringModel>("IonCoulombScattering");
+        _reg_.registration<G4PairProductionRelModel>("PairProductionRel");
+        _reg_.registration<G4eeToTwoGammaModel>("eeToTwoGamma");
+        _reg_.registration<G4eCoulombScatteringModel>("eCoulombScattering");
+        _reg_.registration<G4MollerBhabhaModel>("MollerBhabha");
+        _reg_.registration<G4BraggIonGasModel>("BraggIonGas");
+        _reg_.registration<G4UrbanMscModel95>("UrbanMsc95");
+        _reg_.registration<G4BraggModel>("Bragg");
+        _reg_.registration<G4GoudsmitSaundersonMscModel>("GoudsmitSaundersonMsc");
+        _reg_.registration<G4PAIPhotonModel>("PAIPhoton");
+        _reg_.registration<G4SeltzerBergerModel>("SeltzerBerger");
+        _reg_.registration<G4PEEffectModel>("PEEffect");
+        _reg_.registration<G4UrbanMscModel90>("UrbanMsc90");
+        _reg_.registration<G4ICRU49NuclearStoppingModel>("ICRU49NuclearStopping");
+        _reg_.registration<G4PEEffectFluoModel>("PEEffectFluo");
+        _reg_.registration<G4eSingleCoulombScatteringModel>("eSingleCoulombScattering");
         // End of list of standard EM models.
 
         return;
