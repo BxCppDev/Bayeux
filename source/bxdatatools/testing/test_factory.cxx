@@ -159,7 +159,9 @@ int main(int /*argc_*/ , char ** /*argv_*/)
     // Clear the system factory register :
     DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(my::base_type).clear();
 
-    the_factory_register.registration("my::derived_2_1_type", boost::factory<my::derived_2_1_type*>());
+    the_factory_register.registration("my::derived_2_1_type",
+                                      boost::factory<my::derived_2_1_type*>(),
+                                      typeid(my::derived_2_1_type));
     the_factory_register.print(std::clog, "NOTICE: ");
 
     typedef std::map<std::string, std::string> directives_list_type;

@@ -56,18 +56,17 @@ namespace datatools {
 
     typedef BaseType                       base_type;
     typedef boost::function<base_type*() > factory_type;
-    // typedef boost::function<base_type*(const std::string &) > named_factory_type;
 
-    /* Future addons:
-       struct factory_metadata {
-       std::string description;
-       std::string category;
-       };
-    */
-
+    struct factory_record_type {
+      std::string  type_id;
+      factory_type fact;
+      const std::type_info * tinfo = nullptr;
+      std::string  description;
+      std::string  category;
+    };
+    
     /// \brief Dictionary of object factories
-    typedef std::map<std::string, factory_type> factory_map_type;
-    // typedef std::map<std::string, factory_metadata> factory_metadata_map_type;
+    typedef std::map<std::string, factory_record_type> factory_map_type;
 
     /// Constructor
     factory_register();
@@ -111,9 +110,29 @@ namespace datatools {
     /// Return a const reference to a factory given by registration ID
     const factory_type & get(const std::string & id_) const;
 
-    /// Register the supplied factory under the given ID
-    void registration(const std::string & id_, const factory_type & factory_);
+    /// Return a const reference to a factory record given by registration ID
+    const factory_record_type & get_record(const std::string & id_) const;
 
+    /// Register the supplied factory under the given ID
+    void registration(const std::string & id_,
+                      const factory_type & factory_,
+                      const std::type_info & tinfo_,
+                      const std::string & description_ = "",
+                      const std::string & category_ = "");
+
+    /// Register the supplied factory under the given ID
+    template<class DerivedType>
+    void registration(const std::string & id_,
+                      const std::string & description_ = "",
+                      const std::string & category_ = "");
+
+    /// Fetch the registration type ID associated to a given class
+    template<class DerivedType>
+    bool fetch_type_id(std::string & id_) const;
+
+    /// Fetch the registration type ID associated to a given type_info
+    bool fetch_type_id(const std::type_info & tinfo_, std::string & id_) const;
+                      
     /// Remove registration of the factory stored under supplied ID
     /// TODO : better naming "unregister" for example
     /// COMMENT: "register"/"unregister" would be fine names but "register"
@@ -165,6 +184,7 @@ namespace datatools {
     // Constructor
     _system_factory_registrator(const std::string & type_id_)
     {
+      _type_info_ = &typeid(DerivedType);
       _type_id_ = type_id_;
       this->_trigger_factory_registration_();
       return;
@@ -194,7 +214,8 @@ namespace datatools {
                   "Class ID '" << _type_id_ << "' cannot be registered in register '"
                   << BaseType::grab_system_factory_register().get_label() << "' !");
       BaseType::grab_system_factory_register().registration(_type_id_,
-                                                            boost::factory<DerivedType*>());
+                                                            boost::factory<DerivedType*>(),
+                                                            typeid(DerivedType));
       return;
     }
 
@@ -209,8 +230,10 @@ namespace datatools {
 
   private:
 
+    const std::type_info * _type_info_ = nullptr;
     std::string _type_id_; //!< The registration type unique identifier of the auto-registered class
-
+    
+    
   };
 
 } // end of namespace datatools

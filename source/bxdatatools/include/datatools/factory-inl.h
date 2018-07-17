@@ -59,7 +59,7 @@ namespace datatools {
   }
 
   template <typename BaseType>
-  const std::string& factory_register<BaseType>::get_label() const
+  const std::string & factory_register<BaseType>::get_label() const
   {
     return _label_;
   }
@@ -94,7 +94,7 @@ namespace datatools {
     for (typename factory_map_type::iterator i = _registered_.begin();
          i != _registered_.end();
          ++i) {
-      if (i->second != 0) {
+      if (i->second.fact != nullptr) {
         DT_LOG_INFORMATION(_logging_,"Destroying registered allocator/functor '" << i->first << "'");
       }
     }
@@ -118,7 +118,7 @@ namespace datatools {
     typename factory_map_type::iterator found = _registered_.find(id_);
     DT_THROW_IF(found == _registered_.end(), std::logic_error,
                 "Class ID '" << id_ << "' is not registered !");
-    return found->second;
+    return found->second.fact;
   }
 
   template <typename BaseType>
@@ -128,18 +128,89 @@ namespace datatools {
     typename factory_map_type::const_iterator found = _registered_.find(id_);
     DT_THROW_IF(found == _registered_.end(), std::logic_error,
                 "Class ID '" << id_ << "' is not registered !");
+    return found->second.fact;
+  }
+
+  template <typename BaseType>
+  const typename factory_register<BaseType>::factory_record_type &
+  factory_register<BaseType>::get_record(const std::string & id_) const
+  {
+    typename factory_map_type::const_iterator found = _registered_.find(id_);
+    DT_THROW_IF(found == _registered_.end(), std::logic_error,
+                "Class ID '" << id_ << "' is not registered !");
     return found->second;
+  }
+  
+  template <typename BaseType>
+  bool factory_register<BaseType>::fetch_type_id(const std::type_info & tinfo_, std::string & id_) const
+  {
+    id_.clear();
+    for (typename factory_map_type::const_iterator i = _registered_.begin();
+         i != _registered_.end();
+         ++i) {
+      if (&tinfo_ == i->second.tinfo) {
+        id_ = i->first;
+        return true;
+      }
+    }
+    return false;
+  }                    
+ 
+  template <typename BaseType>
+  template<class DerivedType>
+  bool factory_register<BaseType>::fetch_type_id(std::string & id_) const
+  {
+    id_.clear();
+    bool fatal = !boost::is_base_of<BaseType, DerivedType>::value;
+    DT_THROW_IF(fatal,
+                std::logic_error,
+                "Class ID '" << id_ << "' is not registrable!");
+    // if (fatal) {
+    //   return false;
+    // }
+    for (typename factory_map_type::const_iterator i = _registered_.begin();
+         i != _registered_.end();
+         ++i) {
+      if (&typeid(DerivedType) == i->second.tinfo) {
+        id_ = i->first;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  template <typename BaseType>
+  template <typename DerivedType>
+  void factory_register<BaseType>::registration(const std::string & id_,
+                                                const std::string & description_,
+                                                const std::string & category_)
+  {
+    registration(id_,
+                 boost::factory<DerivedType*>(),
+                 typeid(DerivedType),
+                 description_,
+                 category_);
+    return;
   }
 
   template <typename BaseType>
   void factory_register<BaseType>::registration(const std::string & id_,
-                                                const factory_type & factory_)
+                                                const factory_type & factory_,
+                                                const std::type_info & tinfo_,
+                                                const std::string & description_,
+                                                const std::string & category_)
   {
     DT_LOG_NOTICE(_logging_, "Registration of class with ID '" << id_ << "'");
     typename factory_map_type::const_iterator found = _registered_.find(id_);
     DT_THROW_IF(found != _registered_.end(), std::logic_error,
                 "Class ID '" << id_ << "' is already registered !");
-    _registered_[id_] = factory_;
+    factory_record_type record;
+    record.type_id = id_;
+    record.description = description_;
+    record.category = category_;
+    record.fact = factory_;
+    record.tinfo = &tinfo_;
+    _registered_[id_] = record;
     return;
   }
 
@@ -161,8 +232,12 @@ namespace datatools {
     for (typename factory_map_type::const_iterator i = other_._registered_.begin();
          i != other_._registered_.end();
          ++i) {
-      const factory_type & the_out_factory = i->second;
-      this->registration(i->first, the_out_factory);
+      const factory_record_type & the_out_factory_record = i->second;
+      this->registration(i->first,
+                         the_out_factory_record.fact,
+                         *the_out_factory_record.tinfo,
+                         the_out_factory_record.description, 
+                         the_out_factory_record.category);
     }
     DT_LOG_NOTICE(_logging_, "Done.");
     return;
@@ -176,9 +251,15 @@ namespace datatools {
     for (typename factory_map_type::const_iterator i = other_._registered_.begin();
          i != other_._registered_.end();
          ++i) {
-      if (std::find(imported_factories_.begin(), imported_factories_.end(), i->first) != imported_factories_.end()) {
-        const factory_type & the_out_factory = i->second;
-        this->registration(i->first, the_out_factory);
+      if (std::find(imported_factories_.begin(),
+                    imported_factories_.end(),
+                    i->first) != imported_factories_.end()) {
+        const factory_record_type & the_out_factory_record = i->second;
+        this->registration(i->first,
+                           the_out_factory_record.fact,
+                           *the_out_factory_record.tinfo,
+                           the_out_factory_record.description,
+                           the_out_factory_record.category);
       }
     }
     DT_LOG_NOTICE(_logging_, "Done.");
@@ -228,7 +309,14 @@ namespace datatools {
       } else {
         out_ << i_tree_dumpable::tag;
       }
-      out_ << "ID: \"" << i->first << "\" @ " << &i->second << std::endl;
+      out_ << "ID: \"" << i->first << "\" @ " << &i->second.fact;
+      if (!i->second.description.empty()) {
+        out_ << ": " << i->second.description;
+      }
+      if (!i->second.category.empty()) {
+        out_ << " (" << i->second.category << ')';
+      }
+      out_ << std::endl;
     }
     return;
   }
