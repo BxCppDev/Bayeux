@@ -448,6 +448,7 @@ ${module_test_dir}/test_handle_1.cxx
 ${module_test_dir}/test_handle_2.cxx
 ${module_test_dir}/test_handle_3.cxx
 ${module_test_dir}/test_handle_macros.cxx
+${module_test_dir}/test_handle_operators.cxx
 ${module_test_dir}/test_integer_range.cxx
 ${module_test_dir}/test_ioutils.cxx
 ${module_test_dir}/test_kernel.cxx

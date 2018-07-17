@@ -37,6 +37,7 @@
 // Third Party:
 // - Boost:
 #include <boost/shared_ptr.hpp>
+#include <boost/smart_ptr/make_shared.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/shared_ptr.hpp>
@@ -55,8 +56,24 @@ namespace datatools {
    *
    *  A handle object is given the responsability to
    *  handle a class instance through its pointer using the shared pointer
-   *  mechanism from Boost. The inner hidden pointer can be null.
-   *  It must be initialized with the 'new' construction operator.
+   *  mechanism from Boost. The inner hidden pointer can be null, but accessors
+   *  will throw exceptions if called when this is the case.
+   *  The held instance must be initialized with the 'new' construction operator,
+   *  or you can use the make_handle() free function.
+   *
+   *  Given `handle` and held type `T` (no additional qualifiers), an instance of `handle<T>` has the following
+   *  access behaviour in different `const` contexts:
+   *
+   *  `handle<T>`: all members of `handle` and `T` accessible
+   *
+   *  `const handle<T>`: can only access const members of both
+   *
+   *  `const handle<const T>`: can only access const members of both
+   *
+   *  `handle<const T>`: can access all methods of handle, only `const` members of `T`
+   *
+   *  Access attempts outside these contexts will give a compile-time error.
+   *
    *  The handle class is copyable and can be used within STL containers.
    *
    *  \b Example:
@@ -79,9 +96,19 @@ namespace datatools {
    *    }
    *    cout << "h1 = " << h1.get () << endl; // print it through the
    *                                          // first handle
+   *
+   *    auto h3 = make_handle<std::string>("foo"); // construction via make_handle
+   *
+   *    cout << (*h3) << endl;      // access via dereference
+   *    cout << h3->size() << endl; // access via dereference
+   *
+   *    h3.reset();
+   *    h3->size(); // Throws std::logic_error
+   *
    *  };
    *  \endcode
    *
+   * \see make_handle()
    */
   template <typename T>
   class handle
@@ -183,6 +210,7 @@ namespace datatools {
     }
 
     //! Return a const reference to the hosted instance.
+    //! \exception std::logic_error when managed instance is null
     const T & get() const
     {
       DT_THROW_IF(_sp_.get() == nullptr, std::logic_error, "Handle holds no data!");
@@ -197,6 +225,7 @@ namespace datatools {
     // }
 
     //! Return a non-const reference to the hosted instance.
+    //! \exception std::logic_error when managed instance is null
     template<typename Q = T>
     typename std::enable_if<
       std::is_same<Q, T>::value &&
@@ -206,6 +235,39 @@ namespace datatools {
     {
       DT_THROW_IF(_sp_.get() == nullptr, std::logic_error, "Handle holds no data!");
       return *_sp_;
+    }
+
+    //! Dereferences the stored pointer
+    //! \exception std::logic_error when managed instance is null
+    T* operator->()
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return _sp_.get();
+    }
+
+    //! Dereferences the stored pointer in const context
+    //! \exception std::logic_error when managed instance is null
+    T const* operator->() const
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return _sp_.get();
+    }
+
+
+    //! Dereferences the stored pointer
+    //! \exception std::logic_error when managed instance is null
+    T& operator*()
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return *(_sp_.get());
+    }
+
+    //! Dereferences the stored pointer in const context
+    //! \exception std::logic_error when managed instance is null
+    T const& operator*() const
+    {
+      DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
+      return *(_sp_.get());
     }
 
     //! Reset the internal shared pointer with a new instance.
@@ -242,6 +304,58 @@ namespace datatools {
     boost::shared_ptr<T> _sp_; //!< The embedded shared pointer.
 
   };
+
+  /*! \brief Constructs an object of type T and wraps it in a datatools::handle
+   *
+   * This function behaves in the same way as std::make_shared or
+   * std::make_unique. It is functionally equivalent to:
+   * \code
+   * handle<T>(new T(std::forward<Args>(args)...))
+   * \endcode
+   *
+   * \tparam T the type to construct and wrap in the handle
+   * \param args list of arguments with which the instance of T will be
+   * constructed
+   *
+   * \b Example:
+   * \code
+   * #include <datatools/handle.h>
+   * #include <iostream>
+   *
+   * struct Vec3
+   * {
+   *   int x, y, z;
+   *   Vec3() : x(0), y(0), z(0) { }
+   *   Vec3(int x, int y, int z) : x(x), y(y), z(z) { }
+   *   friend std::ostream& operator<<(std::ostream& os, Vec3& v) {
+   *     return os << '{' << "x:" << v.x << " y:" << v.y << " z:" << v.z  << '}';
+   *   }
+   * };
+   *
+   * int main()
+   * {
+   *   // Uses default constructor
+   *   auto v1 = datatools::make_handle<Vec3>();
+   *   // Uses constructor matching the arguments
+   *   auto v2 = datatools::make_handle<Vec3>(1, 2, 3);
+   *
+   *   std::cout << "v1: " << v1.grab() << '\n'
+   *             << "v2: " << v2.grab() << '\n';
+   * }
+   * \endcode
+   *
+   * Output:
+   * \code
+   * v1: {x:0 y:0 z:0}
+   * v2: {x:1 y:2 z:3}
+   * \endcode
+   */
+  template <typename T, typename... Args>
+  handle<T> make_handle(Args&& ... args)
+  {
+    // Use shared_ptr constructor for simplicity
+    return handle<T>(boost::make_shared<T>(std::forward<Args>(args)...));
+  }
 
   /*! \brief Templatized predicate class associated to handle instance.
    *
