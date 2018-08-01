@@ -389,6 +389,21 @@ namespace geomtools {
     return;
   }
 
+  const vector_2d & invalid_vector_2d()
+  {
+    static const vector_2d _v(std::numeric_limits<double>::quiet_NaN(),
+                              std::numeric_limits<double>::quiet_NaN());
+    return _v;
+  }
+
+  const vector_3d & invalid_vector_3d()
+  {
+    static const vector_3d _v(std::numeric_limits<double>::quiet_NaN(),
+                              std::numeric_limits<double>::quiet_NaN(),
+                              std::numeric_limits<double>::quiet_NaN());
+    return _v;
+  }
+
   void invalidate (vector_3d & vec_)
   {
     double qnan = numeric_limits<double>::quiet_NaN();

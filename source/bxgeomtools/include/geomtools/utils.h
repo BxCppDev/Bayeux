@@ -482,6 +482,9 @@ namespace geomtools {
 
   //! Zero a vector 3D object
   void zero(vector_3d & vec_);
+  
+  //! Return an invalid vector 3D object (static singleton)
+  const vector_3d & invalid_vector_3d();
 
   //! Invalidate a vector 3D object
   void invalidate(vector_3d & vec_);
@@ -519,6 +522,9 @@ namespace geomtools {
 
   //! Invalidate a vector 2D object
   void invalidate_vector_2d(vector_2d & vec_);
+
+  //! Return an invalid vector 2D object (static singleton)
+  const vector_2d & invalid_vector_2d();
 
   //! Check if a vector 2D object is valid
   bool is_valid(const vector_2d & vec_);
