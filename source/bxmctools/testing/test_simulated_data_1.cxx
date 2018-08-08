@@ -125,11 +125,18 @@ int main (int argc_, char ** argv_)
         SD.add_step_hits ("xcalo", 5);
         SD.add_step_hits ("gveto", 5);
         SD.add_step_hit ("gveto").set_hit_id (0);
-        SD.add_step_hits ("gg", 50);
+        SD.add_step_hits ("gg", 50); 
         for (int igg =0; igg < 15; ++igg) {
           SD.add_step_hit ("gg").set_hit_id (igg);
         }
 
+        std::vector<std::string> hit_categories;
+        SD.get_step_hits_categories(hit_categories);
+        // List of hit categories known from this event:
+        for (const std::string & hit_category : hit_categories) {
+          std::clog << " - Category '" << hit_category << "'" << std::endl;
+        }
+        
         // Print :
         SD.tree_dump (clog, "Simulated data :");
         DW.store(SD);

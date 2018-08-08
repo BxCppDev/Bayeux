@@ -35,7 +35,6 @@ namespace mctools {
     return _mapping_category_;
   }
 
-  // Constructor:
   fluence_step_hit_processor::fluence_step_hit_processor()
     : base_step_hit_processor()
   {
@@ -283,7 +282,7 @@ namespace mctools {
                                                      +momentum_start.y()*momentum_start.y()
                                                      +momentum_start.z()*momentum_start.z()
                                                      +particle_mass*particle_mass)-particle_mass;
-          DT_LOG_DEBUG(get_logging_priority(), "entering_kinetic_energy = " << entering_kinetic_energy / CLHEP::keV<< " keV.");
+          DT_LOG_DEBUG(get_logging_priority(), "entering_kinetic_energy = " << entering_kinetic_energy / CLHEP::keV << " keV.");
           current_fluence_hit->grab_auxiliaries().store(track_utils::ENTERING_KINETIC_ENERGY_KEY, entering_kinetic_energy);
        }
         if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::LEAVING_VOLUME_FLAG)) {
@@ -294,7 +293,7 @@ namespace mctools {
                                                     +momentum_stop.y()*momentum_stop.y()
                                                     +momentum_stop.z()*momentum_stop.z()
                                                     +particle_mass*particle_mass)-particle_mass;
-          DT_LOG_DEBUG(get_logging_priority(), "leaving_kinetic_energy = " << leaving_kinetic_energy / CLHEP::keV<< " keV.");
+          DT_LOG_DEBUG(get_logging_priority(), "leaving_kinetic_energy = " << leaving_kinetic_energy / CLHEP::keV << " keV.");
           current_fluence_hit->grab_auxiliaries().store(track_utils::LEAVING_KINETIC_ENERGY_KEY, leaving_kinetic_energy);
         }
 

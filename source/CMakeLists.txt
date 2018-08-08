@@ -511,4 +511,9 @@ foreach(_m ${BAYEUX_SUBMODULES})
   endforeach()
 endforeach()
 
+if(Bayeux_WITH_MCTOOLS)
+  add_subdirectory(bxmctools/validation)
+endif()
+
+
 # - end

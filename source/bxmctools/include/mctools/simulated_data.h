@@ -48,18 +48,18 @@ namespace mctools {
 
     /// Type of the memory layout of the collection of MC hits
     enum collection_type {
-        INVALID_HIT_COLLECTION_TYPE = -1, //!< Invalid type of hit collection
-        PLAIN_HIT_COLLECTION_TYPE   =  0, //!< @deprecated Collection of plain hits
-        HANDLE_HIT_COLLECTION_TYPE  =  1 //!< Collection of hit handles
-      };
+      INVALID_HIT_COLLECTION_TYPE = -1, //!< Invalid type of hit collection
+      PLAIN_HIT_COLLECTION_TYPE   =  0, //!< @deprecated Collection of plain hits
+      HANDLE_HIT_COLLECTION_TYPE  =  1  //!< Collection of hit handles
+    };
 
     /// Categories of MC hits
     enum hit_category_type {
-        HIT_CATEGORY_TYPE_PUBLIC  = datatools::bit_mask::bit00,
-        HIT_CATEGORY_TYPE_PRIVATE = datatools::bit_mask::bit01,
-        HIT_CATEGORY_TYPE_PREFIX  = datatools::bit_mask::bit02,
-        HIT_CATEGORY_TYPE_ALL     = HIT_CATEGORY_TYPE_PUBLIC | HIT_CATEGORY_TYPE_PRIVATE
-      };
+      HIT_CATEGORY_TYPE_PUBLIC  = datatools::bit_mask::bit00,
+      HIT_CATEGORY_TYPE_PRIVATE = datatools::bit_mask::bit01,
+      HIT_CATEGORY_TYPE_PREFIX  = datatools::bit_mask::bit02,
+      HIT_CATEGORY_TYPE_ALL     = HIT_CATEGORY_TYPE_PUBLIC | HIT_CATEGORY_TYPE_PRIVATE
+    };
 
     /// Alias for the MC base step hit
     typedef datatools::handle<base_step_hit>  hit_handle_type;
@@ -173,13 +173,13 @@ namespace mctools {
     /// Get a reference to the non mutable collection of MC hits handles with a given category
     const hit_handle_collection_type & get_step_hits (const std::string & category_) const;
 
-    /// Get a reference to the mutable collection of plain MC hits with a given category
+    /// @deprecated Get a reference to the mutable collection of plain MC hits with a given category
     hit_collection_type & grab_plain_step_hits (const std::string & category_);
 
-    /// Get a reference to the non mutable collection of plain MC hits with a given category
+    /// @deprecated Get a reference to the non mutable collection of plain MC hits with a given category
     const hit_collection_type & get_plain_step_hits (const std::string & category_) const;
 
-    /// \deprecated Reset the internal data
+    /// @deprecated Reset the internal data
     simulated_data & reset(bool reset_collection_type_);
 
     /// Reset data

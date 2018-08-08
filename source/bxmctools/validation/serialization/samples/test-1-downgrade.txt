@@ -1,0 +1,122 @@
+Loaded mock base step hit:
+|-- Store       : (111001111111)
+|-- Hit ID      : 12
+|-- Geometry ID : [100:0.1.0]
+|-- Auxiliaries : 
+|   |-- Name : 'g4_volume.copy_number'
+|   |   |-- Type  : integer (scalar)
+|   |   `-- Value : 42
+|   |-- Name : 'g4_volume.name'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'baz'
+|   |-- Name : 'material.ref'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'water'
+|   |-- Name : 'mock_hit'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'mock_mc'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'bxmctools::exserialization'
+|   |-- Name : 'sensitive.category'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'calo'
+|   |-- Name : 'track.creator_process'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'dummy'
+|   |-- Name : 'track.delta_ray_from_alpha'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.entering_volume'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.id'
+|   |   |-- Type  : integer (scalar)
+|   |   `-- Value : 2
+|   |-- Name : 'track.major'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.parent_id'
+|   |   |-- Type  : integer (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.primary'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.start_kinetic_energy'
+|   |   |-- Type  : real (scalar)
+|   |   `-- Value : 1.2345
+|   |-- Name : 'track.step_length'
+|   |   |-- Type  : real (scalar)
+|   |   `-- Value : 12.3
+|   `-- Name : 'track.stop_kinetic_energy'
+|       |-- Type  : real (scalar)
+|       `-- Value : 1.2111
+|-- Position start : (0,0,-2.5) mm
+|-- Position stop  : (0,0,9.8) mm
+|-- Time start     : 1.21 ns
+|-- Time stop      : 2.444 ns
+|-- Momentum start : (nan,nan,nan) keV
+|-- Momentum stop  : (nan,nan,nan) keV
+|-- Energy deposit : 23.4000000000001 keV
+`-- Particle name  : `bayeutron'
+Loaded mock base step hit:
+|-- Store       : (111001111111)
+|-- Hit ID      : 13
+|-- Geometry ID : [100:0.1.2]
+|-- Auxiliaries : 
+|   |-- Name : 'g4_volume.copy_number'
+|   |   |-- Type  : integer (scalar)
+|   |   `-- Value : 43
+|   |-- Name : 'g4_volume.name'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'baz'
+|   |-- Name : 'material.ref'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'water'
+|   |-- Name : 'mock_hit'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'mock_mc'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'bxmctools::exserialization'
+|   |-- Name : 'sensitive.category'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'calo'
+|   |-- Name : 'track.creator_process'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'dummy'
+|   |-- Name : 'track.delta_ray_from_alpha'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.id'
+|   |   |-- Type  : integer (scalar)
+|   |   `-- Value : 2
+|   |-- Name : 'track.leaving_volume'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.major'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.parent_id'
+|   |   |-- Type  : integer (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.primary'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
+|   |-- Name : 'track.start_kinetic_energy'
+|   |   |-- Type  : real (scalar)
+|   |   `-- Value : 1.2111
+|   |-- Name : 'track.step_length'
+|   |   |-- Type  : real (scalar)
+|   |   `-- Value : 12.3
+|   `-- Name : 'track.stop_kinetic_energy'
+|       |-- Type  : real (scalar)
+|       `-- Value : 1.1877
+|-- Position start : (0,0,9.8) mm
+|-- Position stop  : (0,0,22.1) mm
+|-- Time start     : 2.444 ns
+|-- Time stop      : 3.678 ns
+|-- Momentum start : (nan,nan,nan) keV
+|-- Momentum stop  : (nan,nan,nan) keV
+|-- Energy deposit : 23.4000000000001 keV
+`-- Particle name  : `bayeutron'

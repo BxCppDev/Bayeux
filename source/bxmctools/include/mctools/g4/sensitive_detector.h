@@ -214,16 +214,16 @@ namespace mctools {
       bool                   _record_step_length_;          //!< Record the real property "track.step_length"
       unsigned int           _hits_buffer_capacity_;        //!< The capacity of the pre-allocated buffer of hits
 
-      const track_history::track_info * _track_info_ptr_;   //!< Handle to the tracking information of the current track
-      const track_history::track_info * _parent_track_info_ptr_; //!< Handle to the tracking information of the parent track of the current track
+      const track_history::track_info * _track_info_ptr_ = nullptr;   //!< Handle to the tracking information of the current track
+      const track_history::track_info * _parent_track_info_ptr_ = nullptr; //!< Handle to the tracking information of the parent track of the current track
 
-      manager * _manager_; //!< Handle to the Geant4 manager
+      manager * _manager_ = nullptr; //!< Handle to the Geant4 manager
 
       datatools::properties _aux_; //!< Auxiliary properties
 
       int                         _HCID_; //!< Hit collection Id
       std::vector<sensitive_hit>  _hits_buffer_; //!< Buffer of hits
-      sensitive_hit_collection  * _hits_collection_; //!< Handle to the collection of sensitive hits
+      sensitive_hit_collection  * _hits_collection_ = nullptr; //!< Handle to the collection of sensitive hits
       int                         _used_hits_count_; //!< Counter for buffered hits that are already in use
 
       // Dictionary to attach some processors for step hits:
