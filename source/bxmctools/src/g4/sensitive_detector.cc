@@ -73,7 +73,7 @@ namespace mctools {
 
     bool sensitive_detector::has_manager() const
     {
-      return _manager_ != 0;
+      return _manager_ != nullptr;
     }
 
     void sensitive_detector::set_manager(manager & manager_)
@@ -583,7 +583,7 @@ namespace mctools {
       for (int i = 0; i < _used_hits_count_; i++) {
         _hits_buffer_[i].grab_hit_data().reset();
       }
-      if (_hits_collection_ != 0) {
+      if (_hits_collection_ != nullptr) {
         _hits_collection_->grab_hits().clear();
       }
 
@@ -618,7 +618,7 @@ namespace mctools {
       if (_used_hits_count_ > 0) {
 
         // Set the hits collection pointer :
-        if (_hits_collection_ == 0) {
+        if (_hits_collection_ == nullptr) {
           _hits_collection_ = new sensitive_hit_collection(SensitiveDetectorName,
                                                             collectionName[0]);
           // Assign proper capacity to the 'hits collection' :
@@ -638,8 +638,8 @@ namespace mctools {
       }
 
       // clear tracks infos for this event:
-      _track_info_ptr_ = 0;
-      _parent_track_info_ptr_ = 0;
+      _track_info_ptr_ = nullptr;
+      _parent_track_info_ptr_ = nullptr;
 
       // BUGFIX? FM+AC 2014/09/05: should not be done here but in the event_action(to be validated)
       //_manager_->grab_track_history().reset();
@@ -647,7 +647,7 @@ namespace mctools {
       /*
         if ( _verbose > 1 )
         {
-        sensitive_hits_collection * HC_tmp = 0;
+        sensitive_hits_collection * HC_tmp = nullptr;
         HC_tmp =(sensitive_hits_collection * )( some_hit_collections->GetHC(_HCID));
         for (unsigned int i = 0; i < HC_tmp->GetSize(); i++ )
         {
@@ -662,7 +662,7 @@ namespace mctools {
     }
 
     G4bool sensitive_detector::ProcessHits(G4Step * step_,
-                                            G4TouchableHistory * /*touchable_history_*/)
+                                           G4TouchableHistory * /*touchable_history_*/)
     {
       DT_LOG_TRACE(_logprio(),"Entering...");
       const bool do_process_hits = true;
@@ -675,7 +675,7 @@ namespace mctools {
       DT_LOG_TRACE(_logprio(),"Hit count = " << _used_hits_count_);
 
       const double energy_deposit = step_->GetTotalEnergyDeposit();
-      if (energy_deposit <= 1.e-10 * CLHEP::keV){
+      if (energy_deposit <= 1.e-10 * CLHEP::keV) {
         bool quit = true;
         if (step_->GetTrack()->GetDefinition() == G4Gamma::GammaDefinition()) {
           if (_track_gamma_) quit = false;
@@ -718,7 +718,7 @@ namespace mctools {
       // Grabbing the track history to fill G4 track info
       track_history & the_track_history = _manager_->grab_track_history();
       if (_manager_->has_track_history()) {
-        if ((_track_info_ptr_ == 0) ||(_track_info_ptr_->get_id() != track_id)) {
+        if ((_track_info_ptr_ == nullptr) || (_track_info_ptr_->get_id() != track_id)) {
           // Here we don't have current track info at hand:
           if (! the_track_history.has_track_info(track_id)) {
             // infos about this track are not registered yet,
@@ -737,11 +737,11 @@ namespace mctools {
             // const std::string & category = get_sensitive_category();
             // ti.set_creator_sensitive_category(category);
             _track_info_ptr_ = &ti;
-            _parent_track_info_ptr_ = 0;
+            _parent_track_info_ptr_ = nullptr;
           } else {
             // infos about this track have already been registered, we link it:
             _track_info_ptr_ = &the_track_history.grab_track_info(track_id);
-            _parent_track_info_ptr_ = 0;
+            _parent_track_info_ptr_ = nullptr;
          }
         }
         primary_track = _track_info_ptr_->is_primary();
@@ -750,14 +750,14 @@ namespace mctools {
         // MOD: FM+AC 2014-09-05: accept neutral particles as "major" tracks(gamma, neutron...):
         // const bool has_charge =(step_->GetTrack()->GetDynamicParticle()->GetCharge() != 0.0);
         // if (has_charge) {
-          if (primary_track) {
-            major_track = true;
-          }
-          const double kinetic_energy= step_->GetTrack()->GetKineticEnergy();
-          if (kinetic_energy >= _major_track_minimum_energy_) {
-            major_track = true;
-          }
-          // }
+        if (primary_track) {
+          major_track = true;
+        }
+        const double kinetic_energy= step_->GetTrack()->GetKineticEnergy();
+        if (kinetic_energy >= _major_track_minimum_energy_) {
+          major_track = true;
+        }
+        // }
 
         if (_record_delta_ray_from_alpha_) {
           /* Identify a delta-ray generated along
@@ -765,7 +765,7 @@ namespace mctools {
            */
           if (track_particle_name == "e-" && ! primary_track) {
             // this is a secondary electron from a parent track:
-            if ((_parent_track_info_ptr_ == 0) ||
+            if ((_parent_track_info_ptr_ == nullptr) ||
                (_parent_track_info_ptr_->get_id() != parent_track_id)) {
               // we don't have current parent track info at hand
               // so we try to find it in the track info dictionnary:
@@ -776,7 +776,7 @@ namespace mctools {
             }
 
             // if the parent track has been identified and it is an alpha particle:
-            if ((_parent_track_info_ptr_ != 0) &&
+            if ((_parent_track_info_ptr_ != nullptr) &&
                (_parent_track_info_ptr_->get_particle_name() == "alpha")) {
               // flag the delta_ray:
               delta_ray_from_an_alpha = true;
@@ -786,7 +786,7 @@ namespace mctools {
 
       } // if (_using_track_infos)
 
-      if (_used_hits_count_ ==(int) _hits_buffer_.size()) {
+      if (_used_hits_count_ == (int) _hits_buffer_.size()) {
         //unsigned int osize = _hits_buffer.size();
         sensitive_hit a_hit;
         _hits_buffer_.push_back(a_hit);
@@ -827,27 +827,35 @@ namespace mctools {
         new_hit->grab_hit_data().set_momentum_stop(step_->GetPostStepPoint()->GetMomentum());
       }
 
-      // Grab base hit auxiliaries
-      datatools::properties & hit_aux = new_hit->grab_hit_data().grab_auxiliaries();
+      // 2018-08-08, FM:
+      //  New version of the base_step_hit class does not make
+      //  use of the auxiliary properties.
+      //// Grab base hit auxiliaries
+      //// datatools::properties & hit_aux = new_hit->grab_hit_data().grab_auxiliaries();
 
       // Add auxiliary properties :
       if (_record_kinetic_energy_) {
-        hit_aux.store_real(mctools::track_utils::START_KINETIC_ENERGY_KEY,
-                            step_->GetPreStepPoint()->GetKineticEnergy());
-        hit_aux.store_real(mctools::track_utils::STOP_KINETIC_ENERGY_KEY,
-                            step_->GetPostStepPoint()->GetKineticEnergy());
+        new_hit->grab_hit_data().set_kinetic_energy_start(step_->GetPreStepPoint()->GetKineticEnergy());
+        new_hit->grab_hit_data().set_kinetic_energy_stop(step_->GetPostStepPoint()->GetKineticEnergy());
+        //   hit_aux.store_real(mctools::track_utils::START_KINETIC_ENERGY_KEY,
+        //                       step_->GetPreStepPoint()->GetKineticEnergy());
+        //   hit_aux.store_real(mctools::track_utils::STOP_KINETIC_ENERGY_KEY,
+        //                       step_->GetPostStepPoint()->GetKineticEnergy());
       }
 
       if (_record_step_length_) {
-        hit_aux.store_real(mctools::track_utils::STEP_LENGTH, step_->GetStepLength());
+        new_hit->grab_hit_data().set_step_length(step_->GetStepLength());
+        // hit_aux.store_real(mctools::track_utils::STEP_LENGTH, step_->GetStepLength());
       }
 
       if (_record_boundaries_) {
         if (step_->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) {
-          hit_aux.store_flag(mctools::track_utils::ENTERING_VOLUME_FLAG);
+          new_hit->grab_hit_data().set_entering_volume(true);
+          // hit_aux.store_flag(mctools::track_utils::ENTERING_VOLUME_FLAG);
         }
         if (step_->GetPostStepPoint()->GetStepStatus() == fGeomBoundary) {
-          hit_aux.store_flag(mctools::track_utils::LEAVING_VOLUME_FLAG);
+          new_hit->grab_hit_data().set_leaving_volume(true);
+          // hit_aux.store_flag(mctools::track_utils::LEAVING_VOLUME_FLAG);
         }
       }
 
@@ -855,30 +863,37 @@ namespace mctools {
       if (use_track_info) {
         // special features:
         if (_record_creator_process_ && ! _track_info_ptr_->get_creator_process_name().empty()) {
-          hit_aux.store_string(mctools::track_utils::CREATOR_PROCESS_KEY,
-                                _track_info_ptr_->get_creator_process_name());
+          new_hit->grab_hit_data().set_creator_process_name(_track_info_ptr_->get_creator_process_name());
+          // hit_aux.store_string(mctools::track_utils::CREATOR_PROCESS_KEY,
+          //                   _track_info_ptr_->get_creator_process_name());
         }
 
+        // Unused:
         // if (_record_creator_category_ && ! _track_info_ptr_->get_creator_sensitive_category().empty()) {
         //   hit_aux.store_string(mctools::track_utils::CREATOR_CATEGORY_KEY,
         //                         _track_info_ptr_->get_creator_sensitive_category());
         // }
 
         if (_record_primary_particle_ && primary_track) {
-          hit_aux.store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
+          new_hit->grab_hit_data().set_primary_particle(true);
+          // hit_aux.store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
         }
 
         if (_record_major_track_ && major_track) {
-          hit_aux.store_flag(mctools::track_utils::MAJOR_TRACK_FLAG);
+          new_hit->grab_hit_data().set_major_track(true);
+          // hit_aux.store_flag(mctools::track_utils::MAJOR_TRACK_FLAG);
         }
 
         if (_record_delta_ray_from_alpha_ && delta_ray_from_an_alpha) {
-          hit_aux.store_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+          new_hit->grab_hit_data().set_delta_ray_from_alpha(true);
+          // hit_aux.store_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
         }
 
         if (_record_track_id_) {
-          hit_aux.store_integer(mctools::track_utils::TRACK_ID_KEY, track_id);
-          hit_aux.store_integer(mctools::track_utils::PARENT_TRACK_ID_KEY, parent_track_id);
+          new_hit->grab_hit_data().set_track_id(track_id);
+          new_hit->grab_hit_data().set_parent_track_id(parent_track_id);
+          // hit_aux.store_integer(mctools::track_utils::TRACK_ID_KEY, track_id);
+          // hit_aux.store_integer(mctools::track_utils::PARENT_TRACK_ID_KEY, parent_track_id);
         }
       }
 
@@ -888,19 +903,23 @@ namespace mctools {
         const G4Material * the_g4_material = step_->GetTrack()->GetMaterial();
         std::string material_ref = the_g4_material->GetName().data();
         boost::replace_all(material_ref, "__" , "::");
-        hit_aux.store_string(material_ref_key, material_ref);
+        new_hit->grab_hit_data().set_particle_name(material_ref);
+        // hit_aux.store_string(material_ref_key, material_ref);
       }
 
       if (_record_sensitive_category_) {
         static std::string sensitive_category_key =
           geomtools::sensitive::make_key(geomtools::sensitive::constants::instance().SENSITIVE_CATEGORY_PROPERTY);
-        hit_aux.store_string(sensitive_category_key, get_sensitive_category());
+        new_hit->grab_hit_data().set_sensitive_category(get_sensitive_category());
+        // hit_aux.store_string(sensitive_category_key, get_sensitive_category());
       }
 
       if (_record_g4_volume_properties_) {
         G4VPhysicalVolume * volume = step_->GetTrack()->GetVolume();
-        hit_aux.store_string(sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY, volume->GetName());
-        hit_aux.store_integer(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY, volume->GetCopyNo());
+        new_hit->grab_hit_data().set_g4_volume_name(volume->GetName());
+        new_hit->grab_hit_data().set_g4_volume_copy_number(volume->GetCopyNo());
+        // hit_aux.store_string(sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY, volume->GetName());
+        // hit_aux.store_integer(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY, volume->GetCopyNo());
       }
 
       if (_manager_->using_time_stat()) {
@@ -913,9 +932,9 @@ namespace mctools {
     }
 
     void sensitive_detector::tree_dump(std::ostream & out_,
-                                        const std::string & title_,
-                                        const std::string & indent_,
-                                        bool /*inherit_*/) const
+                                       const std::string & title_,
+                                       const std::string & indent_,
+                                       bool /*inherit_*/) const
     {
       std::string indent;
       if (! indent_.empty()) indent = indent_;
@@ -1010,13 +1029,13 @@ namespace mctools {
 
         out_ << indent << datatools::i_tree_dumpable::tag
              << "Track info pointer          : ";
-        if (_track_info_ptr_ != 0) out_ << _track_info_ptr_;
+        if (_track_info_ptr_ != nullptr) out_ << _track_info_ptr_;
         else                       out_ << "Not allocated";
         out_ << std::endl;
 
         out_ << indent << datatools::i_tree_dumpable::tag
              << "Parent track info pointer   : ";
-        if (_parent_track_info_ptr_ != 0) out_ << _parent_track_info_ptr_;
+        if (_parent_track_info_ptr_ != nullptr) out_ << _parent_track_info_ptr_;
         else                              out_ << "Not allocated";
         out_ << std::endl;
 
