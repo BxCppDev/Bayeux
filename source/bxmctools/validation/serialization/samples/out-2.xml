@@ -5,7 +5,7 @@
 <record class_id="0" tracking_level="1" version="2" object_id="_0">
 	<geomtools__base_hit class_id="1" tracking_level="1" version="1" object_id="_1">
 		<datatool__i_serializable class_id="2" tracking_level="0" version="0"></datatool__i_serializable>
-		<store>134151807</store>
+		<store>536804991</store>
 		<hit_id>12</hit_id>
 		<geom_id class_id="3" tracking_level="1" version="1" object_id="_2">
 			<datatool__i_serializable></datatool__i_serializable>
@@ -43,7 +43,7 @@
 						<string_values class_id="10" tracking_level="0" version="0">
 							<count>1</count>
 							<item_version>0</item_version>
-							<item>bxmctools::exserialization</item>
+							<item>bxmctools::validation::serialization</item>
 						</string_values>
 					</second>
 				</item>
@@ -79,6 +79,8 @@
 	<sensitive_category>calo</sensitive_category>
 	<g4_volume_name>baz</g4_volume_name>
 	<g4_volume_copy_number>42</g4_volume_copy_number>
+	<hit_processor>tic-tac-toe</hit_processor>
+	<visu_highlight>1</visu_highlight>
 </record>
 </boost_serialization>
 
@@ -89,7 +91,7 @@
 <record class_id="0" tracking_level="1" version="2" object_id="_0">
 	<geomtools__base_hit class_id="1" tracking_level="1" version="1" object_id="_1">
 		<datatool__i_serializable class_id="2" tracking_level="0" version="0"></datatool__i_serializable>
-		<store>134184575</store>
+		<store>536837759</store>
 		<hit_id>13</hit_id>
 		<geom_id class_id="3" tracking_level="1" version="1" object_id="_2">
 			<datatool__i_serializable></datatool__i_serializable>
@@ -127,7 +129,7 @@
 						<string_values class_id="10" tracking_level="0" version="0">
 							<count>1</count>
 							<item_version>0</item_version>
-							<item>bxmctools::exserialization</item>
+							<item>bxmctools::validation::serialization</item>
 						</string_values>
 					</second>
 				</item>
@@ -163,6 +165,8 @@
 	<sensitive_category>calo</sensitive_category>
 	<g4_volume_name>baz</g4_volume_name>
 	<g4_volume_copy_number>43</g4_volume_copy_number>
+	<hit_processor>tic-tac-toe</hit_processor>
+	<visu_highlight>1</visu_highlight>
 </record>
 </boost_serialization>
 

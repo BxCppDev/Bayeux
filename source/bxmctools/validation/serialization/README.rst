@@ -34,21 +34,21 @@ Contents
     
 Usage
 =====
-
-#. Build and run the deserialization program with Bayeux >=3.4.0
-   with class ``mctools::base_step_hit`` version 2:
-
-   .. code:: shell
-
-      $ ./prepare.sh
-   ..
    
-#. Build and run the deserialization program with Bayeux <=3.3.0
+#. Build and run the (de)serialization program with Bayeux <=3.3.0
    with class ``mctools::base_step_hit`` version 1:
 
    .. code:: shell
 
-      $ ./prepare.sh --downgrade
+      $ ./prepare.sh --store -C --downgrade
+   ..
+
+#. Build and run the (de)serialization program with Bayeux >=3.4.0
+   with class ``mctools::base_step_hit`` version 2:
+
+   .. code:: shell
+
+      $ ./prepare.sh --store -C
    ..
 
 

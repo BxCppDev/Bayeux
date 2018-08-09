@@ -85,7 +85,7 @@ namespace mctools {
 
   void base_step_hit_processor::setup_private_pool(size_t capacity_)
   {
-    if (_private_pool != 0) {
+    if (_private_pool != nullptr) {
       DT_THROW_IF (_private_pool->get_number_of_used_item() > 0,
                    std::logic_error,
                    "Cannot resize private pool for processor '" << get_name() << "' !");
@@ -114,7 +114,7 @@ namespace mctools {
 
   base_step_hit_processor::pool_type & base_step_hit_processor::get_pool() const
   {
-    DT_THROW_IF (_pool == 0,
+    DT_THROW_IF (_pool == nullptr,
                  std::logic_error,
                  "Processor '" << get_name() << "' does not use any pool of hits !");
     return *_pool;
@@ -122,7 +122,7 @@ namespace mctools {
 
   bool base_step_hit_processor::has_pool() const
   {
-    return _pool != 0;
+    return _pool != nullptr;
   }
 
   void base_step_hit_processor::add_new_hit(simulated_data::hit_handle_collection_type & the_hits)
@@ -150,23 +150,23 @@ th row logic_error(message.str());
 
   bool base_step_hit_processor::using_private_pool() const
   {
-    return _private_pool != 0 && _private_pool == _pool;
+    return _private_pool != nullptr && _private_pool == _pool;
   }
 
   base_step_hit_processor::base_step_hit_processor()
   {
     _logging_priority = datatools::logger::PRIO_ERROR;
-    _geom_manager = 0;
-    _private_pool = 0;
+    _geom_manager = nullptr;
+    _private_pool = nullptr;
     _pool_owner = false;
-    _pool = 0;
+    _pool = nullptr;
     return;
   }
 
   base_step_hit_processor::~base_step_hit_processor()
   {
     // std::cerr << "DEVEL: " << "base_step_hit_processor::DTOR: Entering..." << std::endl;
-    if (_private_pool != 0) {
+    if (_private_pool != nullptr) {
       delete _private_pool;
     }
     // std::cerr << "DEVEL: " << "base_step_hit_processor::DTOR: Exiting." << std::endl;
@@ -197,7 +197,7 @@ th row logic_error(message.str());
 
   bool base_step_hit_processor::has_geom_manager() const
   {
-    return _geom_manager != 0;
+    return _geom_manager != nullptr;
   }
 
   const geomtools::manager &

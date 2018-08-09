@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo >&2 "[info] Running run.sh..."
+
 src_dir=
 work_dir=
 serial_downgrade=0

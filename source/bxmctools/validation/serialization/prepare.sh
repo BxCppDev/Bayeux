@@ -52,7 +52,7 @@ echo -e "\nBuild the validation programs..." 1>&2
 cmake \
     -DCMAKE_INSTALL_PREFIX=${install_dir} \
     -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
-    -DMCTOOLS_SERIALIZATION_DOWNGRADE=${serial_downgrade} \
+    -DMCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE=${serial_downgrade} \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: cmake failed !" 1>&2
@@ -63,11 +63,11 @@ if [ $? -ne 0 ]; then
     echo "ERROR: make failed !" 1>&2
     exit 1
 fi
-make install
-if [ $? -ne 0 ]; then
-    echo "ERROR: make install failed !" 1>&2
-    exit 1
-fi
+# make install
+# if [ $? -ne 0 ]; then
+#     echo "ERROR: make install failed !" 1>&2
+#     exit 1
+# fi
 
 if [ ${only_build} -eq 1 ]; then
     exit 0
@@ -77,7 +77,7 @@ ls -l
 
 if [ ${do_store} -eq 1 ]; then
     echo -e "\nGenerate the output MC hit data file..." 1>&2
-    ${install_dir}/exstore
+    ${build_dir}/exstore
     if [ $? -ne 0 ]; then
 	echo "[error] exstore failed !" 1>&2
 	exit 1
@@ -88,7 +88,8 @@ downgrade_opt=""
 if [ "${serial_downgrade}" -eq 1 ]; then
     downgrade_opt="--downgrade"
 fi
-$(pwd)/run.sh ${downgrade_opt}
+
+$(pwd)/run.sh ${downgrade_opt} --source-dir $(pwd) --work-dir ${build_dir}
 if [ $? -ne 0 ]; then
     echo "[error] run failed !" 1>&2    
     exit 1

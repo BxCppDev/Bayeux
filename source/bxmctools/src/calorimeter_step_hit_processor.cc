@@ -39,8 +39,8 @@ namespace mctools {
   {
     _scintillation_cluster_time_range_  = 1.0 * CLHEP::ns;
     _scintillation_cluster_space_range_ = 1.0 * CLHEP::cm;
-    _mapping_    = 0;
-    _categories_ = 0;
+    _mapping_    = nullptr;
+    _categories_ = nullptr;
     _calo_block_type_ = geomtools::geom_id::INVALID_TYPE;
     _alpha_quenching_ = true;
     return;
@@ -228,9 +228,11 @@ namespace mctools {
       track_match = false;
       if (scintillation_hit_.get_particle_name() == "alpha") {
         if (hit_pname == "e-") {
-          // search for delta rays originated from an alpha track:
+          // Search for delta rays originated from an alpha track:
+          // const bool is_delta_ray_from_alpha
+          //   = step_hit_.get_auxiliaries().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
           const bool is_delta_ray_from_alpha
-            = step_hit_.get_auxiliaries().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+            = step_hit_.has_delta_ray_from_alpha() && step_hit_.is_delta_ray_from_alpha();
           if (is_delta_ray_from_alpha) {
             /*  delta ray production along the alpha track:
              *
@@ -277,10 +279,12 @@ namespace mctools {
       else {
         // e-/e+/gamma
         if (hit_pname == "e-") {
-          // reject delta rays originated from an alpha track for they should be clusterized
+          // Reject delta rays originated from an alpha track for they should be clusterized
           // within the scintillation cluster of an alpha particle:
+          // const bool is_delta_ray_from_alpha
+          //   = step_hit_.get_auxiliaries().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
           const bool is_delta_ray_from_alpha
-            = step_hit_.get_auxiliaries().has_flag(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+            = step_hit_.has_delta_ray_from_alpha() && step_hit_.is_delta_ray_from_alpha();
           if (is_delta_ray_from_alpha) {
             track_match = false;
           }
@@ -370,19 +374,17 @@ namespace mctools {
     return true;
   }
 
-  void calorimeter_step_hit_processor::process(
-                                               const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+  void calorimeter_step_hit_processor::process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
                                                ::mctools::simulated_data::hit_collection_type & the_plain_calo_hits)
   {
-    _process(the_base_step_hits, (simulated_data::hit_handle_collection_type *) 0, &the_plain_calo_hits);
+    _process(the_base_step_hits, (simulated_data::hit_handle_collection_type *) nullptr, &the_plain_calo_hits);
     return;
   }
 
-  void calorimeter_step_hit_processor::process(
-                                               const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+  void calorimeter_step_hit_processor::process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
                                                ::mctools::simulated_data::hit_handle_collection_type & the_calo_hits)
   {
-    _process(the_base_step_hits, &the_calo_hits, (simulated_data::hit_collection_type *) 0);
+    _process(the_base_step_hits, &the_calo_hits, (simulated_data::hit_collection_type *) nullptr);
     return;
   }
 
@@ -393,19 +395,18 @@ namespace mctools {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     // Check the type of output collection (handles or plain hits) :
     bool use_handles = false;
-    if (scintillation_hits_ != 0) {
+    if (scintillation_hits_ != nullptr) {
       use_handles = true;
-    } else if (plain_scintillation_hits_ == 0) {
+    } else if (plain_scintillation_hits_ == nullptr) {
       DT_THROW_IF(true, std::logic_error, "Missing hit collection type (NULL pointer) !");
     }
-    base_step_hit * current_scintillation_cluster = 0;
+    base_step_hit * current_scintillation_cluster = nullptr;
     uint32_t scintillation_hit_count = 0;
 
     // Prereservation :
     if (use_handles) {
       scintillation_hits_->reserve(20);
-    }
-    else {
+    } else {
       plain_scintillation_hits_->reserve(20);
     }
     for (base_step_hit_processor::step_hit_ptr_collection_type::const_iterator ihit = shpc_.begin();
@@ -467,14 +468,14 @@ namespace mctools {
       the_step_hit.set_geom_id(gid);
 
       // first search match with the current cluster (if any):
-      base_step_hit * matching_scintillation_cluster = 0;
-      if (current_scintillation_cluster != 0) {
+      base_step_hit * matching_scintillation_cluster = nullptr;
+      if (current_scintillation_cluster != nullptr) {
         if (match_scintillation_hit(*current_scintillation_cluster, the_step_hit)) {
           matching_scintillation_cluster = current_scintillation_cluster;
         }
       }
       // else: scan the whole list of clusters :
-      if (matching_scintillation_cluster == 0) {
+      if (matching_scintillation_cluster == nullptr) {
         if (use_handles) {
           for (simulated_data::hit_handle_collection_type::iterator icluster
                  = scintillation_hits_->begin();
@@ -504,7 +505,7 @@ namespace mctools {
       }
 
       // if the step hit does not match any cluster:
-      if (matching_scintillation_cluster == 0) {
+      if (matching_scintillation_cluster == nullptr) {
         if (use_handles) {
           // insert a new clusterized hit:
           add_new_hit(*scintillation_hits_);
@@ -522,9 +523,11 @@ namespace mctools {
         current_scintillation_cluster->set_hit_id(scintillation_hit_count);
         current_scintillation_cluster->set_geom_id(gid);
 
-        // // store primary particle information
+        // // store primary particle information:
+        // // const bool is_primary_particle
+        // //   = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
         // const bool is_primary_particle
-        //   = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
+        //   = the_step_hit.has_primary_particle() && the_step_hit.is_primary_particle();
         // if (is_primary_particle) {
         //   current_scintillation_cluster->grab_auxiliaries().store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
         // }
@@ -572,7 +575,8 @@ namespace mctools {
         current_scintillation_cluster = matching_scintillation_cluster;
 
         // increment energy deposit:
-        const double cluster_energy_deposit = current_scintillation_cluster->get_energy_deposit()
+        const double cluster_energy_deposit
+          = current_scintillation_cluster->get_energy_deposit()
           + hit_energy_deposit;
         current_scintillation_cluster->set_energy_deposit(cluster_energy_deposit);
         if (hit_particle_name == "gamma") {
@@ -649,7 +653,7 @@ namespace mctools {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Categories : " << _categories_ << " ";
-      if (_categories_ != 0) {
+      if (_categories_ != nullptr) {
         out_ << '[' << _categories_->size() << ']';
         /*
           for (geomtools::id_mgr::categories_by_name_col_t::const_iterator i = _categories_->begin();

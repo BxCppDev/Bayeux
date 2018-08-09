@@ -177,11 +177,11 @@ namespace mctools {
                                                            * the hit processor is
                                                            * attached with
                                                            */
-    const geomtools::manager       * _geom_manager; ///< The geometry manager
-    datatools::properties            _auxiliaries;  ///< Some auxiliary properties
-    pool_type                      * _private_pool; ///< A private embedded pool of hits
-    bool                             _pool_owner;   ///< Pool of hits ownership flag
-    pool_type                      * _pool;         ///< Reference to an external pool of hits
+    const geomtools::manager       * _geom_manager = nullptr; ///< The geometry manager
+    datatools::properties            _auxiliaries;            ///< Some auxiliary properties
+    pool_type                      * _private_pool = nullptr; ///< A private embedded pool of hits
+    bool                             _pool_owner;             ///< Pool of hits ownership flag
+    pool_type                      * _pool = nullptr;         ///< Reference to an external pool of hits
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_step_hit_processor)

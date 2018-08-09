@@ -20,7 +20,7 @@ find_package(Bayeux 3.3.0 REQUIRED geant4)
 option(MCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE "Downgrade to serialization version 1" OFF)
 
 if (MCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE) 
-  add_definitions(-DMCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE)
+  add_definitions("-DMCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE")
 endif() 
 
 ##############

@@ -49,7 +49,7 @@ int main(int argc_, char **argv_)
   try {
 
     int hit_lib_version = boost::serialization::version<mctools::base_step_hit>::value;
-    int sd_lib_version = boost::serialization::version<mctools::simulated_data>::value;
+    int sd_lib_version  = boost::serialization::version<mctools::simulated_data>::value;
     std::clog << "[info] Base step hit class library version  = " << hit_lib_version << std::endl;
     std::clog << "[info] Simulated data class library version = " << sd_lib_version << std::endl;
 
@@ -85,7 +85,7 @@ int main(int argc_, char **argv_)
       mchit.set_hit_id(12 + i);
       mchit.set_geom_id(geomtools::geom_id(100, 0, 1, 2 * i));
       mchit.grab_auxiliaries().store_flag("mock_hit");
-      mchit.grab_auxiliaries().store("mock_mc", "bxmctools::exserialization");
+      mchit.grab_auxiliaries().store("mock_mc", "bxmctools::validation::serialization");
 
       // Version 0:
       mchit.set_position_start(pos_start);
@@ -105,6 +105,7 @@ int main(int argc_, char **argv_)
       std::string sensitive_category = "calo";
       std::string g4_volume_name = "baz";
       int g4_volume_copy_number = 42 + i;
+      std::string hit_processor_name = "tic-tac-toe";
       
 #ifdef MCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE
       if (hit_lib_version <= 1) {
@@ -144,6 +145,13 @@ int main(int argc_, char **argv_)
         
         mchit.grab_auxiliaries().store(mctools::sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY,
                                        g4_volume_copy_number);
+
+        mchit.grab_auxiliaries().store(mctools::hit_utils::HIT_MC_STEP_PROCESSOR_KEY,
+                                       hit_processor_name);
+
+        mchit.grab_auxiliaries().store(mctools::hit_utils::HIT_VISU_HIGHLIGHTED_KEY,
+                                       true);
+        
       }
 #endif // !MCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE
       
@@ -169,6 +177,8 @@ int main(int argc_, char **argv_)
         mchit.set_sensitive_category(sensitive_category);
         mchit.set_g4_volume_name(g4_volume_name);
         mchit.set_g4_volume_copy_number(g4_volume_copy_number);
+        mchit.set_visu_highlight(true);
+        mchit.set_hit_processor(hit_processor_name);
       }
 #endif // MCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE
       

@@ -9,6 +9,12 @@ Loaded mock base step hit:
 |   |-- Name : 'g4_volume.name'
 |   |   |-- Type  : string (scalar)
 |   |   `-- Value : 'baz'
+|   |-- Name : 'hit.mc_step_processor'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'tic-tac-toe'
+|   |-- Name : 'hit.visu.highlighted'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
 |   |-- Name : 'material.ref'
 |   |   |-- Type  : string (scalar)
 |   |   `-- Value : 'water'
@@ -17,7 +23,7 @@ Loaded mock base step hit:
 |   |   `-- Value : 1
 |   |-- Name : 'mock_mc'
 |   |   |-- Type  : string (scalar)
-|   |   `-- Value : 'bxmctools::exserialization'
+|   |   `-- Value : 'bxmctools::validation::serialization'
 |   |-- Name : 'sensitive.category'
 |   |   |-- Type  : string (scalar)
 |   |   `-- Value : 'calo'
@@ -70,6 +76,12 @@ Loaded mock base step hit:
 |   |-- Name : 'g4_volume.name'
 |   |   |-- Type  : string (scalar)
 |   |   `-- Value : 'baz'
+|   |-- Name : 'hit.mc_step_processor'
+|   |   |-- Type  : string (scalar)
+|   |   `-- Value : 'tic-tac-toe'
+|   |-- Name : 'hit.visu.highlighted'
+|   |   |-- Type  : boolean (scalar)
+|   |   `-- Value : 1
 |   |-- Name : 'material.ref'
 |   |   |-- Type  : string (scalar)
 |   |   `-- Value : 'water'
@@ -78,7 +90,7 @@ Loaded mock base step hit:
 |   |   `-- Value : 1
 |   |-- Name : 'mock_mc'
 |   |   |-- Type  : string (scalar)
-|   |   `-- Value : 'bxmctools::exserialization'
+|   |   `-- Value : 'bxmctools::validation::serialization'
 |   |-- Name : 'sensitive.category'
 |   |   |-- Type  : string (scalar)
 |   |   `-- Value : 'calo'

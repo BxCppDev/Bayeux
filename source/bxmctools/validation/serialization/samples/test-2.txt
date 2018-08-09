@@ -1,5 +1,5 @@
 Loaded mock base step hit:
-|-- Store       : (111111111101111111001111111)
+|-- Store       : (11111111111101111111001111111)
 |-- Hit ID      : 12
 |-- Geometry ID : [100:0.1.0]
 |-- Auxiliaries : 
@@ -8,13 +8,11 @@ Loaded mock base step hit:
 |   |   `-- Value : 1
 |   `-- Name : 'mock_mc'
 |       |-- Type  : string (scalar)
-|       `-- Value : 'bxmctools::exserialization'
+|       `-- Value : 'bxmctools::validation::serialization'
 |-- Position start : (0,0,-2.5) mm
 |-- Position stop  : (0,0,9.8) mm
 |-- Time start     : 1.21 ns
 |-- Time stop      : 2.444 ns
-|-- Momentum start : (nan,nan,nan) keV
-|-- Momentum stop  : (nan,nan,nan) keV
 |-- Energy deposit : 23.4000000000001 keV
 |-- Particle name  : `bayeutron'
 |-- Biasing weight  : 1
@@ -22,7 +20,6 @@ Loaded mock base step hit:
 |-- Kinetic energy stop : 1211.1 keV
 |-- Step length : 12.3 mm
 |-- Entering volume : true
-|-- Leaving volume : false
 |-- Creator process name  : `dummy'
 |-- Primary particle : true
 |-- Major track : true
@@ -32,9 +29,11 @@ Loaded mock base step hit:
 |-- Sensitive category  : `calo'
 |-- Geant4 volume name  : `baz'
 |-- Geant4 volume copy number : 42
+|-- Hit processor : `tic-tac-toe'
+|-- Visu highlight : true
 `-- Validity : true
 Loaded mock base step hit:
-|-- Store       : (111111111110111111001111111)
+|-- Store       : (11111111111110111111001111111)
 |-- Hit ID      : 13
 |-- Geometry ID : [100:0.1.2]
 |-- Auxiliaries : 
@@ -43,20 +42,17 @@ Loaded mock base step hit:
 |   |   `-- Value : true
 |   `-- Name : 'mock_mc'
 |       |-- Type  : string (scalar)
-|       `-- Value : 'bxmctools::exserialization'
+|       `-- Value : 'bxmctools::validation::serialization'
 |-- Position start : (0,0,9.8) mm
 |-- Position stop  : (0,0,22.1) mm
 |-- Time start     : 2.444 ns
 |-- Time stop      : 3.678 ns
-|-- Momentum start : (nan,nan,nan) keV
-|-- Momentum stop  : (nan,nan,nan) keV
 |-- Energy deposit : 23.4000000000001 keV
 |-- Particle name  : `bayeutron'
 |-- Biasing weight  : 1
 |-- Kinetic energy start : 1211.1 keV
 |-- Kinetic energy stop : 1187.7 keV
 |-- Step length : 12.3 mm
-|-- Entering volume : false
 |-- Leaving volume : true
 |-- Creator process name  : `dummy'
 |-- Primary particle : true
@@ -67,4 +63,6 @@ Loaded mock base step hit:
 |-- Sensitive category  : `calo'
 |-- Geant4 volume name  : `baz'
 |-- Geant4 volume copy number : 43
+|-- Hit processor : `tic-tac-toe'
+|-- Visu highlight : true
 `-- Validity : true

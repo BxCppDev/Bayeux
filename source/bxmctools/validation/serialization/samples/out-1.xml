@@ -22,7 +22,7 @@
 			<datatool__i_serializable></datatool__i_serializable>
 			<description></description>
 			<properties class_id="6" tracking_level="0" version="0">
-				<count>16</count>
+				<count>18</count>
 				<item_version>0</item_version>
 				<item class_id="7" tracking_level="0" version="0">
 					<first>g4_volume.copy_number</first>
@@ -46,6 +46,29 @@
 							<item_version>0</item_version>
 							<item>baz</item>
 						</string_values>
+					</second>
+				</item>
+				<item>
+					<first>hit.mc_step_processor</first>
+					<second>
+						<description></description>
+						<flags>4</flags>
+						<string_values>
+							<count>1</count>
+							<item_version>0</item_version>
+							<item>tic-tac-toe</item>
+						</string_values>
+					</second>
+				</item>
+				<item>
+					<first>hit.visu.highlighted</first>
+					<second>
+						<description></description>
+						<flags>1</flags>
+						<boolean_values>
+							<count>1</count>
+							<item>1</item>
+						</boolean_values>
 					</second>
 				</item>
 				<item>
@@ -79,7 +102,7 @@
 						<string_values>
 							<count>1</count>
 							<item_version>0</item_version>
-							<item>bxmctools::exserialization</item>
+							<item>bxmctools::validation::serialization</item>
 						</string_values>
 					</second>
 				</item>
@@ -256,7 +279,7 @@
 			<datatool__i_serializable></datatool__i_serializable>
 			<description></description>
 			<properties class_id="6" tracking_level="0" version="0">
-				<count>16</count>
+				<count>18</count>
 				<item_version>0</item_version>
 				<item class_id="7" tracking_level="0" version="0">
 					<first>g4_volume.copy_number</first>
@@ -280,6 +303,29 @@
 							<item_version>0</item_version>
 							<item>baz</item>
 						</string_values>
+					</second>
+				</item>
+				<item>
+					<first>hit.mc_step_processor</first>
+					<second>
+						<description></description>
+						<flags>4</flags>
+						<string_values>
+							<count>1</count>
+							<item_version>0</item_version>
+							<item>tic-tac-toe</item>
+						</string_values>
+					</second>
+				</item>
+				<item>
+					<first>hit.visu.highlighted</first>
+					<second>
+						<description></description>
+						<flags>1</flags>
+						<boolean_values>
+							<count>1</count>
+							<item>1</item>
+						</boolean_values>
 					</second>
 				</item>
 				<item>
@@ -313,7 +359,7 @@
 						<string_values>
 							<count>1</count>
 							<item_version>0</item_version>
-							<item>bxmctools::exserialization</item>
+							<item>bxmctools::validation::serialization</item>
 						</string_values>
 					</second>
 				</item>
