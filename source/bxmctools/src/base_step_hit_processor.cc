@@ -567,11 +567,12 @@ th row logic_error(message.str());
       the_step_hit = *the_sim_step_hit; // copy the hit in the one stored through the current handle
       the_step_hit.set_hit_id(count); // attribute an unique ID to the hit
       if (are_visu_highlighted_hits()) {
-        the_step_hit.grab_auxiliaries().update_flag(mctools::hit_utils::HIT_VISU_HIGHLIGHTED_KEY);
+        // the_step_hit.grab_auxiliaries().update_flag(mctools::hit_utils::HIT_VISU_HIGHLIGHTED_KEY);
+        the_step_hit.set_visu_highlight(true);
       }
       if (is_record_mc_step_hit_processor()) {
-        the_step_hit.grab_auxiliaries().update(mctools::hit_utils::HIT_MC_STEP_PROCESSOR_KEY,
-                                               get_name());
+        // the_step_hit.grab_auxiliaries().update(mctools::hit_utils::HIT_MC_STEP_PROCESSOR_KEY, get_name());
+        the_step_hit.set_hit_processor(get_name());
       }
       count++; // increment the hit counter
     }

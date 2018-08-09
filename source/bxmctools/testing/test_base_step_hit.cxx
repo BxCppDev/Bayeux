@@ -75,6 +75,7 @@ int main(int /* argc_ */, char ** /* argv_ */)
       BSH.set_position_stop(position);
       BSH.set_time_stop(time);
       BSH.set_energy_deposit(drand48() * 10. * CLHEP::eV * step.mag());
+      BSH.set_visu_highlight(true);
       if (drand48() < 0.3) {
         BSH.grab_auxiliaries().store("sensitive", "drift_chamber");
         BSH.grab_auxiliaries().store("medium", "tracking_gas");

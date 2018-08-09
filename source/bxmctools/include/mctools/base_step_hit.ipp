@@ -70,86 +70,86 @@ namespace mctools {
           // Convert auxiliaries properties into attributes:
           
           if (get_auxiliaries().has_key(mctools::track_utils::TRACK_ID_KEY)) {
-            int track_id = this->get_auxiliaries().fetch_integer(mctools::track_utils::TRACK_ID_KEY);
+            const int track_id = this->get_auxiliaries().fetch_integer(mctools::track_utils::TRACK_ID_KEY);
             this->set_track_id(track_id);
             this->grab_auxiliaries().erase(mctools::track_utils::TRACK_ID_KEY);
           }
           
           if (get_auxiliaries().has_key(mctools::track_utils::PARENT_TRACK_ID_KEY)) {
-            int parent_track_id = this->get_auxiliaries().fetch_integer(mctools::track_utils::PARENT_TRACK_ID_KEY);
+            const int parent_track_id = this->get_auxiliaries().fetch_integer(mctools::track_utils::PARENT_TRACK_ID_KEY);
             this->set_parent_track_id(parent_track_id);
             this->grab_auxiliaries().erase(mctools::track_utils::PARENT_TRACK_ID_KEY);
           }
          
           if (get_auxiliaries().has_key(mctools::track_utils::PRIMARY_PARTICLE_FLAG)) {
-            bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
+            const bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
             this->set_primary_particle(flag);
             this->grab_auxiliaries().erase(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
           }
         
           if (get_auxiliaries().has_key(mctools::track_utils::MAJOR_TRACK_FLAG)) {
-            bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::MAJOR_TRACK_FLAG);
+            const bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::MAJOR_TRACK_FLAG);
             this->set_major_track(flag);
             this->grab_auxiliaries().erase(mctools::track_utils::MAJOR_TRACK_FLAG);
           }
         
           if (get_auxiliaries().has_key(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG)) {
-            bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
+            const bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
             this->set_delta_ray_from_alpha(flag);
             this->grab_auxiliaries().erase(mctools::track_utils::DELTA_RAY_FROM_ALPHA_FLAG);
           }
        
           if (get_auxiliaries().has_key(mctools::track_utils::ENTERING_VOLUME_FLAG)) {
-            bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::ENTERING_VOLUME_FLAG);
+            const bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::ENTERING_VOLUME_FLAG);
             this->set_entering_volume(flag);
             this->grab_auxiliaries().erase(mctools::track_utils::ENTERING_VOLUME_FLAG);
           }
        
           if (get_auxiliaries().has_key(mctools::track_utils::LEAVING_VOLUME_FLAG)) {
-            bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::LEAVING_VOLUME_FLAG);
+            const bool flag = this->get_auxiliaries().fetch_boolean(mctools::track_utils::LEAVING_VOLUME_FLAG);
             this->set_leaving_volume(flag);
             this->grab_auxiliaries().erase(mctools::track_utils::LEAVING_VOLUME_FLAG);
           }
        
           if (get_auxiliaries().has_key(mctools::track_utils::START_KINETIC_ENERGY_KEY)) {
-            double ke = this->get_auxiliaries().fetch_real(mctools::track_utils::START_KINETIC_ENERGY_KEY);
+            const double ke = this->get_auxiliaries().fetch_real(mctools::track_utils::START_KINETIC_ENERGY_KEY);
             this->set_kinetic_energy_start(ke);
             this->grab_auxiliaries().erase(mctools::track_utils::START_KINETIC_ENERGY_KEY);
           }
        
           if (get_auxiliaries().has_key(mctools::track_utils::STOP_KINETIC_ENERGY_KEY)) {
-            double ke = this->get_auxiliaries().fetch_real(mctools::track_utils::STOP_KINETIC_ENERGY_KEY);
+            const double ke = this->get_auxiliaries().fetch_real(mctools::track_utils::STOP_KINETIC_ENERGY_KEY);
             this->set_kinetic_energy_stop(ke);
             this->grab_auxiliaries().erase(mctools::track_utils::STOP_KINETIC_ENERGY_KEY);
           }
       
           if (get_auxiliaries().has_key(mctools::track_utils::STEP_LENGTH)) {
-            double sl = this->get_auxiliaries().fetch_real(mctools::track_utils::STEP_LENGTH);
+            const double sl = this->get_auxiliaries().fetch_real(mctools::track_utils::STEP_LENGTH);
             this->set_step_length(sl);
             this->grab_auxiliaries().erase(mctools::track_utils::STEP_LENGTH);
           }
          
           if (get_auxiliaries().has_key(mctools::track_utils::CREATOR_PROCESS_KEY)) {
-            std::string cp = this->get_auxiliaries().fetch_string(mctools::track_utils::CREATOR_PROCESS_KEY);
+            const std::string & cp = this->get_auxiliaries().fetch_string(mctools::track_utils::CREATOR_PROCESS_KEY);
             this->set_creator_process_name(cp);
             this->grab_auxiliaries().erase(mctools::track_utils::CREATOR_PROCESS_KEY);
           }
 
           {
-            static std::string material_ref_key =
+            static const std::string material_ref_key =
               geomtools::material::make_key(geomtools::material::material_ref_property());       
             if (get_auxiliaries().has_key(material_ref_key)) {
-              std::string mr = this->get_auxiliaries().fetch_string(material_ref_key);
+              const std::string & mr = this->get_auxiliaries().fetch_string(material_ref_key);
               this->set_material_name(mr);
               this->grab_auxiliaries().erase(material_ref_key);
             }
           }
   
           {
-            static std::string sensitive_category_key =
+            static const std::string sensitive_category_key =
               geomtools::sensitive::make_key(geomtools::sensitive::constants::instance().SENSITIVE_CATEGORY_PROPERTY);       
             if (get_auxiliaries().has_key(sensitive_category_key)) {
-              std::string sc = this->get_auxiliaries().fetch_string(sensitive_category_key);
+              const std::string & sc = this->get_auxiliaries().fetch_string(sensitive_category_key);
               this->set_sensitive_category(sc);
               this->grab_auxiliaries().erase(sensitive_category_key);
             }
@@ -157,20 +157,38 @@ namespace mctools {
   
           {
             if (get_auxiliaries().has_key(sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY)) {;
-              std::string vn = this->get_auxiliaries().fetch_string(sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY);
+              const std::string & vn = this->get_auxiliaries().fetch_string(sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY);
               this->set_g4_volume_name(vn);
               this->grab_auxiliaries().erase(sensitive_utils::SENSITIVE_G4_VOLUME_NAME_KEY);
             }
           }
           
           {
-            if (get_auxiliaries().has_key(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY)) {;
-              int vcn = this->get_auxiliaries().fetch_positive_integer(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY);
+            if (get_auxiliaries().has_key(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY)) {
+              const int vcn = this->get_auxiliaries().fetch_positive_integer(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY);
               this->set_g4_volume_copy_number(vcn);
               this->grab_auxiliaries().erase(sensitive_utils::SENSITIVE_G4_VOLUME_COPY_NUMBER_KEY);
             }
           }
           
+          {
+            static const std::string & hit_processor_key = mctools::hit_utils::HIT_MC_STEP_PROCESSOR_KEY;      
+            if (get_auxiliaries().has_key(hit_processor_key)) {
+              const std::string & hp = this->get_auxiliaries().fetch_string(hit_processor_key);
+              this->set_hit_processor(hp);
+              this->grab_auxiliaries().erase(hit_processor_key);
+            }
+          }
+          
+          {
+            static const std::string & visu_highlight_key = mctools::hit_utils::HIT_VISU_HIGHLIGHTED_KEY;
+            if (get_auxiliaries().has_key(visu_highlight_key)) {
+              const bool vh = this->get_auxiliaries().fetch_boolean(visu_highlight_key);
+              this->set_visu_highlight(vh);
+              this->grab_auxiliaries().erase(visu_highlight_key);
+            }
+          }
+
         } // process loaded properties
 
       } else {
@@ -220,6 +238,12 @@ namespace mctools {
         }
         if (_store & STORE_G4_VOLUME_COPY_NUMBER) {
           ar_ & boost::serialization::make_nvp ("g4_volume_copy_number", _g4_volume_copy_number_);
+        }
+        if (_store & STORE_HIT_PROCESSOR) {
+          ar_ & boost::serialization::make_nvp ("hit_processor", _hit_processor_);
+        }
+        if (_store & STORE_VISU_HIGHLIGHT_FLAG) {
+          ar_ & boost::serialization::make_nvp ("visu_highlight", _visu_highlight_);
         }
       }
       

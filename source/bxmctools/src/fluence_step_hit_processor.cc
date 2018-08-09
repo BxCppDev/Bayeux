@@ -188,15 +188,16 @@ namespace mctools {
       // plain_fluence_hits_->reserve(current_size + fluence_hits_->size());
     }
 
-    genbb::single_particle_generator spg;
     for (base_step_hit_processor::step_hit_ptr_collection_type::const_iterator ihit = shpc_.begin();
          ihit != shpc_.end();
          ihit++) {
 
       base_step_hit & the_step_hit = const_cast<base_step_hit &>(*(*ihit));
 
-      if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::ENTERING_VOLUME_FLAG)
-          || the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::LEAVING_VOLUME_FLAG)) {
+      // if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::ENTERING_VOLUME_FLAG)
+      //     || the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::LEAVING_VOLUME_FLAG)) {
+      if ((the_step_hit.has_entering_volume() && the_step_hit.is_entering_volume())
+          || (the_step_hit.has_leaving_volume() && the_step_hit.is_leaving_volume())) {
         const geomtools::vector_3d & position_start = the_step_hit.get_position_start();
         const geomtools::vector_3d & position_stop  = the_step_hit.get_position_stop();
 
@@ -211,11 +212,11 @@ namespace mctools {
         std::string particle_name = the_step_hit.get_particle_name();
         DT_THROW_IF(particle_name.empty(), std::logic_error,
                     "Source step hit has no valid recorded particle name!");
-        double      particle_mass = spg.get_particle_mass_from_label (particle_name);
+        double      particle_mass = genbb::single_particle_generator::get_particle_mass_from_label(particle_name);
 
         // locate the hit using the mean position through the smart locator:
         geomtools::geom_id gid;
-        locate_fluence_volume (position_mean, gid);
+        locate_fluence_volume(position_mean, gid);
         if (! gid.is_valid()) {
           // we do not process such a hit:
           DT_LOG_ERROR(get_logging_priority(),
@@ -251,31 +252,40 @@ namespace mctools {
         current_fluence_hit->set_geom_id(gid);
         current_fluence_hit->set_particle_name(particle_name);
 
-        // store auxiliaries:
+        // Store special attributes:
 
+        // const bool is_primary_particle
+        //   = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
         const bool is_primary_particle
-          = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
+          = the_step_hit.has_primary_particle() && the_step_hit.is_primary_particle();
         DT_LOG_DEBUG(get_logging_priority(), "Primary particle = " << is_primary_particle);
         if (is_primary_particle) {
-          current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
-        }
+          // current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
+          current_fluence_hit->set_primary_particle(true);
+         }
 
-        const bool has_track_id
-          = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::TRACK_ID_KEY);
-        DT_LOG_DEBUG(get_logging_priority(), "Track ID = " << has_track_id);
+        // const bool has_track_id
+        // = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::TRACK_ID_KEY);
+        const bool has_track_id = the_step_hit.has_track_id();
         if (has_track_id) {
-          current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::TRACK_ID_KEY);
+          DT_LOG_DEBUG(get_logging_priority(), "Track ID = " << the_step_hit.get_track_id());
+          // current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::TRACK_ID_KEY);
+          current_fluence_hit->set_track_id(the_step_hit.get_track_id());
         }
 
-        const bool has_parent_track_id
-          = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PARENT_TRACK_ID_KEY);
-        DT_LOG_DEBUG(get_logging_priority(), "Parent track ID = " << has_parent_track_id);
+        // const bool has_parent_track_id
+        //   = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PARENT_TRACK_ID_KEY);
+        const bool has_parent_track_id = the_step_hit.has_parent_track_id();
         if (has_parent_track_id) {
-          current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::PARENT_TRACK_ID_KEY);
+          DT_LOG_DEBUG(get_logging_priority(), "Parent track ID = " << the_step_hit.get_parent_track_id());
+          // current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::PARENT_TRACK_ID_KEY);
+          current_fluence_hit->set_parent_track_id(the_step_hit.get_parent_track_id());
         }
 
-        if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::ENTERING_VOLUME_FLAG)) {
-          current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::ENTERING_VOLUME_FLAG);
+        // if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::ENTERING_VOLUME_FLAG)) {
+        if (the_step_hit.has_entering_volume() && the_step_hit.is_entering_volume()) {
+          // current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::ENTERING_VOLUME_FLAG);
+          current_fluence_hit->set_entering_volume(true);
           current_fluence_hit->set_position_start(position_start);
           current_fluence_hit->set_momentum_start(momentum_start);
           double entering_kinetic_energy = std::sqrt(momentum_start.x()*momentum_start.x()
@@ -283,10 +293,13 @@ namespace mctools {
                                                      +momentum_start.z()*momentum_start.z()
                                                      +particle_mass*particle_mass)-particle_mass;
           DT_LOG_DEBUG(get_logging_priority(), "entering_kinetic_energy = " << entering_kinetic_energy / CLHEP::keV << " keV.");
-          current_fluence_hit->grab_auxiliaries().store(track_utils::ENTERING_KINETIC_ENERGY_KEY, entering_kinetic_energy);
-       }
-        if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::LEAVING_VOLUME_FLAG)) {
-          current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::LEAVING_VOLUME_FLAG);
+          // current_fluence_hit->grab_auxiliaries().store(track_utils::ENTERING_KINETIC_ENERGY_KEY, entering_kinetic_energy);
+          current_fluence_hit->set_kinetic_energy_start(entering_kinetic_energy);
+        }
+        // if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::LEAVING_VOLUME_FLAG)) {
+        if (the_step_hit.has_leaving_volume() && the_step_hit.is_leaving_volume()) {
+          // current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::LEAVING_VOLUME_FLAG);
+          current_fluence_hit->set_leaving_volume(true);
           current_fluence_hit->set_position_stop(position_stop);
           current_fluence_hit->set_momentum_stop(momentum_stop);
           double leaving_kinetic_energy = std::sqrt(momentum_stop.x()*momentum_stop.x()
@@ -294,7 +307,8 @@ namespace mctools {
                                                     +momentum_stop.z()*momentum_stop.z()
                                                     +particle_mass*particle_mass)-particle_mass;
           DT_LOG_DEBUG(get_logging_priority(), "leaving_kinetic_energy = " << leaving_kinetic_energy / CLHEP::keV << " keV.");
-          current_fluence_hit->grab_auxiliaries().store(track_utils::LEAVING_KINETIC_ENERGY_KEY, leaving_kinetic_energy);
+          // current_fluence_hit->grab_auxiliaries().store(track_utils::LEAVING_KINETIC_ENERGY_KEY, leaving_kinetic_energy);
+          current_fluence_hit->set_kinetic_energy_stop(leaving_kinetic_energy);
         }
 
         //increment the hit id:

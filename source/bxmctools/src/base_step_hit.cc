@@ -729,6 +729,62 @@ namespace mctools {
     return;
   }
 
+  /* Step hit processor */
+  
+  bool base_step_hit::has_hit_processor() const
+  {
+    return !_hit_processor_.empty();
+  }
+                
+  const std::string & base_step_hit::get_hit_processor() const
+  {
+    return _hit_processor_;
+  }
+
+  void base_step_hit::set_hit_processor(const std::string & name_)
+  {
+    if (!name_.empty()) {
+      _store |= STORE_HIT_PROCESSOR;
+    } else {
+      _store &= ~STORE_HIT_PROCESSOR;
+    }
+    _hit_processor_ = name_;
+    return;
+  }
+
+  void base_step_hit::invalidate_hit_processor()
+  {
+    set_hit_processor("");
+    return;
+  }
+
+  /* Visu highlight */
+  
+  bool base_step_hit::has_visu_highlight() const
+  {
+    return _store & STORE_VISU_HIGHLIGHT_FLAG;
+  }
+
+  bool base_step_hit::is_visu_highlight() const
+  {
+    return _visu_highlight_;
+  }
+
+  void
+  base_step_hit::set_visu_highlight(const bool new_value_)
+  {
+    _store |= STORE_VISU_HIGHLIGHT_FLAG;
+    _visu_highlight_ = new_value_;
+    return;
+  }
+
+  void base_step_hit::invalidate_visu_highlight()
+  {
+    _visu_highlight_ = false;
+    _store &= ~STORE_VISU_HIGHLIGHT_FLAG;
+    return;
+  }
+ 
   /* General */
   
   base_step_hit::base_step_hit()
@@ -768,6 +824,8 @@ namespace mctools {
     invalidate_sensitive_category();
     invalidate_g4_volume_name();
     invalidate_g4_volume_copy_number();
+    invalidate_hit_processor();
+    invalidate_visu_highlight();
 
     // Version 1:
     invalidate_biasing_weight();
@@ -806,76 +864,132 @@ namespace mctools {
   {
     geomtools::base_hit::tree_dump(out_, title_, indent_, true);
 
-    out_ << indent_ << tag
-         << "Position start : "
-         << std::setprecision(15) << _position_start_ / CLHEP::mm  << " mm" << std::endl;
+    if (has_position_start()) {
+      out_ << indent_ << tag
+           << "Position start : "
+           << std::setprecision(15) << _position_start_ / CLHEP::mm  << " mm" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Position stop  : "
-         << std::setprecision(15) << _position_stop_ / CLHEP::mm << " mm" << std::endl;
+    if (has_position_stop()) {
+      out_ << indent_ << tag
+           << "Position stop  : "
+           << std::setprecision(15) << _position_stop_ / CLHEP::mm << " mm" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Time start     : " << _time_start_ / CLHEP::ns << " ns" << std::endl;
+    if (has_time_start()) {
+      out_ << indent_ << tag
+           << "Time start     : " << _time_start_ / CLHEP::ns << " ns" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Time stop      : " << _time_stop_ / CLHEP::ns << " ns" << std::endl;
+    if (has_time_stop()) {
+      out_ << indent_ << tag
+           << "Time stop      : " << _time_stop_ / CLHEP::ns << " ns" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Momentum start : " << _momentum_start_ / CLHEP::keV << " keV" << std::endl;
+    if (has_momentum_start()) {
+      out_ << indent_ << tag
+           << "Momentum start : " << _momentum_start_ / CLHEP::keV << " keV" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Momentum stop  : " << _momentum_stop_ / CLHEP::keV << " keV" << std::endl;
+    if (has_momentum_stop()) {
+      out_ << indent_ << tag
+           << "Momentum stop  : " << _momentum_stop_ / CLHEP::keV << " keV" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Energy deposit : " << _energy_deposit_ / CLHEP::keV << " keV" << std::endl;
+    if (has_energy_deposit()) {
+      out_ << indent_ << tag
+           << "Energy deposit : " << _energy_deposit_ / CLHEP::keV << " keV" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Particle name  : `" << _particle_name_ << "'" << std::endl;
+    if (has_particle_name()) {
+      out_ << indent_ << tag
+           << "Particle name  : `" << _particle_name_ << "'" << std::endl;
+    }
     
-    out_ << indent_ << tag
-         << "Biasing weight  : " << _biasing_weight_ << std::endl;
-   
-    out_ << indent_ << tag
-         << "Kinetic energy start : " << _kinetic_energy_start_ / CLHEP::keV << " keV" << std::endl;
-  
-    out_ << indent_ << tag
-         << "Kinetic energy stop : " << _kinetic_energy_stop_ / CLHEP::keV << " keV" << std::endl;
-  
-    out_ << indent_ << tag
-         << "Step length : " << _step_length_ / CLHEP::mm << " mm" << std::endl;
+    if (has_biasing_weight()) {
+      out_ << indent_ << tag
+           << "Biasing weight  : " << _biasing_weight_ << std::endl;
+    }
+    
+    if (has_kinetic_energy_start()) {
+      out_ << indent_ << tag
+           << "Kinetic energy start : " << _kinetic_energy_start_ / CLHEP::keV << " keV" << std::endl;
+    }
+    
+    if (has_kinetic_energy_stop()) {
+      out_ << indent_ << tag
+           << "Kinetic energy stop : " << _kinetic_energy_stop_ / CLHEP::keV << " keV" << std::endl;
+    }
+    
+    if (has_step_length()) {
+      out_ << indent_ << tag
+           << "Step length : " << _step_length_ / CLHEP::mm << " mm" << std::endl;
+    }
+    
+    if (has_entering_volume()) {
+      out_ << indent_ << tag
+           << "Entering volume : " << std::boolalpha << _entering_volume_flag_ << std::endl;
+    }
+    
+    if (has_leaving_volume()) {
+      out_ << indent_ << tag
+           << "Leaving volume : " << std::boolalpha << _leaving_volume_flag_ << std::endl;
+    }
+    
+    if (has_creator_process_name()) {
+      out_ << indent_ << tag
+           << "Creator process name  : `" << _creator_process_name_ << "'" << std::endl;
+    }
+    
+    if (has_primary_particle()) {
+      out_ << indent_ << tag
+           << "Primary particle : " << std::boolalpha << _primary_particle_flag_ << std::endl;
+    }
+    
+    if (has_major_track()) {
+      out_ << indent_ << tag
+           << "Major track : " << std::boolalpha << _major_track_flag_ << std::endl;
+    }
+    
+    if (has_delta_ray_from_alpha()) {
+      out_ << indent_ << tag
+           << "Delta-ray from alpha : " << std::boolalpha << _delta_ray_from_alpha_flag_ << std::endl;
+    }
+    
+    if (has_track_id()) {
+      out_ << indent_ << tag
+           << "Track ID : " << _track_id_ << std::endl;
+    }
+    
+    if (has_parent_track_id()) {
+      out_ << indent_ << tag
+           << "Parent track ID : " << _parent_track_id_ << std::endl;
+    }
+    
+    if (has_sensitive_category()) {
+      out_ << indent_ << tag
+           << "Sensitive category  : `" << _sensitive_category_ << "'" << std::endl;
+    }
+    
+    if (has_g4_volume_name()) {
+      out_ << indent_ << tag
+           << "Geant4 volume name  : `" << _g4_volume_name_ << "'" << std::endl;
+    }
+    
+    if (has_g4_volume_copy_number()) {
+      out_ << indent_ << tag
+           << "Geant4 volume copy number : " << _g4_volume_copy_number_ << std::endl;
+    }
+    
+    if (has_hit_processor()) {
+      out_ << indent_ << tag
+           << "Hit processor : `" << _hit_processor_ << "'" << std::endl;
+    }
 
-    out_ << indent_ << tag
-         << "Entering volume : " << std::boolalpha << _entering_volume_flag_ << std::endl;
-
-    out_ << indent_ << tag
-         << "Leaving volume : " << std::boolalpha << _leaving_volume_flag_ << std::endl;
-    
-    out_ << indent_ << tag
-         << "Creator process name  : `" << _creator_process_name_ << "'" << std::endl;
-
-    out_ << indent_ << tag
-         << "Primary particle : " << std::boolalpha << _primary_particle_flag_ << std::endl;
-
-    out_ << indent_ << tag
-         << "Major track : " << std::boolalpha << _major_track_flag_ << std::endl;
-
-    out_ << indent_ << tag
-         << "Delta-ray from alpha : " << std::boolalpha << _delta_ray_from_alpha_flag_ << std::endl;
- 
-    out_ << indent_ << tag
-         << "Track ID : " << _track_id_ << std::endl;
-
-    out_ << indent_ << tag
-         << "Parent track ID : " << _parent_track_id_ << std::endl;
-    
-    out_ << indent_ << tag
-         << "Sensitive category  : `" << _sensitive_category_ << "'" << std::endl;
-    
-    out_ << indent_ << tag
-         << "Geant4 volume name  : `" << _g4_volume_name_ << "'" << std::endl;
-    
-    out_ << indent_ << tag
-         << "Geant4 volume copy number : " << _g4_volume_copy_number_ << std::endl;
+    if (has_visu_highlight()) {
+      out_ << indent_ << tag
+           << "Visu highlight : " << std::boolalpha << _visu_highlight_ << std::endl;
+    }
     
     out_ << indent_ << inherit_tag(inherit_)
          << "Validity : " << std::boolalpha << is_valid() << std::endl;

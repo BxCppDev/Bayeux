@@ -81,7 +81,9 @@ namespace mctools {
       STORE_SENSITIVE_CATEGORY        = datatools::bit_mask::bit24, //!< Serialization mask for the sensitive category
       STORE_G4_VOLUME_NAME            = datatools::bit_mask::bit25, //!< Serialization mask for the Geant4 volume name
       STORE_G4_VOLUME_COPY_NUMBER     = datatools::bit_mask::bit26, //!< Serialization mask for the Geant4 volume copy number
-      STORE_LAST                      = STORE_G4_VOLUME_COPY_NUMBER
+      STORE_HIT_PROCESSOR             = datatools::bit_mask::bit27, //!< Serialization mask for the step hit processor
+      STORE_VISU_HIGHLIGHT_FLAG       = datatools::bit_mask::bit28, //!< Serialization mask for the visu highlight flag
+      STORE_LAST                      = STORE_VISU_HIGHLIGHT_FLAG
     };
 
     // Extract specific properties from the 'auxiliaries' container:
@@ -89,69 +91,69 @@ namespace mctools {
     /* Track ID */
 
     /// Check if the hit records the track ID
-    bool has_track_id () const;
+    bool has_track_id() const;
 
     /// Get the track ID
-    int get_track_id () const;
+    int get_track_id() const;
 
     /// Set the track ID
     void set_track_id(const int id_);
 
     /// Invalidate the track ID
-    void invalidate_track_id ();
+    void invalidate_track_id();
 
     /* Parent track ID */
 
     /// Check if the hit records the parent track ID
-    bool has_parent_track_id () const;
+    bool has_parent_track_id() const;
 
     /// Get the parent track ID
-    int get_parent_track_id () const;
+    int get_parent_track_id() const;
 
     /// Set the parent track ID
     void set_parent_track_id(const int id_);
 
     /// Invalidate the parent track ID
-    void invalidate_parent_track_id ();
+    void invalidate_parent_track_id();
 
     /* Position start */
 
     bool has_position_start() const;
     
     /// Get the start position of the hit (the coordinate system and units are arbitrary)
-    const geomtools::vector_3d & get_position_start () const;
+    const geomtools::vector_3d & get_position_start() const;
 
     /// Set the start position of the hit (the coordinate system and units are arbitrary)
-    void set_position_start (const geomtools::vector_3d &);
+    void set_position_start(const geomtools::vector_3d &);
 
     /// Reset/invalidate the start position of the hit
-    void invalidate_position_start ();
+    void invalidate_position_start();
 
     /* Position stop */
 
     bool has_position_stop() const;
     
     /// Get the stop position of the hit (the coordinate system and units are arbitrary)
-    const geomtools::vector_3d & get_position_stop () const;
+    const geomtools::vector_3d & get_position_stop() const;
 
     /// Set the stop position of the hit (the coordinate system and units are arbitrary)
-    void set_position_stop (const geomtools::vector_3d &);
+    void set_position_stop(const geomtools::vector_3d &);
 
     /// Reset/invalidate the stop position of the hit
-    void invalidate_position_stop ();
+    void invalidate_position_stop();
 
     /* Momentum stop */
 
     bool has_momentum_stop() const;
 
     /// Get the stop momentum of the hit (units are arbitrary)
-    const geomtools::vector_3d & get_momentum_stop () const;
+    const geomtools::vector_3d & get_momentum_stop() const;
 
     /// Set the stop momentum of the hit (units are arbitrary)
-    void set_momentum_stop (const geomtools::vector_3d &);
+    void set_momentum_stop(const geomtools::vector_3d &);
 
     /// Reset/invalidate the stop momentum of the hit
-    void invalidate_momentum_stop ();
+    void invalidate_momentum_stop();
 
     /* Momentum start */
     
@@ -171,7 +173,7 @@ namespace mctools {
     bool has_time_start() const;
 
     /// Get the start time of the hit (units are arbitrary)
-    double get_time_start () const;
+    double get_time_start() const;
 
     /// Set the start time of the hit (units are arbitrary)
     void set_time_start(const double);
@@ -190,7 +192,7 @@ namespace mctools {
     void set_time_stop(const double);
 
     /// Reset/invalidate the stop time of the hit
-    void invalidate_time_stop ();
+    void invalidate_time_stop();
 
     /* Energy deposit */
     
@@ -215,7 +217,7 @@ namespace mctools {
     void set_particle_name(const std::string &);
 
     /// Reset/invalidate the particle name associated to the hit
-    void invalidate_particle_name ();
+    void invalidate_particle_name();
 
     /* Biasing weight */
 
@@ -298,6 +300,12 @@ namespace mctools {
     const std::string & get_sensitive_category() const;
     void         set_sensitive_category(const std::string &);
     void         invalidate_sensitive_category();
+ 
+    /* Hit processor */
+    bool         has_hit_processor() const;
+    const std::string & get_hit_processor() const;
+    void         set_hit_processor(const std::string &);
+    void         invalidate_hit_processor();
 
     /* Geant4 volume name (debug) */
     bool         has_g4_volume_name() const;
@@ -311,6 +319,12 @@ namespace mctools {
     void         set_g4_volume_copy_number(const int);
     void         invalidate_g4_volume_copy_number();
 
+    /* Visu highlight */
+    bool         has_visu_highlight() const;
+    bool         is_visu_highlight() const;
+    void         set_visu_highlight(const bool flag_);
+    void         invalidate_visu_highlight();
+
     /// Check if the hit has a valid internal structure
     /** We consider a base step hit valid if:
      * - a valid hit ID is set
@@ -318,28 +332,28 @@ namespace mctools {
      * - start time is set
      * - start position is set
      */
-    virtual bool is_valid () const;
+    virtual bool is_valid() const;
 
     /// Reset/invalidate the internal structure of the hit
-    virtual void invalidate ();
+    virtual void invalidate();
 
     /// Default constructor
-    base_step_hit ();
+    base_step_hit();
 
     // Destructor
-    virtual ~base_step_hit ();
+    virtual ~base_step_hit();
 
     /// Reset/invalidate the internal structure of the hit
-    void reset ();
+    void reset();
 
     /// Reset/invalidate the internal structure of the hit
-    virtual void clear ();
+    virtual void clear();
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
     /// Smart print (default behaviour/shortcut)
     void dump() const;
@@ -377,6 +391,8 @@ namespace mctools {
     std::string                  _sensitive_category_;
     std::string                  _g4_volume_name_;
     int                          _g4_volume_copy_number_ = -1;
+    std::string                  _hit_processor_;
+    bool                         _visu_highlight_ = false; 
 
     DATATOOLS_SERIALIZATION_DECLARATION()
 
