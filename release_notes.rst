@@ -21,7 +21,7 @@ or macOS 10.
 Additions
 =========
 
-* The ``datatools::factory`` class now has a enriched registration mechanism
+* The ``datatools::factory`` class now has an enriched registration mechanism
   with the ability to register the ``std::type_info`` object associated to
   a registrered class factory. A templatized registration method is provided
   to automate the instantiation of a factory registration record.
