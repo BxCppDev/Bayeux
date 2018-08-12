@@ -46,7 +46,10 @@ None.
 Changes
 =======
 
-None.
+* The ``mctools::base_step_hit`` class is upgraded to serialization version 2
+  with more supported attributes in place of using auxiliary properties. This should
+  make this class more efficient while using it from the Geant4 engine.
+  In consequence, several algorithms have been adapted to use the new set of attributes.
 
 
 Fixes
