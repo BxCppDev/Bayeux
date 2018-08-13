@@ -214,7 +214,7 @@ namespace mctools {
     geomtools::vector_3d      _vertex_;               //!< Common primary vertex (optional)
     double                    _time_;                 //!< Common primary time (optional)
     primary_event_type        _primary_event_;        //!< Primary generated event
-    datatools::properties     _properties_;           //!< List of properties
+    datatools::properties     _properties_;           //!< List of auxiliary properties
     int8_t                    _collection_type_;      //!< Storage type (handle/plain hits)
     step_hits_dict_type       _step_hits_dict_;       //!< Dictionary of collections of handle of hits (default type)
     plain_step_hits_dict_type _plain_step_hits_dict_; //!< Dictionary of collections of plain hits
