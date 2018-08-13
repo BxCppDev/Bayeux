@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2018-05-17
+:Date:    2018-08-13
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
