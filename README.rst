@@ -149,7 +149,7 @@ Debian  or Fedora,  as Linux  is our  main development  and production
 environment.  Other  UNIX-like OSes  (Linux, BSD, macOS)  **may** work
 with some work of adapting.
 
-Bayeux now uses the C++11 standard  by default so this implies the use
+Bayeux uses the C++11 standard  by default so this implies the use
 of a modern C++ compiler (example: GCC version >= 4.9).
 
 Using  the `bxcppdev/bxtap`_  `Linuxbrew`_ *tap*  provided by  the
@@ -159,9 +159,9 @@ environment on your system.
 Releases
 --------
 
-* Latest release: `Bayeux-3.2.0`_
+* Latest release: `Bayeux-3.3.0`_
 
-.. _`Bayeux-3.2.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.2.0
+.. _`Bayeux-3.3.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.3.0
 
 .. raw:: pdf
 
@@ -184,7 +184,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.2.0, you may use, assuming a
+For example, to download Bayeux version 3.3.0, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -192,16 +192,16 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.2.0.tar.gz
-   $ mkdir Bayeux-3.2.0 && tar xvzf Bayeux-3.2.0.tar.gz -C Bayeux-3.2.0 --strip-components 1
-   $ cd Bayeux-3.2.0/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/3.3.0.tar.gz
+   $ mkdir Bayeux-3.3.0 && tar xvzf 3.3.0.tar.gz -C Bayeux-3.3.0 --strip-components 1
+   $ cd Bayeux-3.3.0/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.2.0/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.3.0/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.2.0
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.3.0
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -217,6 +217,7 @@ Git:
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
    $ git clone https://github.com/BxCppDev/Bayeux Bayeux.git
+   $ cd Bayeux.git
    $ git checkout develop
 ..
 
@@ -284,10 +285,10 @@ Core Libraries Required
   and thread libraries.
 * Camp 0.8.0 : https://github.com/tegesoft/camp
 * GSL 2.4 or higher: http://www.gnu.org/s/gsl
-* CLHEP 2.1.3.1 or higher: http://proj-clhep.web.cern.ch
-* Geant4 9.6.0 or higher: http://geant4.cern.ch
+* CLHEP 2.1.3.1: http://proj-clhep.web.cern.ch
+* Geant4 9.6.4: http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
-* ROOT 6.08: http://root.cern.ch
+* ROOT 6.12.04: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
 
   * minimal X11,
