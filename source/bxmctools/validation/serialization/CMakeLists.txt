@@ -15,7 +15,7 @@
 # endif()
 
 # - Bayeux :
-find_package(Bayeux 3.3.0 REQUIRED geant4)
+# find_package(Bayeux 3.3.0 REQUIRED geant4)
 
 option(MCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE "Downgrade to serialization version 1" OFF)
 
@@ -28,7 +28,7 @@ add_executable(exstore exstore.cxx)
 
 target_link_libraries(exstore
   PUBLIC
-  Bayeux::Bayeux
+  Bayeux
   )
 
 # Output to testing subdirectory
@@ -49,7 +49,7 @@ add_executable(exload exload.cxx)
 
 target_link_libraries(exload
   PUBLIC
-  Bayeux::Bayeux
+  Bayeux
   )
 
 # Output to testing subdirectory
