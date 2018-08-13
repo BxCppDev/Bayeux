@@ -219,7 +219,7 @@ if [ $do_simulation -eq 1 ]; then
 
     sim_module="Co60@source_0_bulk"
     bxdpp_processing \
-	--logging-priority "warning" \
+	--logging "warning" \
 	--dlls-config "${CONFIG_DIR}/pipeline/dlls.conf" \
 	--module-manager-config "${CONFIG_DIR}/pipeline/module_manager.conf" \
 	--max-records 7 \
