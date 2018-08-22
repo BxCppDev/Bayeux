@@ -72,8 +72,8 @@ namespace geomtools {
    *
    */
   class blur_spot
-    : public base_hit,
-      public i_wires_3d_rendering
+    : public base_hit
+    , public i_wires_3d_rendering
   {
   public:
 
@@ -266,7 +266,9 @@ namespace geomtools {
 
     //! Reflection interface
     DR_CLASS_RTTI()
-
+    
+    GEOMTOOLS_HIT_REGISTRATION_INTERFACE(blur_spot)
+                                         
   };
 
   template <class BoostRandomizer>

@@ -1,15 +1,13 @@
 /// \file geomtools/base_hit.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-16
- * Last modified: 2013-03-08
+ * Last modified: 2018-08-16
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *
- *   Base hit.
- *
- * History:
+ *   Base hit. 
  *
  */
 
@@ -27,6 +25,7 @@
 #include <datatools/i_predicate.h>
 #include <datatools/bit_mask.h>
 #include <datatools/properties.h>
+#include <datatools/factory_macros.h>
 
 // This project :
 #include <geomtools/geomtools_config.h>
@@ -35,7 +34,7 @@
 
 namespace geomtools {
 
-  /// \brief The base class for all hit objects
+  /// \brief The base class for hit objects that locate events in a geometry model.
   class base_hit :
     public datatools::i_serializable,
     public datatools::i_tree_dumpable,
@@ -159,14 +158,26 @@ namespace geomtools {
 
     /* interface i_tree_dumpable */
 
-    /// Smart print
+    /// \deprecated Smart print
     virtual void tree_dump (std::ostream & a_out    = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
                             bool a_inherit          = false) const;
-
+    //!
+    //! Supported options:
+    //! \code
+    //! {
+    //!   "title"    : "My title: ",
+    //!   "indent"   : "[debug] ",
+    //!   "inherit"  : false,
+    //!   "no_list_auxiliaries" : false
+    //! }
+    //! \endcode
+    void print_tree(std::ostream & out_ = std::clog,
+                    const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const override;
+      
     /// Smart print (default behaviour)
-    void dump () const;
+    void dump() const;
 
     /* predicates */
 
@@ -360,6 +371,11 @@ namespace geomtools {
     //! Reflection interface
     DR_CLASS_RTTI()
 
+    // Factory stuff :
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_hit)
+
+    DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::base_hit, base_hit)
+    
   };
 
 } // end of namespace geomtools
@@ -370,6 +386,15 @@ DR_CLASS_INIT(::geomtools::base_hit)
 // Class version:
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::base_hit, 1)
+
+#define GEOMTOOLS_HIT_REGISTRATION_INTERFACE(HitClassName)          \
+  private:                                                              \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::base_hit,HitClassName) \
+  /**/
+
+#define GEOMTOOLS_HIT_REGISTRATION_IMPLEMENT(HitClassName,HitClassId) \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::base_hit,HitClassName,HitClassId) \
+  /**/
 
 #endif // GEOMTOOLS_BASE_HIT_H
 

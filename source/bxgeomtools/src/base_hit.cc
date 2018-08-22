@@ -13,6 +13,9 @@ namespace geomtools {
   // Serial tag for datatools serializatable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_hit, "geomtools::base_hit")
 
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_hit, "geomtools::base_hit/__system__")
+  GEOMTOOLS_HIT_REGISTRATION_IMPLEMENT(base_hit, "geomtools::base_hit")
+  
   const int32_t base_hit::INVALID_HIT_ID;
 
   base_hit & base_hit::i_measurement::operator()(base_hit & a_hit)
@@ -168,7 +171,59 @@ namespace geomtools {
 
   void base_hit::clear()
   {
-    this->base_hit::invalidate();
+    this->base_hit::reset();
+    return;
+  }
+
+  void base_hit::print_tree(std::ostream & out_,
+                            const boost::property_tree::ptree & options_) const
+  {
+    datatools::i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    bool no_auxiliaries_list  = options_.get<bool>("no_list_auxiliaries", false);
+
+    const std::string & indent = popts.indent;
+    if (! popts.title.empty ()) {
+      out_ << indent << popts.title << std::endl;
+    }
+
+    out_ << indent << tag
+          << "Store       : " << datatools::io::to_binary(_store) << std::endl;
+
+    out_ << indent << tag
+          << "Hit ID      : ";
+    if (has_hit_id()) {
+      out_ << _hit_id_;
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+    
+    out_ << indent << tag
+          << "Geometry ID : ";
+    if (_geom_id_.is_valid()) {
+      out_ << _geom_id_;
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+
+    out_ << indent << inherit_tag(popts.inherit)
+          << "Auxiliaries : ";
+    if (_auxiliaries_.empty()) {
+      out_ << "<empty>";
+    } else {
+      out_ << _auxiliaries_.size() << " item(s)";
+    }
+    out_ << std::endl;
+    if (!no_auxiliaries_list) {
+      if (!_auxiliaries_.empty()) {
+        std::ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << inherit_skip_tag(popts.inherit) ;
+        _auxiliaries_.tree_dump(out_, "", indent_oss.str());
+      }
+    }
     return;
   }
 

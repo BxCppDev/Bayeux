@@ -21,7 +21,9 @@
 namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(blur_spot, "geomtools::blur_spot")
-
+  
+  GEOMTOOLS_HIT_REGISTRATION_IMPLEMENT(blur_spot, "geomtools::blur_spot")
+  
   const double blur_spot::DEFAULT_VALUE  = 0.0;
   const double blur_spot::DEFAULT_NSIGMA = 2.0;
 
