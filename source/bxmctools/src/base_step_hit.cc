@@ -21,6 +21,8 @@ namespace mctools {
 
   // Serial tag for datatools::serialization::i_serializable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_step_hit, "mctools::base_step_hit")
+  
+  GEOMTOOLS_HIT_REGISTRATION_IMPLEMENT(base_step_hit, "mctools::base_step_hit")
 
   /* Position start */
 
@@ -854,6 +856,146 @@ namespace mctools {
   void base_step_hit::invalidate()
   {
     base_step_hit::reset();
+    return;
+  }
+
+  void base_step_hit::print_tree(std::ostream & out_,
+                                 const boost::property_tree::ptree & options_) const
+  {
+    datatools::i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    // bool auxiliaries_list  = options_.get<bool>("list_auxiliaries", false);
+    // const std::string & indent = popts.indent;
+    // if (! popts.title.empty ()) {
+    //   out_ << indent << popts.title << std::endl;
+    // }
+    this->geomtools::base_hit::print_tree(out_,
+                                          base_print_options::force_inheritance(options_));
+
+    if (has_position_stop()) {
+      out_ << popts.indent << tag
+           << "Position stop  : "
+           << std::setprecision(15) << _position_stop_ / CLHEP::mm << " mm" << std::endl;
+    }
+    
+    if (has_time_start()) {
+      out_ << popts.indent << tag
+           << "Time start     : " << _time_start_ / CLHEP::ns << " ns" << std::endl;
+    }
+    
+    if (has_time_stop()) {
+      out_ << popts.indent << tag
+           << "Time stop      : " << _time_stop_ / CLHEP::ns << " ns" << std::endl;
+    }
+    
+    if (has_momentum_start()) {
+      out_ << popts.indent << tag
+           << "Momentum start : " << _momentum_start_ / CLHEP::keV << " keV" << std::endl;
+    }
+    
+    if (has_momentum_stop()) {
+      out_ << popts.indent << tag
+           << "Momentum stop  : " << _momentum_stop_ / CLHEP::keV << " keV" << std::endl;
+    }
+    
+    if (has_energy_deposit()) {
+      out_ << popts.indent << tag
+           << "Energy deposit : " << _energy_deposit_ / CLHEP::keV << " keV" << std::endl;
+    }
+    
+    if (has_particle_name()) {
+      out_ << popts.indent << tag
+           << "Particle name  : `" << _particle_name_ << "'" << std::endl;
+    }
+    
+    if (has_biasing_weight()) {
+      out_ << popts.indent << tag
+           << "Biasing weight  : " << _biasing_weight_ << std::endl;
+    }
+    
+    if (has_kinetic_energy_start()) {
+      out_ << popts.indent << tag
+           << "Kinetic energy start : " << _kinetic_energy_start_ / CLHEP::keV << " keV" << std::endl;
+    }
+    
+    if (has_kinetic_energy_stop()) {
+      out_ << popts.indent << tag
+           << "Kinetic energy stop : " << _kinetic_energy_stop_ / CLHEP::keV << " keV" << std::endl;
+    }
+    
+    if (has_step_length()) {
+      out_ << popts.indent << tag
+           << "Step length : " << _step_length_ / CLHEP::mm << " mm" << std::endl;
+    }
+    
+    if (has_entering_volume()) {
+      out_ << popts.indent << tag
+           << "Entering volume : " << std::boolalpha << _entering_volume_flag_ << std::endl;
+    }
+    
+    if (has_leaving_volume()) {
+      out_ << popts.indent << tag
+           << "Leaving volume : " << std::boolalpha << _leaving_volume_flag_ << std::endl;
+    }
+    
+    if (has_creator_process_name()) {
+      out_ << popts.indent << tag
+           << "Creator process name  : `" << _creator_process_name_ << "'" << std::endl;
+    }
+    
+    if (has_primary_particle()) {
+      out_ << popts.indent << tag
+           << "Primary particle : " << std::boolalpha << _primary_particle_flag_ << std::endl;
+    }
+    
+    if (has_major_track()) {
+      out_ << popts.indent << tag
+           << "Major track : " << std::boolalpha << _major_track_flag_ << std::endl;
+    }
+    
+    if (has_delta_ray_from_alpha()) {
+      out_ << popts.indent << tag
+           << "Delta-ray from alpha : " << std::boolalpha << _delta_ray_from_alpha_flag_ << std::endl;
+    }
+    
+    if (has_track_id()) {
+      out_ << popts.indent << tag
+           << "Track ID : " << _track_id_ << std::endl;
+    }
+    
+    if (has_parent_track_id()) {
+      out_ << popts.indent << tag
+           << "Parent track ID : " << _parent_track_id_ << std::endl;
+    }
+    
+    if (has_sensitive_category()) {
+      out_ << popts.indent << tag
+           << "Sensitive category  : `" << _sensitive_category_ << "'" << std::endl;
+    }
+    
+    if (has_g4_volume_name()) {
+      out_ << popts.indent << tag
+           << "Geant4 volume name  : `" << _g4_volume_name_ << "'" << std::endl;
+    }
+    
+    if (has_g4_volume_copy_number()) {
+      out_ << popts.indent << tag
+           << "Geant4 volume copy number : " << _g4_volume_copy_number_ << std::endl;
+    }
+    
+    if (has_hit_processor()) {
+      out_ << popts.indent << tag
+           << "Hit processor : `" << _hit_processor_ << "'" << std::endl;
+    }
+
+    if (has_visu_highlight()) {
+      out_ << popts.indent << tag
+           << "Visu highlight : " << std::boolalpha << _visu_highlight_ << std::endl;
+    }
+    
+    out_ << popts.indent << inherit_tag(popts.inherit)
+         << "Validity : " << std::boolalpha << is_valid() << std::endl;
+
     return;
   }
 

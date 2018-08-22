@@ -349,12 +349,25 @@ namespace mctools {
     /// Reset/invalidate the internal structure of the hit
     virtual void clear();
 
-    /// Smart print
+    /// \deprecated Smart print
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool inherit_               = false) const;
-
+    
+    //!
+    //! Supported options:
+    //! \code
+    //! {
+    //!   "title"    : "My title: ",
+    //!   "indent"   : "[debug] ",
+    //!   "inherit"  : false,
+    //!   "list_auxiliaries" : true
+    //! }
+    //! \endcode
+    void print_tree(std::ostream & out_ = std::clog,
+                    const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const override;
+  
     /// Smart print (default behaviour/shortcut)
     void dump() const;
 
@@ -395,7 +408,9 @@ namespace mctools {
     bool                         _visu_highlight_ = false; 
 
     DATATOOLS_SERIALIZATION_DECLARATION()
-
+    
+    GEOMTOOLS_HIT_REGISTRATION_INTERFACE(base_step_hit)
+    
 #if MCTOOLS_WITH_REFLECTION == 1
     //! Reflection interface
     DR_CLASS_RTTI()

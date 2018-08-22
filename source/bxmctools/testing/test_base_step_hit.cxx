@@ -21,7 +21,7 @@ int main(int /* argc_ */, char ** /* argv_ */)
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
-    clog << "Test program for class 'base_step_hit'!" << endl;
+    clog << "Test program for class 'mctools::base_step_hit'!" << endl;
 
     // bool debug = false;
 
@@ -55,7 +55,9 @@ int main(int /* argc_ */, char ** /* argv_ */)
                               datatools::using_multi_archives);
 
     mctools::base_step_hit BSH;
-    BSH.tree_dump(clog, "Void step hit: ", "TEST: ");
+    boost::property_tree::ptree popts;
+    popts.put("title", "Step hit: ");  
+    BSH.print_tree(clog, popts);
     for (int i = 0; i < 30; i++) {
       // begin of step hit:
       BSH.set_hit_id(i);
@@ -82,7 +84,7 @@ int main(int /* argc_ */, char ** /* argv_ */)
         BSH.grab_auxiliaries().store_flag("simulated");
       }
       // end of step hit:
-      BSH.tree_dump(clog, "Step hit: ");
+      BSH.print_tree(clog, popts);
       DW.store(BSH);
       BSH.reset();
     }
