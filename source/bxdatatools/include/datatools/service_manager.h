@@ -173,63 +173,63 @@ namespace datatools {
     //! Build the list of services names
     void build_list_of_services(std::vector<std::string> & list_, uint32_t flags_ = 0);
 
-    /**  @param name The name of the service to be checked
+    /**  @param name_ The name of the service to be checked
      *   @return true if the manager hosts the service requested by name
      */
-    bool has(const std::string& name_) const;
+    bool has(const std::string & name_) const;
 
-    /**  @param name The name of the service to be checked
+    /**  @param name_ The name of the service to be checked
      *   @return true if the service is initialized
      */
-    bool is_initialized(const std::string& name_) const;
+    bool is_initialized(const std::string & name_) const;
 
-    /**  @param name The name of the service to be checked
+    /**  @param name_ The name of the service to be checked
      *   @return true if the service is of the requested type
      */
     template <class T>
-    bool is_a(const std::string& name_) const;
+    bool is_a(const std::string & name_) const;
 
     /**  Same as the mutable 'get' method
-     *   @param name The name of the service to be checked
+     *   @param name_ The name of the service to be checked
      *   @return a mutable reference to the service instance requested by name and type
      */
     template<class T>
-    T& grab(const std::string& name_);
+    T& grab(const std::string & name_);
 
-    /**  @param name The name of the service to be checked
+    /**  @param name_ The name of the service to be checked
      *   @return a const reference to the service instance requested by name and type
      */
     template<class T>
-    const T& get(const std::string& name_) const;
+    const T& get(const std::string & name_) const;
 
-    /**  @param name The name of the service to be checked
+    /**  @param name_ The name of the service to be checked
      *   @return a mutable reference to the service instance requested by name
      */
-    base_service & grab_service(const std::string& name_);
+    base_service & grab_service(const std::string & name_);
 
-    /**  @param name The name of the service to be checked
+    /**  @param name_ The name of the service to be checked
      *   @return a const reference to the service instance requested by name
      */
-    const base_service & get_service(const std::string& name_) const;
+    const base_service & get_service(const std::string & name_) const;
 
     //! Check if a service with given name can be dropped
-    bool can_drop(const std::string& name_) const;
+    bool can_drop(const std::string & name_) const;
 
     //! Drop a service given its name
-    void drop(const std::string& name_);
+    void drop(const std::string & name_);
 
     //! Load a service with given name, identifier and configuration
-    void load(const std::string& name_,
-              const std::string& id_,
-              const datatools::properties& config_);
+    void load(const std::string & name_,
+              const std::string & id_,
+              const datatools::properties & config_);
 
     //! Load a service with given name and identifier and without initialization
     //!
     //! Initialization must be manually done later through the returned reference
     //! This method is reserved for experts only because it uses the
     //! interface of the service manager in a very special way.
-    base_service & load_no_init(const std::string& name_,
-                                const std::string& id_);
+    base_service & load_no_init(const std::string & name_,
+                                const std::string & id_);
 
     //! Configure an uninitialized service
     //!

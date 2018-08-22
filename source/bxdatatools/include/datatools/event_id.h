@@ -83,8 +83,8 @@ namespace datatools {
     explicit event_id(int e_);
 
     //! A constructor to fully set the event_id object.
-    /** @param r the run number.
-     *  @param e the event number.
+    /** @param r_ the run number.
+     *  @param e_ the event number.
      */
     event_id(int r_, int e_);
 
@@ -108,18 +108,18 @@ namespace datatools {
     int get_event_number() const;
 
     //! Set the run number.
-    /** @param r the run number.
+    /** @param r_ the run number.
      */
     void set_run_number(int r_);
 
     //! Set the event number.
-    /** @param e the event number.
+    /** @param e_ the event number.
      */
     void set_event_number(int e_);
 
     //! Set the run and event numbers.
-    /** @param r the run number.
-     *  @param e the event number.
+    /** @param r_ the run number.
+     *  @param e_ the event number.
      */
     void set(int r_, int e_);
 
@@ -130,15 +130,15 @@ namespace datatools {
     bool is_complete() const;
 
     //! Check if the instance has specific run and event numbers.
-    /** @param r the run number.
-     *  @param e the event number.
+    /** @param r_ the run number.
+     *  @param e_ the event number.
      *  @return true or false
      */
-    bool has(int r, int e) const;
+    bool has(int r_, int e_) const;
 
     //! Check if the instance match specific run and event numbers.
-    /** @param r the run number.
-     *  @param e the event number.
+    /** @param r_ the run number.
+     *  @param e_ the event number.
      *  @return true or false
      */
     bool match(int r_, int e_) const;
@@ -165,10 +165,10 @@ namespace datatools {
     friend std::istream & operator>>(std::istream & s_, event_id & id_);
 
     //! Method for smart printing (from the datatools::i_tree_dump interface).
-    /** @param out the output stream
-     *   @param title the title to be displayed
-     *   @param indent the indentation string
-     *   @param inherit the inheritance flag.
+    /** @param out_ the output stream
+     *   @param title_ the title to be displayed
+     *   @param indent_ the indentation string
+     *   @param inherit_ the inheritance flag.
      */
     virtual void tree_dump(std::ostream & out_ = std::cerr,
                            const std::string & title_  = "",
@@ -210,7 +210,7 @@ namespace datatools {
   public:
 
     //! Constructor
-    /** @param id the reference event ID.
+    /** @param id_ the reference event ID.
      */
     event_id_equal_predicate(const event_id & id_)
       : _id_(id_)
@@ -219,7 +219,7 @@ namespace datatools {
     }
 
     //! Functionnal operator
-    /** @param id the event ID to be checked to the embedded reference ID.
+    /** @param id_ the event ID to be checked to the embedded reference ID.
      */
     bool operator() (const event_id & id_) const
     {
