@@ -158,7 +158,7 @@ namespace geomtools {
       void dump(std::ostream & = std::clog) const;
 
       /// Smart print
-     //!
+      //!
       //! Supported options:
       //! \code
       //! {
@@ -169,8 +169,8 @@ namespace geomtools {
       //!   "full_categories" : true
       //! }
       //! \endcode
-     virtual void print_tree(std::ostream & out_ = std::clog,
-                             const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
+      virtual void print_tree(std::ostream & out_ = std::clog,
+                              const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
 
       /// Check lock status
       bool is_locked() const;
