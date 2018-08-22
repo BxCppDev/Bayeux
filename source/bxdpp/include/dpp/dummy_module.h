@@ -70,11 +70,11 @@ namespace dpp {
 
     /** Initialization method :
      *
-     * \param properties is a const reference to some container of
+     * \param properties_ is a const reference to some container of
      * various property configuration parameters
-     * \param srv_mgr a reference to a service manager(provided by some
+     * \param srv_mgr_ a reference to a service manager(provided by some
      * external agent)
-     * \param mod_dict a reference to a dictionnary of pre-existing modules
+     * \param mod_dict_ a reference to a dictionnary of pre-existing modules
      * (provided by some external agent)
      */
     virtual void initialize(const datatools::properties & properties_,
@@ -85,7 +85,7 @@ namespace dpp {
     virtual void reset();
 
     /** Event processing method :
-     *  \param data_record is a mutable reference to the data model instance to be processed.
+     *  \param data_record_ is a mutable reference to the data model instance to be processed.
      *  \return the error status of the data record processing
      */
     virtual process_status process(datatools::things & data_record_);

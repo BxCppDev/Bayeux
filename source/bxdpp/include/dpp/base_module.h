@@ -151,17 +151,17 @@ namespace dpp {
                                             module_handle_dict_type & module_dictionnary_);
 
     /** The main initialization method (post-construction):
-     * @param config the container of configuration parameters
-     * @param module_dictionnary a dictionnary of existing 'modules' which can be used
+     * @param config_ the container of configuration parameters
+     * @param service_manager_ a manager for external services
+     * @param module_dictionary_ a dictionnary of existing 'modules' which can be used
      *        to build the current module (used in the framework of a factory)
-     * @param service_manager a manager for external services
      */
     virtual void initialize(const datatools::properties & config_,
                             datatools::service_manager & service_manager_,
-                            module_handle_dict_type & module_dictionnary_) = 0;
+                            module_handle_dict_type & module_dictionary_) = 0;
 
     /** The main data model processing method
-     * @param data_model the data model to be processed
+     * @param data_model_ the data model to be processed
      * @return the status code (0=ok)
      */
     virtual process_status process(datatools::things & data_model_) = 0;
