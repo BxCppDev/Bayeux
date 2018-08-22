@@ -154,40 +154,40 @@ namespace genbb {
     /// Unregister a given type from the factory
     void unregister_pg_type(const std::string & id_);
 
-    /**  @param name The name of the PG to be checked
+    /**  @param name_ The name of the PG to be checked
      *   @return true if the manager hosts the PG requested by name
      */
     bool has(const std::string & name_) const;
 
-    /**  @param name The name of the PG to be checked
+    /**  @param name_ The name of the PG to be checked
      *   @return true if the PG is initialized
      */
     bool is_initialized(const std::string & name_) const;
 
     /**  Check if a given PG can be removed
-     *   @param name The name of the PG to be completely removed
+     *   @param name_ The name of the PG to be completely removed
      */
     bool can_drop(const std::string & name_) const;
 
-    /**  @param name The name of the PG to be completely removed
+    /**  @param name_ The name of the PG to be completely removed
      */
     void drop(const std::string & name_);
 
-    /**  @param name The name of the PG to be reset
+    /**  @param name_ The name of the PG to be reset
      */
     void reset(const std::string & name_);
 
-    /**  @param name The name of the PG to be reset
+    /**  @param name_ The name of the PG to be reset
      *   @return the registration ID of the PG
      */
     const std::string & get_id(const std::string & name_) const;
 
-    /**  @param name The name of the PG to be returned
+    /**  @param name_ The name of the PG to be returned
      *   @return a non-mutable reference to the PG
      */
     const i_genbb & get(const std::string & name_) const;
 
-    /**  @param name The name of the PG to be returned
+    /**  @param name_ The name of the PG to be returned
      *   @return a mutable reference to the PG
      */
     i_genbb & grab(const std::string & name_);
