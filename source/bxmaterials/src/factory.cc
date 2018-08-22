@@ -763,8 +763,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::element,ocd_)
       .set_terse_description("The number of nucleons of the element")
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
-      .set_long_description("Is this property is not used to build the element, \n"
-                            "one must use the ``isotope\n"
+      .set_long_description("If this property is not used to build the element, \n"
+                            "one must use the ``isotope.names`` and ``isotope.weights`` properties.\n"
                             )
       .add_example("Set the number of nucleons for Carbon 12:: \n"
                    "                                           \n"
