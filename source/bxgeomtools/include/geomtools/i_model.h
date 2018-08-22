@@ -42,7 +42,8 @@ namespace geomtools {
   class shape_factory;
 
   /// \brief The base class for geometry models
-  class i_model : public datatools::i_tree_dumpable
+  class i_model
+    : public datatools::i_tree_dumpable
   {
   public:
 
