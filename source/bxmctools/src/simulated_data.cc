@@ -16,6 +16,33 @@ namespace mctools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(simulated_data,"mctools::simulated_data")
 
+  void simulated_data::_set_defaults()
+  {
+    geomtools::invalidate(_vertex_);
+    datatools::invalidate(_time_);
+    _collection_type_ = HANDLE_HIT_COLLECTION_TYPE;
+    return;
+  }
+
+  simulated_data::simulated_data()
+  {
+    _set_defaults();
+    return;
+  }
+
+  simulated_data::simulated_data(int a_collection_type)
+  {
+    _set_defaults();
+    set_collection_type(a_collection_type);
+    return;
+  }
+
+  simulated_data::~simulated_data()
+  {
+    reset();
+    return;
+  }
+
   void simulated_data::reset_collection_type()
   {
     DT_THROW_IF(_step_hits_dict_.size() > 0 || _plain_step_hits_dict_.size() > 0,
@@ -362,10 +389,28 @@ namespace mctools {
     return nbr_step_hits;
   }
 
+  bool simulated_data::has_hit(const std::string & category_, const int index_) const
+  {
+    if (use_handle_hit_collection()) {
+      step_hits_dict_type::const_iterator found = _step_hits_dict_.find(category_);
+      if (found == _step_hits_dict_.end()) return false;
+      if (index_ < 0 || index_ >=(int)found->second.size()) return false;
+      if (! found->second[index_].has_data()) return false;
+      return true;
+    } else {
+      plain_step_hits_dict_type::const_iterator found
+        = _plain_step_hits_dict_.find(category_);
+      if (found == _plain_step_hits_dict_.end()) return false;
+      if (index_ < 0 || index_ >=(int)found->second.size()) return false;
+      return true;
+    }
+    return false;
+  }
+
   const base_step_hit &
   simulated_data::get_step_hit(const std::string & a_category, int a_hit_index) const
   {
-    const base_step_hit * bsh = 0;
+    const base_step_hit * bsh = nullptr;
     if (use_handle_hit_collection()) {
       step_hits_dict_type::const_iterator found
         = _step_hits_dict_.find(a_category);
@@ -492,33 +537,6 @@ namespace mctools {
     return found->second;
   }
 
-  void simulated_data::_set_defaults()
-  {
-    geomtools::invalidate(_vertex_);
-    datatools::invalidate(_time_);
-    _collection_type_ = HANDLE_HIT_COLLECTION_TYPE;
-    return;
-  }
-
-  simulated_data::simulated_data()
-  {
-    _set_defaults();
-    return;
-  }
-
-  simulated_data::simulated_data(int a_collection_type)
-  {
-    _set_defaults();
-    set_collection_type(a_collection_type);
-    return;
-  }
-
-  simulated_data::~simulated_data()
-  {
-    reset();
-    return;
-  }
-
   void simulated_data::reset()
   {
     if (use_handle_hit_collection()) {
@@ -554,6 +572,166 @@ namespace mctools {
   void simulated_data::clear()
   {
     reset(false);
+    return;
+  }
+
+  void simulated_data::print_tree(std::ostream & out_,
+                                  const boost::property_tree::ptree & options_) const
+  {
+    datatools::i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    bool hit_list  = options_.get<bool>("list_hits", false);
+    if (! popts.title.empty ()) {
+      out_ << popts.indent << popts.title << std::endl;
+    }
+   
+    // Properties:
+    {
+      out_ << popts.indent << datatools::i_tree_dumpable::tag
+            << "Properties : ";
+      if (_properties_.size() == 0) {
+        out_ << "<empty>";
+      }
+      out_ << std::endl;
+      {
+        std::ostringstream indent_oss;
+        indent_oss << popts.indent;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
+        _properties_.tree_dump(out_, "", indent_oss.str());
+      }
+    }
+
+    // Collection type :
+    out_ << popts.indent << datatools::i_tree_dumpable::tag
+         << "Collection type : ";
+    if (_collection_type_ == PLAIN_HIT_COLLECTION_TYPE) {
+      out_ << "'plain'";
+    } else if (_collection_type_ == HANDLE_HIT_COLLECTION_TYPE) {
+      out_ << "'handle'";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+
+    // Step hits collections(handle type):
+    if (use_handle_hit_collection()) {
+      out_ << popts.indent << datatools::i_tree_dumpable::tag
+            << "Collections of step hit handles : ";
+      if (_step_hits_dict_.size() == 0) {
+        out_ << "<none>";
+      } else {
+        out_ << '[' << _step_hits_dict_.size() << ']';
+      }
+      out_ << std::endl;
+      for (step_hits_dict_type::const_iterator i = _step_hits_dict_.begin();
+           i != _step_hits_dict_.end();
+           i++) {
+        const std::string & category = i->first;
+        size_t no_hits = i->second.size();
+        step_hits_dict_type::const_iterator j = i;
+        j++;
+        out_ << popts.indent << skip_tag;
+        if (j == _step_hits_dict_.end()) {
+          out_ << last_tag;
+        } else {
+          out_ << tag;
+        }
+        out_ << "Category '" << category << "' has "
+              << no_hits << " hit(s)"  << " [capacity="
+              << i->second.capacity() << ']' << std::endl;
+        if (hit_list) {
+          for (size_t ihit = 0; ihit < no_hits; ihit++) {
+            std::ostringstream indent_oss;
+            out_       << popts.indent << skip_tag;
+            indent_oss << popts.indent << skip_tag;
+             if (j == _step_hits_dict_.end()) {
+              out_       << last_skip_tag;
+              indent_oss << last_skip_tag;
+            } else {
+              out_       << skip_tag;
+              indent_oss << skip_tag;
+            }
+            if (ihit + 1 == no_hits) {
+              out_       << last_tag;
+              indent_oss << last_skip_tag;
+            } else {
+              out_       << tag;
+              indent_oss << skip_tag;
+            }
+            out_ << "Hit #" << ihit << " : " << std::endl;
+            const base_step_hit & hit = get_step_hit(category, ihit);
+            boost::property_tree::ptree pr_options;
+            pr_options.put(i_tree_dumpable::base_print_options::indent_key(),
+                           indent_oss.str());
+            hit.print_tree(out_, pr_options);
+          }
+        }
+      }
+    }
+
+    // Step hits collections(plain type):
+    if (use_plain_hit_collection()) {
+      out_ << popts.indent << datatools::i_tree_dumpable::tag
+            << "Collections of plain step hits : ";
+      if (_plain_step_hits_dict_.size() == 0) {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+      for (plain_step_hits_dict_type::const_iterator i = _plain_step_hits_dict_.begin();
+           i != _plain_step_hits_dict_.end();
+           i++) {
+        const std::string & category = i->first;
+        size_t no_hits = i->second.size();
+        plain_step_hits_dict_type::const_iterator j = i;
+        j++;
+        out_ << popts.indent << datatools::i_tree_dumpable::skip_tag;
+        if (j == _plain_step_hits_dict_.end()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+        }
+        out_ << "Category '" << category << "' has "
+              << no_hits << " hit(s)"  << " [capacity="
+              << i->second.capacity() << ']' << std::endl;
+      }
+    }
+   
+    // Primary event:
+    {
+      out_ << popts.indent << datatools::i_tree_dumpable::tag
+            << "Primary event : " << std::endl;
+      {
+        std::ostringstream indent_oss;
+        indent_oss << popts.indent;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
+        _primary_event_.tree_dump(out_, "", indent_oss.str());
+      }
+    }
+
+    // Time:
+    {
+      out_ << popts.indent << tag
+            << "Time : ";
+      if (has_time()) {
+        out_ << _time_ / CLHEP::nanosecond << " ns";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+    }
+
+    // Vertex:
+    {
+      out_ << popts.indent << inherit_tag(popts.inherit)
+            << "Vertex : ";
+      if (has_vertex()) {
+        out_ << _vertex_ / CLHEP::mm  << " mm";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+    }
+
     return;
   }
 

@@ -3,9 +3,10 @@
  * Creation date: 2010-03-15
  * Last modified: 2013-03-08
  *
- * License:
+ * License: GPL3
  *
  * Description:
+ *
  *   Simulation data based on the 'genbb::primary_event'
  *   class from the 'genbb_help' package.
  *
@@ -76,34 +77,34 @@ namespace mctools {
     typedef ::genbb::primary_event primary_event_type;
 
     /// Reset the memory layout for hit storage
-    void reset_collection_type ();
+    void reset_collection_type();
 
     /// Set the memory layout for hit storage (collection of plain MC hits/collections of MC hits handles)
-    void set_collection_type (int collection_type_);
+    void set_collection_type(int collection_type_);
 
     /// Check if the memory layout for hit storage uses collection of plain MC hits
-    bool use_plain_hit_collection () const;
+    bool use_plain_hit_collection() const;
 
     /// Check if the memory layout for hit storage uses collection of MC hits handles
-    bool use_handle_hit_collection () const;
+    bool use_handle_hit_collection() const;
 
     /// Check if some collections of MC hits exist
-    bool has_data () const;
+    bool has_data() const;
 
     /// Check if a vertex is defined
-    bool has_vertex () const;
+    bool has_vertex() const;
 
     /// Get a reference to the non mutable vertex
-    const geomtools::vector_3d & get_vertex () const;
+    const geomtools::vector_3d & get_vertex() const;
 
     /// Get a reference to the  mutable vertex
-    geomtools::vector_3d & grab_vertex ();
+    geomtools::vector_3d & grab_vertex();
 
     /// Set the vertex
-    void set_vertex (const geomtools::vector_3d &);
+    void set_vertex(const geomtools::vector_3d &);
 
     /// Check if a time is defined
-    bool has_time () const;
+    bool has_time() const;
 
     /// Get the reference time
     double get_time() const;
@@ -112,72 +113,116 @@ namespace mctools {
     void set_time(double);
 
     /// Get a reference to the non mutable primary event
-    const primary_event_type & get_primary_event () const;
+    const primary_event_type & get_primary_event() const;
 
     /// Get a reference to the mutable primary event
-    primary_event_type & grab_primary_event ();
+    primary_event_type & grab_primary_event();
 
     /// Set the primary event
-    void set_primary_event (const primary_event_type &);
+    void set_primary_event(const primary_event_type &);
 
     /// Get a reference to the non mutable collection of auxiliary properties
-    const datatools::properties & get_properties () const;
+    const datatools::properties & get_properties() const;
 
     /// Get a reference to the mutable collection of auxiliary properties
-    datatools::properties & grab_properties ();
+    datatools::properties & grab_properties();
 
     // Set the collection of auxiliary properties
     void set_properties(const datatools::properties &);
 
     /// Get a reference to the mutable collection of MC hits handles
-    step_hits_dict_type & grab_step_hits_dict ();
+    step_hits_dict_type & grab_step_hits_dict();
 
     /// Get a reference to the non mutable collection of MC hits handles
-    const step_hits_dict_type & get_step_hits_dict () const;
+    const step_hits_dict_type & get_step_hits_dict() const;
 
     /// Get a reference to the mutable collection of plain MC hits
-    plain_step_hits_dict_type & grab_plain_step_hits_dict ();
+    plain_step_hits_dict_type & grab_plain_step_hits_dict();
 
     /// Get a reference to the non mutable collection of plain MC hits
-    const plain_step_hits_dict_type & get_plain_step_hits_dict () const;
+    const plain_step_hits_dict_type & get_plain_step_hits_dict() const;
 
     /// Get a list of categories associated to existing collections of MC hits
-    void get_step_hits_categories (std::vector<std::string> & categories_,
-                                   unsigned int mode_ = HIT_CATEGORY_TYPE_ALL,
-                                   const std::string & prefix_ = "") const;
+    void get_step_hits_categories(std::vector<std::string> & categories_,
+                                  unsigned int mode_ = HIT_CATEGORY_TYPE_ALL,
+                                  const std::string & prefix_ = "") const;
 
     /// Add a new collection of MC hits with some given category and a default capacity for memory allocation
-    simulated_data & add_step_hits (const std::string & category_, size_t capacity_ = 0);
+    simulated_data & add_step_hits(const std::string & category_, size_t capacity_ = 0);
 
     /// Remove a collection of MC hits with some given category
-    simulated_data & remove_step_hits (const std::string & category_);
+    simulated_data & remove_step_hits(const std::string & category_);
 
     /// Add/append a new MC hit in a collection of MC hits with some given category
-    base_step_hit & add_step_hit (const std::string & category_);
+    base_step_hit & add_step_hit(const std::string & category_);
 
     /// Check is some MC hits exists in some given category
-    bool has_step_hits (const std::string & category_) const;
+    bool has_step_hits(const std::string & category_) const;
 
     /// Get the number of MC hits within a given category
-    size_t get_number_of_step_hits (const std::string & category_) const;
+    size_t get_number_of_step_hits(const std::string & category_) const;
 
     /// Get a reference to the non mutable MC hit within a given category and index
-    const base_step_hit & get_step_hit (const std::string & category_, int hit_index_) const;
+    const base_step_hit & get_step_hit(const std::string & category_, int hit_index_) const;
 
     /// Get a reference to the mutable MC hit within a given category and index
-    base_step_hit & grab_step_hit (const std::string & category_, int hit_index_);
+    base_step_hit & grab_step_hit(const std::string & category_, int hit_index_);
 
+    /// Add/append a new MC hit in a collection of MC hits with some given category
+    template <class Hit>
+    Hit & add_hit(const std::string & category_)
+    {
+      Hit * h = nullptr;
+      if (use_handle_hit_collection()) {
+        step_hits_dict_type::iterator found
+          = _step_hits_dict_.find(category_);
+        DT_THROW_IF(found == _step_hits_dict_.end(),
+                    std::logic_error,
+                    "No collection of hits with category '" << category_ << "' !");
+        datatools::handle<mctools::base_step_hit> hh(dynamic_cast<mctools::base_step_hit*>(new Hit));
+        found->second.push_back(hh);
+        h = dynamic_cast<Hit*>(&found->second.back().grab());
+      } else {
+        DT_THROW(std::logic_error, "Unsupported method for plain hit collection!");
+      }
+      return *h;
+    }
+
+    bool has_hit(const std::string & category_, const int index_) const;
+
+    template <class Hit>
+    bool is_hit(const std::string & category_, const int index_) const
+    {
+      if (use_handle_hit_collection()) {
+        step_hits_dict_type::iterator found = _step_hits_dict_.find(category_);
+        DT_THROW_IF(found == _step_hits_dict_.end(),
+                    std::logic_error,
+                    "No collection of handles of hits with category '" << category_ << "' !");
+        DT_THROW_IF(index_ < 0 || index_ >=(int)found->second.size(),
+                    std::logic_error,
+                    "Invalid hit index in category '" << category_ << "' !");
+        DT_THROW_IF(! found->second[index_].has_data(),
+                    std::logic_error,
+                    "Null handle at index " << index_ << " in category '" << category_ << "' !");
+        const base_step_hit * bsh = &found->second[index_].get();
+        
+      } else {
+        DT_THROW(std::logic_error, "Unsupported method for plain hit collection!");
+      }
+      return true;
+    }
+    
     /// Get a reference to the mutable collection of MC hits handles with a given category
-    hit_handle_collection_type & grab_step_hits (const std::string & category_);
+    hit_handle_collection_type & grab_step_hits(const std::string & category_);
 
     /// Get a reference to the non mutable collection of MC hits handles with a given category
-    const hit_handle_collection_type & get_step_hits (const std::string & category_) const;
+    const hit_handle_collection_type & get_step_hits(const std::string & category_) const;
 
     /// @deprecated Get a reference to the mutable collection of plain MC hits with a given category
-    hit_collection_type & grab_plain_step_hits (const std::string & category_);
+    hit_collection_type & grab_plain_step_hits(const std::string & category_);
 
     /// @deprecated Get a reference to the non mutable collection of plain MC hits with a given category
-    const hit_collection_type & get_plain_step_hits (const std::string & category_) const;
+    const hit_collection_type & get_plain_step_hits(const std::string & category_) const;
 
     /// @deprecated Reset the internal data
     simulated_data & reset(bool reset_collection_type_);
@@ -189,7 +234,7 @@ namespace mctools {
     simulated_data();
 
     /// Constructor
-    simulated_data(int collection_type_);
+    explicit simulated_data(int collection_type_);
 
     /// Destructor
     virtual ~simulated_data();
@@ -197,11 +242,26 @@ namespace mctools {
     /// Reset the internal data
     virtual void clear();
 
-    /// Smart print
+    /// \deprecated Smart print
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool inherit_          = false) const;
+    
+    //! Smart print
+    //! 
+    //! Supported options:
+    //! \code
+    //! {
+    //!   "title"    : "My title: ",
+    //!   "indent"   : "[debug] ",
+    //!   "inherit"  : false,
+    //!   "list_hits" : false
+    //! }
+    //! \endcode
+    void print_tree(std::ostream & out_ = std::clog,
+                    const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const override;
+  
 
   protected:
 
