@@ -90,7 +90,7 @@ namespace mctools {
 
   bool base_step_hit::has_time_start() const
   {
-    return geomtools::is_valid(_time_start_);
+    return datatools::is_valid(_time_start_);
   }
 
   double
@@ -113,7 +113,7 @@ namespace mctools {
 
   void base_step_hit::invalidate_time_start()
   {
-    set_position_start(geomtools::invalid_vector_3d());
+    set_time_start(datatools::invalid_real());
     return;
   }
 
@@ -121,7 +121,7 @@ namespace mctools {
 
   bool base_step_hit::has_time_stop() const
   {
-    return geomtools::is_valid(_time_stop_);
+    return datatools::is_valid(_time_stop_);
   }
 
   double
@@ -144,7 +144,7 @@ namespace mctools {
 
   void base_step_hit::invalidate_time_stop()
   {
-    set_position_stop(geomtools::invalid_vector_3d());
+    set_time_stop(datatools::invalid_real());
     return;
   }
 
@@ -871,6 +871,12 @@ namespace mctools {
     // }
     this->geomtools::base_hit::print_tree(out_,
                                           base_print_options::force_inheritance(options_));
+
+    if (has_position_start()) {
+      out_ << popts.indent << tag
+           << "Position start  : "
+           << std::setprecision(15) << _position_start_ / CLHEP::mm << " mm" << std::endl;
+    }
 
     if (has_position_stop()) {
       out_ << popts.indent << tag
