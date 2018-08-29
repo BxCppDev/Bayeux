@@ -178,8 +178,8 @@ cmake \
     ${qt_option3} \
     ${qt_option4} \
     -DBAYEUX_ENABLE_TESTING=ON \
-    -DBAYEUX_WITH_DOCS=OFF\
-    -DBAYEUX_WITH_DOCS_OCD=OFF \
+    -DBAYEUX_WITH_DOCS=ON \
+    -DBAYEUX_WITH_DOCS_OCD=ON \
     -GNinja \
     ${bayeux_source_dir}
 if [ $? -ne 0 ]; then
