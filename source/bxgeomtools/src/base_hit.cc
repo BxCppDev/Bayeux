@@ -152,7 +152,10 @@ namespace geomtools {
 
   bool base_hit::is_valid() const
   {
+    // Should we consider only the need for a valid hit id and let the possibility for an
+    // un-initialized geom ID ?
     return(_hit_id_ != INVALID_HIT_ID) && _geom_id_.is_valid();
+    // return(_hit_id_ != INVALID_HIT_ID);
   }
 
   void base_hit::reset()
