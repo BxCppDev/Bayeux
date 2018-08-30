@@ -16,10 +16,9 @@
 #include <mctools/simulated_data.h>
 #include <mctools/simulated_data_input_module.h>
 
-using namespace std;
-
 int main (int /* argc_ */, char ** /* argv_ */)
 {
+  using namespace std;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
