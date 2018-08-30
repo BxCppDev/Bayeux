@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2018-08-13
+:Date:    2018-08-30
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -70,7 +70,7 @@ genvtx
 
 mctools
   Utilities for particle and nuclear physics simulation with
-  an optional Geant4 interface.
+  a Geant4 interface.
 
 lahague
   Utilities for dosimetry and radiation protection.
@@ -137,7 +137,7 @@ GPL 3 within Bayeux.
 Some parts of code or  management/build scripts are released under the
 MIT License.
 
-Most of Bayeux's C++ source code is  released under the GNU General Public
+All other parts of Bayeux's C++ source code are  released under the GNU General Public
 License 3.0.
 
 
@@ -260,7 +260,7 @@ Core Software Required
 
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
-clusters) may  not provide CMake  3.3. If this  is the case,  then you
+institutional computing clusters) may  not provide CMake  3.3. If this  is the case,  then you
 should download the latest Linux *binary .sh* file from:
 
   http://www.cmake.org/cmake/resources/software.html

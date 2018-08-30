@@ -29,13 +29,18 @@ Additions
   - Two new methods ``datatools::factory::fetch_type_id`` are provided
     to fetch a class factory registration ID by its type info or by the proper
     template class parameter.
-  - Factory macros have been updated to this new interface.
+  - Factory macros have been adapted to this new interface.
   - Several client classes using the factory registration system
     have been updated too.
 
 * The ``datatools::handle`` class is enriched by a standard smart pointer
   interfaces, including a ``datatools::make_handle`` template method (PR #21).
-  
+
+* The ``mctools::simulated_data`` class uses now the new smart ``print_tree`` interface.
+
+* The ``mctools::simulated_data`` class can now host collections of handles of hits of any class
+  inherited from the ``mctools::base_step_hit`` class. This should enable to store
+  specialized hit objects. Template methods have been added. Test programs have been updated.
   
 Removals
 =========
