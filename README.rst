@@ -572,6 +572,13 @@ configuration option. From the build directory, simply run:
    $ make test
 ..
 
+or
+
+.. code:: sh
+
+   $ ninja test
+..
+
 
 .. raw:: pdf
 
@@ -581,8 +588,16 @@ configuration option. From the build directory, simply run:
 
 Documentation
 ===============
-WIP
 
+Bayeux is built with *some* documentation, although incomplete:
+
+* From the installation directory, provided the ``BAYEUX_WITH_DOCS`` and ``BAYEUX_WITH_DOCS_OCD`` options
+  have been enabled, one can find a set of Doxygen generated HTML pages. The main page is located at:
+  ``{Bayeux's installation directory}/share/Bayeux-{Bayeux's version}/Documentation/API/html/index.html``.
+* The Bayeux source code provides some test programs that *may* be used as sample code. However, it is not
+  their original purpose.
+* Bayeux modules contains some example code (example: ``source/bxmctools/examples/ex00/``), implemented
+  as small project (see the source code).
 
 Troubleshooting
 ===============
