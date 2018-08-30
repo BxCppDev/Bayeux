@@ -804,7 +804,9 @@ namespace mctools {
 
   bool base_step_hit::is_valid() const
   {
+    // Only check ID, time and position but skip GID ?
     if (!geomtools::base_hit::is_valid()) return false;
+    // if (!has_hit_id()) return false;
     if (!has_time_start()) return false;
     if (!has_position_start()) return false;
     return true;
@@ -864,6 +866,8 @@ namespace mctools {
   {
     datatools::i_tree_dumpable::base_print_options popts;
     popts.configure_from(options_);
+    // bool no_auxiliaries_list  = options_.get<bool>("no_list_auxiliaries", false);
+
     // bool auxiliaries_list  = options_.get<bool>("list_auxiliaries", false);
     // const std::string & indent = popts.indent;
     // if (! popts.title.empty ()) {

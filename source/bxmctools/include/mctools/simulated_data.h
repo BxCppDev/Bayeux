@@ -1,7 +1,7 @@
 /// \file mctools/simulated_data.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-15
- * Last modified: 2013-03-08
+ * Last modified: 2018-08-30
  *
  * License: GPL3
  *
@@ -62,25 +62,35 @@ namespace mctools {
       HIT_CATEGORY_TYPE_ALL     = HIT_CATEGORY_TYPE_PUBLIC | HIT_CATEGORY_TYPE_PRIVATE
     };
 
-    /// Alias for the MC base step hit
+    /// Alias for the MC base step hit handle type
     typedef datatools::handle<base_step_hit>  hit_handle_type;
+    
+    /// Alias for the collection of MC base step hit handles 
     typedef std::vector<hit_handle_type>      hit_handle_collection_type;
+    
+    /// Alias for the collection of MC base step hits 
     typedef std::vector<base_step_hit>        hit_collection_type;
 
-    /* Dictionary of lists of handles for base step hits.
+    /** Dictionary of lists of handles to base step hits.
      * Each list has its own string key which represents
      * the 'category' of simulated hits.
      */
     typedef std::map<std::string, hit_handle_collection_type> step_hits_dict_type;
+    
+    /** Dictionary of lists of base step hits.
+     * Each list has its own string key which represents
+     * the 'category' of simulated hits.
+     */
     typedef std::map<std::string, hit_collection_type>        plain_step_hits_dict_type;
 
+    /// Alias for the primary generated event type
     typedef ::genbb::primary_event primary_event_type;
 
     /// Reset the memory layout for hit storage
     void reset_collection_type();
 
     /// Set the memory layout for hit storage (collection of plain MC hits/collections of MC hits handles)
-    void set_collection_type(int collection_type_);
+    void set_collection_type(const int collection_type_);
 
     /// Check if the memory layout for hit storage uses collection of plain MC hits
     bool use_plain_hit_collection() const;
@@ -110,7 +120,7 @@ namespace mctools {
     double get_time() const;
 
     /// Set the reference time
-    void set_time(double);
+    void set_time(const double);
 
     /// Get a reference to the non mutable primary event
     const primary_event_type & get_primary_event() const;
@@ -193,25 +203,50 @@ namespace mctools {
     template <class Hit>
     bool is_hit(const std::string & category_, const int index_) const
     {
-      if (use_handle_hit_collection()) {
-        step_hits_dict_type::iterator found = _step_hits_dict_.find(category_);
-        DT_THROW_IF(found == _step_hits_dict_.end(),
-                    std::logic_error,
-                    "No collection of handles of hits with category '" << category_ << "' !");
-        DT_THROW_IF(index_ < 0 || index_ >=(int)found->second.size(),
-                    std::logic_error,
-                    "Invalid hit index in category '" << category_ << "' !");
-        DT_THROW_IF(! found->second[index_].has_data(),
-                    std::logic_error,
-                    "Null handle at index " << index_ << " in category '" << category_ << "' !");
-        const base_step_hit * bsh = &found->second[index_].get();
-        
-      } else {
-        DT_THROW(std::logic_error, "Unsupported method for plain hit collection!");
+      DT_THROW_IF(!use_handle_hit_collection(), std::logic_error, "Unsupported method for plain hit collection!");
+      step_hits_dict_type::const_iterator found = _step_hits_dict_.find(category_);
+      DT_THROW_IF(found == _step_hits_dict_.end(),
+                  std::logic_error,
+                  "No collection of handles of hits with category '" << category_ << "' !");
+      DT_THROW_IF(index_ < 0 || index_ >=(int)found->second.size(),
+                  std::logic_error,
+                  "Invalid hit index in category '" << category_ << "' !");
+      DT_THROW_IF(! found->second[index_].has_data(),
+                  std::logic_error,
+                  "Null handle at index " << index_ << " in category '" << category_ << "' !");
+      // Extract the hit:
+      const base_step_hit * bsh = &found->second[index_].get();
+      // Attempt to cast it to the proper type:
+      if (dynamic_cast<const Hit *>(bsh) == nullptr) {
+        return false;
       }
       return true;
     }
-    
+  
+    template <class Hit>
+    const Hit & get_hit(const std::string & category_, const int index_) const
+    {
+      DT_THROW_IF(!use_handle_hit_collection(), std::logic_error, "Unsupported method for plain hit collection!");
+      step_hits_dict_type::const_iterator found = _step_hits_dict_.find(category_);
+      DT_THROW_IF(found == _step_hits_dict_.end(),
+                  std::logic_error,
+                  "No collection of hits with category '" << category_ << "' !");
+      DT_THROW_IF(index_ < 0 || index_ >=(int)found->second.size(),
+                  std::logic_error,
+                  "Invalid hit index in category '" << category_ << "' !");
+      DT_THROW_IF(! found->second[index_].has_data(),
+                  std::logic_error,
+                  "Null handle at index " << index_ << " in category '" << category_ << "' !");
+      // Extract the hit:
+      const base_step_hit * bsh = &found->second[index_].get();
+      // Attempt to cast it to the proper type:
+      const Hit * h = dynamic_cast<const Hit*>(bsh);
+      if (h == nullptr) {
+        DT_THROW(std::logic_error, "Invalid type for hit #" << index_ << " in category '" << category_ << "'!");
+      } 
+      return *h;
+    }
+      
     /// Get a reference to the mutable collection of MC hits handles with a given category
     hit_handle_collection_type & grab_step_hits(const std::string & category_);
 

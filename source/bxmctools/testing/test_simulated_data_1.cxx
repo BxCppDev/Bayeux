@@ -24,6 +24,7 @@
 #include <mctools/utils.h>
 #include <mctools/simulated_data.ipp>
 #include "dummy_mc_hit.h"
+#include "dummy_mc_hit_2.h"
 
 struct app_params {
   bool debug = false;
@@ -88,7 +89,7 @@ void test_1(const app_params & params_)
   clog << "***********************************************************" << endl;
   {
     // datatools serialization:
-    datatools::data_writer DW("test_simulated_data_1.xml",
+    datatools::data_writer DW("test_simulated_data_1.xml.gz",
                               datatools::using_multi_archives);
 
     // brio serialization:
@@ -144,12 +145,40 @@ void test_1(const app_params & params_)
       SD.add_step_hit("calo").set_hit_id(0);
       SD.add_step_hit("calo").set_hit_id(1);
       SD.add_step_hit("calo").set_hit_id(2);
-      SD.add_step_hits("xcalo", 5);
-      SD.add_step_hits("gveto", 5);
+      
+      SD.add_step_hits("xcalo", 2);
+
+      SD.add_step_hits("gveto", 3);
       SD.add_step_hit("gveto").set_hit_id(0);
-      SD.add_step_hits("gg", 50); 
-      for (int igg =0; igg < 15; ++igg) {
-        SD.add_step_hit("gg").set_hit_id(igg);
+      SD.add_step_hit("gveto").set_hit_id(1);
+      
+      const std::size_t ngg = 8;
+      SD.add_step_hits("gg", ngg); 
+      for (std::size_t igg = 0; igg < ngg; ++igg) {
+        bool special = false;
+        if (drand48() < 0.3) {
+          special = true;
+        }
+        mctools::base_step_hit * new_hit = nullptr;
+        if (special) {
+          mctools::testing::dummy_mc_hit_2 & gghit2 = SD.add_hit<mctools::testing::dummy_mc_hit_2>("gg");
+          new_hit = &gghit2;
+          new_hit->grab_auxiliaries().store("comment", "I'm a mctools::testing::dummy_mc_hit_2 hit!");
+          gghit2.set_foo(drand48());
+          gghit2.set_bar(drand48());
+        } else {
+          mctools::base_step_hit & gghit = SD.add_step_hit("gg");
+          new_hit = &gghit;
+        }
+        new_hit->set_hit_id(igg);
+        geomtools::geom_id gid(1234, 0, 1, igg);
+        new_hit->set_geom_id(gid);
+        new_hit->grab_auxiliaries().store_flag("fake");
+        new_hit->set_time_start(1.2 * CLHEP::microsecond);
+        geomtools::vector_3d pos(0.0,
+                                 drand48() * 22 * CLHEP::mm,
+                                 150 * CLHEP::cm * (-1.0 + 2.0 * drand48()));
+        new_hit->set_position_start(pos);
       }
 
       std::vector<std::string> hit_categories;
@@ -158,9 +187,15 @@ void test_1(const app_params & params_)
       for (const std::string & hit_category : hit_categories) {
         std::clog << " - Category '" << hit_category << "'" << std::endl;
       }
-        
-      // Print :
-      SD.tree_dump(clog, "Simulated data :");
+
+      {
+        // Print :
+        boost::property_tree::ptree popts;
+        popts.put(datatools::i_tree_dumpable::base_print_options::indent_key(), "");
+        popts.put(datatools::i_tree_dumpable::base_print_options::title_key(), "Simulated data:");
+        popts.put("list_hits", true);
+        SD.print_tree(std::clog, popts);
+      }
       DW.store(SD);
       clog << "The 'simulated_data' object has been stored in a Boost serialization XML file." << endl;
       BW.store(SD);
@@ -185,7 +220,7 @@ void test_1(const app_params & params_)
   clog << "*********************************************************" << endl;
   {
     // Serialization:
-    datatools::data_reader DR("test_simulated_data_1.xml",
+    datatools::data_reader DR("test_simulated_data_1.xml.gz",
                               datatools::using_multi_archives);
 
     // A simulated data object :
@@ -211,7 +246,14 @@ void test_1(const app_params & params_)
         }
       } else if (DR.record_tag_is(mctools::simulated_data::SERIAL_TAG)) {
         DR.load(SD);
-        SD.tree_dump(clog, "Simulated data (loaded from the reader) :");
+        {
+          // Print :
+          boost::property_tree::ptree popts;
+          popts.put(datatools::i_tree_dumpable::base_print_options::indent_key(), "");
+          popts.put(datatools::i_tree_dumpable::base_print_options::title_key(), "Simulated data (loaded from the reader):");
+          popts.put("list_hits", true);
+          SD.print_tree(std::clog, popts);
+        }
       } else {
         string bad_tag = DR.get_record_tag();
         clog << "ERROR: unknown data tag '"
@@ -234,7 +276,7 @@ void test_1(const app_params & params_)
     // files.push_back("b.xml");
     // files.push_back("c.xml");
     // reader.initialize(files);
-    reader.initialize("test_simulated_data_1.xml");
+    reader.initialize("test_simulated_data_1.xml.gz");
     if (debug) reader.tree_dump(std::cerr, "Reader: ");
     if (reader.has_run_header()) {
       reader.get_run_header().tree_dump(std::clog, "Run header (loaded from the dedicated XML reader) :");
@@ -242,7 +284,14 @@ void test_1(const app_params & params_)
     while (reader.has_next()) {
       mctools::simulated_data SD;
       reader.load_next(SD);
-      SD.tree_dump(std::clog, "Simulated data (loaded from the dedicated XML reader) :");
+      {
+        // Print :
+        boost::property_tree::ptree popts;
+        popts.put(datatools::i_tree_dumpable::base_print_options::indent_key(), "");
+        popts.put(datatools::i_tree_dumpable::base_print_options::title_key(), "Simulated data (loaded from the XML reader):");
+        popts.put("list_hits", true);
+        SD.print_tree(std::clog, popts);
+      }
       if (debug) reader.tree_dump(std::cerr, "Reader: ");
     }
     if (reader.has_run_footer()) {
@@ -274,7 +323,14 @@ void test_1(const app_params & params_)
         break;
       }
       count++;
-      SD.tree_dump(std::clog, "Simulated data (loaded from the dedicated Brio reader) :");
+      {
+        // Print :
+        boost::property_tree::ptree popts;
+        popts.put(datatools::i_tree_dumpable::base_print_options::indent_key(), "");
+        popts.put(datatools::i_tree_dumpable::base_print_options::title_key(), "Simulated data (loaded from the Brio reader):");
+        popts.put("list_hits", true);
+        SD.print_tree(std::clog, popts);
+      }
       if (debug) reader.tree_dump(std::cerr, "Reader (Brio loop): ");
       if (debug) std::cerr << "Exiting reader loop (Brio)." << std::endl;
     }
@@ -282,7 +338,7 @@ void test_1(const app_params & params_)
     if (reader.has_run_footer()) {
       std::cerr << "Has footer." << std::endl;
       reader.get_run_footer().tree_dump(std::cerr,
-                                        "Run footer (loaded from the dedicated Brio reader) :");
+                                        "Run footer (loaded from the Brio reader) :");
     }
   }
   return;
@@ -300,8 +356,12 @@ void test_2(const app_params & /* params_ */)
 
   {
     mctools::simulated_data SD;
+    SD.set_time(0.0 * CLHEP::ns);
+    geomtools::vector_3d vtx(0.0, 0.0, 10.0 * CLHEP::cm);
+    SD.set_vertex(vtx);
     SD.add_step_hits("normal");
     SD.add_step_hits("spot");
+    SD.add_step_hits("special");
 
     for (int i = 0; i < 3; i++) {
       mctools::base_step_hit & hit = SD.add_step_hit("normal");
@@ -315,7 +375,17 @@ void test_2(const app_params & /* params_ */)
       mc_hit.set_hit_id(i);
       mc_hit.set_energy_deposit(4.56 * CLHEP::keV);
       mc_hit.set_time_start(i * 0.1 * CLHEP::ns);
-      mc_hit.set_foo(drand48());
+      if (drand48() < 0.5) mc_hit.set_foo(drand48());
+    }
+
+    for (int i = 0; i < 4; i++) {
+      mctools::testing::dummy_mc_hit_2 & mc_hit
+        = SD.add_hit< mctools::testing::dummy_mc_hit_2>("special");
+      mc_hit.set_hit_id(i);
+      mc_hit.set_energy_deposit(0.12 * CLHEP::keV);
+      mc_hit.set_time_start(i * 2.35 * CLHEP::ns);
+      if (drand48() < 0.5) mc_hit.set_foo(drand48());
+      if (drand48() < 0.5) mc_hit.set_bar(drand48());
     }
 
     SD.tree_dump(std::clog, "Simulated data:"); 
@@ -326,7 +396,7 @@ void test_2(const app_params & /* params_ */)
     clog << "*********************************************************" << endl;
     {
       // datatools serialization:
-      datatools::data_writer DW("test_simulated_data_2.xml",
+      datatools::data_writer DW("test_simulated_data_2.xml.gz",
                                 datatools::using_multi_archives);
       DW.store(SD);
     }
@@ -340,15 +410,14 @@ void test_2(const app_params & /* params_ */)
     clog << "*********************************************************" << endl;
     {
       // datatools serialization:
-      datatools::data_reader DR("test_simulated_data_2.xml",
+      datatools::data_reader DR("test_simulated_data_2.xml.gz",
                                 datatools::using_multi_archives);
       DR.load(SD);
     }
     {
       std::clog << "Loaded:" << std::endl;
       boost::property_tree::ptree popts;
-      popts.put(datatools::i_tree_dumpable::base_print_options::indent_key(),
-                "");
+      popts.put(datatools::i_tree_dumpable::base_print_options::indent_key(), "");
       popts.put("list_hits", true);
       SD.print_tree(std::clog, popts);
     }

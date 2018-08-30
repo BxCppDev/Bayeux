@@ -74,11 +74,14 @@ namespace mctools {
 	out_ << popts.indent << tag
 	     << "Store2       : " << datatools::io::to_binary(_store2) << std::endl;
 
-        if (has_bar()) {
-          out_ << popts.indent << inherit_tag(popts.inherit)
-               << "Bar : " << _bar_ << std::endl;
-        }
-        
+	out_ << popts.indent << inherit_tag(popts.inherit) << "Bar : ";
+	if (has_bar()) {
+          out_ << _bar_;
+        } else {
+          out_ << "<none>";
+	}
+	out_ << std::endl;
+       
         return;
       }
 

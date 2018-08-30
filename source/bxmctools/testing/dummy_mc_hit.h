@@ -69,11 +69,15 @@ namespace mctools {
         this->mctools::base_step_hit::print_tree(out_,
                                                  base_print_options::force_inheritance(options_));
    
+
+        out_ << popts.indent << inherit_tag(popts.inherit) << "Foo : ";
         if (has_foo()) {
-          out_ << popts.indent << inherit_tag(popts.inherit)
-               << "Foo : " << _foo_ << std::endl;
+          out_ << _foo_;
+        } else {
+          out_ << "<none>";
         }
-        
+        out_ << std::endl;
+         
         return;
       }
 
