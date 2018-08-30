@@ -421,6 +421,34 @@ void test_2(const app_params & /* params_ */)
       popts.put("list_hits", true);
       SD.print_tree(std::clog, popts);
     }
+
+    // Re-scan all hits from all categories:
+    std::vector<std::string> categories;
+    SD.get_step_hits_categories(categories);
+    for (std::size_t icat = 0; icat < categories.size(); icat++) {
+      const std::string & category = categories[icat];
+      size_t nbhits= SD.get_number_of_step_hits(category);
+      std::clog << "Hit category '" << category << "': " << nbhits << " hit(s)" << std::endl;
+      for (std::size_t ihit = 0; ihit < nbhits; ihit++) {
+        const mctools::base_step_hit * phit = nullptr;
+        if (SD.is_hit<mctools::testing::dummy_mc_hit_2>(category, ihit)) {
+          const mctools::testing::dummy_mc_hit_2 & hit = SD.get_hit<mctools::testing::dummy_mc_hit_2>(category, ihit);
+          phit = &hit;
+        } else if (SD.is_hit<mctools::testing::dummy_mc_hit>(category, ihit)) {
+          const mctools::testing::dummy_mc_hit & hit = SD.get_hit<mctools::testing::dummy_mc_hit>(category, ihit);
+          phit = &hit;
+        } else {
+          const mctools::base_step_hit & hit = SD.get_step_hit(category, ihit);
+          phit = &hit;
+        }
+        if (phit) {
+          boost::property_tree::ptree popts;
+          popts.put(datatools::i_tree_dumpable::base_print_options::indent_key(), "    ");
+          popts.put(datatools::i_tree_dumpable::base_print_options::title_key(), "Hit: ");
+          phit->print_tree(std::clog, popts);
+        }
+      }
+    }
   }
 
   return;

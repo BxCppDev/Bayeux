@@ -139,7 +139,7 @@ namespace mctools {
 
     // Set the collection of auxiliary properties
     void set_properties(const datatools::properties &);
-
+    
     /// Get a reference to the mutable collection of MC hits handles
     step_hits_dict_type & grab_step_hits_dict();
 
