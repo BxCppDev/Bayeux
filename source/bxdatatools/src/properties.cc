@@ -885,17 +885,6 @@ namespace datatools {
     return aux_.size() > 0;
   }
 
-  bool properties::is_debug() const
-  {
-    return _debug_;
-  }
-
-  void properties::set_debug(bool a_new_value)
-  {
-    _debug_ = a_new_value;
-    return;
-  }
-
   int32_t properties::size() const
   {
     return _props_.size();
@@ -917,11 +906,11 @@ namespace datatools {
   void properties::set_key_validator(const basic_key_validator * prop_key_validator_,
                                      bool deletion_on_destroy_)
   {
-    if (_key_validator_ != 0 && _key_validator_== prop_key_validator_) {
+    if (_key_validator_ != nullptr && _key_validator_== prop_key_validator_) {
       return;
     }
     _clear_key_validator_();
-    if (prop_key_validator_ != 0) {
+    if (prop_key_validator_ != nullptr) {
       _key_validator_ = prop_key_validator_;
       _key_validator_deletion_ = deletion_on_destroy_;
     }
@@ -943,8 +932,6 @@ namespace datatools {
   }
 
   properties::properties()
-    : _debug_(false)
-    , _key_validator_(nullptr)
   {
     this->set_description("");
     this->set_default_key_validator();
@@ -952,8 +939,6 @@ namespace datatools {
   }
 
   properties::properties(const std::string & description_)
-    : _debug_(false)
-    , _key_validator_(nullptr)
   {
     this->set_description(description_);
     this->set_default_key_validator();
@@ -962,8 +947,6 @@ namespace datatools {
 
   properties::properties(const std::string & description_,
                          const basic_key_validator & prop_key_validator_)
-    : _debug_(false)
-    , _key_validator_(nullptr)
   {
     this->set_description(description_);
     this->set_key_validator(prop_key_validator_);
@@ -971,8 +954,6 @@ namespace datatools {
   }
 
   properties::properties(const basic_key_validator & prop_key_validator_)
-    : _debug_(false)
-    , _key_validator_(nullptr)
   {
     this->set_description("");
     this->set_key_validator(prop_key_validator_);
@@ -982,8 +963,6 @@ namespace datatools {
   properties::properties(const std::string & description_,
                          const basic_key_validator * prop_key_validator_,
                          bool deletion_on_destroy_)
-    : _debug_(false)
-    , _key_validator_(nullptr)
   {
     this->set_description(description_);
     this->set_key_validator(prop_key_validator_, deletion_on_destroy_);
@@ -993,8 +972,6 @@ namespace datatools {
 
   properties::properties(const basic_key_validator * prop_key_validator_,
                          bool deletion_on_destroy_)
-    : _debug_(false)
-    , _key_validator_(nullptr)
   {
     this->set_description("");
     this->set_key_validator(prop_key_validator_, deletion_on_destroy_);
@@ -1017,7 +994,7 @@ namespace datatools {
       if (_key_validator_deletion_) {
         delete _key_validator_;
       }
-      _key_validator_ = 0;
+      _key_validator_ = nullptr;
     }
     return;
   }
@@ -1208,7 +1185,6 @@ namespace datatools {
     this->set_description("");
     _props_.clear();
     this->_clear_key_validator_();
-    _debug_ = false;
     return;
   }
 
@@ -2633,7 +2609,84 @@ namespace datatools {
     data_ptr->to_string(oss);
     return oss.str();
   }
+  
+  void properties::print_tree(std::ostream & out_,
+                                 const boost::property_tree::ptree & options_) const
+  {
+    i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    if (! popts.title.empty ()) {
+      out_ << popts.indent << popts.title << std::endl;
+    }
+    bool list_props = true;
+    // if (options_.get<bool>("short")) {
+    //   list_props = false;
+    // }
 
+    if (!_description_.empty()) {
+      out_ << popts.indent << tag
+          << "Description  : '" << this->get_description() << "'" << std::endl;
+      std::string short_desc;
+      out_ << popts.indent << skip_tag << tag
+          << "Short description : ";
+      if (fetch_short_description(short_desc)) {
+        out_ << "'" << short_desc << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+      out_ << popts.indent << skip_tag << last_tag
+          << "Auxiliary descriptions : ";
+      std::vector<std::string> aux;
+      fetch_auxiliary_descriptions(aux);
+      if (aux.size() == 0) out_ << "<none>";
+      out_ << std::endl;
+      for (std::size_t iaux = 0; iaux < aux.size(); iaux++) {
+        out_ << popts.indent << skip_tag << last_skip_tag;
+        if (iaux + 1 == aux.size()) {
+          out_ << last_tag;
+        } else {
+          out_ << tag;
+        }
+        out_ << "Aux: '" << aux[iaux] << "'";
+        out_ << std::endl;
+      }
+    }
+
+    out_ << popts.indent << inherit_tag(popts.inherit)
+        << "Properties : ";
+    if (_props_.size() == 0) {
+      out_ << "<empty>";
+    } else {
+      out_ << '[' << _props_.size() << ']';
+    }
+    out_ << std::endl;
+    if (list_props && _props_.size()) {
+      for (pmap::const_iterator i = _props_.begin();
+           i != _props_.end();
+           ++i) {
+        const std::string & a_key = i->first;
+        const properties::data & a_data = i->second;
+        out_ << popts.indent << inherit_skip_tag(popts.inherit);
+        std::ostringstream indent_oss;
+        indent_oss << popts.indent;
+        pmap::const_iterator j = i;
+        j++;
+        if (j == _props_.end()) {
+          out_ << i_tree_dumpable::inherit_tag(popts.inherit);
+          indent_oss << i_tree_dumpable::inherit_skip_tag(popts.inherit);
+        } else {
+          out_ << i_tree_dumpable::tag;
+          indent_oss << i_tree_dumpable::skip_tag;
+        }
+        out_ << "Name : " << "'" << a_key << "'" << std::endl;
+        a_data.tree_dump(out_, "", indent_oss.str());
+      }
+    }
+  
+    return;
+  }
+  
   void properties::tree_dump(std::ostream & out,
                              const std::string & title,
                              const std::string & a_indent,
@@ -3075,22 +3128,10 @@ namespace datatools {
     return;
   }
 
-  // bool properties::config::is_debug() const {
-  //   return logger::is_debug(_logging_);
-  // }
-
-
-  // void properties::config::set_debug(bool debug) {
-  //   if (debug) {
-  //     _logging_ = logger::PRIO_DEBUG;
-  //   } else {
-  //     _logging_ = logger::PRIO_FATAL;
-  //   }
-  // }
-
+ 
   void properties::config::_init_defaults_()
   {
-    _logging_ = datatools::logger::PRIO_WARNING;
+    _logging_ = datatools::logger::PRIO_FATAL;
     _mode_ = MODE_BARE;
     _dont_clear_ = false;
     _use_smart_modulo_ = false;

@@ -30,14 +30,6 @@ namespace datatools {
           .DR_CLASS_BASE(::datatools::i_tree_dumpable)
           .DR_CLASS_CONSTRUCTOR()
           .DR_CLASS_CONSTRUCTOR1(std::string)
-          .DR_CLASS_METHOD_CONST("is_debug",
-                                 ::datatools::properties,
-                                 ::datatools::properties::is_debug,
-                                 bool)
-          .DR_CLASS_VOID_METHOD1("set_debug",
-                                 ::datatools::properties,
-                                 ::datatools::properties::set_debug,
-                                 bool)
           .DR_CLASS_METHOD_CONST("size",
                                  ::datatools::properties,
                                  ::datatools::properties::size,

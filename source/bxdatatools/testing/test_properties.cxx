@@ -108,30 +108,26 @@ int main(int argc_, char ** argv_)
 
     try {
       my_dict.store("#number", 666);
-    }
-    catch (exception & x) {
+    } catch (exception & x) {
       clog << "ERROR: " << x.what() << endl;
     }
     my_dict.store("age", 24, "the age of the captain");
 
     try {
       my_dict.store ("007", "James Bond");
-    }
-    catch (std::exception & x) {
+    } catch (std::exception & x) {
       clog << "ERROR: " << x.what () << endl;
     }
 
     try {
       my_dict.store ("", "Money Penny");
-    }
-    catch (std::exception & x) {
+    } catch (std::exception & x) {
       clog << "ERROR: " << x.what () << endl;
     }
 
     try {
       my_dict.store ("bad_token", "a bad \"char\"");
-    }
-    catch (std::exception & x) {
+    } catch (std::exception & x) {
       clog << "ERROR: " << x.what () << endl;
     }
 
@@ -252,8 +248,13 @@ int main(int argc_, char ** argv_)
 
     clog << "serialize: reading done." << endl;
     clog << endl;
-    my_dict.tree_dump(clog, "Dict after reading:");
-
+    // my_dict.tree_dump(clog, "Dict after reading:");
+    {
+      boost::property_tree::ptree poptions;
+      poptions.put(datatools::i_tree_dumpable::base_print_options::title_key(), "Dict after reading: ");
+      // poptions.put(base_print_options::indent_key(), "");
+      my_dict.print_tree(clog, poptions);
+    }
     clog << "========================================" << endl;
 
     string filename_cfg = "test_properties.conf";

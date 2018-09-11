@@ -1,11 +1,11 @@
 /// \file datatools/properties.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
- * Last modified: 2017-03-13
+ * Last modified: 2018-08-31
  *
  * License:
  *
- * Copyright (C) 2008-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2008-2018 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,8 @@ namespace datatools {
    * Additional features are available for some types of properties:
    *
    * - explicit support for units with real parameters
-   * - string parameters marked as file path
+   * - string parameters possibly marked as filesystem path
+   * - support for variant configuration parametersat parsing
    * 
    * The properties class is provided with different I/O mechnisms:
    *
@@ -86,6 +87,7 @@ namespace datatools {
     //
     //! \brief Internal data stored within the dictionary of the properties class.
     class data {
+      
     public:
       static const int ERROR_SUCCESS = 0;
       static const int ERROR_FAILURE = 1;
@@ -315,6 +317,7 @@ namespace datatools {
                              bool inherit_ = false) const;
 
     private:
+      
       void clear_values_();
 
       void clear_unit_symbol_();
@@ -370,7 +373,7 @@ namespace datatools {
       default_key_validator();
 
       /// Destructor
-      virtual ~default_key_validator ();
+      virtual ~default_key_validator();
 
       /// Object function interface
       virtual bool operator()(const std::string & key_arg_) const;
@@ -430,12 +433,6 @@ namespace datatools {
 
       /// Set the logging priority threshold
       void set_logging(datatools::logger::priority);
-
-      // /// @deprecated Check the debug flag
-      // bool is_debug() const;
-
-      // /// @deprecated Set the debug flag
-      // void set_debug(bool a_debug);
 
       /// Read a properties container from an input stream
       void read(std::istream & in_, properties & prop_);
@@ -581,12 +578,6 @@ namespace datatools {
     /// Destructor
     virtual ~properties();
 
-    /// Check the debug flag
-    bool is_debug() const;
-
-    /// Set the debug flag
-    void set_debug(bool);
-
     /// Returns the number of stored properties
     int32_t size() const;
 
@@ -611,7 +602,7 @@ namespace datatools {
     ///
     /// Examples:
     /// \code
-    /// My beautiful set of configuration parameter; group=geometry ; price=100 credits ; company=ACME
+    /// My beautiful set of configuration parameters; group=geometry ; price=100 credits ; company=ACME
     /// \endcode
     /// The leading (optional) subpart corresponds to a short text
     ///
@@ -1161,11 +1152,15 @@ namespace datatools {
     //! Basic print
     void dump(std::ostream & out_ = std::clog) const;
 
-    //! Smart print
+    //! \deprecated Smart print
     virtual void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool inherit_ = false) const;
+
+    /// Smart print
+    void print_tree(std::ostream & out_ = std::clog,
+                    const boost::property_tree::ptree & options_ = empty_options()) const override;
 
     std::string key_to_string(const std::string & key_) const;
 
@@ -1216,16 +1211,13 @@ namespace datatools {
 
   private:
 
-    // Management:
-    bool                        _debug_;                  //!< Debug flag
-
     // Internal data:
     std::string                 _description_;            //!< Description string
     pmap                        _props_;                  //!< Internal list of properties
 
     // Not serialized:
-    const basic_key_validator * _key_validator_;          //!< Reference to the embedded key validator
-    bool                        _key_validator_deletion_; //!< Ownership flag for the embedded key validator
+    const basic_key_validator * _key_validator_ = nullptr; //!< Reference to the embedded key validator
+    bool                        _key_validator_deletion_;  //!< Ownership flag for the embedded key validator
 
     //! Cloneable interface
     DATATOOLS_CLONEABLE_DECLARATION(properties)
