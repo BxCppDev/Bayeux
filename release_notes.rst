@@ -26,7 +26,7 @@ Additions
   a registrered class factory. A templatized registration method is provided
   to automate the instantiation of a factory registration record.
 
-  - Two new methods ``datatools::factory::fetch_type_id`` are provided
+  - Two new methods, both named ``datatools::factory::fetch_type_id``, are provided
     to fetch a class factory registration ID by its type info or by the proper
     template class parameter.
   - Factory macros have been adapted to this new interface.
