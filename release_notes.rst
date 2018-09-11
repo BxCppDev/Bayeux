@@ -45,8 +45,8 @@ Additions
 Removals
 =========
 
-None.
-
+* Some unused methods have been removed from the ``datatools::properties`` class.
+  
 
 Changes
 =======
