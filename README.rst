@@ -586,19 +586,75 @@ or
 ..
 
 
+Setup
+-----
+
+In order to setup Bayeux on your system, we recommend to
+provide a bayeux activation shell function from your Bash startup script
+(i.e. ``~/.bashrc``):
+
+.. code:: sh
+ 
+   function bayeux_setup()
+   {
+      if [ -n "${BAYEUX_INSTALL_DIR}" ]; then
+	  echo >&2 "[error] bayeux_setup: Bayeux is already setup!"
+	  return 2
+      fi
+      ### Uncomment the following lines if your Bayeux depends on Linuxbrew:
+      # which brew > /dev/null 2>&1
+      # if [ $? -ne 0 ]; then
+      #	  echo >&2 "[error] bayeux_setup: Linuxbrew is not setup! "
+      #	  echo >&2 "[error] bayeux_setup: Bayeux depends on Linuxbrew."
+      #	  echo >&2 "[error] bayeux_setup: Please setup Linuxbrew"
+      #	  echo >&2 "[error]               on your system first!" 
+      #	  return 1	
+      # fi
+      export BAYEUX_INSTALL_DIR="/path/to/Bayeux/installation/dir"
+      export PATH="${BAYEUX_INSTALL_DIR}/bin:${PATH}"
+      echo >&2 "[info] bayeux_setup: Bayeux $(bxquery --version) is now setup!"
+      return 0
+   }
+   export -f bayeux_setup	  
+..
+
+When you need to use the Bayeux software from a bare Bash shell,
+just type:
+
+.. code:: sh
+
+   $ bayeux_setup
+..
+
+The ``bxquery`` utility should help you to locate the resources
+provided by Bayeux:
+
+.. code:: sh
+
+   $ bxquery --help
+..
+
+Fell free to provide a ``bayeux_unsetup`` shell function to come back to
+the shell initial state.
+
+
 Documentation
 ===============
 
 Bayeux is built with *some* documentation, although incomplete:
 
-* From the installation directory, provided the ``BAYEUX_WITH_DOCS`` and ``BAYEUX_WITH_DOCS_OCD`` options
-  have been enabled, one can find a set of Doxygen generated HTML pages. The main page is located at:
-  ``{Bayeux's installation directory}/share/Bayeux-{Bayeux's version}/Documentation/API/html/index.html``.
-* The Bayeux source code provides some test programs that *may* be used as sample code. However, it is not
-  their original purpose.
-* Bayeux modules contains some example code (example: ``source/bxmctools/examples/ex00/``), implemented
-  as small project (see the source code).
-
+* From the  installation directory, provided  the ``BAYEUX_WITH_DOCS``
+  and ``BAYEUX_WITH_DOCS_OCD`` options have been enabled, one can find
+  a set of  Doxygen generated HTML pages. The main  page is located in
+  ``share/Bayeux-{Bayeux's
+  version}/Documentation/API/html/index.html``   from   the   Bayeux's
+  installation directory.
+* The Bayeux  source code  provides some test  programs that  *may* be
+  used as sample code. However, it is not their original purpose.
+* Bayeux  modules  contains some  example  code  implemented as  small
+  project. See the source code for example in ``share/Bayeux-{Bayeux's
+  version}/examples/`` from the Bayeux's installation directory.
+  
 Troubleshooting
 ===============
 WIP
