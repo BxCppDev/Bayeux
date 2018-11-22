@@ -323,3 +323,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Bayeux specific temporary directories
+_build.d/
+_install.d/
+
+# end
