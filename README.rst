@@ -589,8 +589,8 @@ or
 Setup
 -----
 
-In order to setup Bayeux on your system, we recommend to
-provide a bayeux activation shell function from your Bash startup script
+In order  to setup Bayeux  on your system,  we recommend to  provide a
+bayeux  activation  shell  function  from  your  Bash  startup  script
 (i.e. ``~/.bashrc``):
 
 .. code:: sh
@@ -601,15 +601,31 @@ provide a bayeux activation shell function from your Bash startup script
 	  echo >&2 "[error] bayeux_setup: Bayeux is already setup!"
 	  return 2
       fi
+      
       ### Uncomment the following lines if your Bayeux depends on Linuxbrew:
       # which brew > /dev/null 2>&1
       # if [ $? -ne 0 ]; then
+      #   # You have forgotten to setup Linuxbrew:
       #	  echo >&2 "[error] bayeux_setup: Linuxbrew is not setup! "
       #	  echo >&2 "[error] bayeux_setup: Bayeux depends on Linuxbrew."
       #	  echo >&2 "[error] bayeux_setup: Please setup Linuxbrew"
       #	  echo >&2 "[error]               on your system first!" 
       #	  return 1	
       # fi
+      
+      ### Or, to automate the setup of Linuxbrew, uncomment the following lines :
+      # which brew > /dev/null 2>&1
+      # if [ $? -ne 0 ]; then
+      #    do_linuxbrew_setup
+      #    # In case Linuxbrew provides its own version of Bayeux:
+      #    brew list | tr -s [[:space:]] | grep bayeux
+      #    if [ $? -eq 0 ]; then
+      #        # Disable Linuxbrew's Bayeux:
+      #        # Beware, this can break some dependencies!
+      #        brew unlink bayeux
+      #    fi
+      # fi
+      
       export BAYEUX_INSTALL_DIR="/path/to/Bayeux/installation/dir"
       export PATH="${BAYEUX_INSTALL_DIR}/bin:${PATH}"
       echo >&2 "[info] bayeux_setup: Bayeux $(bxquery --version) is now setup!"
