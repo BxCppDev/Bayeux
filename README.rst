@@ -613,7 +613,8 @@ bayeux  activation  shell  function  from  your  Bash  startup  script
       #	  return 1	
       # fi
       
-      ### Or, to automate the setup of Linuxbrew, uncomment the following lines :
+      ### Or, to automate the setup of Linuxbrew, uncomment the following lines,
+      ### as illustrated at https://github.com/BxCppDev/homebrew-bxtap.git :
       # which brew > /dev/null 2>&1
       # if [ $? -ne 0 ]; then
       #    do_linuxbrew_setup
