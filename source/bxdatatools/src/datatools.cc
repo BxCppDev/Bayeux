@@ -30,7 +30,7 @@ namespace datatools {
         do_kernel = false;
         DT_LOG_TRACE(detail::sys::const_instance().get_logging(),
                      "Do not instantiate the Bayeux/datatools kernel.");
-     }
+      }
       if (do_kernel) {
         if (! datatools::kernel::is_instantiated()) {
           kernel::instantiate();
