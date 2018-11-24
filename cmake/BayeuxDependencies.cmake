@@ -61,7 +61,7 @@ if(Bayeux_WITH_ROOT)
     include(${ROOT_DIR}/modules/RootNewMacros.cmake)
   endif()
   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
-  message(STATUS "Found ROOT at ROOT_DIR    = '${ROOT_DIR}'")
+  message(STATUS "Found ROOT at ROOT_DIR      = '${ROOT_DIR}'")
 endif()
 
 if(Bayeux_WITH_QT)
