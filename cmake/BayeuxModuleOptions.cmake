@@ -53,6 +53,10 @@ mark_as_advanced(BAYEUX_WITH_GENVTX)
 option(BAYEUX_WITH_MCTOOLS    "Build Bayeux/mctools module" ON)
 mark_as_advanced(BAYEUX_WITH_MCTOOLS)
 
+option(BAYEUX_MINIMAL_BUILD
+  "Build minimal Bayeux with only the Bayeux/datatools module, conflicts with BAYEUX_WITH_XXX build module options" OFF)
+mark_as_advanced(BAYEUX_MINIMAL_BUILD)
+
 # lahague module
 set(Bayeux_WITH_LAHAGUE 0)
 if(BAYEUX_WITH_LAHAGUE)
@@ -187,6 +191,22 @@ if(Bayeux_WITH_DPP)
   set(Bayeux_WITH_BRIO 1)
   set(Bayeux_WITH_CUTS 1)
   set(Bayeux_WITH_MYGSL 1)
+endif()
+
+if (BAYEUX_MINIMAL_BUILD)
+  set(Bayeux_WITH_GEANT4_MODULE 0)
+  set(Bayeux_WITH_MCNP_MODULE 0)
+  set(Bayeux_WITH_LAHAGUE 0)
+  set(Bayeux_WITH_MCTOOLS 0)
+  set(Bayeux_WITH_GENVTX 0)
+  set(Bayeux_WITH_GENBB 0)
+  set(Bayeux_WITH_EMFIELD 0)
+  set(Bayeux_WITH_GEOMTOOLS 0)
+  set(Bayeux_WITH_DPP 0)
+  set(Bayeux_WITH_BRIO 0)
+  set(Bayeux_WITH_MYGSL 0)
+  set(Bayeux_WITH_MATERIALS 0)
+  set(Bayeux_WITH_CUTS 0)
 endif()
 
 # end
