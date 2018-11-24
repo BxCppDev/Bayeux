@@ -51,7 +51,7 @@ namespace bayeux {
     init_dtkernel_reserved_14         = datatools::init_reserved_14,
     bxinit_kernel_inhibit             = datatools::init_kernel_inhibit, //!< Do not start the Bayeux/datatools kernel
     init_dtkernel_inhibit             = datatools::init_kernel_inhibit, //!< Do not start the Bayeux/datatools kernel
-    bxinit_max_flags                  = datatools::init_reserved_15     //!< Last flag used by the Bayeux/datatools kernel initialization
+    bxinit_max_flags                  = init_dtkernel_inhibit          //!< Last flag used by the Bayeux/datatools kernel initialization
   };
 
 } // end of namespace bayeux
