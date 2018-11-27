@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A Bash script to build and install devel Bayeux on Ubuntu (16/18.04).
+# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04) or CentOS (7.5).
 
 opwd=$(pwd)
 
@@ -29,6 +29,10 @@ Options:
    --dry-run            : dry run
    --only-configure     : perform configuration stage only
    --nprocs N           : use N processors
+   --install-base-dir PATH : select the Bayeux installation directory
+   --build-base-dir PATH   : select the Bayeux build directory
+   --clean-build-dir    : clean the the Bayeux build directory 
+                          after successfull installation
 
 EOF
     return
@@ -43,6 +47,7 @@ bayeux_source_dir="${opwd}"
 bayeux_version="develop"
 install_base_dir=$(pwd)/_install.d
 build_base_dir=$(pwd)/_build.d
+clean_build_dir=false
 
 function cl_parse()
 {
@@ -62,6 +67,14 @@ function cl_parse()
 	elif [ "${arg}" = "--nprocs" ]; then
 	    shift 1
 	    nprocs=$1
+	elif [ "${arg}" = "--install-base-dir" ]; then
+	    shift 1
+	    install_base_dir=$1
+	elif [ "${arg}" = "--build-base-dir" ]; then
+	    shift 1
+	    build_base_dir=$1
+	elif [ "${arg}" = "--clean-build-dir" ]; then
+	    clean_build_dir=true
 	fi
 	shift 1
     done
@@ -108,7 +121,6 @@ elif [ -f /etc/redhat-release ]; then
 	echo >&2 "[info] Found CentOS Linux ${distrib_release}"
     fi
 fi
-
 
 # Check Git source repository:
 echo >&2 "[info] Bayeux source directory: '${bayeux_source_dir}'"
@@ -234,7 +246,12 @@ if [ ${only_configure} -eq 0 ]; then
     if [ $? -ne 0 ]; then
 	echo >&2 "[error] Bayeux ${bayeux_version} installation failed!"
 	my_exit 1
+    else
+	if [ ${clean_build_dir} == true ]; then
+	    rm -fr ${build_dir}
+	fi
     fi
+    
 fi
 
 my_exit 0

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A Bash script to clean devel Bayeux installation on Ubuntu (16.04).
+# A Bash script to clean default devel Bayeux build/installation dirs.
 #
 #
 opwd=$(pwd)
@@ -9,7 +9,6 @@ build_dir=$(pwd)/_build.d
 if [ -d ${install_dir} ]; then
     rm -fr ${install_dir}
 fi
-
 if [ -d ${build_dir} ]; then
     rm -fr ${build_dir}
 fi
