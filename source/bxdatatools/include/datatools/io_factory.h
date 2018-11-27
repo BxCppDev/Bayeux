@@ -256,11 +256,11 @@ namespace datatools {
       DT_THROW_IF (!this->is_write(),
                    std::logic_error,
                    "Not a writer factory!");
-      if (_otar_ptr_ != 0) {
+      if (_otar_ptr_ != nullptr) {
         this->store_text<Data>(*_otar_ptr_, data_);
-      } else if (_oxar_ptr_ != 0) {
+      } else if (_oxar_ptr_ != nullptr) {
         this->store_xml<Data>(*_oxar_ptr_, data_);
-      } else if (_obar_ptr_ != 0) {
+      } else if (_obar_ptr_ != nullptr) {
         this->store_binary<Data>(*_obar_ptr_, data_);
       }
     }
@@ -271,7 +271,7 @@ namespace datatools {
       DT_THROW_IF (!this->is_read(),
                    std::logic_error,
                    "Not a reader factory!");
-      DT_THROW_IF (_in_fs_ == 0,
+      DT_THROW_IF (_in_fs_ == nullptr,
                    std::runtime_error,
                    "No input stream!");
 
@@ -299,13 +299,13 @@ namespace datatools {
       }
 
       try {
-        if (_itar_ptr_ != 0) {
+        if (_itar_ptr_ != nullptr) {
           this->load_text<Data>(*_itar_ptr_, data_);
           *_in_fs_ >> std::ws;
-        } else if (_ixar_ptr_ != 0) {
+        } else if (_ixar_ptr_ != nullptr) {
           this->load_xml<Data>(*_ixar_ptr_, data_);
           *_in_fs_ >> std::ws;
-        } else if (_ibar_ptr_ != 0) {
+        } else if (_ibar_ptr_ != nullptr) {
           this->load_binary<Data>(*_ibar_ptr_, data_);
         }
       } catch (boost::archive::archive_exception & x) {
@@ -336,14 +336,14 @@ namespace datatools {
     }
 
     template <typename Data>
-    friend io_factory& operator<<(io_factory & iof_, const Data & data_)
+    friend io_factory & operator<<(io_factory & iof_, const Data & data_)
     {
       iof_.store(data_);
       return iof_;
     }
 
     template <typename Data>
-    friend io_factory& operator>>(io_factory & iof_, Data & data_)
+    friend io_factory & operator>>(io_factory & iof_, Data & data_)
     {
       iof_.load(data_);
       return iof_;
@@ -414,32 +414,32 @@ namespace datatools {
   private:
 
 
-    datatools::logger::priority _logging_priority_; ///< Logging priority threshold
-    unsigned int _mode_; ///< Mode bitset of the I/O factory
+    datatools::logger::priority _logging_priority_ = datatools::logger::PRIO_FATAL; ///< Logging priority threshold
+    unsigned int _mode_ = 0; ///< Mode bitset of the I/O factory
 
-    std::istream * _in_;
-    std::ostream * _out_;
+    std::istream * _in_  = nullptr;
+    std::ostream * _out_ = nullptr;
 
-    std::ifstream * _fin_;
-    std::ofstream * _fout_;
+    std::ifstream * _fin_  = nullptr;
+    std::ofstream * _fout_ = nullptr;
 
-    boost::iostreams::filtering_istream * _in_fs_;
-    boost::iostreams::filtering_ostream * _out_fs_;
+    boost::iostreams::filtering_istream * _in_fs_  = nullptr;
+    boost::iostreams::filtering_ostream * _out_fs_ = nullptr;
 
-    std::locale * _default_locale_;
-    std::locale * _locale_;
+    std::locale * _default_locale_ = nullptr;
+    std::locale * _locale_         = nullptr;
 
-    bool _read_archive_is_initialized_;
-    bool _write_archive_is_initialized_;
+    bool _read_archive_is_initialized_  = false;
+    bool _write_archive_is_initialized_ = false;
 
-    boost::archive::text_iarchive * _itar_ptr_;
-    boost::archive::text_oarchive * _otar_ptr_;
+    boost::archive::text_iarchive * _itar_ptr_ = nullptr;
+    boost::archive::text_oarchive * _otar_ptr_ = nullptr;
 
-    boost::archive::xml_iarchive  * _ixar_ptr_;
-    boost::archive::xml_oarchive  * _oxar_ptr_;
+    boost::archive::xml_iarchive  * _ixar_ptr_ = nullptr;
+    boost::archive::xml_oarchive  * _oxar_ptr_ = nullptr;
 
-    eos::portable_iarchive * _ibar_ptr_;
-    eos::portable_oarchive * _obar_ptr_;
+    eos::portable_iarchive * _ibar_ptr_ = nullptr;
+    eos::portable_oarchive * _obar_ptr_  = nullptr;
 
   }; // end of class io_factory
 
@@ -526,7 +526,8 @@ namespace datatools {
 
     enum status_type {
       STATUS_OK    = 0,
-      STATUS_ERROR = 1
+      STATUS_ERROR = 1,
+      STATUS_EOF   = 2
     };
 
     static const std::string & empty_record_tag();
@@ -545,6 +546,8 @@ namespace datatools {
     virtual ~data_reader();
 
     bool is_error() const;
+
+    bool is_eof() const;
 
     const std::string & get_record_tag() const;
 
@@ -660,17 +663,18 @@ namespace datatools {
     template <typename Data>
     void basic_load(Data & data_)
     {
-      DT_THROW_IF (_reader_ == 0,
+      DT_THROW_IF (_reader_ == nullptr,
                    std::logic_error,
                    "Not initialized!");
       try {
         _reader_->load(data_);
-      }
-      catch (std::exception& x) {
+      } catch (std::exception & x) {
+        _status_ = STATUS_ERROR;
         bool warn = false;
         //>>> 2008-11-13 FM: skip EOF message printing
         std::string msg = x.what();
         if (msg.find("EOF") != msg.npos) {
+          _status_ = STATUS_EOF;
           warn = false;
         }
         if (warn) {
@@ -679,11 +683,9 @@ namespace datatools {
                        << x.what() << " !");
         }
         //<<<
-        _status_   = STATUS_ERROR;
         _next_tag_ = empty_record_tag();
         DT_THROW_IF(true, std::logic_error, x.what());
-      }
-      catch (...) {
+      } catch (...) {
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                      "Cannot read data: "
                      << "Unexpected exception" << " !");
@@ -699,14 +701,14 @@ namespace datatools {
 
     void read_next_tag();
 
-    void init_reader(const std::string & filename_, int a_mode_);
+    void init_reader(const std::string & filename_, int mode_);
 
     void reset_reader();
 
   private:
 
-    int          _status_;
-    io_reader   * _reader_;
+    int           _status_ = STATUS_OK; 
+    io_reader   * _reader_ = nullptr;
     std::string   _next_tag_;
 
   };
@@ -805,7 +807,7 @@ namespace datatools {
     void store(const Data & data_)
     {
       const datatools::i_serializable& i_ser =
-        static_cast<const datatools::i_serializable&>(data_);
+        static_cast<const datatools::i_serializable &>(data_);
       this->store<Data>(i_ser.get_serial_tag(), data_);
       return;
     }
@@ -815,9 +817,9 @@ namespace datatools {
     template <typename Data>
     void basic_store(const Data & data_)
     {
-      DT_THROW_IF (_writer_ == 0,
-                   std::logic_error,
-                   "Not initialized!");
+      DT_THROW_IF(_writer_ == nullptr,
+                  std::logic_error,
+                  "Not initialized!");
       _writer_->store<Data>(data_);
       return;
     }
@@ -830,7 +832,7 @@ namespace datatools {
 
   private:
 
-    io_writer * _writer_;
+    io_writer * _writer_ = nullptr;
 
   };
 
