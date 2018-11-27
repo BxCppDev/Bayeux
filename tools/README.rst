@@ -13,7 +13,7 @@ From the Bayeux base source directory, use the build/installation script:
 .. code:: bash
 
    $ linuxbrew_setup # Please use her your own command(s) to setup Bayeux's dependencies
-   $ ./tools/build.sh --help
+   $ ./tools/build.sh --help   
    $ ./tools/build.sh --nprocs 6	  
 ..
 
