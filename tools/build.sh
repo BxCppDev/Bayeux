@@ -28,11 +28,13 @@ Options:
    --debug              : activate debug mode
    --dry-run            : dry run
    --only-configure     : perform configuration stage only
+   --nprocs N           : use N processors
 
 EOF
     return
 }
 
+nprocs=4
 dry_run=False
 rebuild=0
 only_configure=0
@@ -57,6 +59,9 @@ function cl_parse()
 	    rebuild=1
 	elif [ "${arg}" = "--only-configure" ]; then
 	    only_configure=1
+	elif [ "${arg}" = "--nprocs" ]; then
+	    shift 1
+	    nprocs=$1
 	fi
 	shift 1
     done
@@ -209,7 +214,7 @@ if [ ${only_configure} -eq 0 ]; then
 
     echo >&2 ""
     echo >&2 "[info] Building..."
-    ninja -j4
+    ninja -j${nprocs}
     if [ $? -ne 0 ]; then
 	echo >&2 "[error] Bayeux ${bayeux_version} build failed!"
 	my_exit 1
