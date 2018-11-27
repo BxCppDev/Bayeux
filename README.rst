@@ -240,13 +240,13 @@ UNIX Operating System
 *  macOS 10.9 (Mavericks) or higher
 
 We expect  Bayeux to  work on  most modern BSD  based Unices  or Linux
-distributions  derived from  Fedora(RedHat)  and  Debian provided  the
+distributions  derived from  Debian and Fedora (RedHat) provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
 -  Ubuntu 16.04LTS, 18.04LTS (current development system):
    http://www.ubuntu.com
--  Scientific Linux 5/6.X/7.X: http://www.scientificlinux.org
+-  CentOS 7.5: https://www.centos.org/
 
 If you have problems on systems other than these, please contact us,
 though support will be on a best effort basis.

@@ -72,20 +72,38 @@ if [ $? -ne 0 ]; then
 fi
 
 # Check distribution:
-distrib_id=$(cat /etc/lsb-release | grep DISTRIB_ID | cut -d= -f2)
-distrib_release=$(cat /etc/lsb-release | grep DISTRIB_RELEASE | cut -d= -f2)
-
-if [ "${distrib_id}" != "Ubuntu" ]; then
-    echo >&2 "[error] Not an Ubuntu Linux!"
-    my_exit 1
+if [ -f /etc/lsb-release ]; then
+    distrib_id=$(cat /etc/lsb-release | grep DISTRIB_ID | cut -d= -f2)
+    distrib_release=$(cat /etc/lsb-release | grep DISTRIB_RELEASE | cut -d= -f2)
+    
+    if [ "${distrib_id}" != "Ubuntu" ]; then
+	echo >&2 "[error] Not an Ubuntu Linux!"
+	my_exit 1
+    fi
+    
+    if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" ]; then
+	echo >&2 "[error] Not an Ubuntu Linux version 16.04 or 18.04! Abort!"
+	my_exit 1
+    else
+	echo >&2 "[info] Found Ubuntu Linux ${distrib_release}"
+    fi
+elif [ -f /etc/redhat-release ]; then
+    distrib_id=$(cat /etc/redhat-release | head -1 | cut -d' ' -f1) 
+    distrib_release=$(cat /etc/redhat-release | head -1 | cut -d' ' -f4 | cut -d'.' -f1,2) 
+   
+    if [ "${distrib_id}" != "CentOS" ]; then
+	echo >&2 "[error] Not an CentOS Linux!"
+	my_exit 1
+    fi
+    
+    if [ "${distrib_release}" != "7.5" ]; then
+	echo >&2 "[error] Not an CentOS Linux version 7.5! Abort!"
+	my_exit 1
+    else
+	echo >&2 "[info] Found CentOS Linux ${distrib_release}"
+    fi
 fi
 
-if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" ]; then
-    echo >&2 "[error] Not an Ubuntu Linux version 16.04 or 18.04! Abort!"
-    my_exit 1
-else
-    echo >&2 "[info] Found Ubuntu Linux ${distrib_release}"
-fi
 
 # Check Git source repository:
 echo >&2 "[info] Bayeux source directory: '${bayeux_source_dir}'"
