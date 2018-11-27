@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2018-09-11
+:Date:    2018-11-27
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -295,14 +295,17 @@ Core Libraries Required
   * GDML,
   * OpenGL.
 
+* Qt5:
 
 For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
 Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
-clients of Bayeux.  It is **strongly** advised to use this bundle.  It
+clients of Bayeux.  It is strongly advised to use this bundle.  It
 will  provide,  for  Linux  and macOS  systems,  an  uniform  software
 environment with  a selected set  of blessed software,  including the
 C++ compiler if needed.
 
+Note however that it is perfectly possible to use system installation
+of the above libraries if your OS distribution provides adequate support.
 
 **Note:** We  have experienced that  the use  of Linuxbrew is  not the
 definitive robust  solution to solve the  software dependency problem.
@@ -525,7 +528,10 @@ These options control the core configuration of Bayeux.
   Build      *object      configuration     description*      (OCD)
   documentation. Default is OFF. Implies ``BAYEUX_WITH_DOCS``.
 
+``BAYEUX_MINIMAL_BUILD``
+  Build Bayeux core library only (datatools Bayeux/module). Default is OFF (experts only).
 
+  
 Building and Installing
 -----------------------
 
