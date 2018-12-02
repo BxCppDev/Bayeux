@@ -35,6 +35,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
+// Copyright (c) 2016-2018 by François Mauger <mauger@lpccaen.inp3.fr>
+// Copyright (c) 2016-2018 by Université de Caen Normandie
 //
 // This file is part of datatools.
 //

@@ -3,6 +3,8 @@
 //
 // Copyright (c) 2013-2016 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013-2016 by The University of Warwick
+// Copyright (c) 2016-2018 by François Mauger <mauger@lpccaen.inp3.fr>
+// Copyright (c) 2016-2018 by Université de Caen Normandie
 //
 // This file is part of datatools.
 //
@@ -23,6 +25,7 @@
 #define DATATOOLS_DETAIL_LOGGER_MACROS_H
 
 // Standard Library:
+#include <sstream>
 #include <iostream>
 
 // Third Party:
@@ -44,7 +47,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_FATAL) { \
-      std::cerr << "[fatal:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[fatal:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::cerr << _dt_xxx_out.str();                                   \
     }                                                                   \
   }
 
@@ -60,7 +65,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_CRITICAL) { \
-      std::cerr << "[critical:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[critical:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::cerr << _dt_xxx_out.str();                                   \
     }                                                                   \
   }
 
@@ -76,7 +83,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p  >= ::datatools::logger::PRIO_ERROR) { \
-      std::cerr << "[error:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[error:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::cerr << _dt_xxx_out.str();                                   \
     }                                                                   \
   }
 
@@ -92,7 +101,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_WARNING) { \
-      std::cerr << "[warning:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                           \
+      _dt_xxx_out << "[warning:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::cerr << _dt_xxx_out.str();                                           \
     }                                                                   \
   }
 
@@ -108,7 +119,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_NOTICE) { \
-      std::clog << "[notice:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                           \
+      _dt_xxx_out << "[notice:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::clog << _dt_xxx_out.str();                                           \
     }                                                                   \
   }
 
@@ -124,15 +137,66 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_INFORMATION) { \
-      std::clog << "[information:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[information:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::clog << _dt_xxx_out.str();                                           \
     }                                                                   \
   }
+
 //! Log Message if Priority is greater or equal to PRIO_DEBUG
 #define DT_LOG_DEBUG(Priority, Message)                                 \
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_DEBUG) { \
-      std::clog << "[debug:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[debug:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::cerr << _dt_xxx_out.str();                                   \
+    }                                                                   \
+  }
+
+//! Log Message if Priority is greater or equal to PRIO_INFORMATION (short format)
+//!
+//! Log message short format is expected to be used after a call to
+//! the *normal* DT_LOG_INFORMATION macro.
+//! Example:
+//! \code
+//! datatools::logger::priority loglevel = datatools::logger::PRIO_INFORMATION;
+//! ...
+//! DT_LOG_INFORMATION(loglevel, "List of items:");
+//! for (const auto & item : items) {
+//!   DT_LOG_INFORMATION_SHORT(loglevel, "Item = " << item);
+//! }
+//! \endcode
+#define DT_LOG_INFORMATION_SHORT(Priority, Message)                     \
+  {                                                                     \
+    ::datatools::logger::priority _dt_xxx_p = Priority;                 \
+    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_INFORMATION) { \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[debug] " << Message << std::endl;                \
+      std::clog << _dt_xxx_out.str();                                   \
+    }                                                                   \
+  }
+
+//! Log Message if Priority is greater or equal to PRIO_NOTICE (short format)
+//!
+//! Log message short format is expected to be used after a call to
+//! the *normal* DT_LOG_NOTICE macro.
+//! Example:
+//! \code
+//! datatools::logger::priority loglevel = datatools::logger::PRIO_NOTICE;
+//! ...
+//! DT_LOG_NOTICE(loglevel, "List of items:");
+//! for (const auto & item : items) {
+//!   DT_LOG_NOTICE_SHORT(loglevel, "Item = " << item);
+//! }
+//! \endcode
+#define DT_LOG_NOTICE_SHORT(Priority, Message)                      \
+  {                                                                     \
+    ::datatools::logger::priority _dt_xxx_p = Priority;                 \
+    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_NOTICE) { \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[debug] " << Message << std::endl;                \
+      std::clog << _dt_xxx_out.str();                                   \
     }                                                                   \
   }
 
@@ -153,7 +217,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_DEBUG) { \
-      std::clog << "[debug] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[debug] " << Message << std::endl;                \
+      std::cerr << _dt_xxx_out.str();                                   \
     }                                                                   \
   }
 
@@ -162,7 +228,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_TRACE) { \
-      std::cerr << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
+      std::cerr << _dt_xxx_out.str();                                   \
     }                                                                   \
   }
 
@@ -183,7 +251,9 @@
   {                                                                     \
     ::datatools::logger::priority _dt_xxx_p = Priority;                 \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_TRACE) { \
-      std::clog << "[trace] " << Message << std::endl; \
+      std::ostringstream _dt_xxx_out;                                   \
+      _dt_xxx_out << "[trace] " << Message << std::endl;                \
+      std::clog << _dt_xxx_out.str();                                   \
     }                                                                   \
   }
 
