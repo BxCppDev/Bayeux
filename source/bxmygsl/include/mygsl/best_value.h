@@ -18,7 +18,7 @@ namespace mygsl {
     {
     public:
 
-      operator double ();
+      operator double () const;
       void set_value (double value_);
       void set_error_low (double error_low_);
       void set_error_high (double error_lhigh_);

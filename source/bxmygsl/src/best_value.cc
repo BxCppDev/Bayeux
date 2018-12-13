@@ -17,7 +17,7 @@ namespace mygsl {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(best_value,"mygsl::best_value")
 
-  best_value::operator double ()
+  best_value::operator double() const
   {
     return _value_;
   }
