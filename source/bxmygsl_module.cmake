@@ -102,7 +102,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/tabulated_sampling.h
   #${module_include_dir}/${module_name}/high_density_edge_sampling.h
   ${module_include_dir}/${module_name}/unary_function_utils.h
-  )
+  ${module_include_dir}/${module_name}/kernel_smoother.h
+ )
 
 set(${module_name}_MODULE_SOURCES
   #${module_source_dir}/interpolation_1d.cc
@@ -168,6 +169,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/tabulated_sampling.cc
   #${module_source_dir}/high_density_edge_sampling.cc
   ${module_source_dir}/unary_function_utils.cc
+  ${module_source_dir}/kernel_smoother.cc
   )
 
 # - Published headers
@@ -236,6 +238,7 @@ set(${module_name}_MODULE_TESTS
   #${module_test_dir}/test_high_density_edge_sampling.cxx
   #${module_test_dir}/test_interpolation_1d.cxx
   #${module_test_dir}/test_bspline.cxx
+  ${module_test_dir}/test_kernel_smoother.cxx
   )
 
 # - Examples dir
