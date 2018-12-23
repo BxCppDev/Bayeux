@@ -32,11 +32,11 @@ namespace mygsl {
 
   private:
     
-    double _b_;
+    double _b_; ///< Parameter (width) of the Gauss kernel smoother
     
   };
 
-  /// \bried Nadaraya-Watson kernel-weigthed average functor
+  /// \brief Nadaraya-Watson kernel-weigthed average functor
   class nw_sampled_function_smoother
     : public i_unary_function
   {
@@ -60,9 +60,9 @@ namespace mygsl {
  
   private:
 
-    const mygsl::tabulated_function & _tf_;
-    bool _ks_free_needed_ = false;
-    i_kernel_smoother * _ks_ = nullptr;
+    const mygsl::tabulated_function & _tf_; ///< Handle to a tabulated function
+    bool _ks_free_needed_    = false;       ///< Flag to delete the kernel smoother instance (ownership)
+    i_kernel_smoother * _ks_ = nullptr;     ///< Handle to a kernel smoother instance
     
   };
 
