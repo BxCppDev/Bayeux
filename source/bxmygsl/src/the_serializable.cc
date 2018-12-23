@@ -54,6 +54,11 @@
  *************************/
 #include <mygsl/histogram_pool.ipp>
 
+/*****************************
+ * mygsl::tabulated_function *
+ *****************************/
+#include <mygsl/tabulated_function.ipp>
+
 /*********************
  * mygsl::best_value *
  *********************/
@@ -101,5 +106,10 @@ BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::histogram_2d)
  *************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::histogram_pool)
 BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::histogram_pool)
+
+/*****************************
+ * mygsl::tabulated_function *
+ *****************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::tabulated_function)
 
 

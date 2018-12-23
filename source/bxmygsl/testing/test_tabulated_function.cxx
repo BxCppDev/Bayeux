@@ -70,6 +70,15 @@ int main(int /* argc_ */ , char ** /* argv_ */)
     }
     tf.lock_table("linear"); // change interpolation scheme
 
+    std::clog << "Exporting to vectors:" << std::endl;
+    std::vector<double> vx;
+    std::vector<double> vf;
+    tf.export_to_vectors(vx, vf);
+    for (int i = 0; i < (int) vx.size(); i++) {
+      std::clog << vx[i] << ' ' << vf[i] << std::endl;
+    }
+    std::clog << "End of export." << std::endl;
+    
     if (debug) {
       std::cerr.precision(10);
       std::cerr << "DEBUG: min=" << tf.x_min() << std::endl;

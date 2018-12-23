@@ -90,6 +90,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/rng.h
   ${module_include_dir}/${module_name}/seed_manager.h
   ${module_include_dir}/${module_name}/tabulated_function.h
+  ${module_include_dir}/${module_name}/tabulated_function.ipp
   ${module_include_dir}/${module_name}/convolution_function.h
   ${module_include_dir}/${module_name}/zero_function.h
   ${module_include_dir}/${module_name}/identity_function.h

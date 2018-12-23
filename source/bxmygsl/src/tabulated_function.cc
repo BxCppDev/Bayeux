@@ -11,6 +11,7 @@
 
 // Third party:
 // - GSL:
+#include <gsl/gsl_version.h>
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
 // - Bayeux/datatools:
@@ -63,6 +64,12 @@ namespace mygsl {
     return name;
   }
 
+  const std::string & tabulated_function::steffen_interp_name()
+  {
+    static const std::string name("steffen");
+    return name;
+  }
+
   const std::string & tabulated_function::default_interp_name()
   {
     return linear_interp_name();
@@ -71,7 +78,8 @@ namespace mygsl {
   //----------------------------------------------------------------------
   // Internal implementation struct
   //
-  struct tabulated_function::tabfunc_impl {
+  struct tabulated_function::tabfunc_impl
+  {
     tabfunc_impl();
     ~tabfunc_impl();
     void reset();
@@ -83,8 +91,6 @@ namespace mygsl {
     gsl_interp_accel *_giacc_;
     double           _x_min_;
     double           _x_max_;
-    // std::vector<double> _xvalues_;
-    // std::vector<double> _yvalues_;
   };
 
   void tabulated_function::tabfunc_impl::reset()
@@ -136,7 +142,8 @@ namespace mygsl {
     return true;
   }
 
-  tabulated_function::tabulated_function(const std::string& interp_name_) {
+  tabulated_function::tabulated_function(const std::string & interp_name_)
+  {
     pImpl = new tabfunc_impl;
     pImpl->_table_locked_ = false;
     pImpl->_gs_     = 0;
@@ -149,7 +156,9 @@ namespace mygsl {
     }
   }
 
-  tabulated_function::tabulated_function(const tabulated_function& tab_func_) : i_unary_function(tab_func_) {
+  tabulated_function::tabulated_function(const tabulated_function & tab_func_)
+    : i_unary_function(tab_func_)
+  {
     pImpl = new tabfunc_impl;
     pImpl->_table_locked_ = false;
     pImpl->_gs_     = 0;
@@ -163,7 +172,8 @@ namespace mygsl {
     }
   }
 
-  tabulated_function& tabulated_function::operator=(const tabulated_function& tab_func_) {
+  tabulated_function& tabulated_function::operator=(const tabulated_function& tab_func_)
+  {
     if (&(*this) == &tab_func_) return *this;
     reset();
     pImpl->_interpolator_name_ = tab_func_.interpolator_name();
@@ -174,41 +184,70 @@ namespace mygsl {
     return *this;
   }
 
-  bool tabulated_function::is_verbose() const {
+  bool tabulated_function::is_verbose() const
+  {
     return pImpl->_verbose_;
   }
 
-  void tabulated_function::set_verbose(bool v_) {
+  void tabulated_function::set_verbose(bool v_)
+  {
     pImpl->_verbose_ = v_;
   }
 
-  bool tabulated_function::is_valid(double x_) const {
+  bool tabulated_function::is_valid(double x_) const
+  {
     return ((x_ >= pImpl->_x_min_) && (x_ <= pImpl->_x_max_));
   }
 
-  const std::string& tabulated_function::interpolator_name() const {
+  const std::string& tabulated_function::interpolator_name() const
+  {
     return pImpl->_interpolator_name_;
   }
 
-  const tabulated_function::points_map_type& tabulated_function::points() const {
+  const tabulated_function::points_map_type & tabulated_function::points() const
+  {
     return pImpl->_points_;
   }
 
-  const std::string& tabulated_function::default_interpolator_name() {
+  bool tabulated_function::export_to_vectors(std::vector<double> & keys_,
+                                             std::vector<double> & values_) const
+  {
+    keys_.clear();
+    values_.clear();
+    if (pImpl) {
+      keys_.reserve(pImpl->_points_.size());
+      values_.reserve(pImpl->_points_.size());
+      for (mygsl::tabulated_function::points_map_type::const_iterator i = pImpl->_points_.begin();
+           i != pImpl->_points_.end();
+           i++) {
+        keys_.push_back(i->first);
+        values_.push_back(i->second);
+      }
+    }
+    return keys_.size() > 2;
+  }
+
+  const std::string& tabulated_function::default_interpolator_name()
+  {
     return linear_interp_name();
   }
 
-  bool tabulated_function::interpolator_name_is_valid(const std::string& name_){
+  bool tabulated_function::interpolator_name_is_valid(const std::string & name_)
+  {
     if (name_ == linear_interp_name()) return true;
     if (name_ == polynomial_interp_name()) return true;
     if (name_ == cspline_interp_name()) return true;
     if (name_ == cspline_periodic_interp_name()) return true;
     if (name_ == akima_interp_name()) return true;
     if (name_ == akima_periodic_interp_name()) return true;
+    if (GSL_MAJOR_VERSION >= 2) {
+      if (name_ == steffen_interp_name()) return true;
+    }
     return false;
   }
 
-  void tabulated_function::scale(double s_) {
+  void tabulated_function::scale(double s_)
+  {
     for (points_map_type::iterator i = pImpl->_points_.begin();
          i != pImpl->_points_.end();
          i++) {
@@ -216,15 +255,18 @@ namespace mygsl {
     }
   }
 
-  size_t tabulated_function::size() const {
+  size_t tabulated_function::size() const
+  {
     return pImpl->_points_.size();
   }
 
-  bool tabulated_function::is_table_locked() const {
+  bool tabulated_function::is_table_locked() const
+  {
     return pImpl->_table_locked_;
   }
 
-  void tabulated_function::lock_table(const std::string& interp_name_) {
+  void tabulated_function::lock_table(const std::string & interp_name_)
+  {
     if (is_table_locked()) unlock_table();
 
     if (!interp_name_.empty()) {
@@ -259,6 +301,11 @@ namespace mygsl {
     }
     if (pImpl->_interpolator_name_ == akima_periodic_interp_name()) {
       git = gsl_interp_akima_periodic;
+    }
+    if (GSL_MAJOR_VERSION >= 2) {
+      if (pImpl->_interpolator_name_ == steffen_interp_name()) {
+        git = gsl_interp_steffen;
+      }
     }
 
     pImpl->_gs_      = gsl_spline_alloc(git, npoints);
@@ -312,7 +359,8 @@ namespace mygsl {
     pImpl->_table_locked_ = true;
   }
 
-  void tabulated_function::unlock_table() {
+  void tabulated_function::unlock_table()
+  {
     if (!is_table_locked()) return;
 
     if (pImpl->_gs_ != 0) {
@@ -328,7 +376,8 @@ namespace mygsl {
     pImpl->_table_locked_ = false;
   }
 
-  void tabulated_function::relock_table(const std::string& interp_name_) {
+  void tabulated_function::relock_table(const std::string & interp_name_)
+  {
     if (is_verbose()) {
       DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Relock forced !");
     }
@@ -336,7 +385,8 @@ namespace mygsl {
     this->lock_table(interp_name_);
   }
 
-  void tabulated_function::add_point(double x_, double y_, bool lock_after_) {
+  void tabulated_function::add_point(double x_, double y_, bool lock_after_)
+  {
     // bool local_debug = false;
     /*
     if (local_debug) {
@@ -357,11 +407,13 @@ namespace mygsl {
     }
   }
 
-  double tabulated_function::x_min() const {
+  double tabulated_function::x_min() const
+  {
     return pImpl->_x_min_;
   }
 
-  double tabulated_function::x_max() const {
+  double tabulated_function::x_max() const
+  {
     return pImpl->_x_max_;
   }
 
@@ -372,7 +424,6 @@ namespace mygsl {
     double x_unit = 1.0;
     double f_unit = 1.0;
 
-    // XXX
     if (config_.has_key("unit.x")) {
       const std::string & x_unit_label = config_.fetch_string("unit.x");
       x_unit = datatools::units::get_unit(x_unit_label);
@@ -436,25 +487,29 @@ namespace mygsl {
     return this->size() > 2 && is_table_locked();
   }
 
-  void tabulated_function::reset() {
+  void tabulated_function::reset()
+  {
     unlock_table();
     pImpl->_points_.clear();
     pImpl->_interpolator_name_ = default_interp_name();
     this->i_unary_function::_base_reset();
   }
 
-  tabulated_function::~tabulated_function() {
+  tabulated_function::~tabulated_function()
+  {
     unlock_table();
     pImpl->_points_.clear();
   }
 
-  double tabulated_function::_eval(double x_) const {
+  double tabulated_function::_eval(double x_) const
+  {
     DT_THROW_IF (!is_table_locked(), std::logic_error, "Object not locked !");
     double y = gsl_spline_eval(pImpl->_gs_, x_, pImpl->_giacc_);
     return y;
   }
 
-  void tabulated_function::load_from_file(const std::string & filename_, uint32_t /* options_ */)
+  void tabulated_function::load_from_file(const std::string & filename_,
+                                          uint32_t /* options_ */)
   {
     reset();
     double x_unit = 1.0;
@@ -481,7 +536,7 @@ namespace mygsl {
           } else if (word == "#@unit.f") {
             std::string f_unit_symbol;
             tmp_iss >> f_unit_symbol >> std::ws;
-            DT_THROW_IF(f_unit_symbol.empty(), std::logic_error, "Missing X unit symbol!");
+            DT_THROW_IF(f_unit_symbol.empty(), std::logic_error, "Missing F unit symbol!");
             f_unit = datatools::units::get_unit(f_unit_symbol);
           } else if (word == "#@interpolation") {
             tmp_iss >> interpolation_scheme >> std::ws;
@@ -527,8 +582,9 @@ namespace mygsl {
     lock_table(the_interpolator_name);
   }
 
-  void tabulated_function::tabfunc_store(std::ostream& out_,
-                                         void* /*context_*/) const {
+  void tabulated_function::tabfunc_store(std::ostream & out_,
+                                         void * /*context_*/) const
+  {
     out_ << pImpl->_interpolator_name_ << ' ';
     out_ << pImpl->_points_.size() << std::endl;
     for (points_map_type::const_iterator i = pImpl->_points_.begin();
@@ -538,10 +594,10 @@ namespace mygsl {
     }
   }
 
-  void tabulated_function::print_points(std::ostream& out_,
-                                        const std::string& header_comment_,
-                                        const std::string& footer_comment_
-                                        ) const {
+  void tabulated_function::print_points(std::ostream & out_,
+                                        const std::string & header_comment_,
+                                        const std::string & footer_comment_) const
+  {
     if (!header_comment_.empty()) {
       out_ << "# " << header_comment_ << std::endl;
     }
