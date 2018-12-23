@@ -4,7 +4,7 @@
  *
  *  Some useful macros related to Boost/Serialisation within datatools.
  *
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2018 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 // Third Party:
 // - Boost:
+#include <boost/serialization/access.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // declare the template load member function from the header file :
