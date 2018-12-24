@@ -21,7 +21,10 @@ or macOS 10.
 Additions
 =========
 
-None.
+* mygsl : Add serialization and export methods in mygsl::tabulated_function
+* mygsl : Add kernel smoother algo (mygsl/kernel_smoother.h) with
+          Nadaraya-Watson kernel-weigthed average functor with Gauss kernel smoother.
+
  
 Removals
 =========
