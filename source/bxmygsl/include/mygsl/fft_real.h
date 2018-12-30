@@ -19,65 +19,65 @@ namespace mygsl {
   {
   public:
 
-    fft_real ();
+    fft_real();
 
-    ~fft_real ();
+    ~fft_real();
 
-    void reset ();
+    void reset();
 
-    void init (const std::vector<double> & sample_ ,
-               double start_ ,
-               double step_ ,
-               double min_freq_cutoff_ ,
+    void init(const std::vector<double> & sample_,
+               double start_,
+               double step_,
+               double min_freq_cutoff_,
                double max_freq_cutoff_);
 
-    void init (const std::vector<double> & sample_ ,
-               double start_ ,
-               double step_ ,
+    void init(const std::vector<double> & sample_,
+               double start ,
+               double step_,
                double max_freq_cutoff_);
 
-    double get_frequency_step () const;
+    double get_frequency_step() const;
 
-    void dump (std::ostream & out_ , bool dump_arrays_ = true) const;
+    void dump(std::ostream & out_, bool dump_arrays_ = true) const;
 
-    void compute_fourier_spectrum (std::vector<double> & freq_spectrum_) const;
+    void compute_fourier_spectrum(std::vector<double> & freq_spectrum_) const;
 
-    void compute_filtered_data (std::vector<double> & filtered_data_) const;
+    void compute_filtered_data(std::vector<double> & filtered_data_) const;
 
-    void process ();
+    void process();
 
   private:
 
-    void _process_filter_ ();
+    void _process_filter_();
 
   private:
 
-    bool   _initialized_;
+    bool   _initialized_  = false;
     size_t _n_;
     double _start_;
     double _stop_;
-    double _step_;       // grid interval/scanning period
-    double _F0_;         // scanning frequency
-    double * _data_;     // sampled data
-    double * _data_rec_;
-    double * _freq_;
-    double * _tmp_;
+    double _step_;       ///< Grid interval/scanning period
+    double _F0_;         ///< Scanning frequency
+    double * _data_ = nullptr;  ///< Sampled data
+    double * _data_rec_ = nullptr; ///< Reconstructed data
+    double * _freq_ = nullptr;
+    double * _tmp_ = nullptr;
     double _Nyquist_freq_;
     double _min_freq_cutoff_;
     double _max_freq_cutoff_;
 
     // gsl stuff:
-    gsl_fft_real_wavetable *        _the_real_;
-    gsl_fft_halfcomplex_wavetable * _hc_;
-    gsl_fft_real_workspace *        _work_;
+    gsl_fft_real_wavetable *        _the_real_ = nullptr;
+    gsl_fft_halfcomplex_wavetable * _hc_ = nullptr;
+    gsl_fft_real_workspace *        _work_ = nullptr;
 
   };
 
-}
+} // namespace mygsl 
 
 #endif // MYGSL_FFT_REAL_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables:
+// mode: c++
+// coding: utf-8
+// End:
