@@ -12,14 +12,12 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/exception.h>
-#include <datatools/logger.h>
 #include <datatools/utils.h>
 
 namespace mygsl {
 
   const size_t multidimensional_minimization::DEFAULT_MAX_ITER    = 1000;
   const size_t multidimensional_minimization::DEFAULT_MODULO_ITER = 100;
-  const bool   multidimensional_minimization::DEFAULT_VERBOSE  = true;
   const double multidimensional_minimization::DEFAULT_EPSABS   = 1.e-3;
 
   const double multidimensional_minimization_system::DEFAULT_OUT_OF_LIMIT_SLOPE = 1.e10;
@@ -665,12 +663,10 @@ namespace mygsl {
     return _fval_;
   }
 
-  // ctor:
   multidimensional_minimization::multidimensional_minimization ()
   {
     _algo_fdf_ = 0;
     _algo_f_   = 0;
-    _verbose_  = DEFAULT_VERBOSE;
     _mode_     = MODE_F;
     _fdfmin_   = 0;
     _fmin_     = 0;
@@ -698,7 +694,6 @@ namespace mygsl {
     return;
   }
 
-  // dtor:
   multidimensional_minimization::~multidimensional_minimization ()
   {
     reset ();
@@ -711,9 +706,11 @@ namespace mygsl {
                                                      size_t dim_,
                                                      double f_)
   {
+    DT_LOG_TRACE_ENTERING(logging);
     if (_at_step_action_ != 0) {
       (*_at_step_action_) (status_, iter_, x_, dim_, f_);
     }
+    DT_LOG_TRACE_EXITING(logging);
     return;
   }
 
@@ -724,6 +721,8 @@ namespace mygsl {
 
   int multidimensional_minimization::minimize (double epsabs_)
   {
+    DT_LOG_TRACE_ENTERING(logging);
+
     size_t iter   = 0;
     int    status = 0;
     size_t dim    = 0;
@@ -737,36 +736,60 @@ namespace mygsl {
 
     do {
       iter++;
-
+      DT_LOG_DEBUG(logging, "Iteration #" << iter);
+      bool break_me = false;
+      
       if (_mode_ == MODE_F) {
+        DT_LOG_DEBUG(logging, "-> MODE_F");
         dim = _f_.n;
         status = gsl_multimin_fminimizer_iterate (_fmin_);
+        DT_LOG_DEBUG(logging, "-> status = " << status);
         if (status != 0) {
-          break;
+          break_me = true;
         }
         double size = gsl_multimin_fminimizer_size (_fmin_);
+        DT_LOG_DEBUG(logging, "-> size = " << size);
+        DT_LOG_DEBUG(logging, "-> epsabs = " << _epsabs_);
         status = gsl_multimin_test_size (size, _epsabs_);
+        DT_LOG_DEBUG(logging, "-> status = " << status);
         x = _fmin_->x->data;
         fx = _fmin_->fval;
+        DT_LOG_DEBUG(logging, "-> END MODE_F");
       }
 
       if (_mode_ == MODE_FDF) {
+        DT_LOG_DEBUG(logging, "-> MODE_FDF");
         dim = _fdf_.n;
         status = gsl_multimin_fdfminimizer_iterate (_fdfmin_);
+        DT_LOG_DEBUG(logging, "-> status = " << status);
         if (status != 0) {
-          break;
+          break_me = true;
         }
         status = gsl_multimin_test_gradient (_fdfmin_->gradient, _epsabs_);
         x = _fdfmin_->x->data;
         fx = _fdfmin_->f;
+        DT_LOG_DEBUG(logging, "-> END MODE_FDF");
       }
-      _at_step_hook (status, iter, x, dim, fx);
+      
+      _at_step_hook(status, iter, x, dim, fx);
       _fval_ = fx;
-      if ((iter % _modulo_iter_) == 0) {
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Iteration #" << iter << " Fval == " << _fval_);
-        _sys_->print_status (std::clog);
-        std::clog << std::endl;
+      if (datatools::logger::is_debug(logging)) {
+        if ((iter % _modulo_iter_) == 0 or iter < 10) {
+          DT_LOG_DEBUG_SHORT(logging, "Iteration #" << iter << " Fval == " << _fval_);
+          _sys_->print_status (std::cerr);
+          std::cerr << std::endl;
+        }
       }
+      
+      if (break_me) {
+        DT_LOG_DEBUG(logging, "Iteration break!");
+        break;
+      }
+      DT_LOG_DEBUG(logging, "Status       = " << status);
+      DT_LOG_DEBUG(logging, "GSL_SUCCESS  = " << GSL_SUCCESS);
+      DT_LOG_DEBUG(logging, "GSL_CONTINUE = " << GSL_CONTINUE);
+      DT_LOG_DEBUG(logging, "Max iter     = " << _max_iter_);
+      DT_LOG_DEBUG(logging, "iter         = " << iter);
 
     } while ((status == GSL_CONTINUE) && (iter < _max_iter_));
 
@@ -775,6 +798,7 @@ namespace mygsl {
       _sys_->from_double_star (x, dim);
     }
 
+    DT_LOG_TRACE_EXITING(logging);
     return status;
   }
 
