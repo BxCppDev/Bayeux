@@ -121,10 +121,15 @@ namespace mygsl {
     init(sample_, start_, step_, 0.0, max_freq_cutoff_);
     return;
   }
-
+_
   double fft_real::get_frequency_step() const
   {
     return _F0_ / _n_;
+  }
+   
+  double fft_real::get_nyquist_frequency() const
+  {
+    return _Nyquist_freq_;
   }
 
   void fft_real::dump(std::ostream & out_,  bool dump_arrays_) const

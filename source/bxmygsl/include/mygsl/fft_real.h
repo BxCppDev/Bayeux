@@ -37,6 +37,8 @@ namespace mygsl {
                double max_freq_cutoff_);
 
     double get_frequency_step() const;
+    
+    double get_nyquist_frequency() const;
 
     void dump(std::ostream & out_, bool dump_arrays_ = true) const;
 
