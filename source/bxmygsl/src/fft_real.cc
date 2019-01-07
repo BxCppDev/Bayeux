@@ -121,7 +121,7 @@ namespace mygsl {
     init(sample_, start_, step_, 0.0, max_freq_cutoff_);
     return;
   }
-_
+
   double fft_real::get_frequency_step() const
   {
     return _F0_ / _n_;
