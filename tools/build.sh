@@ -167,6 +167,9 @@ fi
 linuxbrew_prefix=$(brew --prefix)
 echo >&2 "[info] Linuxbrew prefix : '${linuxbrew_prefix}'"
 
+boostdir="$(brew --prefix boost)"
+boost_option="-DBoost_ROOT=${boostdir}"
+
 qt5dir="$(brew --prefix qt5-base)/lib/cmake"
 qt_option1="-DQt5Core_DIR=${qt5dir}/Qt5Core"
 qt_option2="-DQt5Gui_DIR=${qt5dir}/Qt5Gui"
@@ -178,6 +181,7 @@ echo >&2 " - bayeux_version   = ${bayeux_version}"
 echo >&2 " - linuxbrew_prefix = ${linuxbrew_prefix}"
 echo >&2 " - build_dir        = ${build_dir}"
 echo >&2 " - install_dir      = ${install_dir}"
+echo >&2 " - Boost dir        = ${boostdir}"
 echo >&2 " - Qt5 dir          = ${qt5dir}"
 
 if [ ${dry_run} = True ]; then
@@ -207,6 +211,7 @@ cmake \
     -DBAYEUX_WITH_LAHAGUE=OFF \
     -DBAYEUX_WITH_GEANT4_MODULE=ON \
     -DBAYEUX_WITH_MCNP_MODULE=OFF \
+    ${boost_option} \
     -DBAYEUX_WITH_QT_GUI=ON \
     ${qt_option1} \
     ${qt_option2} \
