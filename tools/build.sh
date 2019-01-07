@@ -168,7 +168,7 @@ linuxbrew_prefix=$(brew --prefix)
 echo >&2 "[info] Linuxbrew prefix : '${linuxbrew_prefix}'"
 
 boostdir="$(brew --prefix boost)"
-boost_option="-DBoost_ROOT=${boostdir}"
+boost_option="-DBOOST_ROOT=${boostdir}"
 
 qt5dir="$(brew --prefix qt5-base)/lib/cmake"
 qt_option1="-DQt5Core_DIR=${qt5dir}/Qt5Core"
