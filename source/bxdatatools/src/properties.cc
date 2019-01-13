@@ -2611,12 +2611,13 @@ namespace datatools {
   }
   
   void properties::print_tree(std::ostream & out_,
-                                 const boost::property_tree::ptree & options_) const
+                              const boost::property_tree::ptree & options_) const
   {
     i_tree_dumpable::base_print_options popts;
     popts.configure_from(options_);
+    std::ostringstream outs;
     if (! popts.title.empty ()) {
-      out_ << popts.indent << popts.title << std::endl;
+      outs << popts.indent << popts.title << std::endl;
     }
     bool list_props = true;
     // if (options_.get<bool>("short")) {
@@ -2624,110 +2625,113 @@ namespace datatools {
     // }
 
     if (!_description_.empty()) {
-      out_ << popts.indent << tag
+      outs << popts.indent << tag
           << "Description  : '" << this->get_description() << "'" << std::endl;
       std::string short_desc;
-      out_ << popts.indent << skip_tag << tag
+      outs << popts.indent << skip_tag << tag
           << "Short description : ";
       if (fetch_short_description(short_desc)) {
-        out_ << "'" << short_desc << "'";
+        outs << "'" << short_desc << "'";
       } else {
-        out_ << "<none>";
+        outs << "<none>";
       }
-      out_ << std::endl;
-      out_ << popts.indent << skip_tag << last_tag
+      outs << std::endl;
+      outs << popts.indent << skip_tag << last_tag
           << "Auxiliary descriptions : ";
       std::vector<std::string> aux;
       fetch_auxiliary_descriptions(aux);
-      if (aux.size() == 0) out_ << "<none>";
-      out_ << std::endl;
+      if (aux.size() == 0) outs << "<none>";
+      outs << std::endl;
       for (std::size_t iaux = 0; iaux < aux.size(); iaux++) {
-        out_ << popts.indent << skip_tag << last_skip_tag;
+        outs << popts.indent << skip_tag << last_skip_tag;
         if (iaux + 1 == aux.size()) {
-          out_ << last_tag;
+          outs << last_tag;
         } else {
-          out_ << tag;
+          outs << tag;
         }
-        out_ << "Aux: '" << aux[iaux] << "'";
-        out_ << std::endl;
+        outs << "Aux: '" << aux[iaux] << "'";
+        outs << std::endl;
       }
     }
 
-    out_ << popts.indent << inherit_tag(popts.inherit)
+    outs << popts.indent << inherit_tag(popts.inherit)
         << "Properties : ";
     if (_props_.size() == 0) {
-      out_ << "<empty>";
+      outs << "<empty>";
     } else {
-      out_ << '[' << _props_.size() << ']';
+      outs << '[' << _props_.size() << ']';
     }
-    out_ << std::endl;
+    outs << std::endl;
     if (list_props && _props_.size()) {
       for (pmap::const_iterator i = _props_.begin();
            i != _props_.end();
            ++i) {
         const std::string & a_key = i->first;
         const properties::data & a_data = i->second;
-        out_ << popts.indent << inherit_skip_tag(popts.inherit);
+        outs << popts.indent << inherit_skip_tag(popts.inherit);
         std::ostringstream indent_oss;
         indent_oss << popts.indent;
+        indent_oss << inherit_skip_tag(popts.inherit);
         pmap::const_iterator j = i;
         j++;
         if (j == _props_.end()) {
-          out_ << i_tree_dumpable::inherit_tag(popts.inherit);
+          outs << i_tree_dumpable::inherit_tag(popts.inherit);
           indent_oss << i_tree_dumpable::inherit_skip_tag(popts.inherit);
         } else {
-          out_ << i_tree_dumpable::tag;
+          outs << i_tree_dumpable::tag;
           indent_oss << i_tree_dumpable::skip_tag;
         }
-        out_ << "Name : " << "'" << a_key << "'" << std::endl;
-        a_data.tree_dump(out_, "", indent_oss.str());
+        outs << "Name : " << "'" << a_key << "'" << std::endl;
+        a_data.tree_dump(outs, "", indent_oss.str());
       }
     }
-  
+    
+    out_ << outs.str();
     return;
   }
   
-  void properties::tree_dump(std::ostream & out,
-                             const std::string & title,
-                             const std::string & a_indent,
-                             bool inherit) const
+  void properties::tree_dump(std::ostream & out_,
+                             const std::string & title_,
+                             const std::string & indent_,
+                             bool inherit_) const
   {
     std::string indent;
-    if (!a_indent.empty()) indent = a_indent;
-    if (!title.empty()) out << indent << title << std::endl;
+    if (!indent_.empty()) indent = indent_;
+    std::ostringstream outs;
+    if (!title_.empty()) outs << indent << title_ << std::endl;
 
     if (!_description_.empty()) {
-      out << indent << i_tree_dumpable::tag
+      outs << indent << i_tree_dumpable::tag
           << "Description  : '" << this->get_description() << "'" << std::endl;
       std::string short_desc;
-      out << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::tag
+      outs << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::tag
           << "Short description : ";
       if (fetch_short_description(short_desc)) {
-        out << "'" << short_desc << "'";
+        outs << "'" << short_desc << "'";
       } else {
-        out << "<none>";
+        outs << "<none>";
       }
-      out << std::endl;
-      out << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::last_tag
+      outs << std::endl;
+      outs << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::last_tag
           << "Auxiliary descriptions : ";
       std::vector<std::string> aux;
       fetch_auxiliary_descriptions(aux);
-      if (aux.size() == 0) out << "<none>";
-      out << std::endl;
+      if (aux.size() == 0) outs << "<none>";
+      outs << std::endl;
       for (std::size_t iaux = 0; iaux < aux.size(); iaux++) {
-        out << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::last_skip_tag;
+        outs << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::last_skip_tag;
         if (iaux + 1 == aux.size()) {
-          out << i_tree_dumpable::last_tag;
+          outs << i_tree_dumpable::last_tag;
         } else {
-          out << i_tree_dumpable::tag;
+          outs << i_tree_dumpable::tag;
         }
-        out << "Aux: '" << aux[iaux] << "'";
-        out << std::endl;
+        outs << "Aux: '" << aux[iaux] << "'";
+        outs << std::endl;
       }
     }
 
     if (_props_.size() == 0) {
-      out << indent << i_tree_dumpable::inherit_tag(inherit)
+      outs << indent << i_tree_dumpable::inherit_tag(inherit_)
           << "<no property>" << std::endl;
     } else {
       for (pmap::const_iterator i = _props_.begin();
@@ -2735,22 +2739,23 @@ namespace datatools {
            ++i) {
         const std::string & a_key = i->first;
         const properties::data& a_data = i->second;
-        out << indent;
+        outs << indent;
         std::ostringstream indent_oss;
         indent_oss << indent;
         pmap::const_iterator j = i;
         j++;
         if (j == _props_.end()) {
-          out << i_tree_dumpable::inherit_tag(inherit);
-          indent_oss << i_tree_dumpable::inherit_skip_tag(inherit);
+          outs << i_tree_dumpable::inherit_tag(inherit_);
+          indent_oss << i_tree_dumpable::inherit_skip_tag(inherit_);
         } else {
-          out << i_tree_dumpable::tag;
+          outs << i_tree_dumpable::tag;
           indent_oss << i_tree_dumpable::skip_tag;
         }
-        out << "Name : " << "'" << a_key << "'" << std::endl;
-        a_data.tree_dump(out, "", indent_oss.str());
+        outs << "Name : " << "'" << a_key << "'" << std::endl;
+        a_data.tree_dump(outs, "", indent_oss.str());
       }
     }
+    out_ << outs.str();
     return;
   }
 
