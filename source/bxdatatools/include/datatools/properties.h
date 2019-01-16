@@ -437,6 +437,178 @@ namespace datatools {
       void set_logging(datatools::logger::priority);
 
       /// Read a properties container from an input stream
+      ///
+      /// This method is the base of configuration file parsing.
+      ///
+      /// Example of usage which loads a configuration file to store the configuration parameters
+      /// of an algorithm in a properties object:
+      /// \code
+      /// // A dictionary of configuration parameters
+      /// datatools::properties algo_parameters; 
+      /// uint32_t parser_options = 0;                                   // No print option
+      /// parser_options |= datatools::properties::config::LOG_DEBUG;    // Add debug option
+      /// parser_options |= datatools::properties::config::RESOLVE_PATH; // Add path resolving option
+      /// algo_parameters.read_configuration("${MYSETUP}/config/algo.conf", parser_options);
+      /// {
+      ///   // Smart print:
+      ///   boost::property_tree::ptree smart_print_options;
+      ///   smart_print_options.put("indent", "[debug] ");
+      ///   smart_print_options.put("title", "Configuration parameters for my algorithm: ");
+      ///   algo_parameters.print_tree(std::clog, smart_print_options);
+      /// }
+      /// \endcode
+      ///
+      /// Example of input file to be parsed:
+      /// \code
+      ///
+      /// # Format:
+      /// # - Comment lines start with a '#'.
+      /// # This is a  comment line...
+      /// # ...and this is another one.
+      /// test : boolean = true # The end of this property directive line is ignored.
+      /// 
+      /// # - Blank lines are ignored.
+      /// # - Lines starting with '#@' are considered as metacomments
+      /// #   with special embedded parsing options and/or actions.
+      ///
+      /// #@config Configuration parameters for a root finding algorithm
+      /// #  This metacomment provides the general description of the set of properties.
+      /// #  This directive must be given before any property directive.
+      /// 
+      /// #@description The name of the method
+      /// root_finder_type : string = "Newton-Raphson"
+      /// 
+      /// #@description The path of the log file
+      /// #  The 'as path' directive indicates that the string value must
+      /// #  be considered as a filesystem path.
+      /// log_file : string as path = "/tmp/root_finding.log"
+      ///
+      /// #@description Relative tolerance (dimensionless)
+      /// relative_epsilon : real = 5e-6
+      ///
+      /// #@description Absolute tolerance (with explicit dimension and associated unit)
+      /// #  The 'as length' directive indicates that the real value has an explicit
+      /// #  dimension. The explicit 'um' unit symbol after the numerical value must
+      /// #  match the required dimension.
+      /// absolute_epsilon : real as length = 1.5 um # micrometer
+      ///
+      /// #@description A constant value
+      /// #  The 'const' directive will prevent any modification of the property
+      /// #  value after parsing.
+      /// time_duration : const real as time = 0.05 ms
+      ///
+      /// #@verbose_parsing
+      /// #  Special directive which activates, from this point verbose parsing for debug purpose.
+      ///
+      /// #@description Maximum number of iterations
+      /// max_iterations : integer = 100
+      /// 
+      /// #@description Array of guess values to start with (unit is explicitely given)
+      /// #  The 'in mm' directive indicates that all real values in the array
+      /// #  are explicitly expressed in 'mm' unit (of 'length' dimension).
+      /// #  Also a long property directive can be splitted on several lines
+      /// #  using a final '\' (after which no character is allowed).
+      /// guess_values : real[4] in mm = \ # no additional character after '\', even a space 
+      ///   1.0 \  # no additional character after '\', even a space or comment
+      ///   1.2 \  # no additional character after '\'
+      ///   2.4 \  # no additional character after '\'
+      ///   4.8    # last value
+      ///
+      /// #@description Algorithm verbosity
+      /// logging : string = "mute"  # no print at all
+      ///
+      /// #@allow_key_override 
+      /// #  From this point, overriding already defined/duplicated properties is allowed.
+      ///
+      /// #@description Overriden algorithm verbosity (discard the first value above)
+      /// logging : string = "debug" # print debug messages
+      ///
+      /// #@forbid_key_override # Special directive
+      /// #  From this point, overriding already defined propertie is forbidden.
+      ///
+      /// #@enable_variants
+      /// #  Enable the parsing of variant preprocessor directives.
+      ///
+      /// #@variant_only math:numerical_library/if_gsl
+      /// #  This variant directive only applies to the next property directive
+      /// #  if the "math:numerical_library/if_gsl" variant condition is set.
+      /// #@description GSL error handling flag is set only if the GSL library is used
+      /// gsl_error_support : boolean = true
+      ///
+      /// #@description Default tolerance on double precision floats
+      /// #@variant_only math:tolerance/is_native|true
+      /// #  This variant directive only applies to the next property directive
+      /// #  if the "math:epsilon/is_native" variant condition is set.
+      /// #  If the variant system is not activated, the 'true' value after
+      /// #  the '|' character in the "@variant_only" directive is used to
+      /// #  consider the condition set by default.
+      /// default_epsilon : real = 1e-15
+      ///
+      /// #@variant_only math:tolerance/is_user|false
+      /// #  This variant directive only applies to the next property directive
+      /// #  if the "math:epsilon/is_user" variant condition is set.
+      /// #  The parsed value is extracted by the variant preprocessor
+      /// #  from a special variant variable (math:epsilon/is_user/epsilon) available
+      /// #  only when the "math:epsilon/is_user" condition is set.
+      /// #  If the variant system is not activated, the 'false' value after
+      /// #  the '|' character in the "@variant_only" directive is used to consider
+      /// #  the condition unset by default.
+      /// #  If the variant system is not activated, the value '1.e-7' after
+      /// #  the '|' character is used as a fallback value for this property.
+      /// # 
+      /// default_epsilon : real = @variant(math:epsilon/is_user/epsilon|1.e-7)
+      ///
+      /// #@variant_if math:numerical_library/if_std
+      /// #  This variant directive starts a conditional block of property directives.
+      /// #  The block is activated if and only if the "math:numerical_library/if_std"
+      /// #  variant condition is set.
+      /// 
+      /// #@description The identifier of the base pseudo-random number generator (PRNG)
+      /// random_prng : string = "mersenne_twister"
+      ///
+      /// # The next property directive is commented out.
+      /// # #@description The PRNG seed 
+      /// # random_seed : integer = 314159
+      /// 
+      /// #@description The path of the input file where to load initial PRNG state 
+      /// random_input_state_path : string as path = "${MYSETUP}/run_42/config/prng_state_in.state"
+      /// 
+      /// #@description The path of the output file where to save the final initial PRNG state 
+      /// random_output_state_path : string as path = "${MYSETUP}/run_42/product/prng_state_out.data"
+      ///
+      /// #@variant_endif # End of the variant conditional block of property directives
+      ///
+      /// #@description The Pi constant in explicit angular unit
+      /// #  The variant system provides three different options associated to the
+      /// #  'math:accuracy' variant parameter, each of them triggers
+      /// #  the use of a specific value for the Pi constant in this file.
+      /// #@variant_only math:accuracy/if_accurate|true
+      /// Pi : const real as angle = 3.14159265358979 radian
+      ///
+      /// #@variant_only math:accuracy/if_approximated|false
+      /// Pi : const real as angle = 3.14 radian
+      ///
+      /// #@variant_only math:accuracy/if_inaccurate|false
+      /// Pi : const real as angle = 3 radian
+      ///
+      /// #@disable_variants
+      /// #  Disable variant preprocessor directives support from this point.
+      ///
+      /// #@description GUI activation
+      /// gui : boolean = false
+      ///
+      /// #@description GUI mode
+      /// gui.mode : string = "light"
+      ///
+      /// #@description GUI colors (background, foreground then alarm foreground)
+      /// gui.colors : string[3] = "grey" "black" "red"
+      ///
+      /// #@end  # Special directive which forces the end of parsing so that next lines will be ignored
+      /// not_parsed : string = "unused" # This property is not parsed.
+      ///
+      ///
+      /// \endcode
+      /// 
       void read(std::istream & in_, properties & prop_);
 
       /// Read a properties container from an input file
@@ -1177,6 +1349,8 @@ namespace datatools {
                              uint32_t options_ = config::SMART_MODULO | config::SKIP_PRIVATE) const;
 
     //! Load the properties' container object from an ASCII text file
+    //!
+    //! \see The datatools::properties::config::read method for file format
     void read_configuration(const std::string & filename_,
                             uint32_t options_ = config::SMART_MODULO);
 
@@ -1186,6 +1360,8 @@ namespace datatools {
                              uint32_t options_ = 0);
 
     //! Load the properties' container object from an ASCII text file
+    //!
+    //! \see The datatools::properties::config::read method for file format
     static void read_config(const std::string & filename_,
                             properties & props_,
                             uint32_t options_ = 0);
