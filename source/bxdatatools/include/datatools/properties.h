@@ -406,17 +406,19 @@ namespace datatools {
 
       /// \brief Option flags used at construction
       enum options_flag {
-        SKIP_PRIVATE     = bit_mask::bit00, ///< Skip private properties bit
-        FORBID_VARIANTS  = bit_mask::bit01, ///< Forbid variant directives bit
-        LOG_MUTE         = bit_mask::bit02, ///< Mute mode activation bit
-        LOG_DEBUG        = bit_mask::bit03, ///< Debug mode activation bit
-        LOG_TRACE        = bit_mask::bit04, ///< Trace mode activation bit
-        SMART_MODULO     = bit_mask::bit05, ///< Use smart modulo (write)
-        HEADER_FOOTER    = bit_mask::bit06, ///< Use header/footer (write)
-        REQUESTED_TOPIC  = bit_mask::bit07, ///< Requested topic (read/write)
-        FORBID_INCLUDES  = bit_mask::bit08, ///< Forbid include directives bit
-        DONT_CLEAR       = bit_mask::bit09, ///< Don't clear before parsing bit (read)
-        RESOLVE_PATH     = bit_mask::bit10  ///< Resolve path for input filename (read/write)
+        SKIP_PRIVATE       = bit_mask::bit00, ///< Skip private properties bit
+        FORBID_VARIANTS    = bit_mask::bit01, ///< Forbid variant directives bit
+        LOG_MUTE           = bit_mask::bit02, ///< Mute mode activation bit
+        LOG_DEBUG          = bit_mask::bit03, ///< Debug mode activation bit
+        LOG_TRACE          = bit_mask::bit04, ///< Trace mode activation bit
+        SMART_MODULO       = bit_mask::bit05, ///< Use smart modulo (write)
+        HEADER_FOOTER      = bit_mask::bit06, ///< Use header/footer (write)
+        REQUESTED_TOPIC    = bit_mask::bit07, ///< Requested topic (read/write)
+        FORBID_INCLUDES    = bit_mask::bit08, ///< Forbid include directives bit
+        DONT_CLEAR         = bit_mask::bit09, ///< Don't clear before parsing bit (read)
+        RESOLVE_PATH       = bit_mask::bit10, ///< Resolve path for input filename (read/write)
+        ALLOW_KEY_OVERRIDE = bit_mask::bit11, ///< Allow key override (write)
+        LOG_WARNING        = bit_mask::bit12  ///< Warning mode activation bit
       };
 
       /// Constructor
@@ -517,6 +519,7 @@ namespace datatools {
       bool   _forbid_includes_;   ///< Flag to forbid include directives (read)
       bool   _requested_topic_;   ///< Flag to activate topic matching (read)
       bool   _resolve_path_;      ///< Explicitely resolve path for input/output filenames (read/write)
+      bool   _allow_key_override_ = false; ///< Allow key override when duplicated keys are parsed (read)
       std::string _topic_;             ///< Topic to be validated
       std::string _section_name_;      ///< Current section name (from hosting multi_properties, read)
       int _section_start_line_number_; ///< Current section start line number (from hosting multi_properties, read)
@@ -1175,7 +1178,7 @@ namespace datatools {
 
     //! Load the properties' container object from an ASCII text file
     void read_configuration(const std::string & filename_,
-                            uint32_t options_ = 0);
+                            uint32_t options_ = config::SMART_MODULO);
 
     //! Store the properties' container object in an ASCII text file
     static void write_config(const std::string & filename_,

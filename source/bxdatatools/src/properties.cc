@@ -3146,6 +3146,7 @@ namespace datatools {
     _forbid_includes_ = false;
     _requested_topic_ = false;
     _resolve_path_    = false;
+    _allow_key_override_ = false;
     _section_start_line_number_ = -1;
     return;
   }
@@ -3173,6 +3174,9 @@ namespace datatools {
     }
     if (options_ & LOG_TRACE) {
       set_logging(datatools::logger::PRIO_TRACE);
+    }
+    if (options_ & LOG_WARNING) {
+      set_logging(datatools::logger::PRIO_WARNING);
     }
     if (options_ & SMART_MODULO) {
       _use_smart_modulo_ = true;
@@ -3271,7 +3275,7 @@ namespace datatools {
     std::string prop_config;
     std::string prop_description;
     bool property_parsing_started = false;
-
+    bool allow_key_override = _allow_key_override_;
     bool line_goon = false;
     // 2013-04-05 FM : default is to allow unit directives for real numbers
     bool enable_real_with_unit = true;
@@ -3518,6 +3522,32 @@ namespace datatools {
                 }
               }
 
+              if (token == "@allow_key_override") {
+                bool flag_value = true;
+                iss >> std::ws;
+                std::string flag_repr;
+                std::getline(iss, flag_repr);
+                if (flag_repr == "0"
+                    or flag_repr == "false"
+                    or flag_repr == "no") {
+                  flag_value = false;
+                }
+                DT_LOG_DEBUG(logging, "Force allow key override to : " << std::boolalpha << flag_value);
+                allow_key_override = flag_value;
+              } else if (token == "@forbid_key_override") {
+                bool flag_value = true;
+                iss >> std::ws;
+                std::string flag_repr;
+                std::getline(iss, flag_repr);
+                if (flag_repr == "0"
+                    or flag_repr == "false"
+                    or flag_repr == "no") {
+                  flag_value = false;
+                }
+                DT_LOG_DEBUG(logging, "Force forbid key override to : " << std::boolalpha << flag_value);
+                allow_key_override = !flag_value;
+              }
+               
               // Warn if more than one '@config' directive is set...
               if (token == "@config") {
                 DT_PROP_CFG_READ_THROW_IF(property_parsing_started,
@@ -3618,10 +3648,10 @@ namespace datatools {
                                     _current_line_number_,
                                     "Cannot find assign symbol '" << _format::ASSIGN_CHAR << "'!");
           property_parsing_started = true;
-          // parse property desc:
+          // Parse property desc:
           std::string property_desc_str = line_parsing.substr(0, flag_pos);
           DT_LOG_TRACE(logging, "property_desc_str='" << property_desc_str << "'");
-          // parse property value:
+          // Parse property value:
           std::string property_value_str = line_parsing.substr(flag_pos+1);
           DT_LOG_TRACE(logging, "property_value_str='" << property_value_str << "'");
           bool scalar = true;
@@ -3931,7 +3961,7 @@ namespace datatools {
              *
              *  Example:
              *
-             *  #@variant_only !trigger:trigger_mode/multiplicity_mode
+             *  #@variant_only !trigger:trigger_mode/if_multiplicity_mode
              *  #@description The ADC threshold of the trigger system (when the trigger runs NO multiplicity mode)
              *  trigger.adc.threshold : real = 15 mV
              *
@@ -4013,7 +4043,8 @@ namespace datatools {
                                             _section_name_,
                                             _section_start_line_number_,
                                             _current_line_number_,
-                                            "Cannot read boolean value from '" << effective_property_values_line << "' for key '"
+                                            "Cannot read boolean value from '"
+                                            << effective_property_values_line << "' for key '"
                                             << prop_key << "' at line '" << line << "' !");
                 } else {
                   uint32_t read_flags = 0;
@@ -4216,7 +4247,8 @@ namespace datatools {
                       }
                       message_oss << ": ";
                     }
-                    message_oss << "There are unprocessed trailing characters '" << trailing_bits << "' after value record of property '"
+                    message_oss << "There are unprocessed trailing characters '"
+                                << trailing_bits << "' after value record of property '"
                                 << prop_key << "'!";
                     DT_LOG_WARNING(_logging_,message_oss.str());
                   }
@@ -4233,6 +4265,15 @@ namespace datatools {
               //          }
               //        }
               // }
+
+              if (props_.has_key(prop_key)) {
+                if (allow_key_override) {
+                  DT_LOG_WARNING(get_logging(), "Overriding already defined property with key '" << prop_key << "'");
+                  props_.clean(prop_key);
+                } else {
+                  DT_THROW(std::logic_error, "Key '" << prop_key << "' is already used and override is not allowed!");
+                }
+              }
 
               if (store_it) {
                 if (scalar) {

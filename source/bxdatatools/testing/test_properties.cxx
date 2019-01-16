@@ -342,10 +342,14 @@ void test_more()
 
   std::string setup_file = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample.conf";
   datatools::fetch_path_with_env(setup_file);
-  datatools::properties::read_config(setup_file, setup);
-  setup.tree_dump
-    (std::cout, "Setup: ");
-
+  uint32_t read_options = datatools::properties::config::LOG_WARNING;
+  datatools::properties::read_config(setup_file, setup, read_options);
+  {
+    boost::property_tree::ptree options;
+    options.put("indent", "[debug] ");
+    options.put("title", "Properties sample : ");
+    setup.print_tree(std::cout, options);
+  }
   if (setup.has_key("x")) {
     double x = setup.fetch_real_with_explicit_dimension("x", "length");
     std::clog << "x (naked) = "<< x << std::endl;
