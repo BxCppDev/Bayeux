@@ -1,11 +1,11 @@
 /// \file datatools/properties.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
- * Last modified: 2018-08-31
+ * Last modified: 2019-01-17
  *
  * License:
  *
- * Copyright (C) 2008-2018 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2008-2019 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,19 +61,66 @@ namespace datatools {
   /**
    *  The properties class provides a serializable container that holds
    *  many different data of different types (bool, int, double, string)
-   *  as well as size arrays (std::vector) of these build-in types.
+   *  as well as sized arrays (std::vector) of these build-in types.
    *
    * Additional features are available for some types of properties:
    *
    * - explicit support for units with real parameters
    * - string parameters possibly marked as filesystem path
-   * - support for variant configuration parametersat parsing
+   * - support for variant configuration parameter parsing
    * 
    * The properties class is provided with different I/O mechnisms:
    *
    * - Boost/Serialization I/O (text, binary, XML archives)
    * - I/O to/from plain ASCII files (with 'variant' support)
    *
+   * Example:
+   *
+   * \code
+   * // Instantiate a container of arbitrary parameters:
+   * datatools::properties my_parameters;
+   *
+   * // Store properties:
+   * my_parameters.store("test", true, "Test flag");
+   * my_parameters.store("nitems", 42, "Number of items");
+   * my_parameters.store("favorite_color", "Blue", "my favorite color");
+   * my_parameters.store("ratio", 3.14159, "The Pi ratio");
+   * my_parameters.store_with_explicit_unit("width", 12.34 * CLHEP::meter, "The width of the table");
+   * my_parameters.set_unit_symbol("width", "mm");
+   * std::vector<double> pos({ 1.2 * CLHEP::km, 3.4 * CLHEP::km});
+   * my_parameters.store("position", pos, "The position on the 2D-map");
+   * my_parameters.set_unit_symbol("position", "km");
+   *
+   * // Smart print:
+   * std::cout << "My parameters: " << std::endl;
+   * my_parameters.print_tree(std::cout);
+   *
+   * // Save as a file:
+   * my_parameters.write_configuration("my_params.conf");
+   *
+   * // Fetch properties:
+   * bool test = my_parameters.fetch_boolean("test");
+   * uint32_t nitems = my_parameters.fetch_positive_integer("nitems");
+   * std::string favorite_color = my_parameters.fetch_string("favorite_color");
+   * double ratio = my_parameters.fetch_dimensionless_real("ratio");
+   * double width = my_parameters.fetch_real_with_explicit_dimension("width", "length");
+   *
+   * // Instantiate another container:
+   * datatools::properties my_parameters2;
+   *
+   * // Load it from the configuration file:
+   * my_parameters2.read_configuration("my_params.conf");
+   *
+   * // Smart print:
+   * std::cout << "My parameters: " << std::endl;
+   * my_parameters.print_tree(std::cout);
+   *
+   * // Fetch properties:
+   * bool test2 = my_parameters2.fetch_boolean("test");
+   *
+   * 
+   * \endcode
+   * 
    */
   class properties
     : public datatools::i_serializable
@@ -166,7 +213,9 @@ namespace datatools {
       /// Get the description string associated to the stored data
       const std::string & get_description() const;
 
-      /// Set the unit symbol associated to the stored real data
+      /// Set the preferred unit symbol associated to the stored real data
+      ///
+      /// This method implies to set the *explicit unit* flag.
       int set_unit_symbol(const std::string & symbol_);
 
       /// Get the unit symbol associated to the stored real data
@@ -603,8 +652,10 @@ namespace datatools {
       /// #@description GUI colors (background, foreground then alarm foreground)
       /// gui.colors : string[3] = "grey" "black" "red"
       ///
-      /// #@end  # Special directive which forces the end of parsing so that next lines will be ignored
-      /// not_parsed : string = "unused" # This property is not parsed.
+      /// #@end
+      /// #  Special directive which forces the end of parsing so that
+      /// #  next lines will be ignored.
+      /// not_parsed : string = "unused"  # This property directive will not be parsed.
       ///
       ///
       /// \endcode

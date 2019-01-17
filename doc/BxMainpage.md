@@ -80,7 +80,7 @@ of the License, or (at your option) any later version.
 
 ~~~~~~~
 
- Copyright (C) 2008-2018 François Mauger, LPC Caen CNRS/IN2P3 and Université de Caen Normandie
+ Copyright (C) 2008-2019 François Mauger, LPC Caen CNRS/IN2P3 and Université de Caen Normandie
  Contact: mauger@lpccaen.in2p3.fr
 
  This file is part of the Bayeux library.
