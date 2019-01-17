@@ -21,11 +21,12 @@ or macOS 10.
 Additions
 =========
 
-* mygsl : Add serialization and export methods in mygsl::tabulated_function
+* mygsl : Add serialization and export methods in mygsl::tabulated_function.
 * mygsl : Add kernel smoother algo (mygsl/kernel_smoother.h) with
           Nadaraya-Watson kernel-weigthed average functor with Gauss kernel smoother.
+* datatools: Add parsing options and documentation for the datatools::properties class.
+* datatools: Add some functionality tests of the datatools::properties class.
 
- 
 Removals
 =========
 
@@ -40,5 +41,5 @@ None.
 Fixes
 =====
 
-None.
+* datatools: Fix smart print method of the datatools::properties class.
 
