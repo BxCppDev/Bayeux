@@ -1,3 +1,6 @@
+#include "brio/detail/TArrayCMod.h"
+#include "brio/detail/brio_record.h"
+
 #ifdef __CINT__
 #pragma link off all globals;
 #pragma link off all classes;
