@@ -93,7 +93,7 @@ namespace bayeux {
 
       _bxinit = true;
     }
-     return;
+    return;
   }
 
   void terminate()
