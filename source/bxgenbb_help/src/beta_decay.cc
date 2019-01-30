@@ -526,10 +526,10 @@ namespace genbb {
     }
 
     if (_electron_shakeoff_mode_ == ESO_RANDOM_CHARGE) {
-      double prob_cumul = 0;
+      double prob_cumul = 0.0;
       std::set<int> charges;
       for (int i = 0; i < (int) _electron_shakeoff_data_random_.size(); i++) {
-        int charge =  _electron_shakeoff_data_random_[i].charge;
+        int charge = _electron_shakeoff_data_random_[i].charge;
         DT_THROW_IF(charges.count(charge),
                     std::logic_error,
                     "Electron shakeoff random charge state ["
@@ -540,6 +540,7 @@ namespace genbb {
                     "Invalid electron shakeoff random charge state ["
                     << _electron_shakeoff_fixed_charge_ << "] for the recoil ion!");
         prob_cumul += _electron_shakeoff_data_random_[i].probability;
+        _electron_shakeoff_data_random_[i].cumul_probability = prob_cumul;
       }
       for (int i = 0; i < (int) _electron_shakeoff_data_random_.size(); i++) {
         _electron_shakeoff_data_random_[i].cumul_probability /= prob_cumul;

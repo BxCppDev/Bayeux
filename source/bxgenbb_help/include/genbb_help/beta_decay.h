@@ -98,7 +98,7 @@ namespace genbb {
 
     /// \brief Entry for a given daughter recoil ion's charge state
     struct electron_shakeoff_entry {
-      int    charge;            //!< Daughter recoil ion's cHarge state
+      int    charge;            //!< Daughter recoil ion's charge state
       double probability;       //!< Probability
       double cumul_probability; //!< Cumulative probability
     };
