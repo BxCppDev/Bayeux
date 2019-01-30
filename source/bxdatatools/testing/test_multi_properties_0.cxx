@@ -21,7 +21,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
     e1.grab_properties ().store ("depth", 1.234);
 
     if (my_bag_of_bags.get_section ("display").has_key ("colour")) {
-      clog << "Display section has colour : "
+      std::clog << "Display section has colour : "
            << my_bag_of_bags.get_section ("display").fetch_string ("colour")
            << endl;
     }
@@ -47,7 +47,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
     e3.grab_properties ().store ("depth", 0.06);
 
     // Remove a bag from the bag of bags;
-    clog << "Remove section 'display'" << endl;
+    std::clog << "Remove section 'display'" << endl;
     my_bag_of_bags.remove ("display");
 
     my_bag_of_bags.grab_section ("shape").store ("author", "Pablo Picasso");
@@ -65,11 +65,15 @@ int main (int /* argc_ */, char ** /* argv_ */)
                          datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
 
     // Print:
-    my_bag_of_bags.dump (clog);
+
+    std::clog << endl << "my_bag_of_bags :" << endl;
+    my_bag_of_bags.print_tree(clog);
     copy_bag = my_bag_of_bags;
     datatools::multi_properties clone_bag = my_bag_of_bags;
-    clone_bag.tree_dump(std::cerr, "Clone bag:");
+    std::clog << endl << "Clone bag:" << endl;
+    clone_bag.print_tree(std::clog);
   }
-  copy_bag.tree_dump(std::cerr, "Copy bag:");
+  std::clog << endl << "Copy bag:" << endl;
+  copy_bag.print_tree(std::clog);
   return 0;
 }

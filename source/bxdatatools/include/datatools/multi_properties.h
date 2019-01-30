@@ -2,11 +2,11 @@
 /* multi_properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009
- * Last modified: 2017-12-10
+ * Last modified: 2019-01-29
  *
  * License:
  *
- * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2019 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,14 +83,14 @@ namespace datatools {
    *   {
    *      datatools::multi_properties multi_parameters;
    *      multi_parameters.read ("prng_server.conf");
-   *      multi_parameters.tree_dump (std::cout, "PRNG server configuration : ");
+   *      std::cout << "PRNG server configuration : " << std::endl;
+   *      multi_parameters.print_tree(std::cout);
    *      // Check if a section with given name exists :
-   *      if (multi_parameters.has_section ("server"))
-   *        {
-   *           const datatools::properties & server_section = multi_parameters.get_section ("server");
-   *           // Read a setup parameter from the section :
-   *           std::cout << "Port number : " <<  server_section.fetch_integer ("port");
-   *        }
+   *      if (multi_parameters.has_section ("server")) {
+   *         const datatools::properties & server_section = multi_parameters.get_section ("server");
+   *         // Read a setup parameter from the section :
+   *         std::cout << "Port number : " << server_section.fetch_integer ("port");
+   *      }
    *   }
    *   return 0;
    * }
@@ -148,6 +148,12 @@ namespace datatools {
       bool has_meta() const;
 
       /// Smart print
+      void print_tree(std::ostream & out_ = std::clog,
+                      const boost::property_tree::ptree & options_ = empty_options()) const override;
+
+      /// Smart print
+      ///
+      /// \deprecated
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
@@ -336,6 +342,12 @@ namespace datatools {
     void dump(std::ostream & out_ = std::clog) const;
 
     /// Smart print
+    void print_tree(std::ostream & out_ = std::clog,
+                    const boost::property_tree::ptree & options_ = empty_options()) const override;
+    
+    /// Smart print
+    ///
+    /// \deprecated
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",

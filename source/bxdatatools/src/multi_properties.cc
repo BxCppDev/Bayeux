@@ -116,6 +116,45 @@ namespace datatools {
     return (!_meta_.empty());
   }
 
+  void multi_properties::entry::print_tree(std::ostream & out_,
+                                           const boost::property_tree::ptree & options_) const
+  {
+    i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    std::ostringstream outs;
+    if (! popts.title.empty ()) {
+      outs << popts.indent << popts.title << std::endl;
+    }
+
+    outs << popts.indent << i_tree_dumpable::tag
+          << "Key        : \"" <<  _key_ << "\"" << std::endl;
+
+    outs << popts.indent << i_tree_dumpable::tag
+          << "Meta       : \"" <<  _meta_ << "\"" << std::endl;
+
+    {
+      outs << popts.indent << i_tree_dumpable::inherit_tag(popts.inherit)
+            << "Properties : ";
+      if (_properties_.size () == 0) {
+        outs << "<empty>";
+      } else {
+        outs << '[' << _properties_.size() << ']';
+      }
+      outs << std::endl;
+      {
+        std::ostringstream indent_oss;
+        indent_oss << popts.indent;
+        indent_oss << i_tree_dumpable::inherit_skip_tag(popts.inherit);
+        boost::property_tree::ptree options2;
+        options2.put(base_print_options::indent_key(), indent_oss.str());
+        _properties_.print_tree(outs, options2);
+      }
+    }
+
+    out_ << outs.str();
+    return;
+  }
+
   void multi_properties::entry::tree_dump(std::ostream & out_,
                                           const std::string & title_,
                                           const std::string & indent_,
@@ -910,8 +949,6 @@ namespace datatools {
             iss >> std::ws;
             std::string token;
             iss >> token;
-            // std::cerr << "***************** DEVEL: token='" << token << "'" << std::endl;
-            // std::cerr << "***************** DEVEL: with blocks_started = [" << blocks_started << "]" << std::endl;
             if (token.size() > 1 && token[0] == '@') {
               if (token == "@variant_section_only") {
                 DT_THROW_IF(!enable_variants, std::logic_error,
@@ -925,7 +962,6 @@ namespace datatools {
                 std::string variant_path_rule;
                 iss >> std::ws >> variant_path_rule;
                 variant_section_only = variant_path_rule;
-                // std::cerr << "***************** DEVEL: variant_section_only = '" << variant_section_only << "'" << std::endl;
                 DT_LOG_DEBUG(_logging_,
                              (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
                              "Line " << _current_line_number_ << ": "
@@ -1105,7 +1141,6 @@ namespace datatools {
 
         // Parse line:
         if (!skip_line)  {
-          // std::cerr << "DEVEL: " << "PROCESSING LINE = '" << line << "'" << std::endl;
           std::istringstream iss_line(line);
           char c = 0;
           iss_line >> c >> std::ws;
@@ -1113,14 +1148,10 @@ namespace datatools {
           if (c == _format::OPEN_CHAR) {
             if (! blocks_started) {
               blocks_started = true;
-              // std::cerr << "DEVEL: " << "Setting blocks_started = [" << blocks_started << "]" << std::endl;
-              // std::cerr << "DEVEL: " << "blocks_started: new_section_first_line_number = [" << new_section_first_line_number << "]" << std::endl;
               if (new_section_first_line_number > 0) {
                 closed_section_first_line_number = new_section_first_line_number;
-                // std::cerr << "DEVEL: " << "Previous SECTION started at line [" << closed_section_first_line_number << "]..." << std::endl;
               }
               new_section_first_line_number = _current_line_number_;
-              // std::cerr << "DEVEL: " << "New SECTION starts at line [" << _current_line_number_ << "]..." << std::endl;
             }
             // Parse 'key/meta' line:
             iss_line >> std::ws;
@@ -1298,10 +1329,8 @@ namespace datatools {
               load_it = false;
             }
           }
-          //std::cerr << "*********** DEVEL: load_it = [" << load_it << "]" << std::endl;
 
           if (load_it) {
-            //std::cerr << "*********** DEVEL: load_it = [" << load_it << "]" << std::endl;
             DT_LOG_TRACE(_logging_,"load_it = [" << load_it << "]");
             DT_LOG_TRACE(_logging_, "load the current section '" << current_key << "' with meta='" << current_meta << "'");
             target_.add(current_key, current_meta);
@@ -1316,12 +1345,10 @@ namespace datatools {
             pcr.set_section_info(current_key, closed_section_first_line_number);
             std::istringstream block_iss(current_block_oss.str());
             pcr.read(block_iss, e.grab_properties());
-            // std::cerr << "*********** DEVEL: load_it is done" << std::endl;
             DT_LOG_TRACE(_logging_,"load_it = [" << load_it << "] is done.");
           }
           // Reset the current block stream:
           current_block_oss.str("");
-          // std::cerr << "*********** DEVEL: current_block_oss = '" << current_block_oss.str() << "'"  << std::endl;
         }
         // update new key/meta values:
         current_key = new_key;
@@ -1345,6 +1372,117 @@ namespace datatools {
   void multi_properties::dump(std::ostream & out_) const
   {
     this->tree_dump(out_, "datatools::multi_properties:");
+    return;
+  }
+
+  void multi_properties::print_tree(std::ostream & out_,
+                                    const boost::property_tree::ptree & options_) const
+  {
+    i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    std::ostringstream outs;
+    if (! popts.title.empty ()) {
+      outs << popts.indent << popts.title << std::endl;
+    }
+
+    if (!_description_.empty()) {
+      outs << popts.indent << i_tree_dumpable::tag
+            << "Description  : " <<  this->get_description() << std::endl;
+    }
+
+    if (!_key_label_.empty()) {
+      outs << popts.indent << i_tree_dumpable::tag
+            << "Key label    : \""
+            << this->get_key_label()
+            << "\"" << std::endl;
+    }
+
+    if (!_meta_label_.empty()) {
+      outs << popts.indent << i_tree_dumpable::tag
+            << "Meta label   : \"" << this->get_meta_label()
+            << "\"" << std::endl;
+    }
+
+    {
+      outs << popts.indent << i_tree_dumpable::tag
+            << "Entries      : ";
+      if (_entries_.size() == 0) {
+        outs << "<empty>";
+      } else {
+        outs << "[" << _entries_.size() << "]";
+      }
+
+      outs << std::endl;
+      for (entries_ordered_col_type::const_iterator i = _ordered_entries_.begin();
+           i != _ordered_entries_.end();
+           ++i) {
+        const entry& a_entry = **i;
+        const std::string & local_key = a_entry.get_key();
+        outs << popts.indent;
+        std::ostringstream indent_oss;
+        indent_oss << popts.indent;
+        entries_ordered_col_type::const_iterator j = i;
+        outs << i_tree_dumpable::skip_tag;
+        indent_oss << i_tree_dumpable::skip_tag;
+
+        if (++j == _ordered_entries_.end()) {
+          outs << i_tree_dumpable::last_tag;
+          indent_oss << i_tree_dumpable::last_skip_tag;
+        } else {
+          outs << i_tree_dumpable::tag;
+          indent_oss << i_tree_dumpable::skip_tag;
+        }
+        outs << "Entry : " << '"' << local_key << '"';
+        if (properties::key_is_private(local_key)) outs << " [private]";
+        outs << std::endl;
+        boost::property_tree::ptree options2;
+        options2.put(base_print_options::indent_key(), indent_oss.str());
+        a_entry.print_tree(outs, options2);
+      }
+    }
+
+    {
+      int rank = 0;
+      outs << popts.indent << i_tree_dumpable::inherit_tag(popts.inherit)
+            << "Ordered entries      : ";
+      if (_ordered_entries_.size() == 0) {
+        outs << "<empty>";
+      } else {
+        outs << "[" << _ordered_entries_.size() << "]";
+      }
+      outs << std::endl;
+
+      for (entries_ordered_col_type::const_iterator i = _ordered_entries_.begin();
+           i != _ordered_entries_.end();
+           ++i) {
+        const entry *p_entry = *i;
+        outs << popts.indent;
+        std::ostringstream indent_oss;
+        indent_oss << popts.indent;
+        entries_ordered_col_type::const_iterator j = i;
+        j++;
+        outs << i_tree_dumpable::inherit_skip_tag(popts.inherit);
+        indent_oss << i_tree_dumpable::inherit_skip_tag(popts.inherit);
+
+        if (j == _ordered_entries_.end()) {
+          outs << i_tree_dumpable::last_tag;
+          indent_oss << i_tree_dumpable::inherit_skip_tag(popts.inherit);
+        } else {
+          outs << i_tree_dumpable::tag;
+          indent_oss << i_tree_dumpable::skip_tag;
+        }
+
+        std::string local_key = p_entry->get_key();
+        outs << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
+
+        if (properties::key_is_private(local_key)) outs << " [private]";
+
+        outs << std::endl;
+        rank++;
+      }
+    }
+
+    out_ << outs.str();
     return;
   }
 
@@ -1383,11 +1521,6 @@ namespace datatools {
       }
 
       out_ << std::endl;
-      // for (entries_col_type::const_iterator i = _entries_.begin();
-      //      i != _entries_.end();
-      //      ++i) {
-      //   const std::string & local_key = i->first;
-      //   const entry& a_entry = i->second;
       for (entries_ordered_col_type::const_iterator i = _ordered_entries_.begin();
            i != _ordered_entries_.end();
            ++i) {
@@ -1402,7 +1535,7 @@ namespace datatools {
 
         if (++j == _ordered_entries_.end()) {
           out_ << i_tree_dumpable::last_tag;
-          indent_oss << i_tree_dumpable::inherit_skip_tag(inherit_);
+          indent_oss << i_tree_dumpable::last_skip_tag;
         } else {
           out_ << i_tree_dumpable::tag;
           indent_oss << i_tree_dumpable::skip_tag;

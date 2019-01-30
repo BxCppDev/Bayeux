@@ -68,13 +68,15 @@ int main (int argc_ , char ** argv_)
         datatools::multi_properties::entry & e3b = mp.grab ("object_3b");
         e3b.grab_properties ().store ("to_be_removed", true);
 
-        mp.dump (clog);
+        clog << endl << "mp :" << endl;
+        mp.print_tree(clog);
 
         clog << endl << "Removing 2 entries..." << endl;
         mp.remove ("object_3a");
         mp.remove ("object_3b");
 
-        mp.dump (clog);
+        clog << endl << "mp :" << endl;
+        mp.print_tree(clog);
 
         clog << endl << "Saving in ASCII file keeping private entries..." << endl;
         mp.write ("test_multi_properties.conf",
@@ -97,7 +99,8 @@ int main (int argc_ , char ** argv_)
         clog << "Reading from ASCII file skipping private entries..." << endl;
         mp.read ("test_multi_properties.conf",
                  datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
-        mp.dump (clog);
+        clog << "mp :" << endl;
+        mp.print_tree(clog);
         mp.write ("test_multi_properties_2.conf",
                   datatools::multi_properties::config::HEADER_FOOTER
                   | datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
@@ -109,7 +112,8 @@ int main (int argc_ , char ** argv_)
           datatools::data_reader reader (filename);
           reader.load (mp);
           clog << "Deserialization is done." << endl;
-          mp.dump (clog);
+          clog << "mp :" << endl;
+          mp.print_tree(clog);
         }
        }
 
