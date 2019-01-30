@@ -528,6 +528,7 @@ namespace genbb {
     if (_electron_shakeoff_mode_ == ESO_RANDOM_CHARGE) {
       double prob_cumul = 0.0;
       std::set<int> charges;
+      // Compute cumulative probability per charge state:
       for (int i = 0; i < (int) _electron_shakeoff_data_random_.size(); i++) {
         int charge = _electron_shakeoff_data_random_[i].charge;
         DT_THROW_IF(charges.count(charge),
@@ -542,6 +543,7 @@ namespace genbb {
         prob_cumul += _electron_shakeoff_data_random_[i].probability;
         _electron_shakeoff_data_random_[i].cumul_probability = prob_cumul;
       }
+      // Normalization of the cumulative probability per charge state:
       for (int i = 0; i < (int) _electron_shakeoff_data_random_.size(); i++) {
         _electron_shakeoff_data_random_[i].cumul_probability /= prob_cumul;
       }
