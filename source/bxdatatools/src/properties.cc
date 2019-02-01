@@ -751,7 +751,7 @@ namespace datatools {
 
         a_out << " : ";
         if (this->is_boolean()) {
-          a_out << std::dec << this->get_boolean_value(i) << std::endl;
+          a_out << std::boolalpha << this->get_boolean_value(i) << std::endl;
         }
         if (this->is_integer()) {
           a_out << std::dec << this->get_integer_value(i) << std::endl;
