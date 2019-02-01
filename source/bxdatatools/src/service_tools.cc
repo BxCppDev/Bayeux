@@ -370,6 +370,24 @@ namespace datatools {
     return true;
   }
 
+  bool service_of_type_exists(const service_dict_type & services_,
+                              const std::string & service_type_id_,
+                              const std::string & service_name_)
+  {
+    for (::datatools::service_dict_type::const_iterator iserv = services_.begin();
+         iserv != services_.end();
+         iserv++) {
+      const std::string & service_name = iserv->first;
+      if (service_name == service_name_) {
+        const ::datatools::service_entry & sentry = *iserv->second.get();
+        if (sentry.get_service_id() == service_type_id_) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   void merge_services(service_dict_type & services_, service_dict_type & merged_, bool duplicate_throw_)
   {
     for (service_dict_type::iterator iserv = merged_.begin();
@@ -388,7 +406,7 @@ namespace datatools {
   }
 
   bool find_service_name_with_id(const service_dict_type & services_,
-                                 const std::string & service_id_,
+                                 const std::string & service_type_id_,
                                  std::string & service_name_)
   {
     service_name_.clear();
@@ -397,7 +415,7 @@ namespace datatools {
          iserv++) {
       const std::string & service_name = iserv->first;
       const ::datatools::service_entry & sentry = *iserv->second.get();
-      if (sentry.get_service_id() == service_id_) {
+      if (sentry.get_service_id() == service_type_id_) {
         service_name_ = service_name;
         break;
       }
@@ -406,7 +424,7 @@ namespace datatools {
   }
 
   bool find_service_names_with_id(const service_dict_type & services_,
-                                  const std::string & service_id_,
+                                  const std::string & service_type_id_,
                                   std::vector<std::string> & service_names_)
   {
     std::size_t sz = service_names_.size();
@@ -415,7 +433,7 @@ namespace datatools {
          iserv++) {
       const std::string & service_name = iserv->first;
       const ::datatools::service_entry & sentry = *iserv->second.get();
-      if (sentry.get_service_id() == service_id_) {
+      if (sentry.get_service_id() == service_type_id_) {
         service_names_.push_back(service_name);
       }
     }
