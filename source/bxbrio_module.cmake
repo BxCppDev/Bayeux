@@ -55,57 +55,18 @@ set(${module_name}_MODULE_SOURCES
 
 # - Generate ROOT headers
 if(ROOT_VERSION VERSION_GREATER 5.99)
-  # # Need a dummy incdir as root_generate_dictionary doesn't understand genexps
-  # # and requires a nonempty INCLUDE_DIRECTORIES property
-  # ### create a random dir that shouldn't exist to create at least one entry.
-  # ### This shouldn't interfere with any other path.
-  # ### string(RANDOM LENGTH 20 __dummy_path_for_root_incdirs)
-  # # 2017-06-14 FM: use a fixed dummy path because random path
-  # # triggers recompilation of ALL files everytime a single header file is modified:
-  # set(__dummy_path_for_root_incdirs "__dummy_path_for_root_incdirs.dir")
-  # include_directories(${__dummy_path_for_root_incdirs})
-
   # ROOT6 dictionary generation requires a MODULE arg
   set(__BRIO_MODULE_ARG MODULE Bayeux)
   set(__BRIO_ROOT_GEN_DICT_OPTS "-noIncludePaths")
 endif()
 
-set(_bxbrio_rootdict_inc_dir ${CMAKE_CURRENT_BINARY_DIR}/inc)
-file(MAKE_DIRECTORY ${_bxbrio_rootdict_inc_dir})
-file(MAKE_DIRECTORY ${_bxbrio_rootdict_inc_dir}/${module_name})
-file(MAKE_DIRECTORY ${_bxbrio_rootdict_inc_dir}/${module_name}/detail)
-file(MAKE_DIRECTORY ${BAYEUX_BUILD_LIBDIR}/bayeux/${module_name}/detail)
-configure_file(${module_include_dir}/${module_name}/detail/brio_record.h
-  ${_bxbrio_rootdict_inc_dir}/${module_name}/detail/brio_record.h COPYONLY)
-configure_file(${module_include_dir}/${module_name}/detail/TArrayCMod.h
-  ${_bxbrio_rootdict_inc_dir}/${module_name}/detail/TArrayCMod.h COPYONLY)
-include_directories(${_bxbrio_rootdict_inc_dir})
-configure_file(${_bxbrio_rootdict_inc_dir}/${module_name}/detail/brio_record.h
-  ${BAYEUX_BUILD_LIBDIR}/bayeux/${module_name}/detail/brio_record.h
-  COPYONLY
-  )
-configure_file(${_bxbrio_rootdict_inc_dir}/${module_name}/detail/TArrayCMod.h
-  ${BAYEUX_BUILD_LIBDIR}/bayeux/${module_name}/detail/TArrayCMod.h
-  COPYONLY
-  )
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/bxbrio/include)
 root_generate_dictionary(brio_dict
-  ${CMAKE_CURRENT_BINARY_DIR}/inc/${module_name}/detail/brio_record.h
-  ${CMAKE_CURRENT_BINARY_DIR}/inc/${module_name}/detail/TArrayCMod.h
   ${__BRIO_MODULE_ARG}
   LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
-  OPTIONS "-I${CMAKE_CURRENT_BINARY_DIR}/inc" ${__BRIO_ROOT_GEN_DICT_OPTS}
+  OPTIONS ${__BRIO_ROOT_GEN_DICT_OPTS}
   )
 
-# if(ROOT_VERSION VERSION_GREATER 5.99)
-#   execute_process(
-#     COMMAND sed -e "s@\"${CMAKE_CURRENT_BINARY_DIR}/\",@/* */@g" ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
-#     OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/brio_dict-temp.cxx
-#     )
-#   execute_process(
-#     COMMAND mv ${CMAKE_CURRENT_BINARY_DIR}/brio_dict-temp.cxx ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
-#     )
-# endif()
 
 list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
