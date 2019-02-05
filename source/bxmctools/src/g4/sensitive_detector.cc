@@ -903,7 +903,7 @@ namespace mctools {
         const G4Material * the_g4_material = step_->GetTrack()->GetMaterial();
         std::string material_ref = the_g4_material->GetName().data();
         boost::replace_all(material_ref, "__" , "::");
-        new_hit->grab_hit_data().set_particle_name(material_ref);
+        new_hit->grab_hit_data().set_material_name(material_ref);
         // hit_aux.store_string(material_ref_key, material_ref);
       }
 
