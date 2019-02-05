@@ -26,6 +26,9 @@ Additions
           Nadaraya-Watson kernel-weigthed average functor with Gauss kernel smoother.
 * datatools: Add parsing options and documentation for the datatools::properties class.
 * datatools: Add some functionality tests of the datatools::properties class.
+* datatools: Add new smart print interface to the datatools::properties
+  and datatools::multi_properties classes.
+* PR#27: Support C++17 and C++20.
 
 Removals
 =========
@@ -35,11 +38,11 @@ None.
 Changes
 =======
 
-None.
-
 
 Fixes
 =====
 
-* datatools: Fix smart print method of the datatools::properties class.
-
+* datatools: Fix smart print methods of the datatools::properties class.
+* genbb: Fix bug in probability normalization in beta decay classes with electron
+  shakeoff randomized charge state.
+* mctools: Fix bug in sensitive detector (material name stored in place of particle name).
