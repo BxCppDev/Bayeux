@@ -377,12 +377,13 @@ install(DIRECTORY ${BAYEUX_BUILD_INCLUDEDIR}/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   )
 
-if(Bayeux_WITH_ROOTDICT)
-  # Special install of some brio header files used by ROOT dictionary:
-  install(DIRECTORY ${BAYEUX_BUILD_LIBDIR}/bayeux
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/
-    )
-endif()
+### 2019-02-20, FM+RC: remove this hack after broken PR #28
+# if(Bayeux_WITH_ROOTDICT)
+#   # Special install of some brio header files used by ROOT dictionary:
+#   install(DIRECTORY ${BAYEUX_BUILD_LIBDIR}/bayeux
+#     DESTINATION ${CMAKE_INSTALL_LIBDIR}/
+#     )
+# endif()
 
 #-----------------------------------------------------------------------
 # Configure/Install support files
