@@ -48,6 +48,7 @@ bayeux_version="develop"
 install_base_dir=$(pwd)/_install.d
 build_base_dir=$(pwd)/_build.d
 clean_build_dir=false
+bayeux_prefix=
 
 function cl_parse()
 {
@@ -73,6 +74,9 @@ function cl_parse()
 	elif [ "${arg}" = "--build-base-dir" ]; then
 	    shift 1
 	    build_base_dir=$1
+	elif [ "${arg}" = "--bayeux-prefix" ]; then
+	    shift 1
+	    bayeux_prefix=$1
 	elif [ "${arg}" = "--clean-build-dir" ]; then
 	    clean_build_dir=true
 	fi
@@ -133,8 +137,8 @@ bx_branch=$(git --git-dir=${bayeux_source_dir}/.git --work-tree=${bayeux_source_
 echo >&2 "[info] Bayeux Git branch: '${bx_branch}'"
 bayeux_version=${bx_branch}
 
-install_dir=${install_base_dir}/${bayeux_version}
-build_dir=${build_base_dir}/${bayeux_version}
+install_dir=${install_base_dir}/${bayeux_version}${bayeux_prefix}
+build_dir=${build_base_dir}/${bayeux_version}${bayeux_prefix}
 
 # Check Linuxbrew:
 which brew > /dev/null 2>&1
