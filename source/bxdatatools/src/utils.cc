@@ -776,7 +776,7 @@ namespace datatools {
               std::ostringstream message;
               message << "wordexp expands to many tokens : ";
               for (size_t i = 0; i < p.we_wordc; i++) {
-                message << " '" << w[i]<< "'";
+                message << " '" << w[i] << "'";
               }
               DT_THROW_IF(true, std::logic_error, message.str());
             } else {
