@@ -54,10 +54,11 @@ set(Bayeux_docs_FOUND "@BAYEUX_WITH_DOCS@")
 # End of Cmake Generated
 
 #-----------------------------------------------------------------------
-# set_and_check(Bayeux_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/@PROJECT_CMAKEDIR_TO_INCLUDEDIR@")
-# set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux" )
-# message( STATUS "Bayeux_INCLUDE_DIR  = ${Bayeux_INCLUDE_DIR}")
-# message( STATUS "Bayeux_INCLUDE_DIRS = ${Bayeux_INCLUDE_DIRS}")
+# Though usage requirements help clients link, variables for the
+# header path(s) may still be needed by tools needed downstream, such
+# as ROOT dictionary generation
+set_and_check(Bayeux_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/@PROJECT_CMAKEDIR_TO_INCLUDEDIR@")
+set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux" )
 
 #-----------------------------------------------------------------------
 # - Refind third party deps here to regenerate imported targets
