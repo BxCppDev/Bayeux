@@ -53,9 +53,9 @@ namespace mctools {
     //! \brief The set of parameters for the Geant4 simulation manager
     struct manager_parameters
     {
-      bool        interactive;             //!< Flag to activate the interactive mode
+      bool        interactive = false;     //!< Flag to activate the interactive mode
       std::string g4_macro;                //!< Name of a Geant4 macro to be executed
-      bool        g4_visu;                 //!< Flag to activate Geant4 visulization
+      bool        g4_visu = false;         //!< Flag to activate Geant4 visulization
       std::string logging;                 //!< Logging priority threshold label
       std::vector<std::string> dlls;       //!< List of DLLs to be loaded
       std::string dll_loader_config;       //!< Configuration file of the DLL loader
@@ -77,11 +77,11 @@ namespace mctools {
       std::string eg_name;                 //!< Name of the primary event generator
       int         eg_seed;                 //!< Seed for the primary event generator's PRNG
       int         shpf_seed;               //!< Seed for the hit post-processing factory
-      bool        using_time_stat;         //!< Print time statistic at the end of simulation run
+      bool        using_time_stat = false;         //!< Print time statistic at the end of simulation run
       std::string output_profiles_activation_rule; //!< The rule to activate Monte Carlo simulation output profiles
-      bool        forbid_private_hits;     //!< Do not save 'private' MC hits at the end of the simulated event
-      bool        dont_save_no_sensitive_hit_events; //!< Do not save 'no sensitive' MC hits
-      bool        use_run_header_footer;   //!< Add a header/footer in the output data file
+      bool        forbid_private_hits = false;     //!< Do not save 'private' MC hits at the end of the simulated event
+      bool        dont_save_no_sensitive_hit_events = false; //!< Do not save 'no sensitive' MC hits
+      bool        use_run_header_footer = false;   //!< Add a header/footer in the output data file
 
     public:
 

@@ -414,15 +414,15 @@ namespace mctools {
     void event_action::_process_sensitive_hits_(const G4Event* event_, bool & save_this_event_)
     {
       // Process the list of sensitive hits:
-      if (_run_action_->get_manager ().using_time_stat ()) {
-        _run_action_->grab_manager ().grab_CT_map ()["HP"].start ();
+      if (_run_action_->get_manager().using_time_stat()) {
+        _run_action_->grab_manager().grab_CT_map()["HP"].start();
       }
 
-      G4HCofThisEvent * HCE = event_->GetHCofThisEvent ();
+      G4HCofThisEvent * HCE = event_->GetHCofThisEvent();
 
       DT_LOG_DEBUG(_logprio(), "List of sensitive hit collections : ");
-      for (int i = 0; i < (int) HCE->GetCapacity (); i++ ) {
-        G4VHitsCollection * hc = HCE->GetHC (i);
+      for (int i = 0; i < (int) HCE->GetCapacity(); i++ ) {
+        G4VHitsCollection * hc = HCE->GetHC(i);
         if (hc != 0) {
           DT_LOG_DEBUG(_logprio(), "Hit collection '" << hc->GetName()
                        << "' for sensitive detector '" << hc->GetSDname()<< "' @ " << hc);
@@ -430,13 +430,13 @@ namespace mctools {
       }
 
       // Process the list of sensitive hits:
-      if (_run_action_->get_manager ().using_time_stat ()) {
-        _run_action_->grab_manager ().grab_CT_map ()["HP"].start ();
+      if (_run_action_->get_manager().using_time_stat()) {
+        _run_action_->grab_manager().grab_CT_map()["HP"].start();
       }
 
       DT_LOG_DEBUG(_logprio(), "List of sensitive hit collections : ");
-      for (int i = 0; i < (int) HCE->GetCapacity (); i++ ) {
-        G4VHitsCollection * hc = HCE->GetHC (i);
+      for (int i = 0; i < (int) HCE->GetCapacity(); i++ ) {
+        G4VHitsCollection * hc = HCE->GetHC(i);
         if (hc != 0) {
           DT_LOG_DEBUG(_logprio(), "Hit collection '" << hc->GetName()
                        << "' for sensitive detector '" << hc->GetSDname()<< "' @ " << hc);
@@ -446,8 +446,8 @@ namespace mctools {
       // Loop on the dictionnary of sensitive detectors:
       int public_sensitive_category_counter = 0;
       for (detector_construction::sensitive_detector_dict_type::const_iterator iSD
-             = _detector_construction_->get_sensitive_detectors ().begin ();
-           iSD != _detector_construction_->get_sensitive_detectors ().end ();
+             = _detector_construction_->get_sensitive_detectors().begin();
+           iSD != _detector_construction_->get_sensitive_detectors().end();
            iSD++) {
         const std::string & sensitive_category = iSD->first;
         sensitive_detector & the_detector = *iSD->second;
@@ -455,7 +455,7 @@ namespace mctools {
         DT_LOG_DEBUG(_logprio(), "Processing hits from sensitive detector '"
                      << sensitive_category << "'...");
         // sensitive_detector::make_hit_collection_name (sensitive_category)
-        G4VHitsCollection * the_hits_collection = HCE->GetHC (the_detector.get_HCID ());
+        G4VHitsCollection * the_hits_collection = HCE->GetHC(the_detector.get_HCID());
         if (the_hits_collection == 0) {
           DT_LOG_DEBUG(_logprio(),
                        "No hit to process from sensitive detector '"

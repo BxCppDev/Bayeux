@@ -38,6 +38,8 @@ None.
 Changes
 =======
 
+* brio: Allow file opening through the static API ``TFile::Open`` using URL
+  and not only local filesystem path.
 
 Fixes
 =====

@@ -191,7 +191,8 @@ namespace brio {
                      << "' is not recommended !");
     }
     std::string mode("READ");
-    _file = new TFile(_filename.c_str(), mode.c_str());
+    // _file = new TFile(_filename.c_str(), mode.c_str());
+    _file = TFile::Open(_filename.c_str(), mode.c_str());
     DT_THROW_IF(_file == 0,
                 std::runtime_error,
                 "Cannot open file '" << _filename << "' !");
