@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2018-11-27
+:Date:    2019-03-19
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -159,9 +159,9 @@ environment on your system.
 Releases
 --------
 
-* Latest release: `Bayeux-3.3.0`_
+* Latest release: `Bayeux-3.4.0`_
 
-.. _`Bayeux-3.3.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.3.0
+.. _`Bayeux-3.4.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.4.0
 
 .. raw:: pdf
 
@@ -184,7 +184,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.3.0, you may use, assuming a
+For example, to download Bayeux version 3.4.0, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -192,16 +192,16 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/3.3.0.tar.gz
-   $ mkdir Bayeux-3.3.0 && tar xvzf 3.3.0.tar.gz -C Bayeux-3.3.0 --strip-components 1
-   $ cd Bayeux-3.3.0/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/3.4.0.tar.gz
+   $ mkdir Bayeux-3.4.0 && tar xvzf 3.4.0.tar.gz -C Bayeux-3.4.0 --strip-components 1
+   $ cd Bayeux-3.4.0/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.3.0/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.4.0/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.3.0
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.4.0
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -281,12 +281,12 @@ Core Libraries Required
 .......................
 
 * Boost 1.63.0 or higher: http://www.boost.org
-  with filesystem, system, serialization, iostreams, program_options, regex
-  and thread libraries.
+  with the following libraries: filesystem, system, serialization, iostreams, program_options, regex
+  and thread.
 * Camp 0.8.0 : https://github.com/tegesoft/camp
 * GSL 2.4 or higher: http://www.gnu.org/s/gsl
 * CLHEP 2.1.3.1: http://proj-clhep.web.cern.ch
-* Geant4 9.6.4: http://geant4.cern.ch
+* Geant4 9.6.4 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
 * ROOT 6.12.04: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
@@ -295,11 +295,12 @@ Core Libraries Required
   * GDML,
   * OpenGL.
 
-* Qt5:
+* Qt5 (optional)
 
 For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
 Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
-clients of Bayeux.  It is strongly advised to use this bundle.  It
+clients of Bayeux.  It is advised to use this bundle if you don't know how to install and setup
+the dependee libraries mentioned above on your system.  It
 will  provide,  for  Linux  and macOS  systems,  an  uniform  software
 environment with  a selected set  of blessed software,  including the
 C++ compiler if needed.
@@ -307,7 +308,7 @@ C++ compiler if needed.
 Note however that it is perfectly possible to use system installation
 of the above libraries if your OS distribution provides adequate support.
 
-**Note:** We  have experienced that  the use  of Linuxbrew is  not the
+**Beware:** We  have experienced that  the use  of Linuxbrew is  not the
 definitive robust  solution to solve the  software dependency problem.
 Linuxbrew sometimes fails  to provide a proper  and stable environment
 to host  and use  Bayeux, due  to rapidly  changing brew  formulas and
@@ -494,6 +495,10 @@ These options control the core configuration of Bayeux.
      * ``11`` (default) : all features of the C++11 standard in GCC 4.9 (provided
        for forward compatibility)
      * ``14``  :  same  as  ``11``  plus at  least  one  C++14  feature
+       (provided for forward compatibility)
+     * ``17``  :  same  as  ``14``  plus at  least  one  C++17  feature
+       (provided for forward compatibility)
+     * ``20``  :  same  as  ``17``  plus at  least  one  C++20  feature
        (provided for forward compatibility)
 
 ``BAYEUX_COMPILER_ERROR_ON_WARNING``
