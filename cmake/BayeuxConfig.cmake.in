@@ -16,6 +16,7 @@
 #                            for Bayeux. Empty if docs were not built
 #  Bayeux_DOXYGEN_TAGFILE  - path to Doxygen tagfile for Bayeux's docs
 #                            Empty if docs were not built
+#  Bayeux_INCLUDE_DIRS     - Bayeux include dirs
 
 #----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -93,7 +94,6 @@ set(BAYEUX_GSL_VERSION @GSL_VERSION@)
 find_package(GSL ${BAYEUX_GSL_VERSION} EXACT REQUIRED)
 
 # - ROOT
-set(Bayeux_root_FOUND @Bayeux_WITH_ROOT@)
 if(Bayeux_root_FOUND)
   # ROOT can F-up the module path and insert it's own
   # modules. Prevent it doing this.

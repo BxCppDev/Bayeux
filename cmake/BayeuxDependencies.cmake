@@ -65,9 +65,11 @@ if(Bayeux_WITH_ROOT)
 endif()
 
 if(Bayeux_WITH_QT)
-  # Minimal system Qt5 version from Ubuntu 14.04: 5.2.1
-  # version for Ubuntu 16.04: 5.5.1
-  # version for Linuxbrew 5.8.0 (June 2017)
+  # Minimal system Qt5 version
+  #  - Ubuntu 14.04: 5.2.1
+  #  - Ubuntu 16.04: 5.5.1
+  #  - Ubuntu 18.04: 5.9.5
+  # Linuxbrew : 5.10.0 (March 2019)
   set(BAYEUX_QT5_MIN_VERSION "5.2.1")
   find_package(Qt5Core    ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
   find_package(Qt5Gui     ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
