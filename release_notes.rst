@@ -28,7 +28,8 @@ Additions
 * datatools: Add some functionality tests of the datatools::properties class.
 * datatools: Add new smart print interface to the datatools::properties
   and datatools::multi_properties classes.
-* PR#27: Support C++17 and C++20.
+* PR#27: Bayeux supports C++17 and C++20.
+* PR#33: Bayeux CMake config script now defines the ``Bayeux_INCLUDE_DIRS`` variable.
 
 Removals
 =========
