@@ -21,7 +21,7 @@ Preparing Your System for Installation {#bxinstallationguide_preparation}
 To install the Bayeux stack, you first need the following:
 
 * UNIX Operating System
-  * Linux (Ubuntu 14-16, SUSE 11/12, RedHat/CentOS/Scientific 6/7)
+  * Linux (Ubuntu 18, SUSE 11/12, RedHat/CentOS/Scientific 6/7)
     * Other distributions should work provided they supply the software requirements listed below
   * Mac OS X 10.9/10/11 (Mavericks/Yosemite/El Capitan)
     * Earlier versions should work, but are not tested
@@ -30,15 +30,12 @@ To install the Bayeux stack, you first need the following:
   * An additional 1GB for the main build
 * Familiarity with the UNIX command line
 * Required Software
-  * Subversion 1.6 or above
+  * Git 2.17 or above
   * CMake 3.3 or above
   * Doxygen 1.8 or above
-  * C/C++ compiler supporting at least the C++03 standard
-    * GCC 4.5 or above, and Clang 3.1 or above are recommended
-    * If available, you should use a C++11 compliant compiler
+  * C/C++ compiler supporting at least the C++11 standard
       * GCC 4.9 or higher, Clang 3.3 or higher
-      * This is purely for the best forward compatibility, it is not a requirement.
-    * On OS X systems, you should install Xcode from the App Store, and ensure the Command Line Tools are installed
+      * On OS X systems, you should install Xcode from the App Store, and ensure the Command Line Tools are installed
 We recommend that the Required Software are installed via the relevant
 package manager (e.g.  yum, apt on Linux, Homebrew or  MacPorts on Mac
 OS X)  for your system, unless  the version requirement listed  is not
@@ -47,7 +44,7 @@ met.
 In addition to the tools used to build Bayeux, the following libraries
 are needed to support its functionality:
 
-- [Boost C++ Libraries](http://www.boost.org) 1.55.0 and higher
+- [Boost C++ Libraries](http://www.boost.org) 1.63.0 and higher
 - [CAMP C++ Reflection Library](https://github.com/tegesoft/camp) 0.7.1 and higher
 - [CLHEP C++ HEP Library](http://proj-clhep.web.cern.ch/proj-clhep/) 2.1.3.1 and higher
 - [GNU Scientific Library](http://www.gnu.org/software/gsl/) 1.15 and higher
