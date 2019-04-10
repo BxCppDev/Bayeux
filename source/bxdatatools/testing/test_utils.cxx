@@ -89,7 +89,7 @@ void test_bit_manipulation()
   return;
 }
 
-void test_path_manipulation()
+void test_path_manipulation(int argc, char* argv[])
 {
   {
     std::clog << "Testing wordexp : " << std::endl;
@@ -346,7 +346,7 @@ void test_path_manipulation()
   }
   datatools::kernel & krnl = datatools::kernel::instance();
   if (! krnl.is_initialized()) {
-    krnl.initialize(0, 0);
+    krnl.initialize(argc, argv);
   }
   if (krnl.has_library_info_register()) {
     datatools::library_info & lib_info_reg
@@ -430,13 +430,13 @@ void test_path_manipulation()
 }
 
 
-int main(int /*argc*/, const char** /*argv*/)
+int main(int argc, char** argv)
 {
   try {
 
     test_bit_manipulation();
 
-    test_path_manipulation();
+    test_path_manipulation(argc, argv);
 
     test_quotes_manipulation();
 

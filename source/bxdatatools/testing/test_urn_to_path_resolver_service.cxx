@@ -14,10 +14,10 @@
 
 void trps0();
 
-int main(int /* argc_ */, char ** /* argv_ */)
+int main(int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  datatools::initialize();
+  datatools::initialize(argc_, argv_);
   try {
     std::clog << "Test program for the 'datatools::urn_to_path_resolver_service' class."
               << std::endl;

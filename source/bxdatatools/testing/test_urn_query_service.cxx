@@ -19,9 +19,9 @@
 
 void test_urn_query_service_0();
 
-int main (int /* argc_ */, char ** /*argv_*/)
+int main (int argc_, char ** argv_)
 {
-  bayeux::initialize(0,nullptr,0);
+  bayeux::initialize(argc_,argv_,0);
   int error_code = EXIT_SUCCESS;
   try {
     std::clog << "Test of the 'datatools::urn_query_service' class..." << std::endl;

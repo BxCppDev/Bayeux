@@ -9,10 +9,10 @@
 
 void test_urn_db_service_0();
 
-int main (int /* argc_ */, char ** /*argv_*/)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  datatools::initialize();
+  datatools::initialize(argc_, argv_);
   try {
     std::clog << "Test of the 'datatools::urn_db_service' class..." << std::endl;
 

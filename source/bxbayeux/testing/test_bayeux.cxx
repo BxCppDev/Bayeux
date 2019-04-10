@@ -12,7 +12,7 @@
 #include <bayeux/datatools/urn_query_service.h>
 #include <bayeux/datatools/utils.h>
 
-int main( int /*argc_*/, char** /*argv_*/ )
+int main( int argc_, char** argv_ )
 {
   std::clog << "[info] You may activate debug logging from your shell with: \n\n"
             << "\texport BAYEUX_SYS_LOGGING=\"trace\" \n"
@@ -23,7 +23,7 @@ int main( int /*argc_*/, char** /*argv_*/ )
             << "\texport DATATOOLS_SYS_LOGGING=\"fatal\" \n"
             << std::endl;
   int result = EXIT_SUCCESS;
-  ::bayeux::initialize(0, nullptr, 0);
+  ::bayeux::initialize(argc_, argv_, 0);
 
   try {
 

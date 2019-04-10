@@ -28,7 +28,7 @@ struct processing
 
 int main(int argc_, char ** argv_)
 {
-  bayeux::initialize();
+  bayeux::initialize(argc_, argv_);
   int error_code = EXIT_SUCCESS;
   app_config params;
 

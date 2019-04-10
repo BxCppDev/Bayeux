@@ -62,7 +62,7 @@ void test_1(const params & pars_);
 
 int main (int argc_, char ** argv_)
 {
-  bayeux::initialize();
+  bayeux::initialize(argc_, argv_);
   // Register signal and signal handler
   // signal(SIGABRT, signal_callback_handler);
 
