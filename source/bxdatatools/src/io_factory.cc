@@ -250,6 +250,10 @@ namespace datatools {
     }
 
     if (_ixar_ptr_ != nullptr) {
+      // To the end?
+      if(_in_) _in_->seekg(0, std::ios_base::end);
+      if(_fin_) _fin_->seekg(0, std::ios_base::end);
+      if(_in_fs_) _in_fs_->seekg(0, std::ios_base::end);
       delete _ixar_ptr_;
       _ixar_ptr_ = nullptr;
     }
