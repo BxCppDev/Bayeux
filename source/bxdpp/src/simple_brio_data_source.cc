@@ -82,9 +82,9 @@ namespace dpp {
         file_mode = true;
         file_name = label;
         boost::replace_first (file_name, "file://", "");
-			} else if (boost::starts_with (label, "root://")) {
-				file_mode = true;
-				file_name = label;
+      } else if (boost::starts_with (label, "root://")) {
+        file_mode = true;
+        file_name = label;
       } else if (boost::starts_with (label, "http://")) {
         download_mode = true;
 #if BOOST_FILESYSTEM_VERSION == 3
