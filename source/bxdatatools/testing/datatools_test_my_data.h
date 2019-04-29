@@ -64,17 +64,17 @@ namespace datatools {
 
       const std::vector<double> & dvals() const { return _dvals_; }
 
-    private:
-
-      friend class boost::serialization::access;
-      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
-
-      public:
+    public:
 
       virtual void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
                              bool inherit_ = false) const;
+
+    private:
+
+      friend class boost::serialization::access;
+      BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
     };
 
