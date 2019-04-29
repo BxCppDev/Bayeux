@@ -886,6 +886,8 @@ namespace geomtools {
                 "Cannot find cache header in the cache file '" << cache_file_path_ << "'!");
     datatools::properties cache_header;
     cache_reader.load(cache_header);
+    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Loading the header...");
+    cache_header.print_tree(std::cerr);
     DT_THROW_IF(!cache_header.has_key("cache.class"),
                 std::logic_error,
                 "Cannot find class ID in cache header!");
@@ -905,12 +907,10 @@ namespace geomtools {
                 std::logic_error,
                 "Cannot find number of mesh nodes in cache header!");
     number_of_mesh_nodes = cache_header.fetch_integer("cache.mesh_nodes.number");
-    /*
-    std::cerr << "DEVEL: regular_3d_mesh_placement::_load_cache: "
-              << "number_of_mesh_nodes=" << number_of_mesh_nodes
-              << std::endl;
-    */
+    
+    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Number_of_mesh_nodes=" << number_of_mesh_nodes);
     for (int inode = 0; inode < number_of_mesh_nodes; inode++) {
+      // DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "inode=" << inode)
       DT_THROW_IF(!cache_reader.has_record_tag(),
                   std::logic_error,
                   "Cannot find node record in the cache file '" << cache_file_path_ << "'!");

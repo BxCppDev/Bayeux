@@ -4,6 +4,7 @@
  * Last modified: 2015-06-12
  *
  * License: GPL 3
+ *
  * Description:
  *
  *  Regular 3D mesh placement in a logical volume
@@ -34,7 +35,9 @@
 namespace geomtools {
 
   //! \brief Regular 3D mesh placement of small daughter volumes with respect to a mother logical volume
-  class regular_3d_mesh_placement : public i_placement, private boost::noncopyable
+  class regular_3d_mesh_placement
+    : public i_placement
+    , private boost::noncopyable
   {
   public:
 
@@ -141,10 +144,10 @@ namespace geomtools {
 
   private:
 
-    bool _initialized_; ///< Initialization flag
+    bool _initialized_ = false; ///< Initialization flag
     datatools::logger::priority _logging_; ///< Logging priority
-    const logical_volume * _log_vol_; ///< Reference to a logical volume
-    const logical_volume * _node_log_vol_; ///< Reference to a replicated node logical volume
+    const logical_volume * _log_vol_ = nullptr; ///< Reference to a logical volume
+    const logical_volume * _node_log_vol_ = nullptr; ///< Reference to a replicated node logical volume
     uint32_t _overlapping_flags_; ///< Flags for overlapping search
     std::string _cache_file_path_; ///< Cache file path
     double _start_x_; ///< Starting X coordinates
@@ -170,10 +173,8 @@ namespace geomtools {
 
 #endif // GEOMTOOLS_REGULAR_3D_MESH_PLACEMENT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
