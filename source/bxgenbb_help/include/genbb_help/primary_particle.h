@@ -24,8 +24,6 @@
  *
  *   Primary particle for MC generators
  *
- * History:
- *
  */
 
 #ifndef GENBB_HELP_PRIMARY_PARTICLE_H
@@ -408,6 +406,9 @@ namespace genbb {
   };
 
 } // end of namespace genbb
+
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(genbb::primary_particle, "genbb::primary_particle")
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_particle)
 
