@@ -420,6 +420,17 @@ namespace mctools {
 
 } // end of namespace mctools
 
+// #ifdef __clang__
+// #pragma clang diagnostic push
+// #pragma clang diagnostic ignored "-Wunused-local-typedef"
+// #endif
+// #include <boost/serialization/export.hpp>
+// #ifdef __clang__
+// #pragma clang diagnostic pop
+// #endif
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(mctools::base_step_hit, "mctools::base_step_hit")
+
 #if MCTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the mctools::base_step_hit class :
 DR_CLASS_INIT(::mctools::base_step_hit)

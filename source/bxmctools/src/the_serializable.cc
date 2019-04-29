@@ -12,6 +12,7 @@
 // This project:
 #include <mctools/base_step_hit.ipp>
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mctools::base_step_hit)
+BOOST_CLASS_EXPORT_IMPLEMENT(mctools::base_step_hit)
 
 #include <mctools/signal/base_signal.ipp>
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mctools::signal::base_signal)
