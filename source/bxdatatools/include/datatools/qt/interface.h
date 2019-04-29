@@ -75,7 +75,7 @@ namespace datatools {
     private:
 
       /// Constructor
-      interface(int argc_ = 0, char ** argv_ = 0, const char * name_ = 0);
+      interface(int argc_ = 0, char ** argv_ = nullptr, const char * name_ = 0);
 
     public:
 
@@ -99,12 +99,12 @@ namespace datatools {
       // Should we PIMPL ?
       // boost::scope_ptr<interface_impl> _impl_;
 
-      int _argc_;            //!< Local copy of the command line argument count
-      char ** _argv_;        //!< Local copy of the command line arguments
-      bool _arg_owned_;      //!< Flag for command line arguments ownership
-      bool _external_app_;   //!< Flag for external Qt application
-      bool _qt_initialized_; //!< Flag for Qt initialization
-      QApplication * _qt_app_; //!< Handle to the local Qt application
+      int _argc_ = 0;                    //!< Local copy of the command line argument count
+      char ** _argv_ = nullptr;          //!< Local copy of the command line arguments
+      bool _arg_owned_ = false;          //!< Flag for command line arguments ownership
+      bool _external_app_ = false;       //!< Flag for external Qt application
+      bool _qt_initialized_ = false;     //!< Flag for Qt initialization
+      QApplication * _qt_app_ = nullptr; //!< Handle to the local Qt application
 
     };
 
