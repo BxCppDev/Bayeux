@@ -24,6 +24,19 @@ if (MCTOOLS_VALIDATION_SERIALIZATION_DOWNGRADE)
 endif() 
 
 ##############
+add_executable(exbav exbav.cxx)
+
+target_link_libraries(exbav
+  PUBLIC
+  Bayeux
+  )
+
+# Output to testing subdirectory
+set_property(TARGET exbav
+  PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  )
+
+##############
 add_executable(exstore exstore.cxx)
 
 target_link_libraries(exstore

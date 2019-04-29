@@ -33,6 +33,15 @@ fi
 echo >&2 "[info] Working dir      = '${work_dir}'"
 echo >&2 "[info] Serial downgrade = ${serial_downgrade}"
 
+# Boost Archive version
+bav=$(${work_dir}/exbav)
+echo >&2 "[info] Current Boost Archive version = '${bav}'"
+
+if [ ! -d ${src_dir}/samples/bs${bav} ]; then
+    echo "[error] Boost archive version ${bav} sample directory '${src_dir}/samples/bs${bav}' does not exist ! Skip this test!" 1>&2
+    exit 0
+fi
+
 echo -e "\nLoad the sample MC hit data file (version 1)..." 1>&2
 ${work_dir}/exload -i ${src_dir}/samples/out-1.xml -o check-out-1.xml > test-1.txt
 if [ $? -ne 0 ]; then
@@ -42,14 +51,14 @@ fi
    
 if [ ${serial_downgrade} -eq 0 ]; then
     echo -e "\nCompare sample MC hit data file with check file (version 2)..." 1>&2
-    diff ${src_dir}/samples/out-2.xml check-out-1.xml
+    diff ${src_dir}/samples/bs${bav}/out-2.xml check-out-1.xml
     if [ $? -ne 0 ]; then
 	echo "[error] not matching archives of 'mctools::base_step_hit'!" 1>&2	
 	exit 1
     fi
     
     echo -e "\nLoad the sample MC hit data file (version 2)..." 1>&2
-    ${work_dir}/exload -i ${src_dir}/samples/out-2.xml -o check-out-2.xml > test-2.txt
+    ${work_dir}/exload -i ${src_dir}/samples/bs${bav}/out-2.xml -o check-out-2.xml > test-2.txt
     if [ $? -ne 0 ]; then
 	echo "[error] exload failed !" 1>&2
 	exit 1

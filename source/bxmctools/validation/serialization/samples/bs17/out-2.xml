@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="17">
+<record>MChit</record>
+<record class_id="0" tracking_level="1" version="2" object_id="_0">
+	<geomtools__base_hit class_id="1" tracking_level="1" version="1" object_id="_1">
+		<datatool__i_serializable class_id="2" tracking_level="0" version="0"></datatool__i_serializable>
+		<store>536804991</store>
+		<hit_id>12</hit_id>
+		<geom_id class_id="3" tracking_level="1" version="1" object_id="_2">
+			<datatool__i_serializable></datatool__i_serializable>
+			<type>100</type>
+			<address>
+				<count>3</count>
+				<item_version>0</item_version>
+				<item>0</item>
+				<item>1</item>
+				<item>0</item>
+			</address>
+		</geom_id>
+		<auxiliaries class_id="5" tracking_level="1" version="2" object_id="_3">
+			<datatool__i_serializable></datatool__i_serializable>
+			<description></description>
+			<properties class_id="6" tracking_level="0" version="0">
+				<count>2</count>
+				<item_version>0</item_version>
+				<item class_id="7" tracking_level="0" version="0">
+					<first>mock_hit</first>
+					<second class_id="8" tracking_level="0" version="2">
+						<description></description>
+						<flags>1</flags>
+						<boolean_values>
+							<count>1</count>
+							<item>1</item>
+						</boolean_values>
+					</second>
+				</item>
+				<item>
+					<first>mock_mc</first>
+					<second>
+						<description></description>
+						<flags>4</flags>
+						<string_values class_id="10" tracking_level="0" version="0">
+							<count>1</count>
+							<item_version>0</item_version>
+							<item>bxmctools::validation::serialization</item>
+						</string_values>
+					</second>
+				</item>
+			</properties>
+		</auxiliaries>
+	</geomtools__base_hit>
+	<position_start class_id="11" tracking_level="0" version="0">
+		<x>0.00000000000000000e+00</x>
+		<y>0.00000000000000000e+00</y>
+		<z>-2.50000000000000000e+00</z>
+	</position_start>
+	<position_stop>
+		<x>0.00000000000000000e+00</x>
+		<y>0.00000000000000000e+00</y>
+		<z>9.80000000000000071e+00</z>
+	</position_stop>
+	<time_start>1.20999999999999996e+00</time_start>
+	<time_stop>2.44399999999999995e+00</time_stop>
+	<energy_deposit>2.34000000000000874e-02</energy_deposit>
+	<particle_name>bayeutron</particle_name>
+	<biasing_weight>1.00000000000000000e+00</biasing_weight>
+	<kinetic_energy_start>1.23449999999999993e+00</kinetic_energy_start>
+	<kinetic_energy_stop>1.21109999999999984e+00</kinetic_energy_stop>
+	<step_length>1.23000000000000007e+01</step_length>
+	<entering_volume_flag>1</entering_volume_flag>
+	<creator_process_name>dummy</creator_process_name>
+	<primary_particle_flag>1</primary_particle_flag>
+	<major_track_flag>1</major_track_flag>
+	<delta_ray_from_alpha_flag>1</delta_ray_from_alpha_flag>
+	<track_id>2</track_id>
+	<parent_track_id>1</parent_track_id>
+	<material_name>water</material_name>
+	<sensitive_category>calo</sensitive_category>
+	<g4_volume_name>baz</g4_volume_name>
+	<g4_volume_copy_number>42</g4_volume_copy_number>
+	<hit_processor>tic-tac-toe</hit_processor>
+	<visu_highlight>1</visu_highlight>
+</record>
+</boost_serialization>
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="17">
+<record>MChit</record>
+<record class_id="0" tracking_level="1" version="2" object_id="_0">
+	<geomtools__base_hit class_id="1" tracking_level="1" version="1" object_id="_1">
+		<datatool__i_serializable class_id="2" tracking_level="0" version="0"></datatool__i_serializable>
+		<store>536837759</store>
+		<hit_id>13</hit_id>
+		<geom_id class_id="3" tracking_level="1" version="1" object_id="_2">
+			<datatool__i_serializable></datatool__i_serializable>
+			<type>100</type>
+			<address>
+				<count>3</count>
+				<item_version>0</item_version>
+				<item>0</item>
+				<item>1</item>
+				<item>2</item>
+			</address>
+		</geom_id>
+		<auxiliaries class_id="5" tracking_level="1" version="2" object_id="_3">
+			<datatool__i_serializable></datatool__i_serializable>
+			<description></description>
+			<properties class_id="6" tracking_level="0" version="0">
+				<count>2</count>
+				<item_version>0</item_version>
+				<item class_id="7" tracking_level="0" version="0">
+					<first>mock_hit</first>
+					<second class_id="8" tracking_level="0" version="2">
+						<description></description>
+						<flags>1</flags>
+						<boolean_values>
+							<count>1</count>
+							<item>1</item>
+						</boolean_values>
+					</second>
+				</item>
+				<item>
+					<first>mock_mc</first>
+					<second>
+						<description></description>
+						<flags>4</flags>
+						<string_values class_id="10" tracking_level="0" version="0">
+							<count>1</count>
+							<item_version>0</item_version>
+							<item>bxmctools::validation::serialization</item>
+						</string_values>
+					</second>
+				</item>
+			</properties>
+		</auxiliaries>
+	</geomtools__base_hit>
+	<position_start class_id="11" tracking_level="0" version="0">
+		<x>0.00000000000000000e+00</x>
+		<y>0.00000000000000000e+00</y>
+		<z>9.80000000000000071e+00</z>
+	</position_start>
+	<position_stop>
+		<x>0.00000000000000000e+00</x>
+		<y>0.00000000000000000e+00</y>
+		<z>2.21000000000000014e+01</z>
+	</position_stop>
+	<time_start>2.44399999999999995e+00</time_start>
+	<time_stop>3.67799999999999994e+00</time_stop>
+	<energy_deposit>2.34000000000000874e-02</energy_deposit>
+	<particle_name>bayeutron</particle_name>
+	<biasing_weight>1.00000000000000000e+00</biasing_weight>
+	<kinetic_energy_start>1.21109999999999984e+00</kinetic_energy_start>
+	<kinetic_energy_stop>1.18769999999999976e+00</kinetic_energy_stop>
+	<step_length>1.23000000000000007e+01</step_length>
+	<leaving_volume_flag>1</leaving_volume_flag>
+	<creator_process_name>dummy</creator_process_name>
+	<primary_particle_flag>1</primary_particle_flag>
+	<major_track_flag>1</major_track_flag>
+	<delta_ray_from_alpha_flag>1</delta_ray_from_alpha_flag>
+	<track_id>2</track_id>
+	<parent_track_id>1</parent_track_id>
+	<material_name>water</material_name>
+	<sensitive_category>calo</sensitive_category>
+	<g4_volume_name>baz</g4_volume_name>
+	<g4_volume_copy_number>43</g4_volume_copy_number>
+	<hit_processor>tic-tac-toe</hit_processor>
+	<visu_highlight>1</visu_highlight>
+</record>
+</boost_serialization>
+
