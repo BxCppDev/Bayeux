@@ -21,14 +21,14 @@ namespace genbb {
 
   /// Boost serialization template method
   template<class Archive>
-  void primary_particle::serialize(Archive            & ar_,
-                                    const unsigned int   version_)
+  void primary_particle::serialize(Archive & ar_,
+                                   const unsigned int   version_)
   {
-    if (Archive::is_saving::value) {
-      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "saving with version=" << version_);
-    } else {
-      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "loading with version=" << version_);
-    }
+    // if (Archive::is_saving::value) {
+    //   DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "saving with version=" << version_);
+    // } else {
+    //   DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "loading with version=" << version_);
+    // }
 
     if (version_ >= 1) {
       ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
