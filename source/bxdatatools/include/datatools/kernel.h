@@ -277,6 +277,12 @@ namespace datatools {
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
     /// Return the command line argument count
+    unsigned int get_nargs() const;
+
+    /// Return the list of command line arguments
+    const std::vector<std::string> & get_args() const;
+
+    /// Return the command line argument count
     int get_argc() const;
 
     /// Return the command line arguments
@@ -380,6 +386,8 @@ namespace datatools {
     // Configuration parameters:
     std::string      _locale_category_;  //!< Locale category
     std::string      _application_name_; //!< The name of the current application
+    unsigned int     _nargs_ = 0;
+    std::vector<std::string> _args_; //!< List of arguments
     int              _argc_ = 0;             //!< Command line argument count
     char **          _argv_ = nullptr;       //!< Command line arguments
     std::vector<std::string> _unrecognized_args_; //!< List of unrecognized arguments

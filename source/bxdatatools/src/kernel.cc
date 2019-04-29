@@ -58,9 +58,19 @@ namespace datatools {
   }
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
+  unsigned int kernel::get_nargs() const
+  {
+    return _nargs_;
+  }
+
   int kernel::get_argc() const
   {
     return _argc_;
+  }
+
+  const std::vector<std::string> & kernel::get_args() const
+  {
+    return _args_;
   }
 
   char ** kernel::get_argv() const
@@ -103,9 +113,12 @@ namespace datatools {
       if (e) {
         std::string dklogging = e;
         datatools::logger::priority prio = datatools::logger::get_priority(dklogging);
-        if (datatools::logger::is_undefined(prio)) {
+        if (!datatools::logger::is_undefined(prio)) {
           // Set the kernel logging priority threshold:
           _logging_ = prio;
+          _params_.logging_label = datatools::logger::get_priority_label(_logging_);
+          // std::cerr << "************** DEVEL ************* prio=" << prio << "\n";
+          // std::cerr << "************** DEVEL ************* prio label=" << _params_.logging_label << "\n";
         } else {
           DT_LOG_WARNING(logger::PRIO_WARNING, "Invalid environment BXDATATOOLS_KERNEL_LOGGING='" << dklogging << "' value");
         }
@@ -125,6 +138,7 @@ namespace datatools {
       set_locale_category(lc);
     }
 
+    _nargs_ = 0;
     _argc_ = 0;
     _argv_ = nullptr;
     _activate_variant_repository_ = true;
@@ -390,18 +404,6 @@ namespace datatools {
                 );
     }
 
-    // // No library info (deprecated):
-    // if (parse_inhibit_libquery) {
-    //   easy_init("datatools::nolibinfo",
-    //             po::value<bool>(&params_.inhibit_library_query)
-    //             ->zero_tokens()
-    //             ->default_value(false),
-    //             "Inhibit the use of the library/component query service (deprecated).\n"
-    //             "Example :\n"
-    //             "  --datatools::nolibinfo"
-    //             );
-    // }
-
     // Library query logging:
     if (parse_libquery_logging) {
       easy_init("datatools::libinfo::logging",
@@ -413,19 +415,6 @@ namespace datatools {
                 "  --datatools::libinfo::logging=\"trace\""
                 );
     }
-
-
-    // // Library info logging (deprecated):
-    // if (parse_libquery_logging) {
-    //   easy_init("datatools::libinfo::logging",
-    //             po::value<std::string>(&params_.library_query_logging_label)
-    //             ->value_name("level")
-    //             ->default_value("warning"),
-    //             "Set the datatools kernel's library info logging priority threshold (deprecated).\n"
-    //             "Example :\n"
-    //             "  --datatools::libinfo::logging=\"trace\""
-    //             );
-    // }
 
 #if DATATOOLS_WITH_QT_GUI == 1
     // Inhibit Qt GUI:
@@ -594,9 +583,11 @@ namespace datatools {
       set_locale_category(_params_.locale_category);
     }
 
-    // Set the kernel logging priority threshold:
-    this->_logging_ = datatools::logger::get_priority(_params_.logging_label);
-
+    if (this->_logging_ == datatools::logger::PRIO_FATAL) {
+      // Set the kernel logging priority threshold (only if  not already set):
+      this->_logging_ = datatools::logger::get_priority(_params_.logging_label);
+    }
+    
     if (_params_.inhibit_urn_query) {
       DT_LOG_TRACE(_logging_, "Inhibit the URN query service...");
       this->_activate_urn_query_service_ = false;
@@ -727,6 +718,10 @@ namespace datatools {
     _shutdown_services_();
 
     _unrecognized_args_.clear();
+    _nargs_ = 0;
+    _args_.clear();
+
+    // XXX
     for (int i = 0; i < _argc_; i++) {
       if (_argv_[i]) {
         free(_argv_[i]);
@@ -735,6 +730,8 @@ namespace datatools {
     if (_argv_) {
       free(_argv_);
     }
+    _argc_ = 0;
+    //
     _application_name_.clear();
     _locale_category_.clear();
 
@@ -1119,7 +1116,21 @@ namespace datatools {
     DT_LOG_TRACE_ENTERING(_logging_);
     if (_initialized_) return;
 
+    // Fetch the application name:
+    if ( argc_ >= 1 ) {
+      _application_name_= argv_[0];
+    }
+
     // Local copy of the command line arguments:
+    for (int i = 1; i < argc_; i++) {
+      std::string arg(argv_[i]);
+      DT_LOG_TRACE(_logging_, "Kernel append cl arg = '" << arg << "'");
+      _args_.push_back(arg);
+    }
+    _nargs_ = _args_.size();
+    DT_LOG_TRACE(_logging_, "Kernel cl nargs = '" << _nargs_ << "'");
+
+    // XXX
     _argc_ = argc_;
     _argv_ = (char **) malloc( (argc_ + 1) * sizeof(char *));
     for (int i = 0; i < argc_; i++) {
@@ -1128,10 +1139,6 @@ namespace datatools {
     }
     _argv_[argc_] = 0; //'\0';
 
-    // Fetch the application name:
-    if ( argc_ >= 1 ) {
-      _application_name_= argv_[0];
-    }
     _params_.reset();
 
     // Parse command line options:
@@ -1141,7 +1148,9 @@ namespace datatools {
     po::positional_options_description args;
     po::variables_map vm;
     po::parsed_options parsed =
-      po::command_line_parser(argc_, argv_)
+      // XXX : fails with Boost >=1.68 when argv_ == nullptr
+      // po::command_line_parser(argc_, argv_)
+      po::command_line_parser(_args_)
       .options(opts) // Only options to be parsed.
       .allow_unregistered()
       .run();
@@ -1150,6 +1159,11 @@ namespace datatools {
     po::store(parsed, vm);
     po::notify(vm);
 
+    DT_LOG_TRACE(_logging_, "Kernel unrecognized args : " << _unrecognized_args_.size());
+    for (const auto & uarg : _unrecognized_args_) {
+      DT_LOG_TRACE(_logging_, " - unrecognized arg = '" << uarg << "'");
+    }
+ 
     if (_params_.help) {
       print_opt_desc(opts, std::cout);
     }
@@ -1165,7 +1179,9 @@ namespace datatools {
     _initialize_();
 
     _initialized_ = true;
-    if (_logging_ == datatools::logger::PRIO_TRACE) {
+    // std::cerr << "************** DEVEL ************* prio2=" << _logging_ << "\n";
+    if (datatools::logger::is_trace(_logging_)) {
+      // std::cerr << "************** DEVEL ************* tree_dump\n";
       this->tree_dump(std::cerr, "Kernel: ", "trace: ");
     }
     DT_LOG_TRACE_EXITING(_logging_);
@@ -1388,21 +1404,38 @@ namespace datatools {
          << "Application name  : '" << _application_name_ << "'" << std::endl;
 
     out_ << indent << i_tree_dumpable::tag
-         << "Command line argument count : " << _argc_  << std::endl;
+         << "Command line argument count : " << _nargs_  << std::endl;
+
+    // out_ << indent << i_tree_dumpable::tag
+    //      << "Command line argument count : " << _argc_  << std::endl;
 
     out_ << indent << i_tree_dumpable::tag
          << "Command line arguments : ";
-    if (_argc_ == 0) out_ << "<none>";
+    if (_nargs_ == 0) out_ << "<none>";
     out_ << std::endl;
-    for (int i = 0; i < _argc_; i++) {
+    for (int i = 0; i < (int) _args_.size(); i++) {
       out_ << indent << i_tree_dumpable::skip_tag;
-      if (i < _argc_ - 1) {
+      if (i < (int) (_args_.size() - 1)) {
         out_ << i_tree_dumpable::tag;
       } else {
         out_ << i_tree_dumpable::last_tag;
       }
-      out_ << "Argument #" << i << " : '" << _argv_[i] << "'" << std::endl;
+      out_ << "Argument #" << i << " : '" << _args_[i] << "'" << std::endl;
     }
+
+    // out_ << indent << i_tree_dumpable::tag
+    //      << "Command line arguments : ";
+    // if (_argc_ == 0) out_ << "<none>";
+    // out_ << std::endl;
+    // for (int i = 0; i < _argc_; i++) {
+    //   out_ << indent << i_tree_dumpable::skip_tag;
+    //   if (i < _argc_ - 1) {
+    //     out_ << i_tree_dumpable::tag;
+    //   } else {
+    //     out_ << i_tree_dumpable::last_tag;
+    //   }
+    //   out_ << "Argument #" << i << " : '" << _argv_[i] << "'" << std::endl;
+    // }
 
     out_ << indent << i_tree_dumpable::tag
          << "System service manager : "
