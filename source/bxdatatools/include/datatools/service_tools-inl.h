@@ -45,7 +45,7 @@ namespace datatools {
     if (!service_exists(services_, service_name_)) {
       return false;
     }
-    base_service & srvc = get_service(services_, service_name_);
+    const base_service & srvc = get_service(services_, service_name_);
     const std::type_info & ti = typeid(T);
     const std::type_info & tf = typeid(srvc);
     return ti == tf;
