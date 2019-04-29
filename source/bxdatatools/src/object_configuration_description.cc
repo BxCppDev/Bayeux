@@ -8,6 +8,7 @@
 
 // Third party:
 // - Boost:
+#include <boost/version.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -413,7 +414,12 @@ namespace datatools {
   {
     if (is_scalar()) {
       if (is_boolean()) {
+#if BOOST_VERSION < 106800
         return (_default_value_boolean_ == true || _default_value_boolean_ == false);
+#else
+        // See: https://github.com/dyninst/dyninst/pull/541
+        return (static_cast<bool>(_default_value_boolean_) || static_cast<bool>(!_default_value_boolean_));
+#endif
       }
       if (is_integer()) {
         return _default_value_integer_ > std::numeric_limits<int>::min();
@@ -424,14 +430,20 @@ namespace datatools {
       if (is_string()) {
         return _default_value_string_ != "__??__";
       }
-    }
+    } 
     return false;
   }
 
   bool
   configuration_property_description::get_default_value_boolean() const
   {
+#if BOOST_VERSION <= 106800
     return _default_value_boolean_;
+#else
+    if (_default_value_boolean_) return true;
+    else if (!_default_value_boolean_) return false;
+    DT_THROW(std::logic_error, "No default boolean value is set!");
+#endif
   }
 
   int
