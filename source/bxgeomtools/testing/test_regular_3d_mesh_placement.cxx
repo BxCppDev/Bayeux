@@ -37,8 +37,8 @@
 #endif
 
 struct param_type {
-  bool draw;
-  bool delete_cache;
+  bool draw = false;
+  bool delete_cache = false;
   std::string cache_filename;
   std::string config_filename;
 };
