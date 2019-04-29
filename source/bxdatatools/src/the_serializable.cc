@@ -34,6 +34,7 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::i_serializabl
  * datatools::enriched_base     *
  ********************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::enriched_base)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::enriched_base)
 
 /********************************
  * datatools::properties        *
