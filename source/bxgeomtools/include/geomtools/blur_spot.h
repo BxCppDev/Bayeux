@@ -315,6 +315,9 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::blur_spot, "geomtools::blur_spot")
+
 // Activate reflection layer for the blur_spot class :
 DR_CLASS_INIT(::geomtools::blur_spot)
 

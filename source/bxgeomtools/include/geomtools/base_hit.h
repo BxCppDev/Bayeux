@@ -380,6 +380,9 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::base_hit, "geomtools::base_hit")
+
 // Activate reflection layer for the geomtools::base_hit class :
 DR_CLASS_INIT(::geomtools::base_hit)
 

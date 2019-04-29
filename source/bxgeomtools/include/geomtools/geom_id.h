@@ -212,14 +212,7 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-local-typedef"
-#endif
 #include <boost/serialization/export.hpp>
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
 BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
 
 //#warning Activate reflection layer for the geomtools::geom_id class

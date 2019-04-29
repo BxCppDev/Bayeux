@@ -6,9 +6,8 @@
  * License:
  *
  * Description:
- *  Utilities.
  *
- * History:
+ *  Placement.
  *
  */
 
@@ -435,9 +434,11 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
+#include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT_KEY2(geomtools::placement, "geomtools::placement")
+
 // Activate reflection layer :
 DR_CLASS_INIT(::geomtools::placement)
-
 
 /*
 // Class version:
@@ -447,10 +448,8 @@ BOOST_CLASS_VERSION(geomtools::placement, 0)
 
 #endif // GEOMTOOLS_PLACEMENT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

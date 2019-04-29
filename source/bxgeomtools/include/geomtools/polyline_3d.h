@@ -130,7 +130,6 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::polyline_3d, "geomtools::polyline_3d")
 
 // Explicit class version:
