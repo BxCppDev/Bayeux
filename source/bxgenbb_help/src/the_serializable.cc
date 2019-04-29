@@ -15,6 +15,7 @@
  ***************************/
 
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(genbb::primary_particle)
+BOOST_CLASS_EXPORT_IMPLEMENT(genbb::primary_particle)
 
 /************************
  * genbb::primary_event *
