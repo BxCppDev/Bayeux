@@ -56,11 +56,11 @@ namespace datatools {
     interface::interface(int argc_, char ** argv_, const char * name_)
     {
       _argc_ = 0;
-      _argv_ = NULL;
+      _argv_ = nullptr;
       _arg_owned_ = false;
       _external_app_ = false;
       _qt_initialized_ = false;
-      _qt_app_ = 0;
+      _qt_app_ = nullptr;
       if (QApplication::instance()) {
         _external_app_ = true;
         _qt_initialized_ = true;
@@ -92,15 +92,14 @@ namespace datatools {
 
     interface::~interface()
     {
-      // std::cerr << "DEVEL: qt::interface::~interface: Entering." << std::endl;
       if (_qt_initialized_) {
         if (_qt_app_) {
           // QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
           // delete _qt_app_; // Core dump !!!
-          _qt_app_ = 0;
+          _qt_app_ = nullptr;
         }
       }
-      if (_arg_owned_) {
+      if (_arg_owned_ and _argv_ != nullptr) {
         for (int i = 0; i < _argc_; i++) {
           if (_argv_[i]) {
             free(_argv_[i]);
@@ -109,15 +108,16 @@ namespace datatools {
         if (_argv_) {
           free(_argv_);
         }
+        _argv_ = nullptr;
+        _argc_ = 0;
       }
-      // std::cerr << "DEVEL: qt::interface::~interface: Exiting." << std::endl;
       return;
     }
 
     // static
     interface & interface::instance()
     {
-      return instance(0, 0, (const char *) "Bayeux");
+      return instance(0, nullptr, (const char *) "Bayeux");
     }
 
     // static
