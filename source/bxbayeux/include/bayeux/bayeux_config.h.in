@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2013-2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013-2017 by Université de Caen
+// Copyright (c) 2013-2019 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2019 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -24,6 +24,12 @@
 
 #ifndef BAYEUX_BAYEUX_CONFIG_H
 #define BAYEUX_BAYEUX_CONFIG_H
+
+//! The version of Boost used by Bayeux
+#define BAYEUX_BOOST_VERSION @Boost_VERSION@
+
+//! The version of CLHEP used by Bayeux
+#define BAYEUX_CLHEP_VERSION "@CLHEP_VERSION@"
 
 //! Evaluates to true if Bayeux was built with the cuts module
 #define BAYEUX_WITH_CUTS @Bayeux_WITH_CUTS@
@@ -58,6 +64,11 @@
 //! Evaluates to true if Bayeux was built with Geant4 extension module
 #define BAYEUX_WITH_GEANT4_MODULE @Bayeux_WITH_GEANT4_MODULE@
 
+#if BAYEUX_WITH_GEANT4_MODULE == 1
+//! The version of Geant4 used by Bayeux
+#define BAYEUX_GEANT4_VERSION "@Geant4_VERSION@"
+#endif // BAYEUX_WITH_GEANT4_MODULE == 1
+
 //! Evaluates to true if Bayeux was built with MCNP extension module
 #define BAYEUX_WITH_MCNP_MODULE @Bayeux_WITH_MCNP_MODULE@
 
@@ -68,10 +79,17 @@
 #define BAYEUX_WITH_QT @Bayeux_WITH_QT@
 
 #if BAYEUX_WITH_QT == 1
+
+//! The version of CLHEP used by Bayeux
+#define BAYEUX_QT_VERSION "@Qt5Core_VERSION@"
+
 //! Evaluates to true if Bayeux was built with Qt-based GUI components
 #define BAYEUX_WITH_QT_GUI @Bayeux_WITH_QT_GUI@
-#else
+
+#else // BAYEUX_WITH_QT != 1
+
 #define BAYEUX_WITH_QT_GUI 0
+
 #endif // BAYEUX_WITH_QT == 1
 
 //! Evaluates to true if Bayeux was built with ROOT
@@ -79,7 +97,7 @@
 
 #if BAYEUX_WITH_ROOT == 1
 //! Set the ROOT version used within Bayeux
-#define BAYEUX_ROOT_VERSION @ROOT_VERSION@
+#define BAYEUX_ROOT_VERSION "@ROOT_VERSION@"
 
 //! Evaluates to true if Bayeux was built with some ROOT dictionary generation
 #define BAYEUX_WITH_ROOTDICT @Bayeux_WITH_ROOTDICT@
