@@ -417,30 +417,32 @@ namespace datatools {
     datatools::logger::priority _logging_priority_ = datatools::logger::PRIO_FATAL; ///< Logging priority threshold
     unsigned int _mode_ = 0; ///< Mode bitset of the I/O factory
 
-    std::istream * _in_  = nullptr;
-    std::ostream * _out_ = nullptr;
+    std::istream * _in_  = nullptr; ///< Handle to the input stream
+    std::ostream * _out_ = nullptr; ///< Handle to the output stream
 
-    std::ifstream * _fin_  = nullptr;
-    std::ofstream * _fout_ = nullptr;
+    std::ifstream * _fin_  = nullptr; ///< Handle to the input file stream
+    std::ofstream * _fout_ = nullptr; ///< Handle to the output file stream
 
-    boost::iostreams::filtering_istream * _in_fs_  = nullptr;
-    boost::iostreams::filtering_ostream * _out_fs_ = nullptr;
+    boost::iostreams::filtering_istream * _in_fs_  = nullptr; ///< Handle to the filtering input stream
+    boost::iostreams::filtering_ostream * _out_fs_ = nullptr; ///< Handle to the filtering output stream
 
-    std::locale * _default_locale_ = nullptr;
-    std::locale * _locale_         = nullptr;
+    std::locale * _default_locale_ = nullptr; ///< Handle to the default locale instance
+    std::locale * _locale_         = nullptr; ///< Handle to the current locale instance
 
     bool _read_archive_is_initialized_  = false;
     bool _write_archive_is_initialized_ = false;
 
-    boost::archive::text_iarchive * _itar_ptr_ = nullptr;
-    boost::archive::text_oarchive * _otar_ptr_ = nullptr;
+    boost::archive::text_iarchive * _itar_ptr_ = nullptr; ///< Handle to the text input archive
+    boost::archive::text_oarchive * _otar_ptr_ = nullptr; ///< Handle to the text output archive
 
-    boost::archive::xml_iarchive  * _ixar_ptr_ = nullptr;
-    boost::archive::xml_oarchive  * _oxar_ptr_ = nullptr;
+    boost::archive::xml_iarchive  * _ixar_ptr_ = nullptr; ///< Handle to the XML input archive
+    boost::archive::xml_oarchive  * _oxar_ptr_ = nullptr; ///< Handle to the XML output archive
 
-    eos::portable_iarchive * _ibar_ptr_ = nullptr;
-    eos::portable_oarchive * _obar_ptr_  = nullptr;
+    eos::portable_iarchive * _ibar_ptr_ = nullptr;  ///< Handle to the portable binary input archive
+    eos::portable_oarchive * _obar_ptr_ = nullptr;  ///< Handle to the portable binary output archive
 
+    // int _in_cursor_ = -1;
+    
   }; // end of class io_factory
 
 
