@@ -15,24 +15,50 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // This project:
-#include <datatools/io_factory.h>
 #include <datatools/safe_serial.h>
 // A serializable test class :
+#include <datatools_test_my_data.h>
 #include <datatools_test_my_data.cc>
 #include <datatools_test_my_data.ipp>
 
 // Special Boost serialization export/registration code :
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::test::data_t, "datatools::test::data_t")
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::data_t)
 BOOST_CLASS_EXPORT_KEY2(datatools::test::more_data_t, "datatools::test::more_data_t")
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::more_data_t)
 
-// #include <boost/serialization/version.hpp>
-// BOOST_CLASS_VERSION(datatools::test::data_t, 33)
-// BOOST_CLASS_VERSION(datatools::test::more_data_t, 66)
+#include <datatools/archives_instantiation.h>
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::test::data_t)
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::test::more_data_t)
+
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::more_data_t)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::data_t)
+
+#include <datatools/io_factory.h>
 
 using namespace std;
 
+class bar
+{
+public:
+  bar(datatools::test::data_t * data_) : _sh_data_(data_) {}
+  const datatools::test::data_t * get() const { return _sh_data_.get(); }
+  datatools::test::data_t * grab() { return _sh_data_.get(); }
+  void reset() { _sh_data_.reset(); }
+private:
+  boost::shared_ptr<datatools::test::data_t> _sh_data_;
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize (Archive & ar_,
+                  const unsigned int // version_
+                  )
+  {
+    ar_ & boost::serialization::make_nvp ("sh_data", _sh_data_);
+    return;
+  }
+};
+
+void test_bar();
 void test_shared_ptr();
 
 int main(int argc_, char ** argv_)
@@ -49,6 +75,7 @@ int main(int argc_, char ** argv_)
       FORMAT_BIN = 2
     };
     int fmt   = FORMAT_XML;
+    fmt   = FORMAT_TXT;
     bool test = false;
 
     int iarg = 1;
@@ -87,6 +114,7 @@ int main(int argc_, char ** argv_)
 
     srand48(seed);
     clog << "NOTICE: using filename '" << filename << "'" << endl;
+    clog << "NOTICE: test = " << std::boolalpha << test << endl;
 
     int mode_guess;
     if (datatools::io_factory::guess_mode_from_filename(filename, mode_guess)
@@ -95,9 +123,10 @@ int main(int argc_, char ** argv_)
       message << "Cannot guess mode for file '" << filename << "'!";
       throw runtime_error(message.str());
     }
-    if (debug) clog << "DEBUG: mode = " << hex
+    if (debug) clog << "DEBUG: mode = " << std::hex
                     << mode_guess
-                    << dec << endl;
+                    << std::dec << std::endl;
+    if (debug) clog << "DEBUG: nrecords = " << nrecords << std::endl;
 
     if (boost::filesystem::exists(filename)) {
       ostringstream message;
@@ -135,8 +164,10 @@ int main(int argc_, char ** argv_)
       }
       clog << "NOTICE: writing done." << endl << endl;
     }
-
-    {
+    
+    bool read_it = true;
+    read_it = false;
+    if (read_it) {
       clog << endl << endl << "NOTICE: reading..." << endl;
 
       datatools::safe_serial<datatools::test::data_t>      ss_data;
@@ -183,37 +214,56 @@ int main(int argc_, char ** argv_)
       }
       clog << "NOTICE: reading done." << endl << endl;
     }
-
+    
+    test_bar();
     test_shared_ptr();
 
-  }
-  catch (exception & x) {
+    clog << "NOTICE: The End." << endl << endl;
+  } catch (exception & x) {
     cerr << "test_serialization: ERROR: " << x.what() << endl;
     exit(EXIT_FAILURE);
   }
 
+  clog << "NOTICE: The Very End." << endl << endl;
   return (EXIT_SUCCESS);
 }
 
-class bar
-{
-public:
-  bar(datatools::test::data_t * data_) : _sh_data_(data_) {}
-  const datatools::test::data_t * get() const { return _sh_data_.get(); }
-  datatools::test::data_t * grab() { return _sh_data_.get(); }
-  void reset() { _sh_data_.reset(); }
-private:
-  boost::shared_ptr<datatools::test::data_t> _sh_data_;
 
-  friend class boost::serialization::access;
-  template<class Archive>
-  void serialize (Archive & ar_,
-                  const unsigned int /* version_ */)
+void test_bar()
+{
+  std::clog << "NOTICE: test_bar..." << std::endl;
+
+  bar foo(new datatools::test::data_t('z', 42, 3.14, 12));
+  bar foo2(new datatools::test::more_data_t('a', 666, 2.718, 3, "dummy"));
+  foo.get()->tree_dump(std::clog, "foo");
+  foo2.get()->tree_dump(std::clog, "foo2");
+
+  std::string filename = "test_serialization_bar.xml";
   {
-    ar_ & boost::serialization::make_nvp ("sh_data", _sh_data_);
-    return;
+    std::clog << "NOTICE: writing..." << std::endl;
+    datatools::data_writer writer(filename);
+    writer.store("a", foo);
+    writer.store("b", foo2);
+    std::clog << "NOTICE: done." << std::endl;
   }
-};
+
+  foo.reset();
+  foo2.reset();
+  
+  {
+    std::clog << "NOTICE: reading..." << std::endl;
+    datatools::data_reader reader(filename);
+    reader.load("a", foo);
+    reader.load("b", foo2);
+    std::clog << "NOTICE: done." << std::endl;
+  }
+  foo.get()->tree_dump(std::clog, "foo");
+  foo2.get()->tree_dump(std::clog, "foo2");
+  
+  std::clog << "NOTICE: test_bar... done" << std::endl;
+  return;
+}
+ 
 
 void test_shared_ptr()
 {
