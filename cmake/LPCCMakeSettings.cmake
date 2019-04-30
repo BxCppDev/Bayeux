@@ -36,7 +36,7 @@
 # - ``CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION`` : ON
 #
 #   - Disallow absolute paths in install destinations, other than
-#     ``CMAKE_INSTALl_PREFIX``. This helps in making packages fully
+#     ``CMAKE_INSTALL_PREFIX``. This helps in making packages fully
 #     relocatable
 #
 # - ``CMAKE_EXPORT_NO_PACKAGE_REGISTRY`` : ON
