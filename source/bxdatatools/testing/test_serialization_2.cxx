@@ -186,9 +186,7 @@ int main (int argc_, char ** argv_)
             }
           clog << "NOTICE: reading done." << endl << endl;
         }
-    }
-  catch (exception & x)
-    {
+    } catch (exception & x) {
       cerr << "test_serialization_2: ERROR: " << x.what () << endl;
       exit (EXIT_FAILURE);
     }
