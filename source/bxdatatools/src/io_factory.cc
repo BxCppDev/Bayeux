@@ -5,6 +5,7 @@
 
 // Third Party:
 // - Boost:
+#include <boost/version.hpp>
 #include <boost/archive/codecvt_null.hpp>
 // 2012-01-09 FM : now use the Boost >=1.47 header :
 //#include <boost/math/nonfinite_num_facets.hpp>
@@ -125,7 +126,6 @@ namespace datatools {
     return value;
   }
 
-  // Logging features:
   void io_factory::set_logging_priority(::datatools::logger::priority p_)
   {
     _logging_priority_ = p_;
@@ -184,50 +184,52 @@ namespace datatools {
     return (_mode_ & MASK_FORMAT) == MODE_TEXT;
   }
 
-
   bool io_factory::is_binary() const {
     return (_mode_ & MASK_FORMAT) == MODE_BINARY;
   }
-
 
   bool io_factory::is_portable_binary() const
   {
     return this->is_binary() && true;
   }
 
-
   bool io_factory::is_xml() const {
     return (_mode_ & MASK_FORMAT) == MODE_XML;
   }
-
 
   bool io_factory::is_single_archive() const {
     return (_mode_ & MASK_MULTIARCHIVE) == MODE_UNIQUE_ARCHIVE;
   }
 
-
   bool io_factory::is_multi_archives() const {
     return !this->is_single_archive();
   }
-
 
   bool io_factory::is_no_append() const {
     return (_mode_ & MASK_APPEND) == MODE_NO_APPEND;
   }
 
-
   bool io_factory::is_append() const {
     return !this->is_no_append();
   }
-
 
   // return nothing instead????
   int io_factory::init_read_archive()
   {
     if (this->is_text()) {
       _itar_ptr_ = new boost::archive::text_iarchive(*_in_, boost::archive::no_codecvt);
-    } else if (this->is_xml()) {
+     } else if (this->is_xml()) {
+      if (_fin_) {
+        _fin_->tellg();
+        // int fp = _fin_->tellg();
+        // std::cerr << "*** io_factory::init_read_archive *** fp=" << fp << "\n";
+      }
       _ixar_ptr_ = new boost::archive::xml_iarchive(*_in_, boost::archive::no_codecvt);
+      if (_fin_) {
+        _fin_->tellg();
+        // int fp = _fin_->tellg();
+        // std::cerr << "*** io_factory::init_read_archive *** fp=" << fp << "\n";
+      }
     } else if (this->is_binary()) {
       _ibar_ptr_ = new eos::portable_iarchive(*_in_);
     } else {
@@ -236,7 +238,6 @@ namespace datatools {
     _read_archive_is_initialized_ = true;
     return 0;
   }
-
 
   int io_factory::reset_read_archive()
   {
@@ -250,6 +251,39 @@ namespace datatools {
     }
 
     if (_ixar_ptr_ != nullptr) {
+#if BOOST_VERSION >= 106600
+      //       // PR #37 proposed this fix to force the input stream to be seeked to its end
+      //       // at reset/destruction (Boost >= 1.66). But this breaks multiple archives in
+      //       // a single stream.
+      //       { 
+      //         if (_in_) _in_->seekg(0, std::ios_base::end);
+      //         if (_in_fs_) _in_fs_->seekg(0, std::ios_base::end);
+      //         if (_fin_) _fin_->seekg(0, std::ios_base::end);
+      //       }
+      if (is_single_archive()) {
+        if (_in_) {
+          _in_->tellg();
+          //_in_->seekg(0, std::ios_base::end);
+          //int fp = _in_->tellg();
+          //std::cerr << "*** io_factory::reset_read_archive *** fp=" << fp << "\n";
+        }
+        // if (_in_fs_) {
+        //   //_in_fs_->seekg(0, std::ios_base::end);
+        //   int fp = _in_fs_->tellg();
+        //   std::cerr << "*** io_factory::reset_read_archive *** fp=" << fp << "\n";
+        // }
+        // if (_fin_) {
+        //   _fin_->seekg(0, std::ios_base::end);
+        // }
+      }
+      // if (_fin_) {
+      //   int fp = _fin_->tellg();
+      //   std::cerr << "*** io_factory::reset_read_archive *** fp=" << fp << "\n";
+      // }
+      // if (_fin_) {
+      //   _fin_->tellg();
+      // }
+#endif  
       delete _ixar_ptr_;
       _ixar_ptr_ = nullptr;
     }
@@ -275,6 +309,7 @@ namespace datatools {
     }
 
     if (stream_name_.empty()) {
+      DT_THROW(std::logic_error, "Missing input stream name!");
       _in_fs_->push(std::cin);
     } else {
       if (this->is_compressed() || this->is_binary()) {
@@ -287,6 +322,12 @@ namespace datatools {
       DT_THROW_IF(! *_fin_,
                   std::runtime_error,
                   "Cannot open input file stream '" << stream_name_ << "' !");
+      // Not needed:
+      // _fin_->seekg(0, std::ios_base::beg);
+      // _in_cursor_ = 0;
+      _fin_->tellg();
+      // int fp = _fin_->tellg();
+      // std::cerr << "*** io_factory::init_read *** fp=" << fp << "\n";
       _in_fs_->push(*_fin_);
     }
 
@@ -294,13 +335,20 @@ namespace datatools {
     if (this->is_text() || this->is_xml()) {
       _in_->imbue(*_locale_);
     }
-
+    // int p = _in_->tellg();
+    // std::cerr << "*** io_factory::init_read *** p=" << p << "\n";
+    // _in_->seekg(0, std::ios_base::beg);
+    // _in_cursor_ = 0;
+    // p = _in_->tellg();
+    // std::cerr << "*** io_factory::init_read *** p=" << p << "\n";
     return 0;
   }
 
   int io_factory::reset_read()
   {
-    if (_in_ != nullptr) _in_ = nullptr;
+    if (_in_ != nullptr) {
+      _in_ = nullptr;
+    }
 
     if (_in_fs_ != nullptr) {
       _in_fs_->reset();
@@ -309,6 +357,12 @@ namespace datatools {
     }
 
     if (_fin_ != nullptr) {
+      _fin_->tellg();
+      // int fp = _fin_->tellg();
+      // std::cerr << "*** io_factory::reset_read *** fp=" << fp << "\n";
+      // _fin_->seekg(0, std::ios_base::end);
+      // fp = _fin_->tellg();
+      // std::cerr << "*** io_factory::reset_read *** fp=" << fp << "\n";
       _fin_->close();
       delete _fin_;
       _fin_ = nullptr;
@@ -323,23 +377,17 @@ namespace datatools {
       return 0;
     }
     if (this->is_text()) {
-      _otar_ptr_ = new boost::archive::text_oarchive(
-                                                     *_out_, boost::archive::no_codecvt);
+      _otar_ptr_ = new boost::archive::text_oarchive(*_out_, boost::archive::no_codecvt);
     } else if (this->is_xml()) {
-      _oxar_ptr_ = new boost::archive::xml_oarchive(
-                                                    *_out_, boost::archive::no_codecvt);
+      _oxar_ptr_ = new boost::archive::xml_oarchive(*_out_, boost::archive::no_codecvt);
     } else if (this->is_binary()) {
       _obar_ptr_ = new eos::portable_oarchive(*_out_);
     } else {
-      DT_THROW_IF(true,
-                  std::logic_error,
-                  "Format not supported !");
+      DT_THROW_IF(true, std::logic_error, "Format not supported !");
     }
-
     _write_archive_is_initialized_ = true;
     return 0;
   }
-
 
   int io_factory::init_write(const std::string & stream_name_)
   {
@@ -351,7 +399,8 @@ namespace datatools {
       _out_fs_->push(boost::iostreams::bzip2_compressor());
     }
     if (stream_name_.empty()) {
-      _out_fs_->push(std::cout);
+      DT_THROW(std::logic_error, "Missing output stream name!");
+      // _out_fs_->push(std::cout);
       return 0;
     } else {
       std::ios_base::openmode open_mode = std::ios_base::out;
