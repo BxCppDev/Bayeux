@@ -56,12 +56,12 @@ namespace bayeux {
     return version;
   }
 
-  bool version::is_at_least(int major, int minor, int patch) {
-    if (BAYEUX_VERSION_MAJOR < major) return false;
-    if (BAYEUX_VERSION_MAJOR > major) return true;
-    if (BAYEUX_VERSION_MINOR < minor) return false;
-    if (BAYEUX_VERSION_MINOR > minor) return true;
-    if (BAYEUX_VERSION_PATCH < patch) return false;
+  bool version::is_at_least(int major_, int minor_, int patch_) {
+    if (BAYEUX_VERSION_MAJOR < major_) return false;
+    if (BAYEUX_VERSION_MAJOR > major_) return true;
+    if (BAYEUX_VERSION_MINOR < minor_) return false;
+    if (BAYEUX_VERSION_MINOR > minor_) return true;
+    if (BAYEUX_VERSION_PATCH < patch_) return false;
     return true;
   }
 
