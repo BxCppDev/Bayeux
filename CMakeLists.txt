@@ -44,6 +44,13 @@ project(Bayeux)
 # - Load Custom Modules
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
+set(_bx_CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
+# message(STATUS "******** _bx_CMAKE_MODULE_PATH = '${_bx_CMAKE_MODULE_PATH}'")
+if (_bx_CMAKE_MODULE_PATH)
+  list(INSERT CMAKE_MODULE_PATH 0 ${_bx_CMAKE_MODULE_PATH})
+endif()
+# message(STATUS "******** CMAKE_MODULE_PATH = '${CMAKE_MODULE_PATH}'")
+
 # - Version number management utilities:
 include(BxVersionManager)
 
