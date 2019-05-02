@@ -26,6 +26,10 @@ find_package(Boost ${BAYEUX_BOOST_MIN_VERSION}
   REQUIRED
   ${BAYEUX_BOOST_COMPONENTS}
   )
+if (Boost_VERSION VERSION_EQUAL 106800)
+  message(STATUS "Boost version ${Boost_VERSION} has been detected.")
+  message(FATAL_ERROR "Bayeux does not support Boost version 1.68.0\n" "Please use Boost 1.63, 1.65.1 or 1.69.0")
+endif()
 
 foreach(_boost_lib ${BAYEUX_BOOST_COMPONENTS})
   list(APPEND Bayeux_Boost_LIBRARIES Boost::${_boost_lib})
