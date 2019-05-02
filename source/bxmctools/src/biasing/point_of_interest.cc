@@ -148,7 +148,7 @@ namespace mctools {
           DT_THROW_IF(!geomtools::parse(position_str, position), std::logic_error,
                       "Cannot parse the point of interest's position from '"
                       << position_str << "'!");
-	  set_position(position);
+          set_position(position);
         }
       }
 
@@ -224,19 +224,19 @@ namespace mctools {
               }
             }
           }
-	  else DT_THROW_IF (true, std::logic_error,
-			    "Invalid POI_GID ('" << poi_gid << "'). Abort!");
+          else DT_THROW_IF (true, std::logic_error,
+                            "Invalid POI_GID ('" << poi_gid << "'). Abort!");
         }
       }
 
       if (config_.has_key("radius")) {
-	radius = config_.fetch_real("radius");
-	DT_THROW_IF(radius <= 0.0, std::domain_error,
-		    "Point of interest cannot have negative radius!");
-	if (! config_.has_explicit_unit("radius")) {
-	  radius *= default_length_unit;
-	}
-	set_radius(radius);
+        radius = config_.fetch_real("radius");
+        DT_THROW_IF(radius <= 0.0, std::domain_error,
+                    "Point of interest cannot have negative radius!");
+        if (! config_.has_explicit_unit("radius")) {
+          radius *= default_length_unit;
+        }
+        set_radius(radius);
       }
       
       if (! datatools::is_valid(_attractivity_)) {
@@ -253,13 +253,17 @@ namespace mctools {
       }
       
       if (config_.has_key("attractivity")) {
-	double attractivity = config_.fetch_real("attractivity");
-	if (has_attractivity()) {
-	  DT_THROW_IF (attractivity * _attractivity_ < 0.0,
-		       std::logic_error,
-		       "Incompatible attractivity value with former attractivity status!");
-	}
-	set_attractivity(attractivity);
+        double attractivity = config_.fetch_real("attractivity");
+        if (has_attractivity()) {
+          DT_THROW_IF (attractivity * _attractivity_ < 0.0,
+                       std::logic_error,
+                       "Incompatible attractivity value with former attractivity status!");
+        }
+        set_attractivity(attractivity);
+      }
+       
+      if (config_.has_key("skip_check_inside")) {
+        _skip_check_inside_ = config_.fetch_boolean("skip_check_inside");
       }
       
       DT_THROW_IF(! has_attractivity(), std::logic_error, "Missing attractivity for PoI '" << _name_ << "'!");
@@ -272,14 +276,14 @@ namespace mctools {
     {
       const geomtools::vector_3d & S = source_;
       const geomtools::vector_3d & P = _position_;
-      geomtools::vector_3d PS = P - S;
-      double dist = PS.mag();
-      if (dist < _radius_) {
+      geomtools::vector_3d SP = P - S;
+      double dist = SP.mag();
+      if (!_skip_check_inside_ and (dist < _radius_)) {
         /*
          *                   _.-"""""-._ PoI
          *                 .'           `.
          *                /   ->          \
-         *               |    PS   P       |
+         *               |    SP   P       |
          *               |  + - ->+        |
          *               | S       \ R     |
          *                \         \     /
@@ -288,12 +292,12 @@ namespace mctools {
          */
         return true;
       }
-      if (PS.dot(direction_) < 0.0) {
+      if (SP.dot(direction_) < 0.0) {
         /*
          *                   _.-"""""-._ PoI
          *                 .'           `.
          *                / ->            \
-         *       S       |  PS     P       |
+         *       S       |  SP     P       |
          *        + - - -|- - - ->+        |
          *       /       |         \ R     |
          *      / -->     \         \     /
@@ -302,13 +306,14 @@ namespace mctools {
          */
         return false;
       }
+      // 2019-05-01 FM+RC : to be reviewed:
       geomtools::vector_3d L = S + 2 * dist * direction_.unit();
       geomtools::line_3d SL(source_, L);
       /*
        *                   _.-"""""-._ PoI
        *                 .'           `.
        *                / ->            \
-       *       S       |  PS     P       |
+       *       S       |  SP     P       |
        *        + - - -|- - - ->+        |
        *         \     |   ..""  \ R     |
        *     -->  \   ..\"" rho   \     /

@@ -147,7 +147,8 @@ namespace mctools {
       geomtools::vector_3d _position_;     //!< Position of the point of interest in some reference frame (generally the world volume)
       double               _radius_;       //!< Radius of the attractivity influence
       double               _attractivity_; //!< Attractivity of the point of interest
-
+      bool                 _skip_check_inside_ = false;
+      
     };
 
   } // namespace biasing
