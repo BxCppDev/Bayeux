@@ -1,9 +1,9 @@
 /// \file mctools/g4/neutrons_physics_constructor.h
 /* Author(s) :    Arnaud Chapon <chapon@lpccaen.in2p3.fr>
  * Creation date: 2014-08-26
- * Last modified: 2014-09-04
+ * Last modified: 2019-05-01
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *
@@ -12,7 +12,6 @@
  * History:
  *
  */
-
 
 #ifndef MCTOOLS_G4_NEUTRONS_PHYSICS_CONSTRUCTOR_H
 #define MCTOOLS_G4_NEUTRONS_PHYSICS_CONSTRUCTOR_H 1
@@ -25,7 +24,8 @@ namespace mctools {
   namespace g4 {
 
     /// \brief Physics constructor dedicated to neutrons
-    class neutrons_physics_constructor: public base_physics_constructor
+    class neutrons_physics_constructor
+      : public base_physics_constructor
     {
     public:
 
@@ -90,10 +90,8 @@ DOCD_CLASS_DECLARATION(mctools::g4::neutrons_physics_constructor)
 
 #endif // MCTOOLS_G4_NEUTRONS_PHYSICS_CONSTRUCTOR_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

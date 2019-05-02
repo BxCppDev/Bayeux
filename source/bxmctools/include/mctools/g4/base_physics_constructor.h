@@ -3,13 +3,11 @@
  * Creation date: 2013-07-03
  * Last modified: 2015-04-30
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *
  *   Base class for physics constructors
- *
- * History:
  *
  */
 
@@ -115,7 +113,7 @@ namespace mctools {
       std::string _name_;        //!< Name of the physics constructor
       std::string _class_id_;    //!< Class ID of the physics constructor
       bool        _initialized_; //!< Initialization flag
-      physics_list * _mother_physics_list_; //!< Reference to the mother physics list
+      physics_list * _mother_physics_list_ = nullptr; //!< Reference to the mother physics list
 
       // Factory registration system :
       DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_physics_constructor)

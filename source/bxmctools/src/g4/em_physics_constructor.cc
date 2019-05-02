@@ -1000,9 +1000,17 @@ namespace mctools {
     void em_physics_constructor::_ConstructEMProcess()
     {
       DT_LOG_TRACE_ENTERING(_logprio());
+      
+#if G4VERSION_NUMBER < 1000
       theParticleIterator->reset();
       while ((*theParticleIterator)()) {
         G4ParticleDefinition * particle = theParticleIterator->value();
+#else
+      G4ParticleTable::G4PTblDicIterator * theParticleIterator = theParticleTable->GetIterator();
+      theParticleIterator->reset();
+      while ((*theParticleIterator)()) {
+        G4ParticleDefinition * particle = theParticleIterator->value();
+#endif
         G4ProcessManager     * pmanager = particle->GetProcessManager();
         G4String particle_name = particle->GetParticleName();
 

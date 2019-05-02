@@ -5,6 +5,8 @@
 
 // Third party:
 // Geant4:
+#include <G4Version.hh>
+
 // Base model:
 // For C++11 compatibility, remove once Bayeux is C++11 Geant4 10.2 only
 #ifdef __clang__
@@ -23,30 +25,36 @@
 #include <G4hCoulombScatteringModel.hh>
 #include <G4WentzelVIRelModel.hh>
 #include <G4BetheBlochModel.hh>
+#if G4VERSION_NUMBER >= 1000
+#include <G4PAIPhotModel.hh>
+#include <G4UrbanMscModel.hh>
+#include <G4SeltzerBergerModel.hh>
+#else // Geant4 9.X
+#include <G4PAIPhotonModel.hh>
+#include <G4UrbanMscModel90.hh>
+#include <G4UrbanMscModel92.hh>
 #include <G4UrbanMscModel93.hh>
+#include <G4UrbanMscModel95.hh>
+#include <G4UrbanMscModel96.hh>
+#include <G4eBremsstrahlungModel.hh>
+#include <G4PEEffectModel.hh>
+#endif
 #include <G4eBremParametrizedModel.hh>
 #include <G4PAIModel.hh>
 #include <G4WentzelVIModel.hh>
-#include <G4UrbanMscModel96.hh>
 #include <G4XrayRayleighModel.hh>
 #include <G4BetheHeitlerModel.hh>
 #include <G4eBremsstrahlungRelModel.hh>
-#include <G4UrbanMscModel92.hh>
 #include <G4KleinNishinaModel.hh>
-#include <G4eBremsstrahlungModel.hh>
 #include <G4IonCoulombScatteringModel.hh>
 #include <G4PairProductionRelModel.hh>
 #include <G4eeToTwoGammaModel.hh>
 #include <G4eCoulombScatteringModel.hh>
 #include <G4MollerBhabhaModel.hh>
 #include <G4BraggIonGasModel.hh>
-#include <G4UrbanMscModel95.hh>
 #include <G4BraggModel.hh>
 #include <G4GoudsmitSaundersonMscModel.hh>
-#include <G4PAIPhotonModel.hh>
 #include <G4SeltzerBergerModel.hh>
-#include <G4PEEffectModel.hh>
-#include <G4UrbanMscModel90.hh>
 #include <G4ICRU49NuclearStoppingModel.hh>
 #include <G4PEEffectFluoModel.hh>
 #include <G4eSingleCoulombScatteringModel.hh>
@@ -208,30 +216,36 @@ namespace mctools {
         _reg_.registration<G4hCoulombScatteringModel>("hCoulombScattering");
         _reg_.registration<G4WentzelVIRelModel>("WentzelVIRel");
         _reg_.registration<G4BetheBlochModel>("BetheBloch");
-        _reg_.registration<G4UrbanMscModel93>("UrbanMsc93");
         _reg_.registration<G4eBremParametrizedModel>("eBremParametrized");
         _reg_.registration<G4PAIModel>("PAI");
         _reg_.registration<G4WentzelVIModel>("WentzelVI");
+#if G4VERSION_NUMBER >= 1000
+        _reg_.registration<G4UrbanMscModel>("UrbanMsc");
+        _reg_.registration<G4SeltzerBergerModel>("SeltzerBerger");
+        _reg_.registration<G4PAIPhotModel>("PAIPhot");
+#else
+        _reg_.registration<G4UrbanMscModel90>("UrbanMsc90");
+        _reg_.registration<G4UrbanMscModel92>("UrbanMsc92");
+        _reg_.registration<G4UrbanMscModel93>("UrbanMsc93");
+        _reg_.registration<G4UrbanMscModel95>("UrbanMsc95");
         _reg_.registration<G4UrbanMscModel96>("UrbanMsc96");
+        _reg_.registration<G4eBremsstrahlungModel>("eBremsstrahlung");
+        _reg_.registration<G4PEEffectModel>("PEEffect");
+        _reg_.registration<G4PAIPhotonModel>("PAIPhoton");
+#endif
         _reg_.registration<G4XrayRayleighModel>("XrayRayleigh");
         _reg_.registration<G4BetheHeitlerModel>("BetheHeitler");
         _reg_.registration<G4eBremsstrahlungRelModel>("eBremsstrahlungRel");
-        _reg_.registration<G4UrbanMscModel92>("UrbanMsc92");
         _reg_.registration<G4KleinNishinaModel>("KleinNishina");
-        _reg_.registration<G4eBremsstrahlungModel>("eBremsstrahlung");
         _reg_.registration<G4IonCoulombScatteringModel>("IonCoulombScattering");
         _reg_.registration<G4PairProductionRelModel>("PairProductionRel");
         _reg_.registration<G4eeToTwoGammaModel>("eeToTwoGamma");
         _reg_.registration<G4eCoulombScatteringModel>("eCoulombScattering");
         _reg_.registration<G4MollerBhabhaModel>("MollerBhabha");
         _reg_.registration<G4BraggIonGasModel>("BraggIonGas");
-        _reg_.registration<G4UrbanMscModel95>("UrbanMsc95");
         _reg_.registration<G4BraggModel>("Bragg");
         _reg_.registration<G4GoudsmitSaundersonMscModel>("GoudsmitSaundersonMsc");
-        _reg_.registration<G4PAIPhotonModel>("PAIPhoton");
-        _reg_.registration<G4SeltzerBergerModel>("SeltzerBerger");
-        _reg_.registration<G4PEEffectModel>("PEEffect");
-        _reg_.registration<G4UrbanMscModel90>("UrbanMsc90");
+        // _reg_.registration<G4SeltzerBergerModel>("SeltzerBerger");
         _reg_.registration<G4ICRU49NuclearStoppingModel>("ICRU49NuclearStopping");
         _reg_.registration<G4PEEffectFluoModel>("PEEffectFluo");
         _reg_.registration<G4eSingleCoulombScatteringModel>("eSingleCoulombScattering");

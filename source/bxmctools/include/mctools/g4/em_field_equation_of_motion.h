@@ -18,6 +18,7 @@
 
 // Third party:
 // - Geant4:
+#include <G4Version.hh>
 #include <G4EquationOfMotion.hh>
 
 // This project:
@@ -80,16 +81,25 @@ namespace mctools {
       //  spin of the particle.
       /// Derivatives are defined as:
       ///   dr/ds, dp/ds, dt/ds, dSpin/ds
-      void EvaluateRhsGivenB(const G4double y_[],
-                             const G4double field_[6],
-                             G4double dydx_[]) const;
+      virtual void EvaluateRhsGivenB(const G4double y_[],
+                                     const G4double field_[6],
+                                     G4double dydx_[]) const;
 
       /// Set the charge, momentum and mass of the current particle
       /// used to set the equation's coefficients
+      /// Override a manadatory virtual method in Geant 4.9.6
+      /// Signature has changed for some Geant 4.10.X version (see below)
       void SetChargeMomentumMass(G4double particle_charge_, // in e+ units
                                  G4double particle_momentum_,
                                  G4double particle_mass_);
-
+      
+#if G4VERSION_NUMBER >= 1000
+      // New signature for this virtual method in Geant 4.10.X
+      void SetChargeMomentumMass(G4ChargeState particle_charge_, // with charge attribute in e+ units
+                                 G4double particle_momentum_,
+                                 G4double particle_mass_);
+#endif
+      
       /// Set the magnetic anomaly of the particle
       void set_anomaly(double a_);
 
@@ -108,12 +118,6 @@ namespace mctools {
       /// Check the only magnetic flag
       bool is_only_magnetic() const;
 
-      // /// Initialization
-      // void initialize(const datatools::properties & config_);
-
-      // /// Reset
-      // void reset();
-
     protected:
 
       void _set_defaults();
@@ -121,12 +125,12 @@ namespace mctools {
     private:
 
       // Configuration parameters:
-      bool   _with_spin_;     ///< Particle with spin
-      bool   _only_magnetic_; ///< Field is only magnetic
+      bool   _with_spin_ = false;     ///< Particle with spin
+      bool   _only_magnetic_ = false; ///< Field is only magnetic
 
       double _mass_;          ///< Effective mass of the particle
       double _charge_;        ///< Effective charge of the particle
-      double _anomaly_;       ///< Magnetic anomaly of the particle
+      double _anomaly_ = 0.0; ///< Magnetic anomaly of the particle
       double _momentum_;      ///< Momentum of the particle
 
       // Coefficients computed from particle effective mass and charge:
@@ -146,10 +150,8 @@ namespace mctools {
 
 #endif // MCTOOLS_G4_EM_FIELD_EQUATION_OF_MOTION_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
