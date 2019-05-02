@@ -18,6 +18,64 @@ From the Bayeux base source directory, use the build/installation script:
 ..
 
 
+New build script
+================
+
+Build Bayeux with Boost 1.68
+----------------------------
+
+.. code:: bash
+
+   $ bxdev_setup
+   $ ./tools/build_exp.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.68.0 --bayeux-prefix "_boost168"
+..
+
+It breaks as shown in https://github.com/BxCppDev/Bayeux/issues/39 and,
+from the build directory:
+
+.. code:: bash
+
+   $ ctest -VV -I 41,41
+..
+   
+Build Bayeux with Boost 1.69
+----------------------------
+
+.. code:: bash
+
+   $ bxdev_setup
+   $ ./tools/build_exp.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169"
+..
+
+From the build directory:
+
+.. code:: bash
+
+   $ ctest -VV -I 41,41
+..
+
+
+.. code:: bash
+
+With Geant4
+-----------
+
+   $ bxdev_setup
+   $ ./tools/build_exp.sh --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169_withg4"
+..
+
+From the build directory:
+.. code:: bash
+
+   $ ctest -VV -I 41,41
+..
+
+
+
+
+
+
+
 .. end
    
 
