@@ -28,9 +28,16 @@ Additions
 * datatools: Add some functionality tests of the datatools::properties class.
 * datatools: Add new smart print interface to the datatools::properties
   and datatools::multi_properties classes.
+* mctools: Add a flag in the biasing point_of_interest class
 * PR#27: Bayeux supports C++17 and C++20.
 * PR#33: Bayeux CMake config script now defines the ``Bayeux_INCLUDE_DIRS`` variable.
-
+* Support Boost 1.69.0
+* Support Camp 0.8.2
+* Support CLHEP 2.4.1.0
+* Add preliminary support for Geant4 10.5 with new datasets
+* Support ROOT 6.16
+* Issue #39: Bayeux does not support Boost 1.68.0
+  
 Removals
 =========
 
@@ -49,3 +56,4 @@ Fixes
 * genbb: Fix bug in probability normalization in beta decay classes with electron
   shakeoff randomized charge state.
 * mctools: Fix bug in sensitive detector (material name stored in place of particle name).
+* Fix a few bugs detected with new Boost/CLHEP...
