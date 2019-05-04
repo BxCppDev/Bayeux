@@ -67,6 +67,14 @@ root_generate_dictionary(brio_dict
   OPTIONS ${__BRIO_ROOT_GEN_DICT_OPTS}
   )
 
+### To be investigated...
+# root_generate_dictionary(brio_dict
+#   ${CMAKE_CURRENT_SOURCE_DIR}/bxmctools/include/${module_name}/detail/brio_record.h
+#   ${CMAKE_CURRENT_SOURCE_DIR}/bxmctools/include/${module_name}/detail/TArrayCMod.h
+#   ${__BRIO_MODULE_ARG}
+#   LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
+#   OPTIONS "-I${CMAKE_CURRENT_SOURCE_DIR}/bxmctools/include"  ${__BRIO_ROOT_GEN_DICT_OPTS}
+#   )
 
 list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
 if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
