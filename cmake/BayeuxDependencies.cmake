@@ -108,9 +108,13 @@ if(Bayeux_WITH_GEANT4_MODULE)
 endif()
 
 # - Core Includes for Bayeux + Third Party
+message(STATUS "CLHEP_INCLUDE_DIRS    = '${CLHEP_INCLUDE_DIRS}'")
+message(STATUS "ROOT_INCLUDE_DIRS     = '${ROOT_INCLUDE_DIRS}'")
+message(STATUS "CAMP_INCLUDE_DIRS     = '${CAMP_INCLUDE_DIRS}'")
+message(STATUS "Boost_INCLUDE_DIRS    = '${Boost_INCLUDE_DIRS}'")
 #include_directories(SYSTEM ${CLHEP_INCLUDE_DIRS})
 #include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
-#include_directories(${CAMP_INCLUDE_DIRS})
+include_directories(SYSTEM ${CAMP_INCLUDE_DIRS})
 #include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 
