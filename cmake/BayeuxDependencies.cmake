@@ -6,6 +6,8 @@ message( STATUS "[info] Define Bayeux dependencies")
 # Configure build of Bayeux library
 # - Packages
 # - Boost
+### Should we use Boost 1.58 as the minimal version (system version on Ubuntu 16.04) ?
+### set(BAYEUX_BOOST_MIN_VERSION "1.58.0")
 set(BAYEUX_BOOST_MIN_VERSION "1.63.0")
 set(BAYEUX_BOOST_COMPONENTS
   filesystem
