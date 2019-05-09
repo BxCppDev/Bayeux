@@ -399,6 +399,18 @@ if(BAYEUX_ENABLE_TESTING)
       set_property(TEST ${_testname}
         APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
         )
+
+      ### Require that brio-reader tests run after writer ones...
+      if(_testname MATCHES ".*brio_reader.*")
+        string(REPLACE "reader" "writer" _writer_dep ${_testname})
+        set_property(TEST ${_testname} PROPERTY DEPENDS ${_writer_dep})
+      endif()
+
+      if(_testname MATCHES "brio-test_reader*")
+        set_property(TEST ${_testname} PROPERTY DEPENDS "brio-test_writer;brio-test_writer_1;brio-test_writer_2")
+
+      endif()
+
     endforeach()
   endforeach()
 endif()
