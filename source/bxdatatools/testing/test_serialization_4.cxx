@@ -18,14 +18,12 @@
 #include <datatools/safe_serial.h>
 
 
-using namespace std;
-
 // A serializable class:
 class data : public datatools::i_serializable
 {
 public:
-  static const string SERIAL_TAG;
-  virtual const string & get_serial_tag () const;
+  static const std::string SERIAL_TAG;
+  virtual const std::string & get_serial_tag () const;
 
 public:
   int32_t value; // An integral value (32 bits)
@@ -45,9 +43,9 @@ void data::serialize (Archive & ar_,
   return;
 }
 
-const string data::SERIAL_TAG = "data";
+const std::string data::SERIAL_TAG = "data";
 
-const string & data::get_serial_tag () const
+const std::string & data::get_serial_tag () const
 {
   return data::SERIAL_TAG;
 }
@@ -58,7 +56,7 @@ const string & data::get_serial_tag () const
 
 int main (void)
 {
-  string filename = "test_serialization_4.xml";
+  std::string filename = "test_serialization_4.xml";
 
   {
     // Save 1000 data objects:
@@ -93,9 +91,9 @@ int main (void)
           }
         else
           {
-            string bad_tag = reader.get_record_tag ();
-            clog << "ERROR: Unknown serialization tag '"
-                 << bad_tag << "'! Cannot de-serialized more !" << endl;
+            std::string bad_tag = reader.get_record_tag ();
+            std::clog << "ERROR: Unknown serialization tag '"
+                 << bad_tag << "'! Cannot de-serialized more !" << std::endl;
             break;
           }
       }
