@@ -1,7 +1,7 @@
 /// \file brio/reader.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
- * Last modified: 2013-05-19
+ * Last modified: 2019-05-21
  *
  * License: GPL3
  *
@@ -36,13 +36,15 @@
 #endif
 
 // - Bayeux/datatools:
-#include <datatools/eos/portable_iarchive.hpp>
+#include <datatools/portable_archives_support.h>
+#include <datatools/logger.h>
 #include <datatools/exception.h>
 
 // This Project:
 #include <brio/detail/base_io.h>
 
 namespace brio {
+  
   //! \brief The brio generic reader class
   class reader
     : public detail::base_io
@@ -52,13 +54,13 @@ namespace brio {
     reader();
 
     //! Constructor
-    reader(const std::string& filename_,
-     datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
+    reader(const std::string & filename_,
+           datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Constructor
-    reader(const std::string& filename_,
-     const std::string& format_str_,
-     datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
+    reader(const std::string & filename_,
+           const std::string & format_str_,
+           datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Destructor
     virtual ~reader();
@@ -68,8 +70,8 @@ namespace brio {
      *  This behaviour can be changed:
      *
      *  brio::reader a_reader;
-     *  a_reader.open ("file.root");
-     *  a_reader.set_check_serial_tag (false);
+     *  a_reader.open("file.root");
+     *  a_reader.set_check_serial_tag(false);
      *
      */
     void set_check_serial_tag(bool new_value_ = true);
@@ -79,7 +81,7 @@ namespace brio {
     /** Position current entry of store 'label' just before the first
      *  serialized object
      */
-    void rewind_store(const std::string& label_ = "");
+    void rewind_store(const std::string & label_ = "");
 
     /** Position current entry of store 'label' just after the last
      *  serialized object
@@ -88,58 +90,59 @@ namespace brio {
 
     /** Check if some previous entry exists relatively to the current entry
      */
-    bool has_previous(const std::string& label_ = "") const;
+    bool has_previous(const std::string & label_ = "") const;
 
     /** Check if some next entry exists relatively to the current entry
      */
-    bool has_next(const std::string& label_ = "") const;
+    bool has_next(const std::string & label_ = "") const;
 
     //! Load template method for next entry
     template<typename T>
-      int load_next(T& data_, const std::string& label_ = "");
+    int load_next(T & data_, const std::string & label_ = "");
 
     //! Load template method for previous entry
     template<typename T>
-      int load_previous(T& data_, const std::string& label_ = "");
+    int load_previous(T & data_, const std::string & label_ = "");
 
     //! Load template method for arbitrary entry
     template<typename T>
-      int load(T& data_, int64_t nentry_ = -1);
+    int load(T & data_, int64_t nentry_ = -1);
 
     //! Load template method for arbitrary store and entry
     template<typename T>
-      int load(T& data_, const std::string& label_, int64_t nentry_ = -1);
+    int load(T & data_, const std::string & label_, int64_t nentry_ = -1);
 
     //! Smart print
-    virtual void tree_dump(std::ostream& out_ = std::clog,
-         const std::string& title_ = "",
-         const std::string& indent_ = "",
-         bool inherit_ = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
     //! Print
     void print_info(std::ostream& out_ = std::clog) const;
 
   protected:
-    virtual void _at_open(const std::string& filename_);
+    virtual void _at_open(const std::string & filename_);
 
     template<class T>
-      int _at_load(T& data_, store_info *ptr_si_, int64_t nentry_);
+    int _at_load(T & data_, store_info * ptr_si_, int64_t nentry_);
 
     void _set_default();
 
   private:
+    
     //! Return pointer to store with name label. Throw if file is not
     //! open or store does not exist
-    const store_info* get_store_or_throw(const std::string& label) const;
-    store_info* get_store_or_throw(const std::string& label);
-
+    const store_info * get_store_or_throw(const std::string & label_) const;
+    store_info * get_store_or_throw(const std::string & label_);
 
   private:
     bool _allow_mixed_types_in_stores_; ///< Flag to allow stores with mixed types
     bool _allow_automatic_store_;       ///< Flag to allow an default automatic store
     bool _check_serial_tag_;            ///< Flag to automatically check coherence between the store's serialization tag and the stored objects serialization tag
-    store_info *_automatic_store_;      ///< A handle to the automatic store (if any)
+    store_info * _automatic_store_ = nullptr; ///< A handle to the automatic store (if any)
   };
+  
 } // end of namespace brio
 
 #include <brio/reader-inl.h>

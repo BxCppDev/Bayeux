@@ -214,11 +214,17 @@ namespace datatools {
   }
 
   // return nothing instead????
-  int io_factory::init_read_archive()
+  void io_factory::init_read_archive()
   {
     if (this->is_text()) {
+      // if (_fin_) {
+      //   _fin_->tellg();
+      // }
       _itar_ptr_ = new boost::archive::text_iarchive(*_in_, boost::archive::no_codecvt);
-     } else if (this->is_xml()) {
+      // if (_fin_) {
+      //   _fin_->tellg();
+      // }
+    } else if (this->is_xml()) {
       if (_fin_) {
         _fin_->tellg();
         // int fp = _fin_->tellg();
@@ -231,18 +237,18 @@ namespace datatools {
         // std::cerr << "*** io_factory::init_read_archive *** fp=" << fp << "\n";
       }
     } else if (this->is_binary()) {
-      _ibar_ptr_ = new eos::portable_iarchive(*_in_);
+      _ibar_ptr_ = new datatools::portable_iarchive(*_in_);
     } else {
       DT_THROW(std::logic_error, "Format not supported!");
     }
     _read_archive_is_initialized_ = true;
-    return 0;
+    return;
   }
 
-  int io_factory::reset_read_archive()
+  void io_factory::reset_read_archive()
   {
     if (!_read_archive_is_initialized_) {
-      return 0;
+      return;
     }
 
     if (_itar_ptr_ != nullptr) {
@@ -294,10 +300,10 @@ namespace datatools {
     }
 
     _read_archive_is_initialized_ = false;
-    return 0;
+    return;
   }
 
-  int io_factory::init_read(const std::string & stream_name_)
+  void io_factory::init_read(const std::string & stream_name_)
   {
     _in_fs_ = new boost::iostreams::filtering_istream;
     if (this->is_gzip()) {
@@ -341,10 +347,10 @@ namespace datatools {
     // _in_cursor_ = 0;
     // p = _in_->tellg();
     // std::cerr << "*** io_factory::init_read *** p=" << p << "\n";
-    return 0;
+    return;
   }
 
-  int io_factory::reset_read()
+  void io_factory::reset_read()
   {
     if (_in_ != nullptr) {
       _in_ = nullptr;
@@ -368,28 +374,28 @@ namespace datatools {
       _fin_ = nullptr;
     }
 
-    return 0;
+    return;
   }
 
-  int io_factory::init_write_archive()
+  void io_factory::init_write_archive()
   {
     if (_write_archive_is_initialized_) {
-      return 0;
+      return;
     }
     if (this->is_text()) {
       _otar_ptr_ = new boost::archive::text_oarchive(*_out_, boost::archive::no_codecvt);
     } else if (this->is_xml()) {
       _oxar_ptr_ = new boost::archive::xml_oarchive(*_out_, boost::archive::no_codecvt);
     } else if (this->is_binary()) {
-      _obar_ptr_ = new eos::portable_oarchive(*_out_);
+      _obar_ptr_ = new datatools::portable_oarchive(*_out_);
     } else {
       DT_THROW_IF(true, std::logic_error, "Format not supported !");
     }
     _write_archive_is_initialized_ = true;
-    return 0;
+    return;
   }
 
-  int io_factory::init_write(const std::string & stream_name_)
+  void io_factory::init_write(const std::string & stream_name_)
   {
     _out_fs_ = new boost::iostreams::filtering_ostream;
     if (this->is_gzip()) {
@@ -401,7 +407,7 @@ namespace datatools {
     if (stream_name_.empty()) {
       DT_THROW(std::logic_error, "Missing output stream name!");
       // _out_fs_->push(std::cout);
-      return 0;
+      return;
     } else {
       std::ios_base::openmode open_mode = std::ios_base::out;
       if (this->is_compressed() || this->is_binary()) {
@@ -426,13 +432,13 @@ namespace datatools {
     if (this->is_text() || this->is_xml()) {
       _out_->imbue(*_locale_);
     }
-    return 0;
+    return;
   }
 
-  int io_factory::reset_write_archive()
+  void io_factory::reset_write_archive()
   {
     if (!_write_archive_is_initialized_) {
-      return 0;
+      return;
     }
     if (_otar_ptr_ != nullptr) {
       delete _otar_ptr_;
@@ -448,10 +454,10 @@ namespace datatools {
       _obar_ptr_ = nullptr;
     }
     _write_archive_is_initialized_ = false;
-    return 0;
+    return;
   }
 
-  int io_factory::reset_write()
+  void io_factory::reset_write()
   {
     if (_out_ != nullptr) {
       _out_->flush();
@@ -468,10 +474,10 @@ namespace datatools {
       delete _fout_;
       _fout_ = nullptr;
     }
-    return 0;
+    return;
   }
 
-  int io_factory::init(const std::string & stream_name_, int mode_)
+  void io_factory::init(const std::string & stream_name_, int mode_)
   {
     _mode_ = mode_;
     if (this->is_read()) {
@@ -481,7 +487,7 @@ namespace datatools {
       this->init_write(stream_name_);
       if (this->is_single_archive()) this->init_write_archive();
     }
-    return 0;
+    return;
   }
 
   void io_factory::start_archive()
@@ -522,7 +528,7 @@ namespace datatools {
     return;
   }
 
-  int io_factory::reset()
+  void io_factory::reset()
   {
     if (this->is_read()) {
       this->reset_read_archive();
@@ -544,7 +550,7 @@ namespace datatools {
       delete _default_locale_;
       _default_locale_ = nullptr;
     }
-    return 0;
+    return;
   }
 
   io_factory::io_factory(int mode_)

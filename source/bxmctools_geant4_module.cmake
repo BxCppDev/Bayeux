@@ -6,7 +6,7 @@
 # headers... Though these two headers are the only real public interface,
 # they #include other headers, so these also need to be present...
 #
-if(BAYEUX_WITH_GEANT4_MODULE)
+if(Bayeux_WITH_GEANT4_MODULE)
 
   set(${module_name}_GEANT4_HEADERS
     ${module_include_dir}/${module_name}/g4/manager_parameters.h
@@ -112,7 +112,6 @@ if(BAYEUX_WITH_GEANT4_MODULE)
     ${module_app_dir}/g4/g4_production.cxx
     ${module_app_dir}/g4/g4_seeds.cxx
     )
-
 
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   target_compile_features(Bayeux_mctools_geant4 PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})

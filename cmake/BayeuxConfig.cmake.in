@@ -77,6 +77,11 @@ find_package(Boost ${BAYEUX_BOOST_VERSION} EXACT REQUIRED
   COMPONENTS ${BAYEUX_BOOST_COMPONENTS}
   )
 
+if (Boost_VERSION VERSION_GREATER 106800)
+  # - Use explicitely the Boost/Math fp utilities for 
+  add_definitions("-DBOOST_MATH_DISABLE_STD_FPCLASSIFY")
+endif()
+
 # - CAMP
 set(BAYEUX_CAMP_VERSION @CAMP_VERSION@)
 set(CAMP_DIR @CAMP_DIR@)

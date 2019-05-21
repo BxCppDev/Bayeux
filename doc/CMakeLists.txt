@@ -43,7 +43,7 @@ set(_bxocd_depends Bayeux)
 set(_bxgeant4 0)
 
 # This setup
-if(BAYEUX_WITH_GEANT4_MODULE)
+if(Bayeux_WITH_GEANT4_MODULE)
   set(_bxgeant4 1)
 endif()
 
@@ -77,7 +77,9 @@ set(BAYEUX_MARKDOWN_DOCS
   )
 
 # Support Geant4 plugin
-if(BAYEUX_WITH_GEANT4_MODULE)
+message(STATUS "Bayeux_WITH_GEANT4_MODULE=${Bayeux_WITH_GEANT4_MODULE}")
+if(Bayeux_WITH_GEANT4_MODULE)
+  message( STATUS "Documentation support for Bayeux_mctools_geant4")
   list(APPEND BAYEUX_MARKDOWN_DOCS
     BxG4/BxG4Plugin.md
     )

@@ -1,7 +1,7 @@
 /// \file brio/writer.h
 /* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-11-01
- * Last modified: 2013-04-22
+ * Last modified: 2019-05-21
  *
  * License: GPL3
  *
@@ -36,7 +36,7 @@
 #endif
 
 // - Bayeux/datatools:
-#include <datatools/eos/portable_oarchive.hpp>
+#include <datatools/portable_archives_support.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 
@@ -137,9 +137,9 @@ namespace brio {
 
     void _set_default();
 
-    store_info* _add_store(const std::string & label_,
-                           const std::string & serial_tag_,
-                           size_t buffer_size_);
+    store_info * _add_store(const std::string & label_,
+                            const std::string & serial_tag_,
+                            size_t buffer_size_);
 
     template <typename T>
     int _at_store(const T & dat, store_info * store_info_);
@@ -152,7 +152,7 @@ namespace brio {
     bool _allow_mixed_types_in_stores_; ///< Flag to allow stores with mixed types
     bool _allow_automatic_store_;       ///< Flag to allow an default automatic store
     bool _existing_file_protected_;     ///< Flag to protect existing output data file
-    store_info *_automatic_store_;      ///< A handle to the automatic store (if any)
+    store_info * _automatic_store_ = nullptr; ///< A handle to the automatic store (if any)
 
   };
 

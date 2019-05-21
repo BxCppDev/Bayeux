@@ -4,7 +4,7 @@
  *
  *  Convenience header for listing headers for supported archives.
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2019 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 #ifndef DATATOOLS_ARCHIVES_LIST_H
 #define DATATOOLS_ARCHIVES_LIST_H
 
+#include <datatools/datatools_config.h>
+
 // Wrap Boost's archive/polymorphic_iarchive header
 // This header, indirectly, causes "unused parameter" warnings from
 // a transient include of boost/serialization/smart_cast.hpp.
@@ -40,39 +42,17 @@
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
 #include <boost/archive/polymorphic_iarchive.hpp>
-#include <datatools/eos/portable_iarchive.hpp>
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
 
 #include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
 
-// 2012-06-07 FM : switch to Portable Archive v5.0
-#include <datatools/eos/portable_oarchive.hpp>
-
-/// Top-level namespace of the portable binary archives
-namespace eos
-{
-}
-
-/// Top-level namespace of the Boost library
-namespace boost
-{
-  /// Nested namespace of the Boost/archives library
-  namespace archive
-  {
-  }
-
-  /// Nested namespace of the Boost/Serialization library
-  namespace serialization
-  {
-  }
-
-}
+#include <datatools/portable_archives_support.h>
 
 #endif // DATATOOLS_ARCHIVES_LIST_H
 

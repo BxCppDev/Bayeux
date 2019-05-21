@@ -41,6 +41,12 @@ set(BAYEUX_SUBMODULES
   datatools
   )
 
+# - Special 'EOS portable archive' for Boost >= 1.69
+if (Bayeux_USE_EPA_ARCHIVES)
+  message(STATUS "Using special EPA archives for Boost version ${Boost_VERSION}")
+  list(APPEND BAYEUX_SUBMODULES epa)
+endif()
+
 if(Bayeux_WITH_CUTS)
   list(APPEND BAYEUX_SUBMODULES cuts)
 endif()
@@ -102,6 +108,7 @@ set(Bayeux_RESOURCES ${bayeux_MODULE_RESOURCES})
 list(APPEND Bayeux_APPS ${bayeux_MODULE_APPS})
 
 foreach(_m ${BAYEUX_SUBMODULES})
+  message( STATUS "Building Bayeux module '${_m}'...")
   set(MODULE_HEADER_ROOT   "${BAYEUX_BUILD_INCLUDEDIR}/bayeux")
   set(MODULE_RESOURCE_ROOT "${MODULE_RESOURCE_ROOT_BASE}/${_m}")
   set(MODULE_EXAMPLE_ROOT  "${MODULE_EXAMPLE_ROOT_BASE}/${_m}")
@@ -132,19 +139,27 @@ add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
 target_compile_features(Bayeux PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
 target_include_directories(Bayeux
   PUBLIC
-    $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}>
-    $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}/bayeux>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+  $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}>
+  $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}/bayeux>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
   PRIVATE
-   ${CMAKE_CURRENT_BINARY_DIR}
-   ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
-   )
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
+  )
+
+set(_root_include_dirs)
+set(_root_libraries)
+if(Bayeux_WITH_ROOT)
+  set(_root_include_dirs ${ROOT_INCLUDE_DIRS})
+  set(_root_libraries ${ROOT_LIBRARIES})
+endif()
+ 
 # Also need to add, for now, include directories for deps
 # that are not supplied as full imported targets
 target_include_directories(Bayeux SYSTEM
   PUBLIC
-   ${ROOT_INCLUDE_DIRS}
+   ${_root_include_dirs}
    ${CLHEP_INCLUDE_DIRS}
    )
 target_link_libraries(Bayeux
@@ -153,7 +168,7 @@ target_link_libraries(Bayeux
     camp::camp
     GSL::gsl
     ${CLHEP_LIBRARIES}
-    ${ROOT_LIBRARIES}
+    ${_root_libraries}
   PRIVATE
     ${CMAKE_DL_LIBS}
   )

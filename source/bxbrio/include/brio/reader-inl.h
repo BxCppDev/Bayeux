@@ -164,13 +164,12 @@ namespace brio {
       input_stream(si.record.fDataBuffer.fArray,si.record.fDataBuffer.fN);
     // 2011-06-16 FM: restored
     if (this->is_format_pba()) {
-      //boost::archive::portable_binary_iarchive ia (input_stream);
-      eos::portable_iarchive ia(input_stream);
+      datatools::portable_iarchive ia(input_stream);
       ia >> data_;
     }
     if (this->is_format_text()) {
-      input_stream.imbue (*_locale);
-      boost::archive::text_iarchive ia (input_stream);
+      input_stream.imbue(*_locale);
+      boost::archive::text_iarchive ia(input_stream);
       ia >> data_;
     }
 

@@ -6,12 +6,9 @@
 #include <limits>
 
 // The quasi portable binary archives :
-#include <datatools/eos/portable_iarchive.hpp>
-#include <datatools/eos/portable_oarchive.hpp>
-
+#include <datatools/archives_list.h>
 #include <boost/cstdint.hpp>
 #include <boost/serialization/string.hpp>
-
 
 using namespace std;
 
@@ -21,7 +18,7 @@ int main (int /* argc_ */ , char ** /* argv_ */)
   {
     clog << "Storing..." << endl;
     ofstream output_stream ("test_binary_serialization.data");
-    eos::portable_oarchive oa (output_stream);
+    datatools::portable_oarchive oa (output_stream);
     clog << "Output archive is setup !" << endl;
     uint32_t i0 = 0;
     uint32_t i1 = 42;
@@ -57,7 +54,7 @@ int main (int /* argc_ */ , char ** /* argv_ */)
   {
     clog << endl << endl << "Loading..." << endl;
     ifstream input_stream ("test_binary_serialization.data");
-    eos::portable_iarchive ia (input_stream);
+    datatools::portable_iarchive ia (input_stream);
     clog << "Input archive is setup !" << endl;
     uint32_t i0;
     uint32_t i1;

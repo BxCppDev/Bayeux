@@ -34,7 +34,7 @@ set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools
 set(MCTOOLS_WITH_BIO 1)
 set(MCTOOLS_WITH_REFLECTION 1)
 set(MCTOOLS_WITH_G4 0)
-if(BAYEUX_WITH_GEANT4_MODULE)
+if(Bayeux_WITH_GEANT4_MODULE)
   set(MCTOOLS_WITH_G4 1)
   option(MCTOOLS_WITH_G4_G4VIS_USE "Build the Geant4 visualization interface" ON)
 endif()
@@ -158,7 +158,7 @@ set(${module_name}_MODULE_EXAMPLES
   ${module_examples_dir}
   )
 
-if(BAYEUX_WITH_DEVELOPER_TOOLS AND BAYEUX_WITH_GEANT4_MODULE)
+if(BAYEUX_WITH_DEVELOPER_TOOLS AND Bayeux_WITH_GEANT4_MODULE)
   # - Utility script:
   configure_file(${module_app_dir}/g4/mctools_g4_mkskelcfg.in
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxmctools_g4_mkskelcfg @ONLY)

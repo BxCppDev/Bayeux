@@ -8,6 +8,10 @@
 //! Evaluates to true if datatools was built with Boost I/O support
 #define DATATOOLS_WITH_BIO 1
 
+#cmakedefine01 Bayeux_USE_EOS_ARCHIVES
+
+#cmakedefine01 Bayeux_USE_EPA_ARCHIVES
+
 //! Evaluates to true if datatools was built with CAMP reflection/introspection support
 #cmakedefine01 DATATOOLS_WITH_REFLECTION
 

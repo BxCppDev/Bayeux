@@ -17,7 +17,7 @@
 #include <datatools/safe_serial.h>
 #include <datatools/i_serializable.ipp>
 
-#if BOOST_VERSION < 103600
+#if BOOST_VERSION < 103600 || BOOST_VERSION >= 106900
 namespace bmath=boost::math;
 #else
 namespace bmath=boost::spirit::math;

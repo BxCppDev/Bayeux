@@ -5,7 +5,7 @@
  * Define some macros to instantiate template serialization methods
  * for all archives supported by datatools.
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2019 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_iarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_iarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_iarchive) \
-  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,eos::portable_iarchive) \
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,datatools::portable_iarchive) \
   /**/
 
 /// Macro to generate the instantiation declarations of the intrusive serialization methods for all supported output archives
@@ -55,7 +55,7 @@
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_oarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_oarchive) \
   DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_oarchive) \
-  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,eos::portable_oarchive) \
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE(T,datatools::portable_oarchive) \
   /**/
 
 /// Macro to generate the instantiation declarations of the intrusive serialization methods for all supported intput and output archives
@@ -81,7 +81,7 @@
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_iarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_iarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_iarchive) \
-  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,eos::portable_iarchive) \
+  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,datatools::portable_iarchive) \
   /**/
 
 /// Macro to generate the instantiation declarations of the non intrusive serialization functions for all supported output archives
@@ -91,7 +91,7 @@
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::polymorphic_oarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::text_oarchive) \
   DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,boost::archive::xml_oarchive) \
-  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,eos::portable_oarchive) \
+  DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE(T,datatools::portable_oarchive) \
   /**/
 
 /// Macro to generate the instantiation declarations of the non intrusive serialization functions for all supported input and output archives

@@ -127,8 +127,7 @@ namespace brio {
     io::stream<io::back_insert_device<buffer_type> > output_stream(ptr_si->buffer);
     // 2011-06-16 FM: restored
     if (this->is_format_pba()) {
-      //boost::archive::portable_binary_oarchive oa (output_stream);
-      eos::portable_oarchive oa(output_stream);
+      datatools::portable_oarchive oa(output_stream);
       oa << data_;
     }
     if (is_format_text()) {

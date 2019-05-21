@@ -4,7 +4,7 @@
  *
  *  Some generic reader and writer based on Boost archives.
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2019 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,9 @@
 namespace datatools {
 
   //! \brief A generic base reader/writer class based on Boost/Serialization
-  class io_factory : public datatools::i_tree_dumpable {
+  class io_factory
+    : public datatools::i_tree_dumpable
+  {
   public:
     static const int SUCCESS = 0;
     static const int ERROR   = 1;
@@ -226,27 +228,27 @@ namespace datatools {
 
   private:
 
-    int init_read_archive();
+    void init_read_archive();
 
-    int init_read(const std::string & stream_name_);
+    void init_read(const std::string & stream_name_);
 
-    int reset_read_archive();
+    void reset_read_archive();
 
-    int reset_read();
+    void reset_read();
 
-    int init_write_archive();
+    void init_write_archive();
 
-    int init_write(const std::string & stream_name_);
+    void init_write(const std::string & stream_name_);
 
-    int reset_write_archive();
+    void reset_write_archive();
 
-    int reset_write();
+    void reset_write();
 
-    int init(const std::string& stream_name_, int mode_);
+    void init(const std::string& stream_name_, int mode_);
 
     void ctor_defaults();
 
-    int reset();
+    void reset();
 
   public:
 
@@ -377,7 +379,7 @@ namespace datatools {
     }
 
     template <typename Data>
-    void store_binary(eos::portable_oarchive & archive_,
+    void store_binary(datatools::portable_oarchive & archive_,
                       const Data & data_)
     {
       const Data & b = data_;
@@ -403,7 +405,7 @@ namespace datatools {
     }
 
     template <typename Data>
-    void load_binary(eos::portable_iarchive & archive_,
+    void load_binary(datatools::portable_iarchive & archive_,
                      Data & data_)
     {
       Data & b = data_;
@@ -438,13 +440,10 @@ namespace datatools {
     boost::archive::xml_iarchive  * _ixar_ptr_ = nullptr; ///< Handle to the XML input archive
     boost::archive::xml_oarchive  * _oxar_ptr_ = nullptr; ///< Handle to the XML output archive
 
-    eos::portable_iarchive * _ibar_ptr_ = nullptr;  ///< Handle to the portable binary input archive
-    eos::portable_oarchive * _obar_ptr_ = nullptr;  ///< Handle to the portable binary output archive
-
-    // int _in_cursor_ = -1;
+    datatools::portable_iarchive * _ibar_ptr_ = nullptr;  ///< Handle to the portable binary input archive
+    datatools::portable_oarchive * _obar_ptr_ = nullptr;  ///< Handle to the portable binary output archive
     
   }; // end of class io_factory
-
 
   //----------------------------------------------------------------------
   // Reader factory tag type
