@@ -43,10 +43,10 @@ Additions
   Boost 1.69 does not provide it. The Boost/Math  FP utilities
   are now used.
 
-  Support a new version of the Portable binary archives (EAP) based on
+  Support a new version of the Portable binary archives (EPA) based on
   version 6.0 (candidate for inclusion in Boost/Serialization)
   which are fixed to support new versions of Boost. Automatic selection
-  of the legacy EOS or EAP.
+  of the legacy EOS or EPA.
 
 
 Removals
