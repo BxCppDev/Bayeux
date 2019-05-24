@@ -70,10 +70,8 @@ namespace geomtools {
 
 #endif // GEOMTOOLS_BLUR_SPOT_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

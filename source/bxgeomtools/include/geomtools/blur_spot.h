@@ -13,8 +13,6 @@
  *   - spot blured as a stain (blur impact on a surface)
  *   - spot blured as a tiny volume (blur 3D-vertex: 'gazeous drop/cloud/bubble')
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_BLUR_SPOT_H
@@ -328,10 +326,9 @@ BOOST_CLASS_VERSION(geomtools::blur_spot, 1)
 
 #endif // GEOMTOOLS_BLUR_SPOT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
+
