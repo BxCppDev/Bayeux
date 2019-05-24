@@ -1,29 +1,37 @@
 /* test_enriched_base.cxx */
 
+// Ourselves:
+//#include <datatools/enriched_base.h>
+
 // Third Party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
+
+// This Project:
+#include <datatools/datatools_config.h>
+#include <datatools/logger.h>
+#include <datatools/properties.h>
+#include <datatools/io_factory.h>
+
+// Ourselves:
+#include <datatools/enriched_base.h>
+
+#if DATATOOLS_WITH_REFLECTION == 1
 // - Camp:
 #include <camp/userobject.hpp>
 #include <camp/value.hpp>
 #include <camp/args.hpp>
 #include <camp/class.hpp>
-
-// This Project:
-#include <datatools/datatools_config.h>
-#include <datatools/logger.h>
-#include <datatools/enriched_base.h>
-#include <datatools/properties.h>
-#include <datatools/io_factory.h>
-
-// Ourselves:
-#include <datatools/enriched_base.ipp>
+#endif // DATATOOLS_WITH_REFLECTION == 1
 
 void test1();
 void test2();
+#if DATATOOLS_WITH_REFLECTION == 1
 void test_reflection();
+#endif // DATATOOLS_WITH_REFLECTION == 1
 
-int main (int /* argc_ */, char ** /* argv_ */) {
+int main(int /* argc_ */, char ** /* argv_ */)
+{
   int error_code = EXIT_SUCCESS;
   try {
     test1();
@@ -31,12 +39,10 @@ int main (int /* argc_ */, char ** /* argv_ */) {
 #if DATATOOLS_WITH_REFLECTION == 1
     test_reflection();
 #endif // DATATOOLS_WITH_REFLECTION == 1
-  }
-  catch (std::exception & error) {
+  } catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...){
+  } catch (...){
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
@@ -57,6 +63,12 @@ void test1()
   {
     datatools::data_writer writer("test_enriched_base.xml");
     writer.store(obj);
+  }
+  {
+    datatools::enriched_base obj2;
+    datatools::data_reader reader("test_enriched_base.xml");
+    reader.load(obj2);
+    obj2.tree_dump(std::cout, "Loaded object : ");
   }
   return;
 }

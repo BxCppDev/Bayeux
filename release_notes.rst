@@ -36,8 +36,10 @@ Additions
 * Support CLHEP 2.4.1.0
 * Add preliminary support for Geant4 10.5 with new datasets
 * Support ROOT 6.16
-* Issue #39: Bayeux does not support Boost 1.68.0
-  
+* Issue #39: Bayeux does not support Boost 1.65 to 1.68
+  Accept only Boost 1.63 and Boost 1.69
+
+
 Removals
 =========
 

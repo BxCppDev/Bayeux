@@ -54,8 +54,21 @@ endif()
 # - CAMP Reflection
 set(DATATOOLS_WITH_REFLECTION 1)
 
+set(${module_name}_MODULE_HEADERS)
+
+if (Bayeux_USE_EOS_ARCHIVES)
+  list(APPEND
+    ${module_name}_MODULE_HEADERS
+    ${module_include_dir}/${module_name}/eos/polymorphic_portable_archive.hpp
+    ${module_include_dir}/${module_name}/eos/portable_archive_exception.hpp
+    ${module_include_dir}/${module_name}/eos/portable_archive.hpp
+    ${module_include_dir}/${module_name}/eos/portable_iarchive.hpp
+    ${module_include_dir}/${module_name}/eos/portable_oarchive.hpp
+    )
+endif()
+
 # - Raw Headers and Sources
-set(${module_name}_MODULE_HEADERS
+list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/archives_instantiation.h
   ${module_include_dir}/${module_name}/portable_archives_support.h
   ${module_include_dir}/${module_name}/archives_list.h
@@ -246,17 +259,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/command_macros.h
   ${module_include_dir}/${module_name}/detail/logger_macros.h
   )
-
-if (Bayeux_USE_EOS_ARCHIVES)
-  list(APPEND
-    ${module_name}_MODULE_HEADERS
-    ${module_include_dir}/${module_name}/eos/polymorphic_portable_archive.hpp
-    ${module_include_dir}/${module_name}/eos/portable_archive_exception.hpp
-    ${module_include_dir}/${module_name}/eos/portable_archive.hpp
-    ${module_include_dir}/${module_name}/eos/portable_iarchive.hpp
-    ${module_include_dir}/${module_name}/eos/portable_oarchive.hpp
-    )
-endif()
 
 # # - configure special source file
 # configure_file(${module_source_dir}/_datatools.cc.in bx${module_name}/_datatools.cc)

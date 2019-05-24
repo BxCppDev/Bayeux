@@ -28,9 +28,15 @@ find_package(Boost ${BAYEUX_BOOST_MIN_VERSION}
   REQUIRED
   ${BAYEUX_BOOST_COMPONENTS}
   )
-if (Boost_VERSION VERSION_EQUAL 106800)
-  message(STATUS "Boost version ${Boost_VERSION} has been detected.")
-  message(FATAL_ERROR "Bayeux does not support Boost version 1.68.0\n" "Please use Boost 1.63, 1.65.1 or 1.69.0")
+message(STATUS "Boost version ${Boost_VERSION} has been detected.")
+
+set(Bayeux_SUPPORTED_BOOST_VERSIONS 106300 106900)
+message(STATUS "Supported Boost versions: ${Bayeux_SUPPORTED_BOOST_VERSIONS}.")
+set(_bx_boost_ver_index -1)
+list(FIND Bayeux_SUPPORTED_BOOST_VERSIONS ${Boost_VERSION} _bx_boost_ver_index)
+if (_bx_boost_ver_index EQUAL -1)
+  message(FATAL_ERROR "Bayeux does not support Boost version ${Boost_VERSION}\n"
+    "Please use Boost version in: ${Bayeux_SUPPORTED_BOOST_VERSIONS}")
 endif()
 
 message(STATUS "Found Boost ${Boost_VERSION}")
