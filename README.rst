@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2019-03-19
+:Date:    2019-05-24
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -137,8 +137,8 @@ GPL 3 within Bayeux.
 Some parts of code or  management/build scripts are released under the
 MIT License.
 
-All other parts of Bayeux's C++ source code are  released under the GNU General Public
-License 3.0.
+All other parts of Bayeux's C++ source code are released under the GNU
+General Public License 3.0.
 
 
 Supported environments
@@ -149,8 +149,8 @@ Debian  or Fedora,  as Linux  is our  main development  and production
 environment.  Other  UNIX-like OSes  (Linux, BSD, macOS)  **may** work
 with some work of adapting.
 
-Bayeux uses the C++11 standard  by default so this implies the use
-of a modern C++ compiler (example: GCC version >= 4.9).
+Bayeux uses the C++11 standard by default so this implies the use of a
+modern C++ compiler (example: GCC version >= 4.9).
 
 Using  the `bxcppdev/bxtap`_  `Linuxbrew`_ *tap*  provided by  the
 BxCppDev_  group  should help  you  to  provide a  suitable  working
@@ -255,9 +255,15 @@ Core Software Required
 ......................
 
 * CMake 3.3.0 or higher: http://www.cmake.org
+  
+  * Ubuntu 18.04 provides GCC version  3.10.2.
+
 * C/C++ compiler supporting at least C++11 standard
   (GNU/Clang/Intel)
+  
+  * Ubuntu 18.04 provides GCC version 6.5 and 7.3.
 
+  
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
 institutional computing clusters) may  not provide CMake  3.3. If this  is the case,  then you
@@ -280,15 +286,31 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 Core Libraries Required
 .......................
 
-* Boost 1.63.0 or higher: http://www.boost.org
-  with the following libraries: filesystem, system, serialization, iostreams, program_options, regex
-  and thread.
-* Camp 0.8.0 : https://github.com/tegesoft/camp
-* GSL 2.4 or higher: http://www.gnu.org/s/gsl
-* CLHEP 2.1.3.1: http://proj-clhep.web.cern.ch
-* Geant4 9.6.4 (optional) : http://geant4.cern.ch
+* Boost  1.63.0 or  1.69.0:  http://www.boost.org  with the  following
+  libraries:    filesystem,    system,    serialization,    iostreams,
+  program_options, regex and thread.
+
+  **Beware** Boost versions 1.65 (default on Ubuntu 18.04) to 1.68 are
+  expected to  cause some crash with  GCC under Linux due  to a subtle
+  bug concerning the Boost/Serialization singleton class. Boost 1.69 should
+  fix this issue.
+  
+* Camp 0.8.2 : https://github.com/fw4spl-org/camp
+  
+  Former version 0.8.0 can be found at: https://github.com/tegesoft/camp
+  and should work.
+
+* GSL 2.4 (default in Ubuntu 18.04) or higher: http://www.gnu.org/s/gsl
+* CLHEP 2.4.1.0: http://proj-clhep.web.cern.ch
+ 
+  Former version is 2.1.3.1.
+  
+* Geant4 10.5 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
-* ROOT 6.12.04: http://root.cern.ch
+
+  Former version is 9.6.4.
+
+* ROOT 6.12.04 or 6.16.00: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
 
   * minimal X11,
@@ -297,20 +319,26 @@ Core Libraries Required
 
 * Qt5 (optional)
 
+  
+
+Install dependencies with LinuxBrew
+...................................
+  
 For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
 Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
-clients of Bayeux.  It is advised to use this bundle if you don't know how to install and setup
-the dependee libraries mentioned above on your system.  It
-will  provide,  for  Linux  and macOS  systems,  an  uniform  software
-environment with  a selected set  of blessed software,  including the
-C++ compiler if needed.
+clients of Bayeux.  It is advised to use this bundle if you don't know
+how to  install and  setup the dependee  libraries mentioned  above on
+your system.  It will provide, for Linux and macOS systems, an uniform
+software  environment  with  a   selected  set  of  blessed  software,
+including the C++ compiler if needed.
 
-Note however that it is perfectly possible to use system installation
-of the above libraries if your OS distribution provides adequate support.
+Note however that it is  perfectly possible to use system installation
+of  the above  libraries  if your  OS  distribution provides  adequate
+support.
 
-**Beware:** We  have experienced that  the use  of Linuxbrew is  not the
+**Beware:** We have  experienced that the use of Linuxbrew  is not the
 definitive robust  solution to solve the  software dependency problem.
-Linuxbrew sometimes fails  to provide a proper  and stable environment
+Linuxbrew regularly fails  to provide a proper  and stable environment
 to host  and use  Bayeux, due  to rapidly  changing brew  formulas and
 their dependencies from the homebrew core  tap.  We try to provide the
 proper formulas for Ubuntu Linux. However you could be forced to adapt
@@ -388,8 +416,11 @@ Additional Software Required
 
 Known Issues on Tested Platforms
 --------------------------------
-None known at present.
 
+
+- Boost/Serialization library  from version  1.65 to 1.68  introduce a
+  bug  in the  implementation of  the singleton  template class.  As a
+  consequence, only Boost version 1.63 and 1.69 are supported so far.
 
 .. raw:: pdf
 
@@ -618,7 +649,7 @@ bayeux  activation  shell  function  from  your  Bash  startup  script
       # if [ $? -ne 0 ]; then
       #   # You have forgotten to setup Linuxbrew:
       #	  echo >&2 "[error] bayeux_setup: Linuxbrew is not setup! "
-      #	  echo >&2 "[error] bayeux_setup: Bayeux depends on Linuxbrew."
+      #	  echo >&2 "[error] bayeux_setup: Bayeux depends on software managed by Linuxbrew."
       #	  echo >&2 "[error] bayeux_setup: Please setup Linuxbrew"
       #	  echo >&2 "[error]               on your system first!" 
       #	  return 1	
@@ -663,7 +694,7 @@ provided by Bayeux:
 ..
 
 Fell free to provide a ``bayeux_unsetup`` shell function to come back to
-the shell initial state.
+the initial state of the shell.
 
 
 Documentation

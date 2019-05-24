@@ -36,8 +36,17 @@ Additions
 * Support CLHEP 2.4.1.0
 * Add preliminary support for Geant4 10.5 with new datasets
 * Support ROOT 6.16
-* Issue #39: Bayeux does not support Boost 1.65 to 1.68
-  Accept only Boost 1.63 and Boost 1.69
+* Issue #39: Bayeux does not support Boost 1.65 to 1.68.
+  Force Bayeux to accept only Boost 1.63 and Boost 1.69.
+* Issue #40: Portable binary archives (EOS) version 5.0
+  used within Bayeux rely on Boost/Spirit FP utilities but
+  Boost 1.69 does not provide it. The Boost/Math  FP utilities
+  are now used.
+
+  Support a new version of the Portable binary archives (EAP) based on
+  version 6.0 (candidate for inclusion in Boost/Serialization)
+  which are fixed to support new versions of Boost. Automatic selection
+  of the legacy EOS or EAP.
 
 
 Removals
@@ -54,8 +63,10 @@ Changes
 Fixes
 =====
 
-* datatools: Fix smart print methods of the datatools::properties class.
-* genbb: Fix bug in probability normalization in beta decay classes with electron
-  shakeoff randomized charge state.
-* mctools: Fix bug in sensitive detector (material name stored in place of particle name).
-* Fix a few bugs detected with new Boost/CLHEP...
+* datatools:  Fix smart  print  methods  of the  datatools::properties
+  class.
+* genbb: Fix  bug in probability  normalization in beta  decay classes
+  with electron shakeoff randomized charge state.
+* mctools:  Fix bug  in sensitive  detector (material  name stored  in
+  place of particle name).
+* Fix a few bugs detected with new Boost/CLHEP.
