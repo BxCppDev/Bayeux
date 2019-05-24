@@ -99,7 +99,7 @@ namespace datatools {
                                   const std::string &, int)
           .DR_CLASS_METHOD1_CONST("get_section",
                                   ::datatools::multi_properties,
-                                  ::datatools::multi_properties::get_section_const,
+                                  ::datatools::multi_properties::get_section,
                                   const ::datatools::properties &,
                                   const std::string &)
           .DR_CLASS_METHOD2("add_section",

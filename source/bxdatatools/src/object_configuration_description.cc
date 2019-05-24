@@ -430,7 +430,7 @@ namespace datatools {
       if (is_string()) {
         return _default_value_string_ != "__??__";
       }
-    } 
+    }
     return false;
   }
 
@@ -1565,7 +1565,7 @@ namespace datatools {
       }
       // Check fixed sized array :
       if (cpd_.is_fixed_sized_array()) {
-        if (cpd_.get_array_fixed_size() != pd.get_size()) {
+        if (cpd_.get_array_fixed_size() != (int)pd.get_size()) {
           std::ostringstream message_oss;
           message_oss << "Expected array size "
                       << cpd_.get_array_fixed_size()
