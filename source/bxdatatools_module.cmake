@@ -169,6 +169,7 @@ list(APPEND ${module_name}_MODULE_HEADERS
   # ${module_include_dir}/${module_name}/log_format.h
   # ${module_include_dir}/${module_name}/rst_tools.h
 
+  ${module_include_dir}/${module_name}/configuration/ascii_io.h
   ${module_include_dir}/${module_name}/configuration/i_occurrence.h
   ${module_include_dir}/${module_name}/configuration/single_occurrence.h
   ${module_include_dir}/${module_name}/configuration/array_occurrence.h
@@ -180,8 +181,10 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/configuration/variant_registry_manager.h
   ${module_include_dir}/${module_name}/configuration/variant_model.h
   ${module_include_dir}/${module_name}/configuration/variant_physical.h
+  ${module_include_dir}/${module_name}/configuration/variant_preprocessor.h
   ${module_include_dir}/${module_name}/configuration/variant_record.h
   ${module_include_dir}/${module_name}/configuration/variant_registry.h
+  ${module_include_dir}/${module_name}/configuration/variant_reporting.h
   ${module_include_dir}/${module_name}/configuration/variant_repository.h
   ${module_include_dir}/${module_name}/configuration/variant_service.h
   ${module_include_dir}/${module_name}/configuration/variant_dependency_utils.h
@@ -322,19 +325,21 @@ ${module_source_dir}/dependency_graph.cc
 # ${module_source_dir}/log_format.cc
 # ${module_source_dir}/rst_tools.cc
 
+${module_source_dir}/configuration/ascii_io.cc
 ${module_source_dir}/configuration/i_occurrence.cc
 ${module_source_dir}/configuration/single_occurrence.cc
 ${module_source_dir}/configuration/array_occurrence.cc
 ${module_source_dir}/configuration/occurrence_factory.cc
-${module_source_dir}/configuration/io.cc
 ${module_source_dir}/configuration/parameter_model.cc
 ${module_source_dir}/configuration/parameter_physical.cc
 ${module_source_dir}/configuration/utils.cc
 ${module_source_dir}/configuration/variant_registry_manager.cc
 ${module_source_dir}/configuration/variant_model.cc
 ${module_source_dir}/configuration/variant_physical.cc
+${module_source_dir}/configuration/variant_preprocessor.cc
 ${module_source_dir}/configuration/variant_record.cc
 ${module_source_dir}/configuration/variant_registry.cc
+${module_source_dir}/configuration/variant_reporting.cc
 ${module_source_dir}/configuration/variant_repository.cc
 ${module_source_dir}/configuration/variant_service.cc
 ${module_source_dir}/configuration/variant_object_info.cc

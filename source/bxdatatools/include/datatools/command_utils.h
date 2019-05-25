@@ -33,6 +33,7 @@
 #include <iostream>
 
 // This project:
+#include <datatools/detail/command_macros.h>
 #ifndef Q_MOC_RUN
 #include <datatools/reflection_interface.h>
 #endif // Q_MOC_RUN
