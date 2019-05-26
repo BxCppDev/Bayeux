@@ -1,17 +1,16 @@
-// utils.cc
+// path_utils.cc
 
-// Ourselves:
-#include <datatools/utils.h>
+// Ourselves
+#include <datatools/path_utils.h>
+
 
 // Standard Library:
 #include <cstdlib>
-#include <cmath>
 #include <unistd.h>
 #include <wordexp.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -31,324 +30,9 @@
 #include <datatools/urn.h>
 #include <datatools/urn_query_service.h>
 
-namespace datatools {
+namespace {
 
-  const std::string & empty_string()
-  {
-    static const std::string _e;
-    return _e;
-  }
-  
-  const std::string & none_label()
-   {
-     static const std::string _l("none");
-    return _l;
-  }
- 
-  const std::string & yes_label()
-    {
-    static const std::string _l("yes");
-    return _l;
-  }
-
-  const std::string & no_label()
-  {
-    static const std::string _l("no");
-    return _l;
-  }
-
-  // const boost::property_tree::ptree & empty_options()
-  // {
-  //   static const boost::property_tree::ptree _empty;
-  //   return _empty;
-  // }
-
-  /* Single precision utility functions */
-
-  void invalidate(float& x) {
-    x = std::numeric_limits<float>::quiet_NaN();
-  }
-
-  float invalid_real_single()
-  {
-    return std::numeric_limits<float>::quiet_NaN();
-  }
-
-  bool is_valid(float x) {
-    return x == x;
-  }
-
-  bool is_infinity(float x) {
-    return std::isinf(x);
-  }
-
-  bool is_plus_infinity(float x)
-  {
-    return is_infinity(x) && x > 0.0F;
-  }
-
-  bool is_minus_infinity(float x)
-  {
-    return is_infinity(x) && x < 0.0F;
-  }
-
-  void plus_infinity(float& x) {
-    x = std::numeric_limits<float>::infinity();
-  }
-
-  void minus_infinity(float& x) {
-    x = -std::numeric_limits<float>::infinity();
-  }
-
-  void infinity(float& x) {
-    plus_infinity(x);
-  }
-
-  /* Double precision utility functions */
-
-  void invalidate(double& x) {
-    x = std::numeric_limits<double>::quiet_NaN();
-  }
-
-  double invalid_real()
-  {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
-
-  double invalid_real_double()
-  {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
-
-  bool is_valid(double x) {
-    return x == x;
-  }
-
-  bool is_infinity(double x) {
-    return std::isinf(x);
-  }
-
-  bool is_plus_infinity(double x)
-  {
-    return is_infinity(x) && x > 0.0;
-  }
-
-  bool is_minus_infinity(double x)
-  {
-    return is_infinity(x) && x < 0.0;
-  }
-
-  bool is_normal(double x) {
-    return ! is_infinity(x) && is_valid(x);
-  }
-
-  void plus_infinity(double& x) {
-    x = std::numeric_limits<double>::infinity();
-  }
-
-  void minus_infinity(double& x) {
-    x = -std::numeric_limits<double>::infinity();
-  }
-
-  void infinity(double& x) {
-    plus_infinity(x);
-  }
-
-  compare_result_type compare_real(double x1_, double x2_,
-                                   double abs_eps_, double rel_eps_)
-  {
-    if (std::isunordered(x1_,x2_)) {
-      // At least one id a NaN: cannot compare NaNs:
-      return COMPARE_UNDEFINED;
-    }
-
-    if (is_infinity(x1_) && is_infinity(x2_)) {
-      // Both numbers are infinite:
-      if (is_minus_infinity(x1_) && is_minus_infinity(x2_)) {
-        return COMPARE_UNDEFINED;
-      }
-      if (is_plus_infinity(x1_) && is_plus_infinity(x2_)) {
-        return COMPARE_UNDEFINED;
-      }
-      if (is_minus_infinity(x1_) && is_plus_infinity(x2_)) {
-        return COMPARE_LESS;
-      }
-
-      if (is_plus_infinity(x1_) && is_minus_infinity(x2_)) {
-        return COMPARE_GREATER;
-      }
-    }
-
-    // Only one number is infinite:
-    if (is_minus_infinity(x1_)) {
-      return COMPARE_LESS;
-    }
-    if (is_plus_infinity(x1_)) {
-      return COMPARE_GREATER;
-    }
-    if (is_minus_infinity(x2_)) {
-      return COMPARE_GREATER;
-    }
-    if (is_plus_infinity(x2_)) {
-      return COMPARE_LESS;
-    }
-
-    // Both numbers are finite:
-
-    // First we try to compare numbers using an absolute tolerance, if given
-    double abseps = abs_eps_;
-    if (is_valid(abseps) && abseps > 0.0) {
-      // We compare them using an absolute tolerance:
-      if (x1_ < (x2_ - abseps)) {
-        return COMPARE_LESS;
-      } else if (x1_ > (x2_ + abseps)) {
-        return COMPARE_GREATER;
-      } else {
-        return COMPARE_EQUAL;
-      }
-    }
-
-    // If no absolute tolerance is provided, try to use comparison
-    // with respect to a relative error:
-    double releps = rel_eps_;
-    if (!is_valid(abseps) || abseps < 0.0) {
-      releps = std::numeric_limits<double>::epsilon();
-    }
-    double diff = std::abs(x1_ - x2_);
-    double ax1 = std::fabs(x1_);
-    double ax2 = std::fabs(x2_);
-    double largest = (ax1 > ax2) ? ax1 : ax2;
-    if (diff <= largest * releps) {
-      return COMPARE_EQUAL;
-    } else if (x1_ < x2_) {
-      return COMPARE_LESS;
-    } else {
-      return COMPARE_GREATER;
-    }
-
-    return COMPARE_UNDEFINED;
-  }
-
-  /* String utility functions */
-
-  bool name_validation(const std::string & name_, uint32_t flags_ )
-  {
-    static const std::string _base_allowed_chars =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.:-";
-    static const std::string _upper_chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static const std::string _lower_chars =
-      "abcdefghijklmnopqrstuvwxyz";
-    if (name_.empty()) return false;
-    bool forbid_colon  = flags_ & NV_NO_COLON;
-    bool forbid_dot    = flags_ & NV_NO_DOT;
-    bool forbid_hyphen = flags_ & NV_NO_HYPHEN;
-    bool forbid_underscore = flags_ & NV_NO_UNDERSCORE;
-    bool allow_leading_digit = flags_ & NV_LEADING_DIGIT;
-    bool forbid_lower_case = flags_ & NV_NO_LOWER_CASE;
-    bool forbid_upper_case = flags_ & NV_NO_UPPER_CASE;
-    if (forbid_colon) {
-      if (name_.find(':') != name_.npos) return false;
-    }
-    if (forbid_dot) {
-      if (name_.find('.') != name_.npos) return false;
-    }
-    if (forbid_hyphen) {
-      if (name_.find('-') != name_.npos) return false;
-    }
-    if (forbid_underscore) {
-      if (name_.find('_') != name_.npos) return false;
-    }
-    if (forbid_lower_case) {
-      if (name_.find_first_of(_lower_chars) != name_.npos) return false;
-    }
-    if (forbid_upper_case) {
-      if (name_.find_first_of(_upper_chars) != name_.npos) return false;
-    }
-    if (name_.find_first_not_of(_base_allowed_chars) != name_.npos) return false;
-    if (!allow_leading_digit) {
-      if (name_.find_first_of("0123456789.") == 0) return false;
-    }
-    // Reject trailing dot:
-    if (name_[name_.size()-1] == '.') return false;
-    // Reject trailing colon:
-    if (name_[name_.size()-1] == ':') return false;
-    // Reject trailing hyphen:
-    if (name_[name_.size()-1] == '-') return false;
-    // // Colon must be followed by one other colon (example: "::")
-    // unsigned int colon_first = name_.find(':');
-    // if (colon_first != name_.npos) {
-    //   if (name_[colon_first + 1] != ':') return false;
-    // }
-    return true;
-  }
-
-  bool is_quoted(const std::string & text_, char q_)
-  {
-    DT_THROW_IF(q_ != '\'' && q_ != '"',
-                std::range_error,
-                "Unsupported quoting character '" << q_ << "'!");
-    char c = q_;
-    if (text_.size() > 1) {
-      return (text_[0] == c) && (text_[text_.size() - 1] == c);
-    }
-    return false;
-  }
-
-  void add_quotes(const std::string & from_, std::string & to_, char q_)
-  {
-    DT_THROW_IF(q_ != '\'' && q_ != '"',
-                std::range_error,
-                "Unsupported quoting character '" << q_ << "'!");
-    if (! is_quoted(from_, q_)) {
-      std::ostringstream oss;
-      oss << q_ << from_ << q_;
-      to_ = oss.str();
-    } else {
-      to_ = from_;
-    }
-    return;
-  }
-
-  void add_quotes(std::string & text_, char q_)
-  {
-    std::string t;
-    add_quotes(text_, t, q_);
-    text_ = t;
-    return;
-  }
-
-  void remove_all_quotes(std::string & text_)
-  {
-    if (is_quoted(text_, '"')) {
-      remove_quotes(text_, '"');
-    } else if (is_quoted(text_, '\'')) {
-      remove_quotes(text_, '\'');
-    }
-    return;
-  }
-
-  void remove_quotes(const std::string & from_, std::string & to_, char q_)
-  {
-    DT_THROW_IF(q_ != '\'' && q_ != '"',
-                std::range_error,
-                "Unsupported quoting character '" << q_ << "'!");
-    if (is_quoted(from_, q_)) {
-      to_ = from_.substr(1,from_.length()-2);
-    } else {
-      to_ = from_;
-    }
-    return;
-  }
-
-  void remove_quotes(std::string & text_, char q_)
-  {
-    std::string t;
-    remove_quotes(text_, t, q_);
-    text_ = t;
-    return;
-  }
-
+  //! Private implementation of the global path
   struct _gp {
     enum action_type {
       ACTION_GET = 1,
@@ -358,37 +42,17 @@ namespace datatools {
     static const std::string & global_path(int action_, const std::string & gpath_ = "");
   };
 
-  bool has_global_path()
-  {
-    return ! _gp::global_path(_gp::ACTION_GET).empty();
-  }
-
-  void set_global_path(const std::string & gpath_)
-  {
-    _gp::global_path(_gp::ACTION_SET, gpath_);
-  }
-
-  void reset_global_path()
-  {
-    _gp::global_path(_gp::ACTION_RESET);
-  }
-
-  const std::string & get_global_path()
-  {
-    return _gp::global_path(_gp::ACTION_GET);
-  }
-
+  // Private Implementation of path processing/expansion
   /// \brief A path parser enabling environment variable as well as datatools kernel's library info
   class fetch_path_processor {
   public:
-
     enum use_type {
       USE_NOTHING          = 0x0,
-      USE_TRACE            = bit_mask::bit01, //!< Activate trace logging
-      USE_GLOBAL_PATH      = bit_mask::bit02, //!< Undocumented
-      USE_ENVIRON          = bit_mask::bit03, //!< Accept environment variables in path
-      USE_KERNEL_LIBINFO   = bit_mask::bit04, //!< Accept Kernel library query resolution
-      USE_KERNEL_URN_QUERY = bit_mask::bit05, //!< Accept URN query resolution
+      USE_TRACE            = datatools::bit_mask::bit01, //!< Activate trace logging
+      USE_GLOBAL_PATH      = datatools::bit_mask::bit02, //!< Undocumented
+      USE_ENVIRON          = datatools::bit_mask::bit03, //!< Accept environment variables in path
+      USE_KERNEL_LIBINFO   = datatools::bit_mask::bit04, //!< Accept Kernel library query resolution
+      USE_KERNEL_URN_QUERY = datatools::bit_mask::bit05, //!< Accept URN query resolution
       USE_DEFAULTS         = USE_ENVIRON | USE_KERNEL_LIBINFO| USE_KERNEL_URN_QUERY
     };
 
@@ -436,59 +100,32 @@ namespace datatools {
     std::string _parent_path_;
   };
 
-  bool resolve_library_info_path_keys(const std::string & library_topic_,
-                                      std::string & install_path_key_,
-                                      std::string & environ_path_key_)
+  fetch_path_processor::fetch_path_processor(uint32_t use_mode_,
+                                             const std::string & parent_path_)
+      // Use () initialization to allow implicit int -> bool
+      : _trace_(use_mode_ & USE_TRACE),
+        _use_global_path_(use_mode_ & USE_GLOBAL_PATH),
+        _use_env_(use_mode_ & USE_ENVIRON),
+        _use_kernel_libinfo_(use_mode_ & USE_KERNEL_LIBINFO),
+        _use_kernel_urn_query_(use_mode_ & USE_KERNEL_URN_QUERY),
+        _parent_path_{parent_path_}
   {
-    typedef fetch_path_processor::lib_info_keys_dict_type dict_type;
-    const dict_type & lik = fetch_path_processor::lib_info_keys();
-    dict_type::const_iterator found = lik.find(library_topic_);
-    if (found == lik.end()) {
-      return false;
-    }
-    bool valid = false;
-    if (! found->second.install_path_key.empty()) {
-      install_path_key_ = found->second.install_path_key;
-      valid = true;
-    }
-    if (! found->second.environ_path_key.empty()) {
-      environ_path_key_ = found->second.environ_path_key;
-      valid = true;
-    }
-    return valid;
+    return;
   }
 
-  const std::string & _gp::global_path(int action_,
-                                       const std::string & gpath_)
+  fetch_path_processor::fetch_path_processor(const std::string & parent_path_,
+                                             bool use_global_path_,
+                                             bool use_env_,
+                                             bool use_kernel_libinfo_,
+                                             bool use_kernel_urn_query_)
+      : _trace_{false},
+        _use_global_path_{use_global_path_},
+        _use_env_{use_env_},
+        _use_kernel_libinfo_{use_kernel_libinfo_},
+        _use_kernel_urn_query_{use_kernel_urn_query_},
+        _parent_path_{parent_path_}
   {
-    static std::unique_ptr<std::string> _gpath;
-    if (_gpath.get() == nullptr) {
-      _gpath.reset(new std::string);
-    }
-    std::string & gpath = *_gpath.get();
-    {
-      char * egp = ::getenv("BXDATATOOLS_GLOBAL_PATH");
-      if (gpath.empty() && egp != 0) {
-        std::clog << datatools::io::notice
-                  << "datatools::_gp::global_path: "
-                  << "Set the global path from the 'BXDATATOOLS_GLOBAL_PATH' environment variable."
-                  << std::endl;
-        gpath = egp;
-      }
-    }
-    if (action_ == ACTION_RESET) {
-      gpath.clear();
-    } else if (action_ == ACTION_GET) {
-    } else if (action_ == ACTION_SET) {
-      if (! gpath_.empty()) {
-        fetch_path_processor fpp;
-        fpp.set_use_global_path(false);
-        std::string p = gpath_;
-        fpp.process(p);
-        gpath = p;
-      }
-    }
-    return gpath;
+    return;
   }
 
   void fetch_path_processor::set_use_global_path(bool ugp_)
@@ -521,31 +158,6 @@ namespace datatools {
   bool fetch_path_processor::use_kernel_urn_query() const
   {
     return _use_kernel_urn_query_;
-  }
-
-  fetch_path_processor::fetch_path_processor(uint32_t use_mode_,
-                                             const std::string & parent_path_)
-  {
-    _trace_                = use_mode_ & USE_TRACE;
-    _use_global_path_      = use_mode_ & USE_GLOBAL_PATH;
-    _use_env_              = use_mode_ & USE_ENVIRON;
-    _use_kernel_libinfo_   = use_mode_ & USE_KERNEL_LIBINFO;
-    _use_kernel_urn_query_ = use_mode_ & USE_KERNEL_URN_QUERY;
-    _parent_path_ = parent_path_;
-    return;
-  }
-
-  fetch_path_processor::fetch_path_processor(const std::string & parent_path_,
-                                             bool use_global_path_,
-                                             bool use_env_,
-                                             bool use_kernel_libinfo_,
-                                             bool use_kernel_urn_query_) {
-    _trace_ = false;
-    _parent_path_ = parent_path_;
-    _use_global_path_ = use_global_path_;
-    _use_env_ = use_env_;
-    _use_kernel_libinfo_ = use_kernel_libinfo_;
-    _use_kernel_urn_query_ = use_kernel_urn_query_;
   }
 
   bool fetch_path_processor::process(std::string & path) {
@@ -581,58 +193,58 @@ namespace datatools {
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_prefix();
-        e.environ_path_key = library_info::keys().env_prefix();
+        e.install_path_key = datatools::library_info::keys().install_prefix();
+        e.environ_path_key = datatools::library_info::keys().env_prefix();
         keys["prefix"] = e;
       }
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_resource_dir();
-        e.environ_path_key = library_info::keys().env_resource_dir();
+        e.install_path_key = datatools::library_info::keys().install_resource_dir();
+        e.environ_path_key = datatools::library_info::keys().env_resource_dir();
         keys["resources"] = e;
         keys[""] = e;
       }
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_lib_dir();
-        e.environ_path_key = library_info::keys().env_lib_dir();
+        e.install_path_key = datatools::library_info::keys().install_lib_dir();
+        e.environ_path_key = datatools::library_info::keys().env_lib_dir();
         keys["libraries"] = e;
       }
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_bin_dir();
-        e.environ_path_key = library_info::keys().env_bin_dir();
+        e.install_path_key = datatools::library_info::keys().install_bin_dir();
+        e.environ_path_key = datatools::library_info::keys().env_bin_dir();
         keys["binaries"] = e;
       }
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_plugin_lib_dir();
-        e.environ_path_key = library_info::keys().env_plugin_lib_dir();
+        e.install_path_key = datatools::library_info::keys().install_plugin_lib_dir();
+        e.environ_path_key = datatools::library_info::keys().env_plugin_lib_dir();
         keys["plugins"] = e;
       }
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_data_dir();
-        e.environ_path_key = library_info::keys().env_data_dir();
+        e.install_path_key = datatools::library_info::keys().install_data_dir();
+        e.environ_path_key = datatools::library_info::keys().env_data_dir();
         keys["data"] = e;
       }
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_include_dir();
-        e.environ_path_key = library_info::keys().env_include_dir();
+        e.install_path_key = datatools::library_info::keys().install_include_dir();
+        e.environ_path_key = datatools::library_info::keys().env_include_dir();
         keys["includes"] = e;
       }
 
       {
         lib_info_keys_entry_type e;
-        e.install_path_key = library_info::keys().install_doc_dir();
-        e.environ_path_key = library_info::keys().env_doc_dir();
+        e.install_path_key = datatools::library_info::keys().install_doc_dir();
+        e.environ_path_key = datatools::library_info::keys().env_doc_dir();
         keys["docs"] = e;
       }
 
@@ -644,28 +256,18 @@ namespace datatools {
   // Well, Boost Spirit is probably expensive for such a simple parsing
   // (compilation time and size of code explodes with many levels of templatization...)
   void fetch_path_processor::process_impl(std::string& path) {
-    bool trace = _trace_;
-    {
-      // Special environment variable to trace the resolution of path
-      char * env = getenv("DATATOOLS_FETCH_PATH_TRACE");
-      if (env != NULL) {
-        std::string str_env = env;
-        if (str_env == "1") {
-          trace = true;
-          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                       "Activating the TRACE logging level thanks to the 'DATATOOLS_FETCH_PATH_TRACE' environment variable for path '" << path << "'...");
-        }
-      }
-    }
+    // Special environment variable to trace the resolution of path
+    bool trace = (getenv("DATATOOLS_FETCH_PATH_TRACE") != NULL) ? true : _trace_;
 
     if (trace) {
       DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
     }
+
     // working buffer:
     std::string text = path;
     // First we search for an URN scheme in the case the filename has been registered
     // in some URN system repository:
-    if ( boost::starts_with(text, urn::urn_scheme() + urn::urn_separator())) {
+    if ( boost::starts_with(text, datatools::urn::urn_scheme() + datatools::urn::urn_separator())) {
       if (!_use_kernel_urn_query_) {
         // Unsupported URN scheme for path resolution
         DT_THROW(std::logic_error, "The path resolution from an URN tag is not allowed!");
@@ -711,6 +313,7 @@ namespace datatools {
       }
       text = urn_path;
     }
+
     bool registered_lib_topic = false;
     if (text[0] == '@') {
       if (!_use_kernel_libinfo_) {
@@ -807,11 +410,9 @@ namespace datatools {
       //   usleep(100000);
       //   wordfree( &p );
       // }
-      if (!error_message.empty()) {
-        DT_THROW_IF(true,
-                    std::logic_error,
-                    "Shell expansion error: " << error_message);
-      }
+      DT_THROW_IF(!error_message.empty(),
+                  std::logic_error,
+                  "Shell expansion error: " << error_message);
     } // if (_use_env_)
     path = text;
 
@@ -823,7 +424,7 @@ namespace datatools {
       if (parent_path.empty()) {
         // Check for an implicit parent path :
         if (use_global_path() && datatools::has_global_path())  {
-          parent_path = get_global_path();
+          parent_path = datatools::get_global_path();
         }
       }
       if (! parent_path.empty()
@@ -837,6 +438,87 @@ namespace datatools {
     }
     path = text;
     return;
+  }
+
+
+  // This member function uses fetch_path_processor, so must come after
+  // its declaration...
+  const std::string & _gp::global_path(int action_,
+                                       const std::string & gpath_)
+  {
+    static std::unique_ptr<std::string> _gpath;
+    if (_gpath.get() == nullptr) {
+      _gpath.reset(new std::string);
+    }
+    std::string & gpath = *_gpath.get();
+    {
+      char * egp = ::getenv("BXDATATOOLS_GLOBAL_PATH");
+      if (gpath.empty() && egp != 0) {
+        std::clog << datatools::io::notice
+                  << "datatools::_gp::global_path: "
+                  << "Set the global path from the 'BXDATATOOLS_GLOBAL_PATH' environment variable."
+                  << std::endl;
+        gpath = egp;
+      }
+    }
+    if (action_ == ACTION_RESET) {
+      gpath.clear();
+    } else if (action_ == ACTION_GET) {
+    } else if (action_ == ACTION_SET) {
+      if (! gpath_.empty()) {
+        fetch_path_processor fpp;
+        fpp.set_use_global_path(false);
+        std::string p = gpath_;
+        fpp.process(p);
+        gpath = p;
+      }
+    }
+    return gpath;
+  }
+}
+
+
+namespace datatools {
+  bool has_global_path()
+  {
+    return ! _gp::global_path(_gp::ACTION_GET).empty();
+  }
+
+  void set_global_path(const std::string & gpath_)
+  {
+    _gp::global_path(_gp::ACTION_SET, gpath_);
+  }
+
+  void reset_global_path()
+  {
+    _gp::global_path(_gp::ACTION_RESET);
+  }
+
+  const std::string & get_global_path()
+  {
+    return _gp::global_path(_gp::ACTION_GET);
+  }
+
+  //----------------------------------------------------------------------
+  // Free functions
+  bool resolve_library_info_path_keys(const std::string & library_topic_,
+                                      std::string & install_path_key_,
+                                      std::string & environ_path_key_)
+  {
+    const auto& lik = fetch_path_processor::lib_info_keys();
+    auto found = lik.find(library_topic_);
+    if (found == lik.end()) {
+      return false;
+    }
+    if (! found->second.install_path_key.empty()) {
+      install_path_key_ = found->second.install_path_key;
+      return true;
+    }
+    if (! found->second.environ_path_key.empty()) {
+      environ_path_key_ = found->second.environ_path_key;
+      return true;
+    }
+    return false;
   }
 
   std::string fetch_path(const std::string& word) {
@@ -925,36 +607,5 @@ namespace datatools {
     return (line_get);
   }
 
-  /* From:
-     Data Structures in C++ Using the STL
-     by Timothy A. Budd
-     published by Addison Wesley Longman
-     ISBN 0-201-31659-5
-     http://web.engr.oregonstate.edu/~budd/Books/stl/info/ReadMe.html
-  */
-  void split_string(const std::string& text, const std::string& separators,
-                    std::list<std::string>& words) {
-    // split a string into a list of words
-    // 'text_' and 'separators_' are input,
-    // list of 'words_' is output
-    int text_len = text.length();
-
-    // find first non-separator character
-    int start = text.find_first_not_of(separators, 0);
-
-    // loop as long as we have a non-separator character
-    while ((start >= 0) && (start < text_len)) {
-      // find end of current word
-      int stop = text.find_first_of(separators, start);
-
-      if ((stop < 0) || (stop > text_len)) stop = text_len;
-
-      // add word to list of words
-      words.push_back(text.substr(start, stop - start));
-
-      // find start of next word
-      start = text.find_first_not_of(separators, stop+1);
-    }
-  }
-
 } // namespace datatools
+
