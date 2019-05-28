@@ -32,6 +32,7 @@ Additions
 * PR#27: Bayeux supports C++17 and C++20.
 * PR#33: Bayeux CMake config script now defines the ``Bayeux_INCLUDE_DIRS`` variable.
 * Support Boost 1.69.0
+* Support only Boost 1.63 and 1.69
 * Support Camp 0.8.2
 * Support CLHEP 2.4.1.0
 * Add preliminary support for Geant4 10.5 with new datasets
@@ -47,7 +48,8 @@ Additions
   version 6.0 (candidate for inclusion in Boost/Serialization)
   which are fixed to support new versions of Boost. Automatic selection
   of the legacy EOS or EPA.
-
+* mctools:  biaising   now  supports   an  oriented  disk   shape  for
+  attractive/repulsive point of interest.
 
 Removals
 =========
