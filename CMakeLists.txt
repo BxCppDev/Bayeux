@@ -4,6 +4,8 @@
 #-----------------------------------------------------------------------
 # Copyright 2012,2013 Ben Morgan <bmorgan.warwick@gmail.com>
 # Copyright 2012,2013 University of Warwick
+# Copyright 2012,2019 François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright 2012,2013 University of Caen Normandie
 #
 # This file is part of Bayeux.
 #
@@ -45,11 +47,9 @@ project(Bayeux)
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 set(_bx_CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
-# message(STATUS "******** _bx_CMAKE_MODULE_PATH = '${_bx_CMAKE_MODULE_PATH}'")
 if (_bx_CMAKE_MODULE_PATH)
   list(INSERT CMAKE_MODULE_PATH 0 ${_bx_CMAKE_MODULE_PATH})
 endif()
-# message(STATUS "******** CMAKE_MODULE_PATH = '${CMAKE_MODULE_PATH}'")
 
 # - Version number management utilities:
 include(BxVersionManager)
@@ -177,6 +177,14 @@ add_subdirectory(doc)
 # Install common resources
 install(DIRECTORY ${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_TAG}
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
+  )
+
+#-----------------------------------------------------------------------
+# Install CMake scripts
+install(FILES
+  ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake
+  # ${CMAKE_SOURCE_DIR}/cmake/FindReadline.cmake
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_TAG}/cmake/
   )
 
 # - end
