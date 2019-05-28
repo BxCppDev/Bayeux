@@ -18,6 +18,8 @@
 #include <geomtools/id_selector.h>
 #include <geomtools/bounding_data.h>
 #include <geomtools/line_3d.h>
+#include <geomtools/utils.h>
+#include <geomtools/plane.h>
 
 namespace mctools {
 
@@ -56,6 +58,19 @@ namespace mctools {
       return _position_;
     }
 
+    void point_of_interest::set_orientation(const geomtools::vector_3d & o_)
+    {
+      DT_THROW_IF(o_.mag() < geomtools::constants::get_default_tolerance(), std::logic_error,
+                  "Invalid orientation vector!");
+      _orientation_ = o_.unit();
+      return;
+    }
+
+    const geomtools::vector_3d & point_of_interest::get_orientation() const
+    {
+      return _orientation_;
+    }
+
     void point_of_interest::set_attractivity(double a_)
     {
       _attractivity_ = a_;
@@ -82,10 +97,13 @@ namespace mctools {
 
     bool point_of_interest::is_valid() const
     {
-      return !_name_.empty()
-        && geomtools::is_valid(_position_)
-        && datatools::is_valid(_attractivity_)
-        && datatools::is_valid(_radius_);
+      if (_name_.empty()) return false;
+      if (_attractive_shape_ == ATTRACTIVE_SHAPE_INVALID) return false;
+      if (!geomtools::is_valid(_position_)) return false;
+      if (_attractive_shape_ == ATTRACTIVE_SHAPE_DISC && !geomtools::is_valid(_orientation_)) return false;
+      if (!datatools::is_valid(_attractivity_)) return false;
+      if (!datatools::is_valid(_radius_)) return false;
+      return true;
     }
 
     void point_of_interest::invalidate()
@@ -97,7 +115,9 @@ namespace mctools {
 
     void point_of_interest::_set_default()
     {
+      _attractive_shape_ = ATTRACTIVE_SHAPE_INVALID;
       geomtools::invalidate(_position_);
+      geomtools::invalidate(_orientation_);
       datatools::invalidate(_attractivity_);
       datatools::invalidate(_radius_);
       return;
@@ -133,6 +153,7 @@ namespace mctools {
                                        const geomtools::manager * geomgr_)
     {
       geomtools::vector_3d position;
+      geomtools::vector_3d orientation;
       double radius;
       double default_length_unit = CLHEP::mm;
 
@@ -152,14 +173,44 @@ namespace mctools {
         }
       }
 
+      if (_attractive_shape_ == ATTRACTIVE_SHAPE_INVALID) {
+        if (config_.has_key("attractive_shape")) {
+          std::string attractive_shape_label = config_.fetch_string("attractive_shape");
+          if (attractive_shape_label == "sphere") {
+            _attractive_shape_ = ATTRACTIVE_SHAPE_SPHERE;
+          } else if (attractive_shape_label == "disc") {
+            _attractive_shape_ = ATTRACTIVE_SHAPE_DISC;
+          } else {
+            DT_THROW(std::logic_error, "Unsupported attractive shape '" << attractive_shape_label << "'!");
+          }
+        } else {
+          _attractive_shape_ = ATTRACTIVE_SHAPE_SPHERE;
+        }
+      }
+        
+      if (_attractive_shape_ == ATTRACTIVE_SHAPE_DISC) {
+        if (! geomtools::is_valid(_orientation_)) {
+          if (config_.has_key("orientation")) {
+            std::string orientation_str = config_.fetch_string("orientation");
+            DT_THROW_IF(!geomtools::parse(orientation_str, orientation), std::logic_error,
+                        "Cannot parse the point of interest's orientation from '"
+                        << orientation_str << "'!");
+            set_orientation(orientation);
+          }
+        }
+        if (! geomtools::is_valid(_orientation_)) {
+          DT_THROW(std::logic_error, "Missing orientation for disk of interest!");
+        }
+      }
+
       if (geomgr_) {
-        const geomtools::mapping * geo_mapping = 0;
+        const geomtools::mapping * geo_mapping = nullptr;
         std::string mapping_plugin_name = "";
         if (config_.has_key("geometry.mapping_plugin")) {
           mapping_plugin_name = config_.fetch_string("geometry.mapping_plugin");
         }
         geo_mapping = &geomgr_->get_mapping(mapping_plugin_name);
-
+        
         if (! geomtools::is_valid(_position_) && ! datatools::is_valid(_radius_)) {
           geomtools::geom_id poi_gid;
           if (config_.has_key("geometry.origin")) {
@@ -278,7 +329,16 @@ namespace mctools {
       const geomtools::vector_3d & P = _position_;
       geomtools::vector_3d SP = P - S;
       double dist = SP.mag();
-      if (!_skip_check_inside_ and (dist < _radius_)) {
+      if (!_skip_check_inside_ and dist < _radius_) {
+
+        if (_attractive_shape_ == ATTRACTIVE_SHAPE_SPHERE) {
+          return true;
+        }
+        if (_attractive_shape_ == ATTRACTIVE_SHAPE_DISC) {
+          const geomtools::vector_3d & O = _orientation_;
+          geomtools::plane plane_of_the_disk(P,O);
+          if (plane_of_the_disk.is_on_surface(S, geomtools::constants::get_default_tolerance())) return true;
+        }
         /*
          *                   _.-"""""-._ PoI
          *                 .'           `.
@@ -290,7 +350,6 @@ namespace mctools {
          *                 `._       \ _.'
          *                    `-.....-'
          */
-        return true;
       }
       if (SP.dot(direction_) < 0.0) {
         /*
@@ -306,28 +365,38 @@ namespace mctools {
          */
         return false;
       }
-      // 2019-05-01 FM+RC : to be reviewed:
-      geomtools::vector_3d L = S + 2 * dist * direction_.unit();
-      geomtools::line_3d SL(source_, L);
-      /*
-       *                   _.-"""""-._ PoI
-       *                 .'           `.
-       *                / ->            \
-       *       S       |  SP     P       |
-       *        + - - -|- - - ->+        |
-       *         \     |   ..""  \ R     |
-       *     -->  \   ..\"" rho   \     /
-       *     dir   +""   `._       \ _.'
-       *            \       `-.....-'
-       *             \
-       *              \
-       *               \
-       *                \
-       *                 \
-       *                  \
-       *                   + L
-       */
-      double rho = SL.get_distance_to_line(P);
+      // 2019-05-28 FM+RC : to be reviewed:
+      double rho = datatools::invalid_real();
+      if (_attractive_shape_ == ATTRACTIVE_SHAPE_SPHERE) {
+        geomtools::vector_3d L = S + 2 * dist * direction_.unit();
+        geomtools::line_3d SL(source_, L);
+        /*
+         *                   _.-"""""-._ PoI
+         *                 .'           `.
+         *                / ->            \
+         *       S       |  SP     P       |
+         *        + - - -|- - - ->+        |
+         *         \     |   ..""  \ R     |
+         *     -->  \   ..\"" rho   \     /
+         *     dir   +""   `._       \ _.'
+         *            \       `-.....-'
+         *             \
+         *              \
+         *               \
+         *                \
+         *                 \
+         *                  \
+         *                   + L
+         */
+        rho = SL.get_distance_to_line(P);
+      } else {
+        // ATTRACTIVE_SHAPE_DISC
+        const geomtools::vector_3d & O = _orientation_;
+        geomtools::plane plane_of_the_disk(P,O);
+        geomtools::vector_3d L = plane_of_the_disk.projection(S, direction_);
+        geomtools::vector_3d LP = P - L;
+        rho = LP.mag();
+      }
       if (rho < _radius_) {
         return true;
       }
@@ -349,6 +418,22 @@ namespace mctools {
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Position : " << _position_ / CLHEP::mm << " mm" << std::endl;
 
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Attractive shape : ";
+      if (_attractive_shape_ == ATTRACTIVE_SHAPE_INVALID) {
+        out_ << "<none>";
+      } else if (_attractive_shape_ == ATTRACTIVE_SHAPE_SPHERE) {
+        out_ << "sphere";
+      } else if (_attractive_shape_ == ATTRACTIVE_SHAPE_DISC) {
+        out_ << "disc";
+      }
+      out_ << std::endl;
+      
+      if (_attractive_shape_ == ATTRACTIVE_SHAPE_DISC) {
+        out_ << indent_ << datatools::i_tree_dumpable::tag
+             << "Orientation : " << _orientation_ / CLHEP::mm << " mm" << std::endl;
+      }
+      
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Radius : " << _radius_ / CLHEP::mm << " mm" << std::endl;
 

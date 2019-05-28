@@ -70,9 +70,16 @@ namespace mctools {
      *  TO DO: Use a 2D/3D oriented blur_spot for better flexibility
      *
      */
-    class point_of_interest : public datatools::i_tree_dumpable
+    class point_of_interest
+      : public datatools::i_tree_dumpable
     {
     public:
+
+      enum attractive_shape_type {
+        ATTRACTIVE_SHAPE_INVALID = 0,
+        ATTRACTIVE_SHAPE_SPHERE  = 1,
+        ATTRACTIVE_SHAPE_DISC    = 2
+      };
 
       /// Default constructor
       point_of_interest();
@@ -91,6 +98,12 @@ namespace mctools {
 
       /// Return the position
       geomtools::vector_3d & grab_position();
+
+      /// Set the orientation
+      void set_orientation(const geomtools::vector_3d &);
+
+      /// Return the orientation
+      const geomtools::vector_3d & get_orientation() const;
 
       /// Set the attractivity
       void set_attractivity(double);
@@ -145,6 +158,8 @@ namespace mctools {
       // geomtools::placement _placement_; //!< Placement of the spot
       // geomtools::blur_spot _spot_;      //!< Spot
       geomtools::vector_3d _position_;     //!< Position of the point of interest in some reference frame (generally the world volume)
+      attractive_shape_type _attractive_shape_ = ATTRACTIVE_SHAPE_INVALID;  //!< Attractive shape 
+      geomtools::vector_3d _orientation_;  //!< Orientation of the point of interest in some reference frame (generally the world volume)
       double               _radius_;       //!< Radius of the attractivity influence
       double               _attractivity_; //!< Attractivity of the point of interest
       bool                 _skip_check_inside_ = false;
