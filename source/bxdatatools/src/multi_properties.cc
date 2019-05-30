@@ -242,8 +242,8 @@ namespace datatools {
     this->_meta_label_  = source_._meta_label_;
     this->_entries_     = source_._entries_;
 
-    for (const auto& entry : source_._ordered_entries_) {
-      auto found = this->_entries_.find(entry->get_key());
+    for (const auto& e : source_._ordered_entries_) {
+      auto found = this->_entries_.find(e->get_key());
       this->_ordered_entries_.push_back(&found->second);
     }
 
@@ -783,7 +783,6 @@ namespace datatools {
 
     for (const entry * pentry : target_._ordered_entries_) {
       const std::string & name = pentry->get_key();
-      bool skip_this_section = false;
 
       // Apply criterion to skip the section:
       if (_skip_private_sections_ && properties::key_is_private(name)) {
@@ -1586,7 +1585,6 @@ namespace datatools {
           outs << i_tree_dumpable::tag;
           indent_oss << i_tree_dumpable::skip_tag;
         }
-
         outs << "Entry : " << '"' << local_key << '"';
         if (properties::key_is_private(local_key)) outs << " [private]";
         outs << std::endl;
@@ -1629,7 +1627,7 @@ namespace datatools {
           indent_oss << i_tree_dumpable::skip_tag;
         }
 
-        std::string local_key = p_entry->get_key();
+        const std::string & local_key = p_entry->get_key();
         outs << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
 
         if (properties::key_is_private(local_key)) outs << " [private]";
@@ -1741,7 +1739,7 @@ namespace datatools {
           indent_oss << i_tree_dumpable::skip_tag;
         }
 
-        std::string local_key = p_entry->get_key();
+        const std::string & local_key = p_entry->get_key();
         out_ << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
 
         if (properties::key_is_private(local_key)) out_ << " [private]";

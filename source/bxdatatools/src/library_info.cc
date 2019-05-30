@@ -476,7 +476,7 @@ namespace datatools {
         lib_info.set_explicit_path(info_key_, true);
       }
     }
-    if (locked_) lib_info.key_lock(info_key_);
+    if (locked_) lib_info.lock(info_key_);
     return;
   }
 

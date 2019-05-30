@@ -234,11 +234,11 @@ void test_properties (bool /*debug_*/)
       {
         std::clog << "Cannot change Pi value because it is locked !" << std::endl;
         std::clog << "Unlock it first !" << std::endl;
-        propsObj.call ("key_unlock", camp::Args("pi"));
+        propsObj.call ("unlock", camp::Args("pi"));
         std::clog << "Changing Pi value..." << std::endl;
         propsObj.call ("change_real", camp::Args("pi", "3.14159"));
         std::clog << "Finally re-lock it !" << std::endl;
-        propsObj.call ("key_lock", camp::Args("pi"));
+        propsObj.call ("lock", camp::Args("pi"));
       }
     propsObj.call("tree_print", camp::Args(1, "Properties: "));
   }

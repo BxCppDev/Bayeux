@@ -144,14 +144,6 @@ namespace datatools {
                                   ::datatools::properties::key_size,
                                   bool,
                                   std::string)
-          .DR_CLASS_VOID_METHOD1("key_lock",
-                                 ::datatools::properties,
-                                 ::datatools::properties::key_lock,
-                                 std::string)
-          .DR_CLASS_VOID_METHOD1("key_unlock",
-                                 ::datatools::properties,
-                                 ::datatools::properties::key_unlock,
-                                 std::string)
           .DR_CLASS_METHOD1_CONST("get_key_description",
                                   ::datatools::properties,
                                   ::datatools::properties::get_key_description,
