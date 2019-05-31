@@ -82,6 +82,9 @@ namespace dpp {
         file_mode = true;
         file_name = label;
         boost::replace_first (file_name, "file://", "");
+      } else if (boost::starts_with (label, "root://")) {
+        file_mode = true;
+        file_name = label;
       } else if (boost::starts_with (label, "http://")) {
         download_mode = true;
 #if BOOST_FILESYSTEM_VERSION == 3
@@ -135,7 +138,7 @@ namespace dpp {
 
   void simple_brio_data_source::_open_file_source ()
   {
-    DT_THROW_IF (! boost::filesystem::exists (_source_record.effective_label),
+    DT_THROW_IF (!boost::starts_with(_source_record.effective_label,"root://") && !boost::filesystem::exists (_source_record.effective_label),
                  std::runtime_error,
                  "File '" << _source_record.effective_label << "' does not exist !");
 

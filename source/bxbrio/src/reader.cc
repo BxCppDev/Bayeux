@@ -8,6 +8,7 @@
 
 // Third Party:
 // - Boost:
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 // - ROOT:
 #ifdef __clang__
@@ -170,7 +171,7 @@ namespace brio {
   {
     _filename = filename_;
     datatools::fetch_path_with_env(_filename);
-    DT_THROW_IF(!boost::filesystem::exists(_filename),
+    DT_THROW_IF(!boost::starts_with(_filename,"root://") && !boost::filesystem::exists(_filename),
                 std::runtime_error,
                 "File '" << _filename << "' does not exist !");
 
