@@ -24,15 +24,21 @@ function my_usage()
 
 Options:
 
-   --help               : print help
-   --debug              : activate debug mode
-   --dry-run            : dry run
-   --only-configure     : perform configuration stage only
-   --nprocs N           : use N processors
-   --install-base-dir PATH : select the Bayeux installation directory
-   --build-base-dir PATH   : select the Bayeux build directory
-   --clean-build-dir    : clean the the Bayeux build directory 
-                          after successfull installation
+   --help                  : Print help
+   --debug                 : Activate debug mode
+   --dry-run               : Dry run
+   --only-configure        : Perform configuration stage only
+   --nprocs N              : Use N processors
+   --install-base-dir path : Select the Bayeux installation directory
+   --build-base-dir path   : Select the Bayeux build directory
+   --clean-build-dir       : Clean the the Bayeux build directory 
+                             after successfull installation
+   --without-geant4        : Do not build the Geant4 module
+   --without-qt            : Do not build the Qt-based GUI material
+   --camp-prefix path      : Set the CAMP prefix path
+   --minimal-build         : Minimal build
+   --bayeux-suffix name    : Set a special suffix for the build directory
+   --gcc-version version   : Set GC version
 
 EOF
     return
@@ -48,7 +54,13 @@ bayeux_version="develop"
 install_base_dir=$(pwd)/_install.d
 build_base_dir=$(pwd)/_build.d
 clean_build_dir=false
-bayeux_prefix=
+bayeux_suffix=
+with_geant4=true
+with_qt=true
+camp_prefix=""
+boost_root=""
+minimal_build=false
+gcc_version=
 
 function cl_parse()
 {
@@ -61,6 +73,8 @@ function cl_parse()
 	    debug=1
 	elif [ "${arg}" = "--dry-run" ]; then
 	    dry_run=True
+	elif [ "${arg}" = "--minimal-build" ]; then
+	    minimal_build=true
 	elif [ "${arg}" = "--rebuild" ]; then
 	    rebuild=1
 	elif [ "${arg}" = "--only-configure" ]; then
@@ -70,15 +84,28 @@ function cl_parse()
 	    nprocs=$1
 	elif [ "${arg}" = "--install-base-dir" ]; then
 	    shift 1
-	    install_base_dir=$1
+	    install_base_dir="$1"
 	elif [ "${arg}" = "--build-base-dir" ]; then
 	    shift 1
-	    build_base_dir=$1
-	elif [ "${arg}" = "--bayeux-prefix" ]; then
+	    build_base_dir="$1"
+	elif [ "${arg}" = "--bayeux-suffix" ]; then
 	    shift 1
-	    bayeux_prefix=$1
+	    bayeux_suffix="$1"
+	elif [ "${arg}" = "--boost-root" ]; then
+	    shift 1
+	    boost_root="$1"
 	elif [ "${arg}" = "--clean-build-dir" ]; then
 	    clean_build_dir=true
+	elif [ "${arg}" = "--without-geant4" ]; then
+	    with_geant4=false
+	elif [ "${arg}" = "--without-qt" ]; then
+	    with_qt=false
+	elif [ "${arg}" = "--camp-prefix" ]; then
+	    shift 1
+	    camp_prefix="$1"
+	elif [ "${arg}" = "--gcc-version" ]; then
+	    shift 1
+	    gcc_version="$1"
 	fi
 	shift 1
     done
@@ -86,6 +113,12 @@ function cl_parse()
 }
 
 echo >&2 "[info] Bayeux source dir : '${bayeux_source_dir}'"
+echo >&2 "[info] GCC version       : ${gcc_version}"
+
+if [ "x${gcc_version}" != "x" ]; then
+    export CC=$(which gcc-${gcc_version})
+    export CXX=$(which g++-${gcc_version})
+fi
 
 cl_parse $@
 if [ $? -ne 0 ]; then
@@ -135,18 +168,45 @@ if [ ! -d ${bayeux_source_dir}/.git ]; then
 fi
 bx_branch=$(git --git-dir=${bayeux_source_dir}/.git --work-tree=${bayeux_source_dir} branch | grep \* | tr -d [[:space:]\*] )
 echo >&2 "[info] Bayeux Git branch: '${bx_branch}'"
-bayeux_version=${bx_branch}
+bayeux_version="${bx_branch}"
 
-install_dir=${install_base_dir}/${bayeux_version}${bayeux_prefix}
-build_dir=${build_base_dir}/${bayeux_version}${bayeux_prefix}
+install_dir=${install_base_dir}/${bayeux_version}${bayeux_suffix}
+build_dir=${build_base_dir}/${bayeux_version}${bayeux_suffix}
 
-# Check Linuxbrew:
-which brew > /dev/null 2>&1
+which ninja > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo >&2 "[error] Linuxbrew is not setup! Please run linuxbrew_setup! Abort!"
+    echo >&2 "[error] ninja builder not found!"
     my_exit 1
 else
-    echo >&2 "[info] Found Linuxbrew : $(which brew)"
+    echo >&2 "[info] Found ninja  : $(which ninja)"
+fi
+
+which clhep-config > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo >&2 "[error] CLHEP is not setup!"
+    my_exit 1
+else
+    echo >&2 "[info] Found CLHEP  : $(which clhep-config)"
+fi
+
+if [ ${minimal_build} == false -a ${with_geant4} == true ]; then
+    which geant4-config > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo >&2 "[error] GEANT4 is not setup!"
+	my_exit 1
+    else
+	echo >&2 "[info] Found GEANT4 : $(which geant4-config)"
+    fi
+fi
+
+if [ ${minimal_build} == false ]; then
+    which root-config > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo >&2 "[error] ROOT is not setup!"
+	my_exit 1
+    else
+	echo >&2 "[info] Found ROOT   : $(which root-config)"
+    fi
 fi
 
 if [ ! -d ${bayeux_source_dir} ]; then
@@ -168,28 +228,135 @@ else
     fi
 fi
 
-linuxbrew_prefix=$(brew --prefix)
-echo >&2 "[info] Linuxbrew prefix : '${linuxbrew_prefix}'"
+if [ "x${boost_root}" = "x" ]; then
+    if [ "x${BX_BOOST_INSTALL_DIR}" != "x" ]; then
+	boost_root="${BX_BOOST_INSTALL_DIR}"
+    # else
+    # 	boost_root="/usr"
+    fi
+fi
+if [ ! -d ${boost_root} ]; then
+      my_exit 1 "Boost root '${boost_root}' does not exist!"
+fi
+boost_option="-DBOOST_ROOT=${boost_root} -DBoost_ADDITIONAL_VERSIONS=1.69"
 
-boostdir="$(brew --prefix boost)"
-boost_option="-DBOOST_ROOT=${boostdir}"
+camp_prefix=""
+if [ "x${camp_prefix}" = "x" ]; then
+    if [ "x${BX_CAMP_INSTALL_DIR}" != "x" ]; then
+	camp_prefix="${BX_CAMP_INSTALL_DIR}"
+    fi
+fi
+if [ "x${camp_prefix}" = "x" ]; then
+    my_exit 1 "Missing CAMP prefix!"   
+fi
+camp_dir="${camp_prefix}/lib/camp/cmake"
+if [ ! -d ${camp_dir} ]; then
+    my_exit 1 "CAMP dir '${camp_dir}' does not exist!"
+fi
+camp_option="-DCAMP_DIR=${camp_dir}"
 
-qt5dir="$(brew --prefix qt5-base)/lib/cmake"
-qt_option1="-DQt5Core_DIR=${qt5dir}/Qt5Core"
-qt_option2="-DQt5Gui_DIR=${qt5dir}/Qt5Gui"
-qt_option3="-DQt5Widgets_DIR=${qt5dir}/Qt5Widgets"
-qt_option4="-DQt5Svg_DIR=${qt5dir}/Qt5Svg"
+clhep_prefix="$(clhep-config --prefix | tr -d '"')"
+clhep_dir="${clhep_prefix}/lib/CLHEP-$(clhep-config --version | cut -d' ' -f2)"
+if [ ! -d ${clhep_dir} ]; then
+      my_exit 1 "CLHEP dir '${clhep_dir}' does not exist!"
+fi
+clhep_option="-DCLHEP_DIR=${clhep_dir}"
+
+qt_option0=
+qt_option1=
+qt_option2=
+qt_option3=
+qt_option4=
+if [ ${minimal_build} == false -a ${with_qt} == true ]; then
+    qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
+    qt5core_dir="${qt5_dir}/Qt5Core"
+    qt5gui_dir="${qt5_dir}/Qt5Gui"
+    qt5widgets_dir="${qt5_dir}/Qt5Widgets"
+    qt5svg_dir="${qt5_dir}/Qt5Svg"
+    if [ ! -d ${qt5core_dir} ]; then
+	my_exit 1 "Qt5Core dir '${qt5core_dir}' does not exist!"
+    fi
+    if [ ! -d ${qt5gui_dir} ]; then
+	my_exit 1 "Qt5Gui dir '${qt5gui_dir}' does not exist!"
+    fi
+    if [ ! -d ${qt5widgets_dir} ]; then
+	my_exit 1 "Qt5Widgets dir '${qt5widgets_dir}' does not exist!"
+    fi
+    if [ ! -d ${qt5svg_dir} ]; then
+	my_exit 1 "Qt5Svg dir '${qt5svg_dir}' does not exist!"
+    fi
+    qt_option0="-DBAYEUX_WITH_QT_GUI=ON"
+    qt_option1="-DQt5Core_DIR=${qt5core_dir}"
+    qt_option2="-DQt5Gui_DIR=${qt5gui_dir}"
+    qt_option3="-DQt5Widgets_DIR=${qt5widgets_dir}"
+    qt_option4="-DQt5Svg_DIR=${qt5svg_dir}"
+else
+    qt_option0="-DBAYEUX_WITH_QT_GUI=OFF"
+fi
+
+root_prefix="$(root-config --prefix)"
+root_dir="${root_prefix}/share/root/cmake"
+root_option="-DROOT_DIR=${root_dir}"
+
+geant4_option=""
+if [ ${minimal_build} == false -a ${with_geant4} == true ]; then
+    geant4_prefix="$(geant4-config --prefix)"
+    # if [ "x${BX_GEANT4_INSTALL_DIR}" != "x" ]; then
+    #     geant4_prefix="${BX_GEANT4_INSTALL_DIR}"
+    # fi
+    geant4_dir="${geant4_prefix}/lib/Geant4-$(geant4-config --version | cut -d' ' -f2)"
+    if [ ! -d ${geant4_dir} ]; then
+	my_exit 1 "GEANT4 dir '${geant4_dir}' does not exist!"
+    fi
+    geant4_option="-DBAYEUX_WITH_GEANT4_MODULE=ON -DGeant4_DIR=${geant4_dir}"
+else
+    geant4_option="-DBAYEUX_WITH_GEANT4_MODULE=OFF"
+fi
+
+cmake_prefix_path_option=
+# export CMAKE_MODULE_PATH=${root_module_path}:${CMAKE_MODULE_PATH}
+# echo >&2 "[info] CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}"
+# cmake_prefix_path_option="-DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}"
 
 echo >&2 "Bayeux build context: "
 echo >&2 " - bayeux_version   = ${bayeux_version}"
-echo >&2 " - linuxbrew_prefix = ${linuxbrew_prefix}"
 echo >&2 " - build_dir        = ${build_dir}"
 echo >&2 " - install_dir      = ${install_dir}"
-echo >&2 " - Boost dir        = ${boostdir}"
-echo >&2 " - Qt5 dir          = ${qt5dir}"
+echo >&2 " - Boost root       = ${boost_root}"
+echo >&2 " - CAMP dir         = ${camp_dir}"
+echo >&2 " - CLHEP dir        = ${clhep_dir}"
+echo >&2 " - ROOT dir         = ${root_dir}"
+if [ ${with_qt} == true ]; then
+    echo >&2 " - Qt5 dir          = ${qt5_dir}"
+fi
+if [ ${with_geant4} == true ]; then
+    echo >&2 " - GEANT4 dir       = ${geant4_dir}"
+fi
 
 if [ ${dry_run} = True ]; then
       my_exit 0
+fi
+
+default_with_module=ON
+minimal_build_option=
+if [ ${minimal_build} == true ]; then
+    default_with_module=OFF
+    minimal_build_option="-DBAYEUX_MINIMAL_BUILD=ON"
+    root_option=
+    geant4_option=
+    qt_option0=
+    qt_option1=
+    qt_option2=
+    qt_option3=
+    qt_option4=
+fi
+
+compiler_options=
+if [ "x${gcc_version}" != "x" ]; then
+    compiler_options="\
+    -DCMAKE_C_COMPILER=/usr/bin/gcc-${gcc_version} \
+    -DCMAKE_CXX_COMPILER=/usr/bin/g++-${gcc_version} \
+    "
 fi
 
 cd ${build_dir}
@@ -198,25 +365,30 @@ echo >&2 "[info] Configuring..."
 cmake \
     -DCMAKE_BUILD_TYPE:STRING="Release" \
     -DCMAKE_INSTALL_PREFIX:PATH="${install_dir}" \
-    -DCMAKE_PREFIX_PATH:PATH="${linuxbrew_prefix}" \
+    ${cmake_prefix_path_option} \
+    ${compiler_options} \
+    ${boost_option} \
+    ${camp_option} \
+    ${clhep_option} \
+    ${minimal_build_option} \
+    ${root_option} \
     -DBAYEUX_COMPILER_ERROR_ON_WARNING=ON \
     -DBAYEUX_WITH_IWYU_CHECK=OFF \
     -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
-    -DBAYEUX_WITH_BRIO=ON \
-    -DBAYEUX_WITH_CUTS=ON \
-    -DBAYEUX_WITH_MYGSL=ON \
-    -DBAYEUX_WITH_MATERIALS=ON \
-    -DBAYEUX_WITH_DPP=ON \
-    -DBAYEUX_WITH_GEOMTOOLS=ON \
-    -DBAYEUX_WITH_EMFIELD=ON \
-    -DBAYEUX_WITH_GENBB=ON \
-    -DBAYEUX_WITH_GENVTX=ON \
-    -DBAYEUX_WITH_MCTOOLS=ON \
+    -DBAYEUX_WITH_BRIO=${default_with_module} \
+    -DBAYEUX_WITH_CUTS=${default_with_module} \
+    -DBAYEUX_WITH_MYGSL=${default_with_module} \
+    -DBAYEUX_WITH_MATERIALS=${default_with_module} \
+    -DBAYEUX_WITH_DPP=${default_with_module} \
+    -DBAYEUX_WITH_GEOMTOOLS=${default_with_module} \
+    -DBAYEUX_WITH_EMFIELD=${default_with_module} \
+    -DBAYEUX_WITH_GENBB=${default_with_module} \
+    -DBAYEUX_WITH_GENVTX=${default_with_module} \
+    -DBAYEUX_WITH_MCTOOLS=${default_with_module} \
     -DBAYEUX_WITH_LAHAGUE=OFF \
-    -DBAYEUX_WITH_GEANT4_MODULE=ON \
     -DBAYEUX_WITH_MCNP_MODULE=OFF \
-    ${boost_option} \
-    -DBAYEUX_WITH_QT_GUI=ON \
+    ${geant4_option} \
+    ${qt_option0} \
     ${qt_option1} \
     ${qt_option2} \
     ${qt_option3} \
