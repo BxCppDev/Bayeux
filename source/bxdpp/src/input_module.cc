@@ -409,7 +409,6 @@ namespace dpp {
                   std::logic_error,
                   "Input module '" << get_name()
                   << "' : No more available event record ! This is a bug !");
-      _source_->load_next_record(a_data_record);
       // Load correct first record (if set)
       if ((get_common().get_record_counter() == 0) &&
           (get_common().get_first_record() > 0)) {
