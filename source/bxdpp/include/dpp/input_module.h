@@ -55,7 +55,8 @@ namespace dpp {
     /// Set limits
     void set_limits(int max_record_total_,
                     int max_record_per_file_ = 0,
-                    int max_files_ = -1);
+                    int max_files_ = -1,
+                    int first_record_ = -1);
 
     /// Set the filename of a single input file
     void set_single_input_file(const std::string & filepath_);

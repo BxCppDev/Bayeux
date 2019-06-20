@@ -45,7 +45,8 @@ namespace dpp {
 
   void input_module::set_limits(int max_record_total_,
                                 int max_record_per_file_,
-                                int max_files_)
+                                int max_files_,
+                                int first_record_)
   {
     DT_THROW_IF (is_initialized (), std::logic_error,
                  "Input module '" << get_name () << "' is already initialized !");
@@ -58,6 +59,9 @@ namespace dpp {
     }
     if (max_files_ > 0) {
       ioc.set_max_files(max_files_);
+    }
+    if (first_record_ > 0) {
+      ioc.set_first_record(first_record_);
     }
     return;
   }
@@ -354,7 +358,10 @@ namespace dpp {
       DT_LOG_TRACE(_logging, "Source is open.");
       _load_metadata_();
       // Check if we have some records in it :
-      if (! _source_->has_next_record()) {
+      // if (! _source_->has_next_record()) {
+      int first_record = get_common().get_first_record();
+      if (first_record < 0) first_record = 0;
+      if (! _source_->can_load_record(first_record)) {    
         DT_LOG_TRACE(_logging, "NO NEXT RECORD.");
         _source_->reset();
         delete _source_;
@@ -403,6 +410,14 @@ namespace dpp {
                   "Input module '" << get_name()
                   << "' : No more available event record ! This is a bug !");
       _source_->load_next_record(a_data_record);
+      // Load correct first record (if set)
+      if ((get_common().get_record_counter() == 0) &&
+          (get_common().get_first_record() > 0)) {
+        _source_->load_record(a_data_record, get_common().get_first_record());
+      }
+      else {
+        _source_->load_next_record(a_data_record);
+      }
       _grab_common().set_file_record_counter(get_common().get_file_record_counter()+1);
       _grab_common().set_record_counter(get_common().get_record_counter()+1);
     }

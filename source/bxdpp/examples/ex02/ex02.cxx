@@ -38,6 +38,7 @@ void test1w()   {
     datatools::properties & hits = event_record.add<datatools::properties>("RawHits");
     hits.store("Hit0", "this is the first hit");
     hits.store("Hit1", "this is the second hit");
+    hits.store("ID", i);
     event_record.tree_dump(std::clog, "An event record:");
     SDS.store_next_record(event_record);
   }
@@ -83,6 +84,7 @@ void test2w()   {
     datatools::properties & hits = event_record.add<datatools::properties>("RawHits");
     hits.store("Hit0", "this is the first hit");
     hits.store("Hit1", "this is the second hit");
+    hits.store("ID", i);
     event_record.tree_dump(std::clog, "An event record:");
     SBDS.store_next_record(event_record);
   }
