@@ -45,8 +45,7 @@ namespace dpp {
 
   void input_module::set_limits(int max_record_total_,
                                 int max_record_per_file_,
-                                int max_files_,
-                                int first_record_)
+                                int max_files_)
   {
     DT_THROW_IF (is_initialized (), std::logic_error,
                  "Input module '" << get_name () << "' is already initialized !");
@@ -60,6 +59,14 @@ namespace dpp {
     if (max_files_ > 0) {
       ioc.set_max_files(max_files_);
     }
+    return;
+  }
+
+  void input_module::set_first_record(int first_record_)
+  {
+    DT_THROW_IF (is_initialized (), std::logic_error,
+                 "Input module '" << get_name () << "' is already initialized !");
+    io_common & ioc = _grab_common();
     if (first_record_ > 0) {
       ioc.set_first_record(first_record_);
     }

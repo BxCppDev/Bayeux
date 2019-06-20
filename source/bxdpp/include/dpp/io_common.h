@@ -199,10 +199,10 @@ namespace dpp {
     io_type     _io_;                        //!< I/O flag
     format_type _format_;                    //!< Format flag
     datatools::logger::priority * _logging_; //!< Handle to the logging priority of the associated module
-    int _first_record_;                      //!< First record to be processed
     int _max_record_per_file_;               //!< Maximum number of event records per file
     int _max_record_total_;                  //!< Maximum number of event records to be processed
     int _max_files_;                         //!< Maximum number of data files to be processed
+    int _first_record_;                      //!< First record to be processed
     datatools::smart_filename _filenames_;   //!< Smart list of data filenames
 
     // Running/dynamic attributes:
