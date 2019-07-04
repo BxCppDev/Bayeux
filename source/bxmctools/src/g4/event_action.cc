@@ -304,7 +304,7 @@ namespace mctools {
       }
 
       DT_LOG_DEBUG(_logprio(), "Event data #" << event_id);
-      DT_LOG_DEBUG(_logprio(), "Save this event = " << save_this_event);
+      DT_LOG_DEBUG(_logprio(), "Save this event = " << std::boolalpha << save_this_event);
       if (is_debug() && save_this_event) {
         get_event_data().tree_dump(std::clog, "Saved event: ", "[debug]: ");
       }
@@ -398,6 +398,12 @@ namespace mctools {
     {
       // Detach the hits collections from this event :
       G4HCofThisEvent * HCE = event_->GetHCofThisEvent();
+      //if (HCE == nullptr) {
+        // clog << datatools::io::devel
+        //           << "event_action::EndOfEventAction: Detach '"
+        //           << hcol->GetName () << "' hits collection"
+        //           << endl;
+      //}
       for (int i = 0; i < (int) HCE->GetCapacity(); i++) {
         G4VHitsCollection * hcol = HCE->GetHC(i);
         if (hcol != 0) {

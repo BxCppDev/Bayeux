@@ -80,7 +80,13 @@ class G4VisManager;
 #endif // G4VIS_USE
 
 class G4VSteppingVerbose;
+
+#ifdef G4MULTITHREADED
+class G4MTRunManager;
+#else
 class G4RunManager;
+#endif
+
 class G4UImanager;
 
 namespace datatools {
@@ -588,7 +594,11 @@ namespace mctools {
 
       // G4 objects:
       G4VSteppingVerbose* _g4_stepping_verbosity_ = nullptr; //!< Geant4 stepping verbosity instance
+#ifdef G4MULTITHREADED
+      G4MTRunManager*     _g4_run_manager_ = nullptr;        //!< Geant4 MT run manager
+#else     
       G4RunManager*       _g4_run_manager_ = nullptr;        //!< Geant4 run manager
+#endif
       G4UImanager*        _g4_UI_ = nullptr;                 //!< Geant4 UI manager
 
       // User specified G4 interfaces :
@@ -637,6 +647,7 @@ namespace mctools {
       bool        _use_time_stat_;         //!< Flag to activate CPU time statistics
       CT_map      _CTs_;                   //!< CPU time statistics
     };
+    
   } // end of namespace g4
 } // end of namespace mctools
 

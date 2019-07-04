@@ -70,6 +70,9 @@
 #include <G4UImanager.hh>
 
 // In C++11, no register keyword, remove once updated to G4 10.2
+#ifdef G4MULTITHREADED
+#include <G4MTRunManager.hh>
+#else
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-register"
@@ -907,8 +910,12 @@ namespace mctools {
        * USER ACTIONS FOR GEANT 4 *
        ****************************/
       // Run manager:
+#ifdef G4MULTITHREADED
+      _g4_run_manager_ = new G4MTRunManager;
+      _g4_run_manager_->SetNumberOfThreads(2);
+#else
       _g4_run_manager_ = new G4RunManager;
-
+#endif
       /*** User initializations ***/
       // Detector construction:
       _init_detector_construction ();
