@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2019-05-24
+:Date:    2019-07-05
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -305,10 +305,10 @@ Core Libraries Required
  
   Former version is 2.1.3.1.
   
-* Geant4 10.5 (optional) : http://geant4.cern.ch
+* Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
 
-  Former version is 9.6.4.
+  Geant4 version 10.5 support is not ready (issue #43).
 
 * ROOT 6.12.04 or 6.16.00: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
@@ -418,10 +418,14 @@ Known Issues on Tested Platforms
 --------------------------------
 
 
-- Boost/Serialization library  from version  1.65 to 1.68  introduce a
+- Boost/Serialization library  from version  1.65 to 1.68  introduced a
   bug  in the  implementation of  the singleton  template class.  As a
   consequence, only Boost version 1.63 and 1.69 are supported so far.
-
+- Despite our efforts, Geant4 10.5 (no  MT build) is not supported yet
+  since  the implementation  of  hit collections  has  changed in  some
+  undocumented  way  and  now  causes  segfault  in the  Bayeux/mctools
+  Geant4 extension module.
+  
 .. raw:: pdf
 
    PageBreak oneColumn
@@ -500,7 +504,7 @@ to deal with the following three in most cases:
   ``Release``, so you will not need to change it in most cases.
 
 Note also  that you can  ask CMake to use  the Ninja_ build  system in
-place of the legacy make command. Use the ``-GNinja`` switch with your
+place of the legacy ``make`` command. Use the ``-GNinja`` switch with your
 CMake command:
 
 .. code:: sh
@@ -545,8 +549,9 @@ These options control the core configuration of Bayeux.
 ``BAYEUX_WITH_GEANT4_MODULE``
   Build the Bayeux/mctools Geant4 library extension module. Default is ON.
 
-``BAYEUX_WITH_MCNP_MODULE``
-  Build the Bayeux/mctools MCNP library extension module (experimental). Default is OFF.
+``BAYEUX_WITH_GEANT4_EXPERIMENTAL``
+  Build the Bayeux/mctools Geant4 library extension module with
+  experimental Geant4 support (>=10.5, experts only). Default is OFF.
 
 ``BAYEUX_WITH_LAHAGUE``
   Build the Bayeux/lahague library module. Default is OFF.
@@ -752,13 +757,14 @@ To do
 =====
 
 * Provide official example code for many classes.
-* Migrate some deprecated Boost classes to some C++11 classes (smart pointers...)
-* Implement support for radioactive decays  using ENSDF files from Geant4 in
-  the Bayeux/genbb_help module.
-* Implement  the  Bayeux/mctools  MCNP extension  library  module  and
+* Migrate some deprecated  Boost classes to some  C++11 classes (smart
+  pointers...)
+* Implement  support for  radioactive  decays using  ENSDF files  from
+  Geant4 in the Bayeux/genbb_help module.
+* Implement  a  Bayeux/mctools  MCNP   extension  library  module  and
   companion tools.
-* Split the historical GENBB/Decay0 C++ port into a external standalone project
-  and make Bayeux/genbb depends on it.
+* Split  the  historical  GENBB/Decay0   C++  port  into  an  external
+  standalone project and make Bayeux/genbb depends on it.
 
 .. raw:: pdf
 
@@ -771,19 +777,25 @@ Bayeux development group
 
 Current development staff:
 
-* Xavier Garrido (LAL Orsay, Université Paris Sud, Université Paris-Saclay): all modules, validation.
-* Jean Hommet (LPC Caen): initial development of the Boost/Serialization features.
-* Yves Lemière (LPC Caen, Université de Caen, Normandie Université): validation.
-* François Mauger (LPC Caen, Université de Caen, Normandie Université, project leader): all modules.
-* Guillaume Oliviéro (LPC Caen, Université de Caen, Normandie Université): validation
+* Xavier  Garrido   (LAL  Orsay,  Université  Paris   Sud,  Université
+  Paris-Saclay): all modules, validation.
+* Jean    Hommet   (LPC    Caen):   initial    development   of    the
+  Boost/Serialization features.
+* Yves Lemière  (LPC Caen, Université de  Caen, Normandie Université):
+  validation.
+* François Mauger (LPC Caen, Université de Caen, Normandie Université,
+  project leader): all modules.
 
 Other contributors:
 
+* Guillaume  Oliviéro   (LPC  Caen,  Université  de   Caen,  Normandie
+  Université): validation
 * Arnaud Chapon (LPC Caen, Cerap): geometry, validation.
-* Benoit Guillon (LPC Caen, ENSICAEN): original implementation of the ``Bayeux/materials`` module.
-* Ben Morgan (University of Warwick): CMake support, logging features in datatools,
-  other management and integration tools, Doxygen based documentation support,
-  Trac/SVN to GitHub migration.
+* Benoit Guillon (LPC Caen,  ENSICAEN): original implementation of the
+  ``Bayeux/materials`` module.
+* Ben Morgan (University of  Warwick): CMake support, logging features
+  in datatools, other management  and integration tools, Doxygen based
+  documentation support, Trac/SVN to GitHub migration.
 
 
 Acknowledgements
