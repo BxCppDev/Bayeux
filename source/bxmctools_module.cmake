@@ -151,7 +151,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_geant4_module.cmake)
 #-----------------------------------------------------------------------
 # - Build/Link the MCNP extension module, if required
 #
-include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_mcnp_module.cmake)
+#include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_mcnp_module.cmake)
 
 # - Examples dir
 set(${module_name}_MODULE_EXAMPLES

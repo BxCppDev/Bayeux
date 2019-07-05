@@ -46,7 +46,7 @@ int main( int /*argc_*/, char** /*argv_*/ )
     {
       std::clog << "Print status of optional modules: " << std::endl;
       std::clog << "  Geant4 module      : " << BAYEUX_WITH_GEANT4_MODULE << std::endl;
-      std::clog << "  MCNP module        : " << BAYEUX_WITH_MCNP_MODULE << std::endl;
+      // std::clog << "  MCNP module        : " << BAYEUX_WITH_MCNP_MODULE << std::endl;
       std::clog << "  LaHague module     : " << BAYEUX_WITH_LAHAGUE << std::endl;
       std::clog << "  Qt GUI             : " << BAYEUX_WITH_QT_GUI << std::endl;
       std::clog << std::endl;

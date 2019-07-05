@@ -16,11 +16,11 @@ option(BAYEUX_WITH_GEANT4_MODULE "Build Bayeux/mctools Geant4 Monte-Carlo module
 mark_as_advanced(BAYEUX_WITH_GEANT4_MODULE)
 cmake_dependent_option(BAYEUX_WITH_GEANT4_EXPERIMENTAL "Allow experimental Geant4 support" OFF "BAYEUX_WITH_GEANT4_MODULE" OFF)
 
-#-----------------------------------------------------------------------
-# Option for enabling MCNP extension library module
-#
-option(BAYEUX_WITH_MCNP_MODULE "Build Bayeux/mctools MCNP Monte-Carlo module" OFF)
-mark_as_advanced(BAYEUX_WITH_MCNP_MODULE)
+# #-----------------------------------------------------------------------
+# # Option for enabling MCNP extension library module
+# #
+# option(BAYEUX_WITH_MCNP_MODULE "Build Bayeux/mctools MCNP Monte-Carlo module" OFF)
+# mark_as_advanced(BAYEUX_WITH_MCNP_MODULE)
 
 #-----------------------------------------------------------------------
 # Only for developers
@@ -70,11 +70,11 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   set(Bayeux_WITH_GEANT4_MODULE 1)
 endif()
 
-# MCNP module
-set(Bayeux_WITH_MCNP_MODULE 0)
-if(BAYEUX_WITH_MCNP_MODULE)
-  set(Bayeux_WITH_MCNP_MODULE 1)
-endif()
+# # MCNP module
+# set(Bayeux_WITH_MCNP_MODULE 0)
+# if(BAYEUX_WITH_MCNP_MODULE)
+#   set(Bayeux_WITH_MCNP_MODULE 1)
+# endif()
 
 #-----------------------------------------------------------------------
 # mctools module
@@ -158,9 +158,9 @@ if(Bayeux_WITH_GEANT4_MODULE)
   set(Bayeux_WITH_MCTOOLS 1)
 endif()
 
-if(Bayeux_WITH_MCNP_MODULE)
-  set(Bayeux_WITH_MCTOOLS 1)
-endif()
+# if(Bayeux_WITH_MCNP_MODULE)
+#   set(Bayeux_WITH_MCTOOLS 1)
+# endif()
 
 if(Bayeux_WITH_MCTOOLS)
   set(Bayeux_WITH_GENVTX 1)
@@ -196,7 +196,7 @@ endif()
 
 if (BAYEUX_MINIMAL_BUILD)
   set(Bayeux_WITH_GEANT4_MODULE 0)
-  set(Bayeux_WITH_MCNP_MODULE 0)
+  #set(Bayeux_WITH_MCNP_MODULE 0)
   set(Bayeux_WITH_LAHAGUE 0)
   set(Bayeux_WITH_MCTOOLS 0)
   set(Bayeux_WITH_GENVTX 0)
