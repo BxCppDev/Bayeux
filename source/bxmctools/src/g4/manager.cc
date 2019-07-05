@@ -81,6 +81,7 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
+#endif
 
 
 #ifdef G4UI_USE_TCSH
