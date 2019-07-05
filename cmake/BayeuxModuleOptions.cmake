@@ -14,6 +14,7 @@ mark_as_advanced(BAYEUX_WITH_LAHAGUE)
 #
 option(BAYEUX_WITH_GEANT4_MODULE "Build Bayeux/mctools Geant4 Monte-Carlo module" ON)
 mark_as_advanced(BAYEUX_WITH_GEANT4_MODULE)
+cmake_dependent_option(BAYEUX_WITH_GEANT4_EXPERIMENTAL "Allow experimental Geant4 support" OFF "BAYEUX_WITH_GEANT4_MODULE" OFF)
 
 #-----------------------------------------------------------------------
 # Option for enabling MCNP extension library module

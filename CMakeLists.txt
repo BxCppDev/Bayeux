@@ -63,6 +63,7 @@ message(STATUS "[info] Project version = '${PROJECT_VERSION}'")
 # Common LPC utilities
 #
 include(LPCCMakeSettings)
+include(CMakeDependentOption)
 
 # - SVN revision number for dev builds
 include(LPCSVNUtilities)
@@ -159,7 +160,6 @@ endif()
 #-----------------------------------------------------------------------
 # Optional for enabling documentation
 #
-include(CMakeDependentOption)
 option(BAYEUX_WITH_DOCS "Build Bayeux documentation products" ON)
 cmake_dependent_option(BAYEUX_WITH_DOCS_OCD "Build Plugin Module documentation" OFF "BAYEUX_WITH_DOCS" OFF)
 mark_as_advanced(BAYEUX_WITH_DOCS BAYEUX_WITH_DOCS_OCD)
