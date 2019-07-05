@@ -55,7 +55,8 @@ Additions
 Removals
 =========
 
-None.
+* Remove option for experimental support of Bayeux/mctools  MCNP
+  Monte-Carlo module.
 
 Changes
 =======
