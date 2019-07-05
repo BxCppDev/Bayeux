@@ -159,9 +159,9 @@ environment on your system.
 Releases
 --------
 
-* Latest release: `Bayeux-3.4.0`_
+* Latest release: `Bayeux-3.4.1`_
 
-.. _`Bayeux-3.4.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.4.0
+.. _`Bayeux-3.4.1`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.4.1
 
 .. raw:: pdf
 
@@ -184,7 +184,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.4.0, you may use, assuming a
+For example, to download Bayeux version 3.4.1, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -192,16 +192,16 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/3.4.0.tar.gz
-   $ mkdir Bayeux-3.4.0 && tar xvzf 3.4.0.tar.gz -C Bayeux-3.4.0 --strip-components 1
-   $ cd Bayeux-3.4.0/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/3.4.1.tar.gz
+   $ mkdir Bayeux-3.4.1 && tar xvzf 3.4.1.tar.gz -C Bayeux-3.4.1 --strip-components 1
+   $ cd Bayeux-3.4.1/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.4.0/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.4.1/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.4.0
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.4.1
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
