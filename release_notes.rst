@@ -14,7 +14,7 @@ the `release notes archive`_.
 Requirements
 ============
 
-Bayeux 3.4.1 requires Linux (for example Ubuntu >=18.04, CentOS >=7.5),
+Bayeux 3.4.1 requires Linux (recommended Ubuntu >=18.04, CentOS >=7.5),
 or macOS 10.
 
 
@@ -29,20 +29,21 @@ Additions
 * datatools: Add new smart print interface to the datatools::properties
   and datatools::multi_properties classes.
 * mctools: Add a flag in the biasing point_of_interest class
-* PR#27: Bayeux supports C++17 and C++20.
-* PR#33: Bayeux CMake config script now defines the ``Bayeux_INCLUDE_DIRS`` variable.
-* Support Boost 1.69.0
-* Support only Boost 1.63 and 1.69
-* Support Camp 0.8.2
-* Support CLHEP 2.4.1.0
+* PR #27: Bayeux supports C++17 and C++20.
+* PR #33: Bayeux CMake config script now defines the ``Bayeux_INCLUDE_DIRS`` variable.
+* Support Boost 1.69.0 (recommended)
+* Support only Boost 1.63 and 1.69 
+* Support Camp 0.8.2 (recommended)
+* Support CLHEP 2.4.1.0 (recommended)
 * Add preliminary support for Geant4 10.5 with new datasets
-* Support ROOT 6.16
-* Issue #39: Bayeux does not support Boost 1.65 to 1.68.
+* Support ROOT 6.16 (recommended)
+* Issue #39: Bayeux does not support Boost 1.65 to 1.68 which
+  have a broken serialization library.
   Force Bayeux to accept only Boost 1.63 and Boost 1.69.
 * Issue #40: Portable binary archives (EOS) version 5.0
   used within Bayeux rely on Boost/Spirit FP utilities but
-  Boost 1.69 does not provide it. The Boost/Math  FP utilities
-  are now used.
+  Boost 1.69 does not provide it anymore.
+  The Boost/Math  FP utilities are now used.
 
   Support a new version of the Portable binary archives (EPA) based on
   version 6.0 (candidate for inclusion in Boost/Serialization)
@@ -69,6 +70,19 @@ Fixes
   class.
 * genbb: Fix  bug in probability  normalization in beta  decay classes
   with electron shakeoff randomized charge state.
-* mctools:  Fix bug  in sensitive  detector (material  name stored  in
-  place of particle name).
-* Fix a few bugs detected with new Boost/CLHEP.
+* mctools:  Fix bug  in sensitive  detector (*material  name* stored  in
+  place of *particle name*).
+* Fix a few bugs detected with new Boost/CLHEP releases.
+
+Bugs
+====
+
+* Geant4 10.5 (no MT build) is  not supported yet since some segfaults
+  occur  while managing  hit collections  through sensitive  detectors
+  (see issue #43).  Special option ``BAYEUX_WITH_GEANT4_EXPERIMENTAL``
+  has  been introduced  to allow  the build  of Bayeux/mctools  Geant4
+  Monte-Carlo module with experimental Geant4 10.5 support (for expert
+  developpers only).
+
+
+.. end
