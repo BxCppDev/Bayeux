@@ -34,6 +34,10 @@ Options:
    --clean-build-dir       : Clean the the Bayeux build directory 
                              after successfull installation
    --without-geant4        : Do not build the Geant4 module
+   --with-geant4           : Build the Geant4 module
+   --with-geant4-experimental : 
+                             Build the Geant4 module (experimental mode).
+			     Allows Geant4 10.5
    --without-qt            : Do not build the Qt-based GUI material
    --camp-prefix path      : Set the CAMP prefix path
    --minimal-build         : Minimal build
@@ -56,6 +60,7 @@ build_base_dir=$(pwd)/_build.d
 clean_build_dir=false
 bayeux_suffix=
 with_geant4=true
+with_geant4_experimental=false
 with_qt=true
 camp_prefix=""
 boost_root=""
@@ -96,8 +101,13 @@ function cl_parse()
 	    boost_root="$1"
 	elif [ "${arg}" = "--clean-build-dir" ]; then
 	    clean_build_dir=true
+	elif [ "${arg}" = "--with-geant4" ]; then
+	    with_geant4=true
+	elif [ "${arg}" = "--with-geant4-experimental" ]; then
+	    with_geant4_experimental=true
 	elif [ "${arg}" = "--without-geant4" ]; then
 	    with_geant4=false
+	    with_geant4_experimental=false
 	elif [ "${arg}" = "--without-qt" ]; then
 	    with_qt=false
 	elif [ "${arg}" = "--camp-prefix" ]; then
@@ -309,6 +319,9 @@ if [ ${minimal_build} == false -a ${with_geant4} == true ]; then
 	my_exit 1 "GEANT4 dir '${geant4_dir}' does not exist!"
     fi
     geant4_option="-DBAYEUX_WITH_GEANT4_MODULE=ON -DGeant4_DIR=${geant4_dir}"
+    if [ ${with_geant4_experimental} == true ]; then
+	geant4_option="${geant4_option} -DBAYEUX_WITH_GEANT4_EXPERIMENTAL=ON"
+    fi
 else
     geant4_option="-DBAYEUX_WITH_GEANT4_MODULE=OFF"
 fi
