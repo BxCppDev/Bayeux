@@ -788,20 +788,6 @@ namespace mctools {
   }
  
   /* General */
-  
-  base_step_hit::base_step_hit()
-    : geomtools::base_hit()
-  {
-    base_step_hit::reset();
-    return;
-  }
-
-  base_step_hit::~base_step_hit()
-  {
-    base_step_hit::reset();
-    return;
-  }
-
   bool base_step_hit::is_valid() const
   {
     // Only check ID, time and position but skip GID ?

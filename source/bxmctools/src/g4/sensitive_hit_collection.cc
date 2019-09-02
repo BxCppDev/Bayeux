@@ -10,21 +10,10 @@ namespace mctools {
 
   namespace g4 {
 
-    sensitive_hit_collection::sensitive_hit_collection ()
-    {
-      return;
-    }
-
     sensitive_hit_collection::sensitive_hit_collection (G4String a_detector_name,
                                                         G4String a_collection_name)
       : G4VHitsCollection (a_detector_name, a_collection_name)
     {
-      return;
-    }
-
-    sensitive_hit_collection::~sensitive_hit_collection ()
-    {
-      _hits.clear ();
       return;
     }
 
