@@ -117,10 +117,22 @@ namespace geomtools {
     void invalidate_auxiliaries ();
 
     /// Default constructor
-    base_hit ();
+    base_hit() = default;
 
     /// Destructor
-    virtual ~base_hit ();
+    virtual ~base_hit() = default;
+
+    /// Copy constructor
+    base_hit(const base_hit&) = default;
+
+    /// Copy assignment
+    base_hit& operator=(const base_hit& rhs) = default;
+
+    /// Move constructor
+    base_hit(base_hit&&) = default;
+
+    /// Move assignment
+    base_hit& operator=(base_hit&&) = default;
 
     /// Check if the hit is valid
     /** We consider a base hit valid if:
@@ -358,13 +370,13 @@ namespace geomtools {
      * the hit. It is made protected in order to allow
      * daughter classes to use it (32 bits are available)
      */
-    uint32_t              _store;
+    uint32_t              _store = STORE_NOTHING;
 
   private:
 
-    int32_t               _hit_id_;      //!< Unique hit ID
-    geomtools::geom_id    _geom_id_;     //!< Geometry ID
-    datatools::properties _auxiliaries_; //!< Auxiliary properties
+    int32_t               _hit_id_ = INVALID_HIT_ID;      //!< Unique hit ID
+    geomtools::geom_id    _geom_id_{};     //!< Geometry ID
+    datatools::properties _auxiliaries_{}; //!< Auxiliary properties
 
     DATATOOLS_SERIALIZATION_DECLARATION()
 

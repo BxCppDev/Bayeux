@@ -136,20 +136,6 @@ namespace geomtools {
     return;
   }
 
-  base_hit::base_hit()
-  {
-    _store = STORE_NOTHING;
-    _hit_id_ = INVALID_HIT_ID;
-    _geom_id_.invalidate();
-    return;
-  }
-
-  base_hit::~base_hit()
-  {
-    this->base_hit::invalidate();
-    return;
-  }
-
   bool base_hit::is_valid() const
   {
     // Should we consider only the need for a valid hit id and let the possibility for an
