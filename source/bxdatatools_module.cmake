@@ -462,6 +462,7 @@ ${module_test_dir}/test_factory.cxx
 ${module_test_dir}/test_handle_1.cxx
 ${module_test_dir}/test_handle_2.cxx
 ${module_test_dir}/test_handle_3.cxx
+${module_test_dir}/test_handle_construction.cxx
 ${module_test_dir}/test_handle_macros.cxx
 ${module_test_dir}/test_handle_operators.cxx
 ${module_test_dir}/test_integer_range.cxx

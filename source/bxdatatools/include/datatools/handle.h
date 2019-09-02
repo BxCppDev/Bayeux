@@ -178,10 +178,24 @@ namespace datatools {
     }
 
     //! Destructor
-    virtual ~handle()
+    virtual ~handle() = default;
+
+    //! Copy constructor
+    handle(const handle&) = default;
+
+    //! Copy assignment
+    handle& operator=(const handle& rhs) = default;
+
+    //! Move constructor
+    handle(handle&&) = default;
+
+    //! Move assignment
+    handle& operator=(handle&& rhs) = default;
+
+    //! Return number of handle objects referring to the referenced object
+    size_t use_count() const 
     {
-      _sp_.reset();
-      return;
+      return _sp_.use_count();
     }
 
     //! Check if the current handle holds an uniquely referenced object
