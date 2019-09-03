@@ -70,12 +70,6 @@ namespace datatools {
     return;
   }
 
-  multi_properties::entry::~entry()
-  {
-    _properties_.clear();
-    return;
-  }
-
   const properties& multi_properties::entry::get_properties() const
   {
     return _properties_;
@@ -355,13 +349,6 @@ namespace datatools {
     return;
   }
 
-  multi_properties::~multi_properties()
-  {
-    _ordered_entries_.clear();
-    _entries_.clear();
-    return;
-  }
-
   void multi_properties::_copy_impl_(const multi_properties & source_)
   {
     this->_debug_       = source_._debug_;
@@ -369,12 +356,10 @@ namespace datatools {
     this->_key_label_   = source_._key_label_;
     this->_meta_label_  = source_._meta_label_;
     this->_entries_     = source_._entries_;
-    for (entries_ordered_col_type::const_iterator i = source_._ordered_entries_.begin();
-         i != source_._ordered_entries_.end();
-         i++) {
-      const entry * source_entry = *i;
-      const std::string & source_key = source_entry->get_key();
-      entries_col_type::iterator found = this->_entries_.find(source_key);
+
+    // repopulate ordering list
+    for (const entry* source_entry : source_._ordered_entries_) {
+      auto found = this->_entries_.find(source_entry->get_key());
       this->_ordered_entries_.push_back(&found->second);
     }
     return;
@@ -397,13 +382,12 @@ namespace datatools {
 
   bool multi_properties::has_key(const std::string & key_) const
   {
-    entries_col_type::const_iterator found = _entries_.find(key_);
-    return found != _entries_.end();
+    return _entries_.find(key_) != _entries_.end();
   }
 
   bool multi_properties::has_key_with_meta(const std::string & key_, const std::string & a_meta) const
   {
-    entries_col_type::const_iterator found = _entries_.find(key_);
+    auto found = _entries_.find(key_);
     if (found == _entries_.end()) return false;
     return found->second.get_meta() == a_meta;
   }
@@ -411,7 +395,7 @@ namespace datatools {
   const std::string & multi_properties::key (int key_index_) const
   {
     int key_count = 0;
-    entries_col_type::const_iterator iter = _entries_.begin();
+    auto iter = _entries_.begin();
     for (;
          iter != _entries_.end();
          ++iter, ++key_count) {
@@ -429,7 +413,7 @@ namespace datatools {
   const std::string & multi_properties::ordered_key (int key_index_) const
   {
     int key_count = 0;
-    entries_ordered_col_type::const_iterator iter = _ordered_entries_.begin();
+    auto iter = _ordered_entries_.begin();
     for (;
          iter != _ordered_entries_.end();
          ++iter, ++key_count) {
@@ -446,10 +430,8 @@ namespace datatools {
 
   void multi_properties::keys(std::vector<std::string>&k) const
   {
-    for (entries_col_type::const_iterator iter = _entries_.begin();
-         iter != _entries_.end();
-         ++iter) {
-      k.push_back(iter->first);
+    for (const auto& e : _entries_) {
+      k.push_back(e.first);
     }
     return;
   }
@@ -470,10 +452,7 @@ namespace datatools {
 
   void multi_properties::ordered_keys(std::vector<std::string> & keys_) const
   {
-    for (entries_ordered_col_type::const_iterator iter = _ordered_entries_.begin();
-         iter != _ordered_entries_.end();
-         ++iter) {
-      entry * e = *iter;
+    for (const entry* e : _ordered_entries_) {
       keys_.push_back(e->get_key());
     }
     return;
@@ -486,7 +465,7 @@ namespace datatools {
 
   const multi_properties::entry& multi_properties::get(const std::string & key_) const
   {
-    entries_col_type::const_iterator found = _entries_.find(key_);
+    auto found = _entries_.find(key_);
     DT_THROW_IF (found == _entries_.end(),
                  std::logic_error,
                  "Key '" << key_ << "' is not used !");
@@ -495,7 +474,7 @@ namespace datatools {
 
   multi_properties::entry& multi_properties::grab(const std::string & key_)
   {
-    entries_col_type::iterator found = _entries_.find(key_);
+    auto found = _entries_.find(key_);
     DT_THROW_IF (found == _entries_.end(),
                  std::logic_error,
                  "Key '" << key_ << "' is not used !");
@@ -519,8 +498,8 @@ namespace datatools {
 
   void multi_properties::remove_impl(const std::string & key_)
   {
-    entries_ordered_col_type::iterator found = _ordered_entries_.end();
-    for (entries_ordered_col_type::iterator i = _ordered_entries_.begin();
+    auto found = _ordered_entries_.end();
+    for (auto i = _ordered_entries_.begin();
          i != _ordered_entries_.end();
          ++i) {
       entry *e = *i;
@@ -538,7 +517,7 @@ namespace datatools {
 
   void multi_properties::remove(const std::string & key_)
   {
-    entries_col_type::iterator found = _entries_.find(key_);
+    auto found = _entries_.find(key_);
     DT_THROW_IF (found == _entries_.end(),
                  std::logic_error,
                  "Key '" << key_ << "' is not used !");
@@ -627,6 +606,7 @@ namespace datatools {
     r.read(filename_, *this);
     return;
   }
+
 
   multi_properties::config::config(uint32_t options_, const std::string & topic_)
   {
@@ -821,12 +801,8 @@ namespace datatools {
           << std::endl;
     out_ << std::endl;
 
-    for (entries_ordered_col_type::const_iterator i = target_._ordered_entries_.begin();
-         i != target_._ordered_entries_.end();
-         ++i) {
-      const entry *pentry = *i;
+    for (const entry* pentry : target_._ordered_entries_) {
       const std::string & name = pentry->get_key();
-      const entry& an_entry = *pentry;
       bool skip_this_section = false;
 
       // Apply criterion to skip the section:
@@ -844,10 +820,10 @@ namespace datatools {
       entry_head_oss << _format::OPEN_CHAR
             << target_.get_key_label() << _format::ASSIGN_CHAR
             << _format::QUOTES_CHAR << name << _format::QUOTES_CHAR;
-      if (an_entry.has_meta()) {
+      if (pentry->has_meta()) {
         entry_head_oss << _format::SPACE_CHAR
               << target_.get_meta_label() << _format::ASSIGN_CHAR
-              << _format::QUOTES_CHAR << an_entry.get_meta() << _format::QUOTES_CHAR;
+              << _format::QUOTES_CHAR << pentry->get_meta() << _format::QUOTES_CHAR;
       }
       entry_head_oss << _format::CLOSE_CHAR;
 
@@ -857,7 +833,7 @@ namespace datatools {
       }
       out_ << entry_head_oss.str() << std::endl << std::endl;
 
-      pcfg.write(out_, an_entry.get_properties());
+      pcfg.write(out_, pentry->get_properties());
       out_ << std::endl;
     }
 
@@ -934,7 +910,7 @@ namespace datatools {
       std::string new_meta = "";
       if (!line_goon) {
         bool skip_line = false;
-        std::string line = line_in;
+        std::string& line = line_in;
         // Check if line is blank:
         std::istringstream check_iss(line_in);
         std::string check_word;
@@ -1413,7 +1389,7 @@ namespace datatools {
       }
 
       outs << std::endl;
-      for (entries_ordered_col_type::const_iterator i = _ordered_entries_.begin();
+      for (auto i = _ordered_entries_.begin();
            i != _ordered_entries_.end();
            ++i) {
         const entry& a_entry = **i;
@@ -1421,7 +1397,7 @@ namespace datatools {
         outs << popts.indent;
         std::ostringstream indent_oss;
         indent_oss << popts.indent;
-        entries_ordered_col_type::const_iterator j = i;
+        auto j = i;
         outs << i_tree_dumpable::skip_tag;
         indent_oss << i_tree_dumpable::skip_tag;
 
@@ -1452,14 +1428,14 @@ namespace datatools {
       }
       outs << std::endl;
 
-      for (entries_ordered_col_type::const_iterator i = _ordered_entries_.begin();
+      for (auto i = _ordered_entries_.begin();
            i != _ordered_entries_.end();
            ++i) {
         const entry *p_entry = *i;
         outs << popts.indent;
         std::ostringstream indent_oss;
         indent_oss << popts.indent;
-        entries_ordered_col_type::const_iterator j = i;
+        auto j = i;
         j++;
         outs << i_tree_dumpable::inherit_skip_tag(popts.inherit);
         indent_oss << i_tree_dumpable::inherit_skip_tag(popts.inherit);
@@ -1472,7 +1448,7 @@ namespace datatools {
           indent_oss << i_tree_dumpable::skip_tag;
         }
 
-        std::string local_key = p_entry->get_key();
+        const std::string& local_key = p_entry->get_key();
         outs << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
 
         if (properties::key_is_private(local_key)) outs << " [private]";
@@ -1521,7 +1497,7 @@ namespace datatools {
       }
 
       out_ << std::endl;
-      for (entries_ordered_col_type::const_iterator i = _ordered_entries_.begin();
+      for (auto i = _ordered_entries_.begin();
            i != _ordered_entries_.end();
            ++i) {
         const entry& a_entry = **i;
@@ -1529,7 +1505,7 @@ namespace datatools {
         out_ << indent_;
         std::ostringstream indent_oss;
         indent_oss << indent_;
-        entries_ordered_col_type::const_iterator j = i;
+        auto j = i;
         out_ << i_tree_dumpable::skip_tag;
         indent_oss << i_tree_dumpable::skip_tag;
 
@@ -1560,14 +1536,14 @@ namespace datatools {
       }
       out_ << std::endl;
 
-      for (entries_ordered_col_type::const_iterator i = _ordered_entries_.begin();
+      for (auto i = _ordered_entries_.begin();
            i != _ordered_entries_.end();
            ++i) {
         const entry *p_entry = *i;
         out_ << indent_;
         std::ostringstream indent_oss;
         indent_oss << indent_;
-        entries_ordered_col_type::const_iterator j = i;
+        auto j = i;
         j++;
         out_ << i_tree_dumpable::inherit_skip_tag(inherit_);
         indent_oss << i_tree_dumpable::inherit_skip_tag(inherit_);
@@ -1580,7 +1556,7 @@ namespace datatools {
           indent_oss << i_tree_dumpable::skip_tag;
         }
 
-        std::string local_key = p_entry->get_key();
+        const std::string& local_key = p_entry->get_key();
         out_ << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
 
         if (properties::key_is_private(local_key)) out_ << " [private]";

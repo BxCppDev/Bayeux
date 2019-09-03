@@ -124,7 +124,19 @@ namespace datatools {
             const std::string & meta_ = "");
 
       /// Destructor
-      virtual ~entry();
+      virtual ~entry() = default;
+
+      /// Copy constructor
+      entry(const entry&) = default;
+
+      /// Copy assignment
+      entry& operator=(const entry&) = default;
+
+      /// Move constructor
+      entry(entry&&) = default;
+
+      /// Move assignment
+      entry& operator=(entry&&) = default;
 
       /// Return a const reference to the collection of properties
       const properties& get_properties() const;
@@ -204,13 +216,19 @@ namespace datatools {
                      bool debug_ = false);
 
     /// Destructor
-    virtual ~multi_properties();
+    virtual ~multi_properties() = default;
 
     /// Copy constructor
     multi_properties(const multi_properties &);
 
     /// Assignment operator
     multi_properties & operator=(const multi_properties &);
+
+    // Move constructor
+    multi_properties(multi_properties&&) = default;
+
+    // Move assignment
+    multi_properties& operator=(multi_properties&&) = default;
 
     /// Check the debug flag
     bool is_debug() const;
