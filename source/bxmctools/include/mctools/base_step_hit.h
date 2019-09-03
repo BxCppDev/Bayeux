@@ -348,13 +348,13 @@ namespace mctools {
     base_step_hit(const base_step_hit&) = default;
 
     // Copy assignment
-    base_step_hit& operator=(const base_step_hit& rhs) = default;
+    base_step_hit& operator=(const base_step_hit&) = default;
 
     // Move constructor
     base_step_hit(base_step_hit&&);
 
     // Move assignment
-    base_step_hit& operator=(base_step_hit&& rhs) = default;
+    base_step_hit& operator=(base_step_hit&&) = default;
 
     /// Reset/invalidate the internal structure of the hit
     void reset();

@@ -190,7 +190,7 @@ namespace datatools {
     handle(handle&&) = default;
 
     //! Move assignment
-    handle& operator=(handle&& rhs) = default;
+    handle& operator=(handle&&) = default;
 
     //! Return number of handle objects referring to the referenced object
     size_t use_count() const 

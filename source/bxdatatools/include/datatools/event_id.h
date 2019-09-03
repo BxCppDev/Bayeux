@@ -98,10 +98,10 @@ namespace datatools {
     event_id& operator=(const event_id&) = default;
 
     //! Move constructor
-    event_id(event_id&& other) = default;
+    event_id(event_id&&) = default;
 
     //! Move assignment
-    event_id& operator=(event_id&& rhs) = default;    
+    event_id& operator=(event_id&&) = default;    
 
     //! Invalidate the id.
     virtual void clear();

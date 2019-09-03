@@ -150,7 +150,7 @@ namespace geomtools {
     geom_id(const geom_id&) = default;
 
     /// Copy assignment
-    geom_id& operator=(const geom_id& rhs) = default;
+    geom_id& operator=(const geom_id&) = default;
 
     /// Move constructor
     geom_id(geom_id&&) = default;

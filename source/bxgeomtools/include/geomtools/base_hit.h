@@ -126,7 +126,7 @@ namespace geomtools {
     base_hit(const base_hit&) = default;
 
     /// Copy assignment
-    base_hit& operator=(const base_hit& rhs) = default;
+    base_hit& operator=(const base_hit&) = default;
 
     /// Move constructor
     base_hit(base_hit&&) = default;
