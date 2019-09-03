@@ -36,10 +36,6 @@ int main (int argc_, char ** argv_)
       srand48 (seed);
 
       datatools::properties my_dict ("a list of user properties");
-      if (! use_validator)
-        {
-          my_dict.unset_key_validator ();
-        }
       my_dict.dump (clog);
       my_dict.store ("name","my name");
       my_dict.store ("firstname","my firstname");

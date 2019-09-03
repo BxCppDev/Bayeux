@@ -170,7 +170,7 @@ namespace datatools {
         static bool boolean_value(); // return false
         static int integer_value();  // return 0
         static double real_value();  // return 0.0
-        static const std::string string_value(); // return empty string
+        static std::string string_value(); // return empty string
       };
 
     public:
@@ -202,7 +202,19 @@ namespace datatools {
       data(const char* value_, int size_ = SCALAR_DEF);
 
       /// Destructor
-      virtual ~data();
+      virtual ~data() = default;
+
+      // Copy constructor
+      data(const data&) = default;
+
+      // Copy assignment
+      data& operator=(const data&) = default;
+
+      // Move construction
+      data(data&&) = default;
+
+      // Move assignment
+      data& operator=(data&&) = default;
 
       /// Check is description is set
       bool has_description() const;
@@ -396,37 +408,6 @@ namespace datatools {
 
     }; //----- end of data inner class
 
-
-    //----------------------------------------------------------------------
-    // Key validator inner classes
-    //! \brief Pure abstract class for key validator.
-    struct basic_key_validator
-      : public std::unary_function<std::string,bool>
-    {
-      virtual ~basic_key_validator()
-      {
-        return;
-      }
-
-      virtual bool operator()(const std::string & key_arg_) const = 0;
-    };
-
-    //! \brief Default abstract class for key validator.
-    class default_key_validator
-      : public basic_key_validator
-    {
-    public:
-      static const std::string & allowed_chars();
-
-      /// Default constructor
-      default_key_validator();
-
-      /// Destructor
-      virtual ~default_key_validator();
-
-      /// Object function interface
-      virtual bool operator()(const std::string & key_arg_) const;
-    };
 
     //----------------------------------------------------------------------
     // Config inner class
@@ -776,33 +757,26 @@ namespace datatools {
 
   public:
     
-    /// Default constructor with embedded default key validator
-    properties();
+    /// Default constructor
+    properties() = default;
 
-    /// Constructor with explicit description and embedded default key validator
+    /// Constructor with explicit description
     explicit properties(const std::string & desc_);
 
-    /// Constructor with explicit description and explicit key validator
-    properties(const std::string & desc_, const basic_key_validator &);
-
-    /// Constructor with explicit key validator
-    explicit properties(const basic_key_validator &);
-
-    /* with external key validator (deletion_on_destroy_==false)
-     * with internal key validator (deletion_on_destroy_==true)
-     *      validator is deleted in the destructor.
-     */
-
-    /// Constructor with explicit description and explicit external key validator
-    properties(const std::string & desc_, const basic_key_validator *,
-               bool deletion_on_destroy_ = true);
-
-    /// Constructor with explicit external key validator
-    explicit properties(const basic_key_validator *,
-                        bool deletion_on_destroy_ = true);
-
     /// Destructor
-    virtual ~properties();
+    virtual ~properties() = default;
+
+    /// Copy constructor
+    properties(const properties&) = default;
+
+    /// Copy assignment
+    properties& operator=(const properties&) = default;
+
+    /// Move constructor
+    properties(properties&&) = default;
+
+    /// Move assignment
+    properties& operator=(properties&&) = default;
 
     /// Returns the number of stored properties
     int32_t size() const;
@@ -855,19 +829,6 @@ namespace datatools {
 
     /// Fetch the auxiliary description strings associated to the container
     bool fetch_auxiliary_descriptions(std::vector<std::string> &) const;
-
-    /// Unset the current key validator
-    void unset_key_validator();
-
-    /// Use the default key validator
-    void set_default_key_validator();
-
-    /// Set the current key validator
-    void set_key_validator(const basic_key_validator &);
-
-    /// Set the current key validator with ownership
-    void set_key_validator(const basic_key_validator *,
-                           bool deletion_on_destroy_ = true);
 
     //! Returns the list of keys stored in the map (read-only).
     std::vector<std::string> keys() const;
@@ -1422,11 +1383,6 @@ namespace datatools {
                                           const std::string & subkey_);
 
      
-  protected:
-
-    /// Default global key validator (singleton)
-    static default_key_validator & global_default_key_validator();
-
   private:
 
     void _check_nokey_(const std::string & prop_key_) const;
@@ -1437,17 +1393,11 @@ namespace datatools {
 
     void _validate_key_(const std::string & prop_key_) const;
 
-    void _clear_key_validator_();
-
   private:
 
     // Internal data:
-    std::string                 _description_;            //!< Description string
-    pmap                        _props_;                  //!< Internal list of properties
-
-    // Not serialized:
-    const basic_key_validator * _key_validator_ = nullptr; //!< Reference to the embedded key validator
-    bool                        _key_validator_deletion_;  //!< Ownership flag for the embedded key validator
+    std::string _description_ = ""; //!< Description string
+    pmap        _props_{};          //!< Internal list of properties
 
     //! Cloneable interface
     DATATOOLS_CLONEABLE_DECLARATION(properties)
@@ -1475,16 +1425,10 @@ namespace datatools {
   {
     DT_THROW_IF (this == &props_,
                  std::logic_error, "Self export is not allowed !");
-    keys_col_type ks;
-    for (pmap::const_iterator iter = _props_.begin(); iter != _props_.end();
-         ++iter) {
-      if (predicate_(iter->first)) {
-        ks.push_back(iter->first);
+    for(const auto& p : _props_) {
+      if (predicate_(p.first)) {
+        props_._props_[p.first] = p.second;
       }
-    }
-    for (keys_col_type::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
-      props_._props_[*i] = ptmp._props_[*i];
     }
     return;
   }
@@ -1495,16 +1439,10 @@ namespace datatools {
   {
     DT_THROW_IF (this == &props_,
                  std::logic_error, "Self export is not allowed !");
-    keys_col_type ks;
-    for (pmap::const_iterator iter = _props_.begin(); iter != _props_.end();
-         ++iter) {
-      if (!predicate_(iter->first)) {
-        ks.push_back(iter->first);
+    for(const auto& p : _props_) {
+      if (!predicate_(p.first)) {
+        props_._props_[p.first] = p.second;
       }
-    }
-    for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
-      props_._props_[*i] = ptmp._props_[*i];
     }
     return;
   }

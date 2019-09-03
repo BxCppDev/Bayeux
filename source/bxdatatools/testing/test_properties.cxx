@@ -17,6 +17,7 @@
 #include <datatools/clhep_units.h>
 
 void test_more();
+void test_key_validation();
 
 int main(int argc_, char ** argv_)
 {
@@ -91,9 +92,6 @@ int main(int argc_, char ** argv_)
     clog << "========================================" << endl;
 
     datatools::properties my_dict("A list of user properties; group=Foo; date=01-02-2016");
-    if (! use_validator) {
-      my_dict.unset_key_validator();
-    }
     my_dict.dump(clog);
     clog << endl;
     clog << "========================================" << endl;
@@ -324,6 +322,8 @@ int main(int argc_, char ** argv_)
     test_more();
     std::clog << "\n";
 
+    test_key_validation();
+
   } catch (std::exception & x) {
     std::clog << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
@@ -359,4 +359,72 @@ void test_more()
   }
 
   return;
+}
+
+void test_key_validation()
+{
+  datatools::properties a;
+  bool noExceptionThrown = true;
+
+  // Empty key is failure
+  try {
+    a.store("", "foo");
+  }
+  catch (std::exception&) {
+    noExceptionThrown = false;
+  }
+  if(noExceptionThrown) {
+    DT_THROW(std::logic_error, "Storing an empty key did not throw");
+  }
+
+  // Key ending in '.' is failure
+  noExceptionThrown = true;
+  try {
+    a.store("foo.", "bar");
+  }
+  catch (std::exception&) {
+    noExceptionThrown = false;
+  }
+  if(noExceptionThrown) {
+    DT_THROW(std::logic_error, "Storing a key ending in '.' did not throw");
+  }
+
+  // Key beginning with '.' is failure
+  noExceptionThrown = true;
+  try {
+    a.store(".foo", "bar");
+  }
+  catch (std::exception&) {
+    noExceptionThrown = false;
+  }
+  if(noExceptionThrown) {
+    DT_THROW(std::logic_error, "Storing a key beginning with '.' did not throw");
+  }
+
+  // Key beginning with digit is failure
+  std::string digits{"0123456789"};
+  for (char c : digits) {
+    noExceptionThrown = true;
+    try {
+      a.store(c+"foo", "bar");
+    }
+    catch (std::exception&) {
+      noExceptionThrown = false;
+    }
+    if(noExceptionThrown) {
+      DT_THROW(std::logic_error, "Storing a key beginning with '" << c << "' did not throw");
+    }
+  }
+
+  // Key containing non-allowed character is failure
+  noExceptionThrown = true;
+  try {
+    a.store("spaces and * are invalid", "bar");
+  }
+  catch (std::exception&) {
+    noExceptionThrown = false;
+  }
+  if(noExceptionThrown) {
+    DT_THROW(std::logic_error, "Storing a key containing invalis chars did not throw");
+  }
 }

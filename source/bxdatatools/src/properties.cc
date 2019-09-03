@@ -102,21 +102,13 @@ namespace {
     static const char CONTINUATION_CHAR = '\\'; ///< Continuation character
   };
 
+  const char kAllowedChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
 }
 
 namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(properties,"datatools::properties")
   
-  properties::default_key_validator & properties::global_default_key_validator()
-  {
-    static std::unique_ptr<properties::default_key_validator> dkv;
-    if (!dkv) {
-      dkv.reset(new properties::default_key_validator);
-    }
-    return *dkv;
-  }
-
   //----------------------------------------------------------------------
   // properties::data class implementation
   //
@@ -164,15 +156,14 @@ namespace datatools {
     return 0.0;
   }
 
-  const std::string properties::data::defaults::string_value()
+  std::string properties::data::defaults::string_value()
   {
-    static std::string s;
-    return s;
+    return std::string{};
   }
 
   bool properties::data::has_forbidden_char(const std::string & str_)
   {
-    return str_.find_first_of(STRING_FORBIDDEN_CHAR) != str_.npos;
+    return str_.find_first_of(STRING_FORBIDDEN_CHAR) != std::string::npos;
   }
 
   std::string properties::data::get_error_message(int error_code_)
@@ -254,7 +245,7 @@ namespace datatools {
 
   bool properties::data::has_unit_symbol() const
   {
-    return _flags_ & MASK_UNIT_SYMBOL;
+    return (_flags_ & MASK_UNIT_SYMBOL) != 0;
   }
 
   int properties::data::set_unit_symbol(const std::string & a_symbol)
@@ -319,7 +310,7 @@ namespace datatools {
 
   bool properties::data::is_path() const
   {
-    return is_string() && _flags_ & MASK_EXPLICIT_PATH;
+    return is_string() && ((_flags_ & MASK_EXPLICIT_PATH) != 0);
   }
 
   bool properties::data::is_string() const
@@ -455,7 +446,7 @@ namespace datatools {
     _flags_ = 0;
     this->init_values_(TYPE_STRING_SYMBOL, size_);
     std::string tmp;
-    if (value_ != 0) {
+    if (value_ != nullptr) {
       tmp = value_;
       DT_THROW_IF(has_forbidden_char(tmp),
                   std::logic_error,
@@ -464,11 +455,6 @@ namespace datatools {
     for (int i = 0; i < (int)this->size(); ++i) {
       this->set_value(tmp, i);
     }
-    return;
-  }
-
-  properties::data::~data()
-  {
     return;
   }
 
@@ -778,34 +764,6 @@ namespace datatools {
   }
 
   //----------------------------------------------------------------------
-  // properties::key_validator implementation
-
-  const std::string & properties::default_key_validator::allowed_chars()
-  {
-    static const std::string chars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.");
-    return chars;
-  }
-
-  properties::default_key_validator::default_key_validator()
-  {
-    return;
-  }
-
-  properties::default_key_validator::~default_key_validator()
-  {
-    return;
-  }
-
-  bool properties::default_key_validator::operator()(const std::string & prop_key) const
-  {
-    if (prop_key.empty()) return false;
-    if (prop_key.find_first_not_of(allowed_chars()) != prop_key.npos) return false;
-    if (prop_key.find_first_of("0123456789.") == 0) return false;
-    if (prop_key[prop_key.size()-1] == '.') return false;
-    return true;
-  }
-
-  //----------------------------------------------------------------------
   // properties class implementation
   //
   const std::string & properties::private_property_prefix()
@@ -817,11 +775,17 @@ namespace datatools {
 
   void properties::_validate_key_(const std::string & prop_key_) const
   {
-    if (_key_validator_ != 0) {
-      DT_THROW_IF(!_key_validator_->operator()(prop_key_),
-                  std::logic_error,
-                  "After key validator, the '"
-                  << prop_key_ << "' key is not valid!");
+    if (prop_key_.empty()) {
+      DT_THROW(std::logic_error, "properties key must not be empty");
+    }
+    if (prop_key_.find_first_not_of(kAllowedChars) != std::string::npos) {
+      DT_THROW(std::logic_error, "properties key must only contain alphanumeric chars, underscores, and periods");
+    }
+    if ((std::isdigit(static_cast<unsigned char>(prop_key_.front())) != 0) || prop_key_.front() == '.') {
+      DT_THROW(std::logic_error, "properties key must not start with a digit or period");
+    }
+    if (prop_key_.back() == '.') {
+      DT_THROW(std::logic_error, "properties key must not end with '.'");
     }
     return;
   }
@@ -842,11 +806,11 @@ namespace datatools {
     short_desc_.clear();
     std::vector<std::string> desc_parts;
     boost::split(desc_parts, _description_, boost::is_any_of(";"));
-    if (desc_parts.size()) {
+    if (!desc_parts.empty()) {
       short_desc_ = desc_parts.front();
       boost::trim(short_desc_);
     }
-    return short_desc_.size() > 0;
+    return !short_desc_.empty();
   }
 
   bool properties::has_short_description() const
@@ -882,7 +846,7 @@ namespace datatools {
         }
       }
     }
-    return aux_.size() > 0;
+    return !aux_.empty();
   }
 
   int32_t properties::size() const
@@ -895,113 +859,19 @@ namespace datatools {
     return _props_.empty();
   }
 
-  void properties::set_key_validator(const basic_key_validator & prop_key_validator_)
-  {
-    _clear_key_validator_();
-    _key_validator_ = &prop_key_validator_;
-    _key_validator_deletion_ = false;
-    return;
-  }
-
-  void properties::set_key_validator(const basic_key_validator * prop_key_validator_,
-                                     bool deletion_on_destroy_)
-  {
-    if (_key_validator_ != nullptr && _key_validator_== prop_key_validator_) {
-      return;
-    }
-    _clear_key_validator_();
-    if (prop_key_validator_ != nullptr) {
-      _key_validator_ = prop_key_validator_;
-      _key_validator_deletion_ = deletion_on_destroy_;
-    }
-    return;
-  }
-
-  void properties::set_default_key_validator()
-  {
-    this->_clear_key_validator_();
-    _key_validator_ = &global_default_key_validator();
-    _key_validator_deletion_ = false; //true;
-    return;
-  }
-
-  void properties::unset_key_validator()
-  {
-    this->_clear_key_validator_();
-    return;
-  }
-
-  properties::properties()
-  {
-    this->set_description("");
-    this->set_default_key_validator();
-    return;
-  }
 
   properties::properties(const std::string & description_)
   {
     this->set_description(description_);
-    this->set_default_key_validator();
     return;
   }
 
-  properties::properties(const std::string & description_,
-                         const basic_key_validator & prop_key_validator_)
-  {
-    this->set_description(description_);
-    this->set_key_validator(prop_key_validator_);
-    return;
-  }
-
-  properties::properties(const basic_key_validator & prop_key_validator_)
-  {
-    this->set_description("");
-    this->set_key_validator(prop_key_validator_);
-    return;
-  }
-
-  properties::properties(const std::string & description_,
-                         const basic_key_validator * prop_key_validator_,
-                         bool deletion_on_destroy_)
-  {
-    this->set_description(description_);
-    this->set_key_validator(prop_key_validator_, deletion_on_destroy_);
-    return;
-  }
-
-
-  properties::properties(const basic_key_validator * prop_key_validator_,
-                         bool deletion_on_destroy_)
-  {
-    this->set_description("");
-    this->set_key_validator(prop_key_validator_, deletion_on_destroy_);
-    return;
-  }
-
-
-  properties::~properties()
-  {
-    _props_.clear();
-    _clear_key_validator_();
-    return;
-  }
 
   DATATOOLS_CLONEABLE_IMPLEMENTATION(properties)
 
-  void properties::_clear_key_validator_()
-  {
-    if (_key_validator_ != nullptr) {
-      if (_key_validator_deletion_) {
-        delete _key_validator_;
-      }
-      _key_validator_ = nullptr;
-    }
-    return;
-  }
-
   void properties::erase(const std::string & prop_key_)
   {
-    pmap::iterator found = _props_.find(prop_key_);
+    auto found = _props_.find(prop_key_);
     DT_THROW_IF(found == _props_.end(),
                 std::logic_error,
                 "Key '" << prop_key_ << "' not known!");
@@ -1039,7 +909,7 @@ namespace datatools {
     keys_col_type local_keys;
     this->keys_starting_with(local_keys, prop_key_prefix_);
     for (keys_col_type::const_iterator i = local_keys.begin(); i !=  local_keys.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
+      auto& ptmp = const_cast<properties &>(*this);
       std::string new_key = *i;
       boost::replace_first(new_key, prop_key_prefix_, a_new_prefix);
       props_._props_[new_key] = ptmp._props_[*i];
@@ -1055,7 +925,7 @@ namespace datatools {
     keys_col_type local_keys;
     this->keys(local_keys);
     for (keys_col_type::const_iterator i = local_keys.begin(); i != local_keys.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
+      auto& ptmp = const_cast<properties &>(*this);
       props_._props_[*i] = ptmp._props_[*i];
     }
     return;
@@ -1070,7 +940,7 @@ namespace datatools {
     keys_col_type local_keys;
     this->keys(local_keys);
     for (keys_col_type::const_iterator i = local_keys.begin(); i != local_keys.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
+      auto& ptmp = const_cast<properties &>(*this);
       std::ostringstream new_key_oss;
       new_key_oss << prefix_ << *i;
       props_._props_[new_key_oss.str()] = ptmp._props_[*i];
@@ -1087,7 +957,7 @@ namespace datatools {
     keys_col_type local_keys;
     this->keys_starting_with(local_keys, prefix_);
     for (keys_col_type::const_iterator i = local_keys.begin(); i != local_keys.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
+      auto& ptmp = const_cast<properties &>(*this);
       props_._props_[*i] = ptmp._props_[*i];
     }
     return;
@@ -1102,7 +972,7 @@ namespace datatools {
     keys_col_type local_keys;
     this->keys_not_starting_with(local_keys, prefix_);
     for (keys_col_type::const_iterator i = local_keys.begin(); i !=  local_keys.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
+      auto& ptmp = const_cast<properties &>(*this);
       props_._props_[*i] = ptmp._props_[*i];
     }
     return;
@@ -1137,7 +1007,7 @@ namespace datatools {
     keys_col_type local_keys;
     this->keys_ending_with(local_keys, suffix);
     for (keys_col_type::const_iterator i = local_keys.begin(); i != local_keys.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
+      auto& ptmp = const_cast<properties &>(*this);
       props_._props_[*i] = ptmp._props_[*i];
     }
     return;
@@ -1152,7 +1022,7 @@ namespace datatools {
     keys_col_type local_keys;
     this->keys_not_ending_with(local_keys, suffix);
     for (keys_col_type::const_iterator i = local_keys.begin(); i !=  local_keys.end(); ++i) {
-      properties & ptmp = const_cast<properties &>(*this);
+      auto& ptmp = const_cast<properties &>(*this);
       props_._props_[*i] = ptmp._props_[*i];
     }
     return;
@@ -1166,7 +1036,7 @@ namespace datatools {
 
   void properties::clean(const std::string & a_key)
   {
-    pmap::iterator found = _props_.find(a_key);
+    auto found = _props_.find(a_key);
     if (found != _props_.end()) {
       _props_.erase(found);
     }
@@ -1176,7 +1046,6 @@ namespace datatools {
   void properties::clear()
   {
     _props_.clear();
-    _clear_key_validator_();
     return;
   }
 
@@ -1184,7 +1053,6 @@ namespace datatools {
   {
     this->set_description("");
     _props_.clear();
-    this->_clear_key_validator_();
     return;
   }
 
@@ -1195,15 +1063,14 @@ namespace datatools {
                 std::logic_error,
                 "Empty key prefix argument !");
     size_t n = prefix_.size();
-    for (pmap::const_iterator iter = _props_.begin();
-         iter != _props_.end();
-         ++iter) {
+    for (const auto& p : _props_) {
       bool push = true;
-      if (iter->first.substr(0, n) == prefix_) push = false;
-      if (push) some_keys.push_back(iter->first);
+      if (p.first.substr(0, n) == prefix_) push = false;
+      if (push) some_keys.push_back(p.first);
     }
     return;
   }
+
 
   std::vector<std::string>
   properties::keys_not_starting_with(const std::string & prefix_) const
@@ -1220,12 +1087,10 @@ namespace datatools {
                 std::logic_error,
                 "Empty key prefix argument !");
     size_t n = prefix_.size();
-    for (pmap::const_iterator iter = _props_.begin();
-         iter != _props_.end();
-         ++iter) {
-      if (iter->first.size() < n) continue;
-      if (iter->first.substr(0, n) == prefix_) {
-        some_keys.push_back(iter->first);
+    for (const auto& p : _props_) { 
+      if (p.first.size() < n) continue;
+      if (p.first.substr(0, n) == prefix_) {
+        some_keys.push_back(p.first);
       }
     }
     return;
@@ -1246,15 +1111,12 @@ namespace datatools {
                 std::logic_error,
                 "Empty key suffix argument !");
     size_t n = suffix.size();
-    for (pmap::const_iterator iter = _props_.begin();
-         iter != _props_.end();
-         ++iter) {
+    for (const auto& p : _props_) {
       bool push = true;
-      if (iter->first.substr(iter->first.size() - n, iter->first.size())
-          == suffix) {
+      if (p.first.substr(p.first.size() - n, p.first.size()) == suffix) {
         push = false;
       }
-      if (push) prop_keys.push_back(iter->first);
+      if (push) prop_keys.push_back(p.first);
     }
     return;
   }
@@ -1273,13 +1135,10 @@ namespace datatools {
                 std::logic_error,
                 "Empty key suffix argument in properties described by '" << get_description() << "' !");
     size_t n = suffix.size();
-    for (pmap::const_iterator iter = _props_.begin();
-         iter != _props_.end();
-         ++iter) {
-      if (iter->first.size() < n) continue;
-      if (iter->first.substr(iter->first.size()-n, iter->first.size())
-          == suffix) {
-        prop_keys.push_back(iter->first);
+    for (const auto& p : _props_ ) {
+      if (p.first.size() < n) continue;
+      if (p.first.substr(p.first.size()-n, p.first.size()) == suffix) {
+        prop_keys.push_back(p.first);
       }
     }
     return;
@@ -1301,10 +1160,8 @@ namespace datatools {
 
   void properties::keys(std::vector<std::string> & some_keys_) const
   {
-    for (pmap::const_iterator iter = _props_.begin();
-         iter != _props_.end();
-         ++iter) {
-      some_keys_.push_back(iter->first);
+    for (const auto& p : _props_) {
+      some_keys_.push_back(p.first);
     }
     return;
   }
@@ -1312,7 +1169,7 @@ namespace datatools {
   const properties::data &
   properties::get(const std::string & prop_key) const
   {
-    pmap::const_iterator found = _props_.find(prop_key);
+    auto found = _props_.find(prop_key);
     DT_THROW_IF(found == _props_.end(),
                 std::logic_error,
                 "Property '" << prop_key << "' does not exist in properties described by '" << get_description() << "' !");
@@ -1331,7 +1188,7 @@ namespace datatools {
   const std::string & properties::key(int key_index_) const
   {
     int key_count = 0;
-    pmap::const_iterator iter = _props_.begin();
+    auto iter = _props_.begin();
     for (;
          iter != _props_.end();
          ++iter, ++key_count) {
@@ -1359,7 +1216,7 @@ namespace datatools {
 
   bool properties::is_locked(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->is_locked();
   }
@@ -1387,7 +1244,7 @@ namespace datatools {
 
   bool properties::is_private(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return this->key_is_private(a_key);
   }
@@ -1399,56 +1256,56 @@ namespace datatools {
 
   bool properties::is_boolean(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->is_boolean();
   }
 
   bool properties::is_integer(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->is_integer();
   }
 
   bool properties::is_real(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->is_real();
   }
 
   bool properties::is_string(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->is_string();
   }
 
   bool properties::is_scalar(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->is_scalar();
   }
 
   bool properties::is_vector(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->is_vector();
   }
 
   int32_t properties::size(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->size();
   }
 
   int32_t properties::key_size(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->size();
   }
@@ -1462,7 +1319,7 @@ namespace datatools {
 
   void properties::key_lock(const std::string & a_key)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     data_ptr->lock();
     return;
@@ -1470,7 +1327,7 @@ namespace datatools {
 
   void properties::key_unlock(const std::string & a_key)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     data_ptr->unlock();
     return;
@@ -1479,7 +1336,7 @@ namespace datatools {
   const std::string &
   properties::get_key_description(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     return data_ptr->get_description();
   }
@@ -1487,7 +1344,7 @@ namespace datatools {
   void properties::set_key_description(const std::string & a_key,
                                        const std::string & desc_)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     data_ptr->set_description(desc_);
     return;
@@ -1503,7 +1360,7 @@ namespace datatools {
 
   void properties::_check_key_(const std::string & a_key, data **a_data)
   {
-    pmap::iterator iter = _props_.find(a_key);
+    auto iter = _props_.find(a_key);
     DT_THROW_IF(_props_.find(a_key) == _props_.end(),
                 std::logic_error,
                 "Key '" << a_key << "' does not exist in properties described by '" << get_description() << "' !");
@@ -1514,7 +1371,7 @@ namespace datatools {
   void properties::_check_key_(const std::string & a_key,
                                const data **a_data) const
   {
-    pmap::const_iterator iter = _props_.find(a_key);
+    auto iter = _props_.find(a_key);
     DT_THROW_IF(_props_.find(a_key) == _props_.end(),
                 std::logic_error,
                 "Key '" << a_key << "' does not exist in properties described by '" << get_description() << "' !");
@@ -1568,7 +1425,7 @@ namespace datatools {
 
   bool properties::is_explicit_path(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(! data_ptr->is_string(),
                 std::logic_error,
@@ -1578,7 +1435,7 @@ namespace datatools {
 
   bool properties::has_unit_symbol(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(! data_ptr->is_real(),
                 std::logic_error,
@@ -1588,7 +1445,7 @@ namespace datatools {
 
   const std::string & properties::get_unit_symbol(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(! data_ptr->is_real(),
                 std::logic_error,
@@ -1598,7 +1455,7 @@ namespace datatools {
 
   void properties::set_unit_symbol(const std::string & a_key, const std::string & unit_symbol)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(! data_ptr->is_real(),
                 std::logic_error,
@@ -1610,7 +1467,7 @@ namespace datatools {
 
   bool properties::has_explicit_unit(const std::string & a_key) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(! data_ptr->is_real(),
                 std::logic_error,
@@ -1620,7 +1477,7 @@ namespace datatools {
 
   void properties::set_explicit_path(const std::string & a_key, bool a_explicit_path)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(! data_ptr->is_string(),
                 std::logic_error,
@@ -1632,7 +1489,7 @@ namespace datatools {
 
   void properties::set_explicit_unit(const std::string & a_key, bool a_explicit_unit)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(! data_ptr->is_real(),
                 std::logic_error,
@@ -1887,7 +1744,7 @@ namespace datatools {
 
   void properties::change(const std::string & a_key, bool value, int index)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
 
     int error = data_ptr->set_value(value, index);
@@ -1901,7 +1758,7 @@ namespace datatools {
 
   void properties::change(const std::string & a_key, int value, int index)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     int error = data_ptr->set_value(value, index);
     DT_THROW_IF(error != data::ERROR_SUCCESS,
@@ -1914,7 +1771,7 @@ namespace datatools {
 
   void properties::change(const std::string & a_key, double value, int index)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     int error = data_ptr->set_value(value, index);
     DT_THROW_IF(error != data::ERROR_SUCCESS,
@@ -1928,7 +1785,7 @@ namespace datatools {
   void properties::change(const std::string & a_key, const std::string & value,
                           int index)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     int error = data_ptr->set_value(value, index);
     DT_THROW_IF(error != data::ERROR_SUCCESS,
@@ -1943,14 +1800,14 @@ namespace datatools {
                           int index)
   {
     std::string tmp = "";
-    if (value != 0) tmp = value;
+    if (value != nullptr) tmp = value;
     this->change(a_key, tmp, index);
     return;
   }
 
   void properties::change(const std::string & a_key, const data::vbool& values)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_boolean() || !data_ptr->is_vector(),
                 std::logic_error,
@@ -1976,7 +1833,7 @@ namespace datatools {
 
   void properties::change(const std::string & a_key, const data::vint& values)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_integer() || !data_ptr->is_vector(),
                 std::logic_error,
@@ -2003,7 +1860,7 @@ namespace datatools {
   void properties::change(const std::string & a_key,
                           const data::vdouble& values)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_real() || ! data_ptr->is_vector(),
                 std::logic_error,
@@ -2030,7 +1887,7 @@ namespace datatools {
   void properties::change(const std::string & a_key,
                           const data::vstring& values)
   {
-    data *data_ptr = 0;
+    data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_string() || ! data_ptr->is_vector(),
                 std::logic_error,
@@ -2187,7 +2044,7 @@ namespace datatools {
   void properties::update(const std::string & a_key, const char* value)
   {
     std::string tmp = "";
-    if (value != 0) tmp = value;
+    if (value != nullptr) tmp = value;
     if (this->has_key(a_key)) {
       this->change(a_key, tmp);
     } else {
@@ -2254,7 +2111,7 @@ namespace datatools {
   void properties::fetch(const std::string & a_key, bool& value,
                          int index) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
     DT_THROW_IF(error != data::ERROR_SUCCESS,
@@ -2268,7 +2125,7 @@ namespace datatools {
   void properties::fetch(const std::string & a_key, int& value,
                          int index) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
     DT_THROW_IF(error != data::ERROR_SUCCESS,
@@ -2282,7 +2139,7 @@ namespace datatools {
   void properties::fetch(const std::string & a_key, double& value,
                          int index) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
     DT_THROW_IF(error != data::ERROR_SUCCESS,
@@ -2296,7 +2153,7 @@ namespace datatools {
   void properties::fetch(const std::string & a_key, std::string & value,
                          int index) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
     DT_THROW_IF(error != data::ERROR_SUCCESS,
@@ -2431,7 +2288,7 @@ namespace datatools {
 
   void properties::fetch(const std::string & a_key, data::vbool& values) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_boolean() || !data_ptr->is_vector(),
                 std::logic_error,
@@ -2452,7 +2309,7 @@ namespace datatools {
 
   void properties::fetch(const std::string & a_key, data::vint& values) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_integer() || ! data_ptr->is_vector(),
                 std::logic_error,
@@ -2482,7 +2339,7 @@ namespace datatools {
   void properties::fetch(const std::string & a_key,
                          data::vdouble& values) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_real() || ! data_ptr->is_vector(),
                 std::logic_error,
@@ -2502,7 +2359,7 @@ namespace datatools {
   void properties::fetch(const std::string & a_key,
                          data::vstring& values) const
   {
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     DT_THROW_IF(!data_ptr->is_string() || ! data_ptr->is_vector(),
                 std::logic_error,
@@ -2525,8 +2382,8 @@ namespace datatools {
   {
     std::vector<std::string> vvalues;
     this->fetch(a_key, vvalues);
-    for (int i = 0; i < (int) vvalues.size(); i++) {
-      const std::string & value = vvalues[i];
+    
+    for (const auto& value : vvalues) {
       DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
                   std::logic_error,
                   "Duplicated string value '" << value << "' at key '" << a_key << "'!");
@@ -2541,8 +2398,7 @@ namespace datatools {
   {
     std::vector<int> vvalues;
     this->fetch(a_key, vvalues);
-    for (int i = 0; i < (int) vvalues.size(); i++) {
-      const int & value = vvalues[i];
+    for (const auto& value : vvalues) {
       DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
                   std::logic_error,
                   "Duplicated integer value [" << value << "] at key '" << a_key << "'!");
@@ -2559,8 +2415,7 @@ namespace datatools {
     this->fetch(key_, vvalues);
     values_.reserve(vvalues.size());
     std::set<std::string> records;
-    for (int i = 0; i < (int) vvalues.size(); i++) {
-      const std::string & value = vvalues[i];
+    for (const auto& value : vvalues) {
       DT_THROW_IF(records.count(value), std::logic_error,
                   "Duplicated string value [" << value << "] at key '" << key_ << "'!");
       records.insert(value);
@@ -2575,15 +2430,15 @@ namespace datatools {
   {
     std::vector<int> vvalues;
     this->fetch(a_key, vvalues);
-    for (int i = 0; i < (int) vvalues.size(); i++) {
-      const int & value = vvalues[i];
+
+    for (int value : vvalues) {
       DT_THROW_IF(value < 0,
                   std::logic_error,
                   "Unauthorized negative integer value [" << value << "] at key '" << a_key << "'!");
       DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
                   std::logic_error,
                   "Duplicated integer value [" << value << "] at key '" << a_key << "'!");
-      values.insert(value);
+      values.insert(static_cast<unsigned int>(value));
     }
     return;
   }
@@ -2592,7 +2447,7 @@ namespace datatools {
   {
     if (!this->has_key(a_key)) return "";
     std::ostringstream oss;
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(a_key, &data_ptr);
     data_ptr->to_string(oss);
     return oss.str();
@@ -2603,7 +2458,7 @@ namespace datatools {
   {
     if (!this->has_key(key_)) return "";
     std::ostringstream oss;
-    const data *data_ptr = 0;
+    const data *data_ptr = nullptr;
     this->_check_key_(key_, &data_ptr);
     oss << key_ << '=';
     data_ptr->to_string(oss);
@@ -2663,7 +2518,7 @@ namespace datatools {
     }
     outs << std::endl;
     if (list_props && _props_.size()) {
-      for (pmap::const_iterator i = _props_.begin();
+      for (auto i = _props_.begin();
            i != _props_.end();
            ++i) {
         const std::string & a_key = i->first;
@@ -2672,7 +2527,7 @@ namespace datatools {
         std::ostringstream indent_oss;
         indent_oss << popts.indent;
         indent_oss << inherit_skip_tag(popts.inherit);
-        pmap::const_iterator j = i;
+        auto j = i;
         j++;
         if (j == _props_.end()) {
           outs << i_tree_dumpable::inherit_tag(popts.inherit);
@@ -2734,7 +2589,7 @@ namespace datatools {
       outs << indent << i_tree_dumpable::inherit_tag(inherit_)
           << "<no property>" << std::endl;
     } else {
-      for (pmap::const_iterator i = _props_.begin();
+      for (auto i = _props_.begin();
            i != _props_.end();
            ++i) {
         const std::string & a_key = i->first;
@@ -2742,7 +2597,7 @@ namespace datatools {
         outs << indent;
         std::ostringstream indent_oss;
         indent_oss << indent;
-        pmap::const_iterator j = i;
+        auto j = i;
         j++;
         if (j == _props_.end()) {
           outs << i_tree_dumpable::inherit_tag(inherit_);
@@ -3111,17 +2966,12 @@ namespace datatools {
       out_ << std::endl;
     }
 
-    for (pmap::const_iterator i = props_._props_.begin();
-         i != props_._props_.end();
-         ++i) {
-      const std::string &     a_key  = i->first;
-      const properties::data& data_ = i->second;
-
+    for (const auto& p : props_._props_) {
       if (_write_public_only_) {
-        if (key_is_private(a_key)) continue;
+        if (key_is_private(p.first)) continue;
       }
 
-      write_data(out_, a_key, data_, "", "", "");
+      write_data(out_, p.first, p.second, "", "", "");
       out_ << std::endl;
 
     }
@@ -3370,7 +3220,7 @@ namespace datatools {
       bool allow_include = ! _forbid_includes_;
       if (!line_goon) {
         bool skip_line = false;
-        std::string line = line_in;
+        std::string& line = line_in;
         DT_LOG_TRACE(logging, "Line " << _current_line_number_ << " size is " << line.size());
         // check if line is blank:
         std::istringstream check_iss(line_in);
@@ -4356,13 +4206,12 @@ namespace datatools {
   void properties::export_to_string_based_dictionary(std::map<std::string, std::string> & dict_,
                                                      bool quoted_strings_) const
   {
-    for (pmap::const_iterator iter = _props_.begin();
-         iter != _props_.end();
-         ++iter) {
-      const std::string & prop_key = iter->first;
-      std::ostringstream valoss;
-      const data & a_data = iter->second;
+    for (const auto& p : _props_) {
+      const std::string & prop_key = p.first;
+      const data & a_data = p.second;
 
+      std::ostringstream valoss;
+      
       if (a_data.is_vector()) valoss << '(';
 
       for (int i = 0; i < (int)a_data.get_size(); ++i) {
