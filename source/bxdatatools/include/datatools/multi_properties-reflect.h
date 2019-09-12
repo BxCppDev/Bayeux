@@ -30,11 +30,8 @@ namespace datatools {
           .DR_CLASS_BASE(::datatools::i_tree_dumpable)
           .DR_CLASS_CONSTRUCTOR()
           .DR_CLASS_CONSTRUCTOR2(std::string, std::string)
-          .DR_CLASS_CONSTRUCTOR4(std::string, std::string, std::string, bool)
+          .DR_CLASS_CONSTRUCTOR3(std::string, std::string, std::string)
 
-          .DR_CLASS_PROPERTY_GETTER_SETTER ("debug",
-                                            ::datatools::multi_properties::is_debug,
-                                            ::datatools::multi_properties::set_debug)
           .DR_CLASS_PROPERTY_GETTER_SETTER ("description",
                                             ::datatools::multi_properties::get_description,
                                             ::datatools::multi_properties::set_description)
@@ -44,14 +41,6 @@ namespace datatools {
           .DR_CLASS_PROPERTY_GETTER_SETTER ("meta_label",
                                             ::datatools::multi_properties::get_meta_label,
                                             ::datatools::multi_properties::set_meta_label)
-          .DR_CLASS_METHOD_CONST("is_debug",
-                                 ::datatools::multi_properties,
-                                 ::datatools::multi_properties::is_debug,
-                                 bool)
-          .DR_CLASS_VOID_METHOD1("set_debug",
-                                 ::datatools::multi_properties,
-                                 ::datatools::multi_properties::set_debug,
-                                 bool)
           .DR_CLASS_VOID_METHOD1("set_description",
                                  ::datatools::multi_properties,
                                  ::datatools::multi_properties::set_description,

@@ -186,17 +186,6 @@ namespace datatools {
   //
   DATATOOLS_CLONEABLE_IMPLEMENTATION(multi_properties)
 
-  bool multi_properties::is_debug() const
-  {
-    return _debug_;
-  }
-
-  void multi_properties::set_debug(bool debug_)
-  {
-    _debug_ = debug_;
-    return;
-  }
-
   bool multi_properties::has_description() const
   {
     return !_description_.empty();
@@ -314,10 +303,8 @@ namespace datatools {
 
   void multi_properties::_init_(const std::string & key_label_,
                                 const std::string & meta_label_,
-                                const std::string & description_,
-                                bool debug_)
+                                const std::string & description_)
   {
-    _debug_ = debug_;
     if (_key_label_.empty()) _key_label_ = defaults::key_label();
     if (_meta_label_.empty()) _meta_label_ = defaults::meta_label();
     if (!key_label_.empty()) this->set_key_label(key_label_);
@@ -328,30 +315,27 @@ namespace datatools {
 
   multi_properties::multi_properties()
   {
-    _debug_ = false;
-    _init_("", "", "", false);
+    _init_("", "", "");
     return;
   }
 
   multi_properties::multi_properties(const std::string & key_label_,
                                      const std::string & meta_label_)
   {
-    _init_(key_label_,meta_label_,"",false);
+    _init_(key_label_, meta_label_,"");
     return;
   }
 
   multi_properties::multi_properties(const std::string & key_label_,
                                      const std::string & meta_label_,
-                                     const std::string & description_,
-                                     bool debug_)
+                                     const std::string & description_)
   {
-    _init_(key_label_,meta_label_,description_,debug_);
+    _init_(key_label_, meta_label_, description_);
     return;
   }
 
   void multi_properties::_copy_impl_(const multi_properties & source_)
   {
-    this->_debug_       = source_._debug_;
     this->_description_ = source_._description_;
     this->_key_label_   = source_._key_label_;
     this->_meta_label_  = source_._meta_label_;
@@ -532,8 +516,8 @@ namespace datatools {
     return;
   }
 
-  properties& multi_properties::add_impl2(const std::string & key_,
-                                          const std::string & meta_)
+  properties & multi_properties::add_impl2(const std::string & key_,
+                                           const std::string & meta_)
   {
     DT_THROW_IF (_entries_.find(key_) != _entries_.end(),
                  std::logic_error,
@@ -545,13 +529,10 @@ namespace datatools {
     "Key '" << key_ << "' has a an empty '" << _meta_label_ << "' !");
     }
     */
-    if (is_debug()) {
-      // 2017-03-17, FM: I don't know what to do with the following lines!
-      // So wrap it only in debug mode...
-      if (_meta_label_.empty() && !meta_.empty()) {
-        DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,
-                       "Key '" << key_ << "' will ignore meta '" << meta_ << "' !");
-      }
+    // 2019-09-12, FM: Warn!
+    if (_meta_label_.empty() && !meta_.empty()) {
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                     "Key '" << key_ << "' will ignore meta '" << meta_ << "' !");
     }
     _entries_[key_] = entry(key_, meta_);
     _ordered_entries_.push_back(&_entries_[key_]);
@@ -564,7 +545,6 @@ namespace datatools {
   {
     this->add_impl(key_, meta_);
   }
-
 
   void multi_properties::add(const std::string & key_,
                              const properties & a_props)

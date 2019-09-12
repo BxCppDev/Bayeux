@@ -194,8 +194,7 @@ namespace datatools {
     /// Private initialization
     void _init_ (const std::string & key_label_,
                  const std::string & meta_label_,
-                 const std::string & description_,
-                 bool debug_);
+                 const std::string & description_);
 
     /// Private copy
     void _copy_impl_(const multi_properties &);
@@ -209,11 +208,10 @@ namespace datatools {
     multi_properties(const std::string & key_label_,
                      const std::string & meta_label_);
 
-    /// Constructor specifying key label, meta label, description and debug flag
+    /// Constructor specifying key label, meta label and description
     multi_properties(const std::string & key_label_,
                      const std::string & meta_label_,
-                     const std::string & description_,
-                     bool debug_ = false);
+                     const std::string & description_);
 
     /// Destructor
     virtual ~multi_properties() = default;
@@ -229,12 +227,6 @@ namespace datatools {
 
     // Move assignment
     multi_properties & operator=(multi_properties &&) = default;
-
-    /// Check the debug flag
-    bool is_debug() const;
-
-    /// Set the debug flag
-    void set_debug(bool = true);
 
     /// Set the description
     void set_description(const std::string & description_);
@@ -477,7 +469,6 @@ namespace datatools {
 
   private:
 
-    bool                  _debug_;       //!< Debug flag
     std::string           _description_; //!< Description of the container
     std::string           _key_label_;   //!< The key label used by the container
     std::string           _meta_label_;  //!< The meta label used by the container
