@@ -12,9 +12,11 @@ Version                 Release Date
 3.2.0_                   2018-03-20
 3.3.0_                   2018-07-12
 3.4.0_                   2018-11-27
+3.4.1_                   2019-07-05
 ======================= ============
 
 .. _3.1.2: release_notes-3.1.2.rst
 .. _3.2.0: release_notes-3.2.0.rst
 .. _3.3.0: release_notes-3.3.0.rst
 .. _3.4.0: release_notes-3.4.0.rst
+.. _3.4.1: release_notes-3.4.1.rst
