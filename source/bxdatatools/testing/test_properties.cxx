@@ -405,17 +405,11 @@ void test_key_validation()
     try {
       std::string k = "_foo";
       k[0] = c;
-      // std::cerr << "key = '" << k << "'" << std::endl;
       a.store(k, "bar");
     }
     catch (std::exception &) {
-      // std::cerr << "TEST " << std::endl;
       noExceptionThrown = false;
     }
-    // catch (std::exception & x) {
-    //   std::cerr << "As expected: " << x.what() << std::endl;
-    //   noExceptionThrown = false;
-    // }
     if (noExceptionThrown) {
       DT_THROW(std::logic_error, "Storing a key beginning with '" << c << "' did not throw");
     }
