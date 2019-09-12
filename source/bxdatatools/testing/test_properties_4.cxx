@@ -1,19 +1,24 @@
 // This Project:
 #include <datatools/properties.h>
+
+// Standard library:
+#include <iostream>
+#include <exception>
+
+// This Project:
 #include <datatools/clhep_units.h>
 
-int main (void)
+int main(void)
 {
-  using namespace std;
+  // using namespace std;
   try {
     {
       datatools::properties setup;
       
       std::string setup_file = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample.conf";
       datatools::fetch_path_with_env(setup_file);
-      datatools::properties::read_config (setup_file, setup);
-
-      setup.tree_dump (cout, "Setup: ");
+      datatools::properties::read_config(setup_file, setup);
+      setup.tree_dump(std::cout, "Setup: ");
 
       if (setup.has_key("Mass")){
         double mass = setup.fetch_real("Mass");
@@ -25,6 +30,7 @@ int main (void)
         }
         std::clog << "Mass = " << mass / CLHEP::g << " g" << std::endl;
       }
+      
       if (setup.has_key("Value")) {
         double value = setup.fetch_real("Value");
         if (! setup.has_explicit_unit("Value")) {
@@ -37,7 +43,6 @@ int main (void)
       }
       
       std::clog << "\nAdd more properties..." << std::endl;
-
       setup.store("test", true, "Test flag");
       setup.store("nitems", 42, "Number of items");
       setup.store("favorite_color", "Blue", "my favorite color");
@@ -47,11 +52,11 @@ int main (void)
       std::vector<double> pos({ 1.2 * CLHEP::km, 3.4 * CLHEP::km});
       setup.store("position", pos, "The position on the map");
       setup.set_unit_symbol("position", "km");
-      setup.tree_dump (cout, "Setup: ");
+      setup.tree_dump(std::clog, "Setup: ");
 
     }
-  } catch (exception & x) {
-    cerr << "error: " << x.what () << endl;
+  } catch (std::exception & x) {
+    std::cerr << "error: " << x.what() << std::endl;
   }
 
   return 0;

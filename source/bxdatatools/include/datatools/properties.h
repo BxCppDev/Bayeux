@@ -205,16 +205,16 @@ namespace datatools {
       virtual ~data() = default;
 
       // Copy constructor
-      data(const data&) = default;
+      data(const data &) = default;
 
       // Copy assignment
-      data& operator=(const data&) = default;
+      data & operator=(const data &) = default;
 
       // Move construction
-      data(data&&) = default;
+      data(data &&) = default;
 
       // Move assignment
-      data& operator=(data&&) = default;
+      data & operator=(data &&) = default;
 
       /// Check is description is set
       bool has_description() const;
@@ -388,7 +388,8 @@ namespace datatools {
 
       BOOST_SERIALIZATION_BASIC_DECLARATION()
 
-      private:
+    private:
+      
       std::string _description_; //!< Description of the property
       /** 8-bits description flags :
        * Format is : VLUPSTTT
@@ -753,7 +754,7 @@ namespace datatools {
 
   public:
 
-    typedef std::vector<std::string>    keys_col_type;
+    typedef std::vector<std::string> keys_col_type;
 
   public:
     
@@ -767,16 +768,16 @@ namespace datatools {
     virtual ~properties() = default;
 
     /// Copy constructor
-    properties(const properties&) = default;
+    properties(const properties &) = default;
 
     /// Copy assignment
-    properties& operator=(const properties&) = default;
+    properties & operator=(const properties &) = default;
 
     /// Move constructor
-    properties(properties&&) = default;
+    properties(properties &&) = default;
 
     /// Move assignment
-    properties& operator=(properties&&) = default;
+    properties & operator=(properties &&) = default;
 
     /// Returns the number of stored properties
     int32_t size() const;
@@ -834,7 +835,7 @@ namespace datatools {
     std::vector<std::string> keys() const;
 
     //! Returns the ith key
-    const std::string & key (int) const;
+    const std::string & key(int) const;
 
     //! Set the list of keys.
     void keys(std::vector<std::string> &) const;
