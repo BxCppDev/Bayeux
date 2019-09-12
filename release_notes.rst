@@ -21,8 +21,8 @@ or macOS 10.
 Additions
 =========
 
-* PR      #49:       Modernize      ``datatools::properties``      and
-  ``datatools::multi_properties`` classes.
+* PR #49:       Modernize      ``datatools::properties``      and
+  ``datatools::multi_properties`` classes (B.Morgan).
 
 Removals
 =========
