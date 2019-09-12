@@ -336,7 +336,7 @@ namespace datatools {
 
     /// Add a new section with primary key and a collection of properties
     void add(const std::string & key_,
-             const properties& props_);
+             const properties & props_);
 
     /// Add an empty section with primary key and meta information text
     void add(const std::string & key_,
@@ -369,12 +369,14 @@ namespace datatools {
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_               = false) const;
 
     /// \brief Reader/writer class for multi_properties objects
     class config
     {
     public:
+
+      /// \brief Flags to modify the behaviour and formatting of a config object
       enum options_flag {
         SKIP_PRIVATE_SECTIONS = bit_mask::bit00, ///< Skip private sections bit
         FORBID_VARIANTS       = bit_mask::bit01, ///< Forbid variant block directives bit
