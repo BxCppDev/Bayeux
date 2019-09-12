@@ -124,13 +124,25 @@ namespace datatools {
             const std::string & meta_ = "");
 
       /// Destructor
-      virtual ~entry();
+      virtual ~entry() = default;
+
+      /// Copy constructor
+      entry(const entry &) = default;
+
+      /// Copy assignment
+      entry & operator=(const entry &) = default;
+
+      /// Move constructor
+      entry(entry &&) = default;
+
+      /// Move assignment
+      entry & operator=(entry &&) = default;
 
       /// Return a const reference to the collection of properties
-      const properties& get_properties() const;
+      const properties & get_properties() const;
 
       /// Return a mutable reference to the collection of properties
-      properties& grab_properties();
+      properties & grab_properties();
 
       /// Return the primary key
       const std::string & get_key() const;
@@ -182,8 +194,7 @@ namespace datatools {
     /// Private initialization
     void _init_ (const std::string & key_label_,
                  const std::string & meta_label_,
-                 const std::string & description_,
-                 bool debug_);
+                 const std::string & description_);
 
     /// Private copy
     void _copy_impl_(const multi_properties &);
@@ -197,14 +208,13 @@ namespace datatools {
     multi_properties(const std::string & key_label_,
                      const std::string & meta_label_);
 
-    /// Constructor specifying key label, meta label, description and debug flag
+    /// Constructor specifying key label, meta label and description
     multi_properties(const std::string & key_label_,
                      const std::string & meta_label_,
-                     const std::string & description_,
-                     bool debug_ = false);
+                     const std::string & description_);
 
     /// Destructor
-    virtual ~multi_properties();
+    virtual ~multi_properties() = default;
 
     /// Copy constructor
     multi_properties(const multi_properties &);
@@ -212,11 +222,11 @@ namespace datatools {
     /// Assignment operator
     multi_properties & operator=(const multi_properties &);
 
-    /// Check the debug flag
-    bool is_debug() const;
+    // Move constructor
+    multi_properties(multi_properties &&) = default;
 
-    /// Set the debug flag
-    void set_debug(bool = true);
+    // Move assignment
+    multi_properties & operator=(multi_properties &&) = default;
 
     /// Set the description
     void set_description(const std::string & description_);
@@ -318,7 +328,7 @@ namespace datatools {
 
     /// Add a new section with primary key and a collection of properties
     void add(const std::string & key_,
-             const properties& props_);
+             const properties & props_);
 
     /// Add an empty section with primary key and meta information text
     void add(const std::string & key_,
@@ -351,12 +361,14 @@ namespace datatools {
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_               = false) const;
 
     /// \brief Reader/writer class for multi_properties objects
     class config
     {
     public:
+
+      /// \brief Flags to modify the behaviour and formatting of a config object
       enum options_flag {
         SKIP_PRIVATE_SECTIONS = bit_mask::bit00, ///< Skip private sections bit
         FORBID_VARIANTS       = bit_mask::bit01, ///< Forbid variant block directives bit
@@ -457,7 +469,6 @@ namespace datatools {
 
   private:
 
-    bool                  _debug_;       //!< Debug flag
     std::string           _description_; //!< Description of the container
     std::string           _key_label_;   //!< The key label used by the container
     std::string           _meta_label_;  //!< The meta label used by the container

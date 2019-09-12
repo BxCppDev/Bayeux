@@ -105,9 +105,6 @@ namespace dpp {
     }
 
     _store_ = new datatools::multi_properties;
-    if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
-      _store_->set_debug(true);
-    }
 
     if (! _load_filename_.empty()) {
       std::string dummy = _load_filename_;
