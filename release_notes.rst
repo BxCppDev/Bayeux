@@ -21,10 +21,15 @@ or macOS 10.
 Additions
 =========
 
-* PR #49: Modernize datatools::properties and datatools::multi_properties classes.
+* PR      #49:       Modernize      ``datatools::properties``      and
+  ``datatools::multi_properties`` classes.
 
 Removals
 =========
+
+* Remove   unused  ``debug``   attribute   and   related  methods   in
+  ``datatools::multi_properties``  class, propagate  this change  to a
+  few places in the library.
 
 Changes
 =======
