@@ -104,26 +104,26 @@ int main(int argc_, char ** argv_)
     try {
       my_dict.store("#number", 666);
     } catch(exception & x) {
-      std::clog << "ERROR: " << x.what() << std::endl;
+      std::clog << "error: " << x.what() << std::endl;
     }
     my_dict.store("age", 24, "the age of the captain");
 
     try {
       my_dict.store("007", "James Bond");
     } catch(std::exception & x) {
-      std::clog << "ERROR: " << x.what() << std::endl;
+      std::clog << "error: " << x.what() << std::endl;
     }
 
     try {
       my_dict.store("", "Money Penny");
     } catch(std::exception & x) {
-      std::clog << "ERROR: " << x.what() << std::endl;
+      std::clog << "error: " << x.what() << std::endl;
     }
 
     try {
       my_dict.store("bad_token", "a bad \"char\"");
     } catch(std::exception & x) {
-      std::clog << "ERROR: " << x.what() << std::endl;
+      std::clog << "error: " << x.what() << std::endl;
     }
 
     my_dict.store_with_explicit_unit("weight", 23.4 * CLHEP::kg);
@@ -403,11 +403,19 @@ void test_key_validation()
   for (char c : digits) {
     noExceptionThrown = true;
     try {
-      a.store(c+"foo", "bar");
+      std::string k = "_foo";
+      k[0] = c;
+      // std::cerr << "key = '" << k << "'" << std::endl;
+      a.store(k, "bar");
     }
     catch (std::exception &) {
+      // std::cerr << "TEST " << std::endl;
       noExceptionThrown = false;
     }
+    // catch (std::exception & x) {
+    //   std::cerr << "As expected: " << x.what() << std::endl;
+    //   noExceptionThrown = false;
+    // }
     if (noExceptionThrown) {
       DT_THROW(std::logic_error, "Storing a key beginning with '" << c << "' did not throw");
     }
@@ -417,7 +425,7 @@ void test_key_validation()
   noExceptionThrown = true;
   try {
     a.store("spaces and * are invalid", "bar");
-  } catch( std::exception &) {
+  } catch (std::exception &) {
     noExceptionThrown = false;
   }
   if (noExceptionThrown) {
