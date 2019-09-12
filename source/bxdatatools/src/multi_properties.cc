@@ -358,7 +358,7 @@ namespace datatools {
     this->_entries_     = source_._entries_;
 
     // repopulate ordering list
-    for (const entry* source_entry : source_._ordered_entries_) {
+    for (const entry * source_entry : source_._ordered_entries_) {
       auto found = this->_entries_.find(source_entry->get_key());
       this->_ordered_entries_.push_back(&found->second);
     }
@@ -430,7 +430,7 @@ namespace datatools {
 
   void multi_properties::keys(std::vector<std::string>&k) const
   {
-    for (const auto& e : _entries_) {
+    for (const auto & e : _entries_) {
       k.push_back(e.first);
     }
     return;
@@ -452,7 +452,7 @@ namespace datatools {
 
   void multi_properties::ordered_keys(std::vector<std::string> & keys_) const
   {
-    for (const entry* e : _ordered_entries_) {
+    for (const entry * e : _ordered_entries_) {
       keys_.push_back(e->get_key());
     }
     return;
@@ -606,7 +606,6 @@ namespace datatools {
     r.read(filename_, *this);
     return;
   }
-
 
   multi_properties::config::config(uint32_t options_, const std::string & topic_)
   {
@@ -801,7 +800,7 @@ namespace datatools {
           << std::endl;
     out_ << std::endl;
 
-    for (const entry* pentry : target_._ordered_entries_) {
+    for (const entry * pentry : target_._ordered_entries_) {
       const std::string & name = pentry->get_key();
       bool skip_this_section = false;
 
@@ -910,7 +909,7 @@ namespace datatools {
       std::string new_meta = "";
       if (!line_goon) {
         bool skip_line = false;
-        std::string& line = line_in;
+        std::string & line = line_in;
         // Check if line is blank:
         std::istringstream check_iss(line_in);
         std::string check_word;
@@ -1448,7 +1447,7 @@ namespace datatools {
           indent_oss << i_tree_dumpable::skip_tag;
         }
 
-        const std::string& local_key = p_entry->get_key();
+        const std::string & local_key = p_entry->get_key();
         outs << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
 
         if (properties::key_is_private(local_key)) outs << " [private]";
@@ -1556,7 +1555,7 @@ namespace datatools {
           indent_oss << i_tree_dumpable::skip_tag;
         }
 
-        const std::string& local_key = p_entry->get_key();
+        const std::string & local_key = p_entry->get_key();
         out_ << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
 
         if (properties::key_is_private(local_key)) out_ << " [private]";

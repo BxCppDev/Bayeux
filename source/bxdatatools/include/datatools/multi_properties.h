@@ -127,22 +127,22 @@ namespace datatools {
       virtual ~entry() = default;
 
       /// Copy constructor
-      entry(const entry&) = default;
+      entry(const entry &) = default;
 
       /// Copy assignment
-      entry& operator=(const entry&) = default;
+      entry & operator=(const entry &) = default;
 
       /// Move constructor
-      entry(entry&&) = default;
+      entry(entry &&) = default;
 
       /// Move assignment
-      entry& operator=(entry&&) = default;
+      entry & operator=(entry &&) = default;
 
       /// Return a const reference to the collection of properties
-      const properties& get_properties() const;
+      const properties & get_properties() const;
 
       /// Return a mutable reference to the collection of properties
-      properties& grab_properties();
+      properties & grab_properties();
 
       /// Return the primary key
       const std::string & get_key() const;
@@ -225,10 +225,10 @@ namespace datatools {
     multi_properties & operator=(const multi_properties &);
 
     // Move constructor
-    multi_properties(multi_properties&&) = default;
+    multi_properties(multi_properties &&) = default;
 
     // Move assignment
-    multi_properties& operator=(multi_properties&&) = default;
+    multi_properties & operator=(multi_properties &&) = default;
 
     /// Check the debug flag
     bool is_debug() const;
