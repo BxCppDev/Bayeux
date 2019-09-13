@@ -22,16 +22,6 @@ namespace mctools {
       return _hit_data_;
     }
 
-    sensitive_hit::sensitive_hit()
-    {
-       return;
-    }
-
-    sensitive_hit::~sensitive_hit()
-    {
-      return;
-    }
-
     void sensitive_hit::reset()
     {
       _hit_data_.reset();

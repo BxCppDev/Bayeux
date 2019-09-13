@@ -39,10 +39,22 @@ namespace mctools {
       mctools::base_step_hit & grab_hit_data ();
 
       /// Default constructor
-      sensitive_hit ();
+      sensitive_hit() = default;
 
       /// Destructor
-      virtual ~sensitive_hit ();
+      virtual ~sensitive_hit() = default;
+
+      /// Copy Constructor
+      sensitive_hit(const sensitive_hit &) = default;
+
+      /// Copy assignment
+      sensitive_hit & operator=(const sensitive_hit &) = default;
+
+      /// Move Constructor
+      sensitive_hit(sensitive_hit &&) = default;
+      
+      /// Move assignment
+      sensitive_hit & operator=(sensitive_hit &&) = default;
 
       /// Reset to default values
       void reset ();

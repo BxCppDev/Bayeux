@@ -337,11 +337,24 @@ namespace mctools {
     /// Reset/invalidate the internal structure of the hit
     virtual void invalidate();
 
+
     /// Default constructor
-    base_step_hit();
+    base_step_hit() = default;
 
     // Destructor
-    virtual ~base_step_hit();
+    virtual ~base_step_hit() = default;
+
+    // Copy constructor
+    base_step_hit(const base_step_hit &) = default;
+
+    // Copy assignment
+    base_step_hit & operator=(const base_step_hit &) = default;
+
+    // Move constructor
+    base_step_hit(base_step_hit &&);
+
+    // Move assignment
+    base_step_hit & operator=(base_step_hit &&) = default;
 
     /// Reset/invalidate the internal structure of the hit
     void reset();
@@ -372,40 +385,39 @@ namespace mctools {
     void dump() const;
 
   private:
-
     // Attributes :
 
     // Original attributes in version 0:
-    geomtools::vector_3d         _position_start_; //!< Start position : beginning of the tiny track segment (step)
-    geomtools::vector_3d         _position_stop_;  //!< Stop position  : end of the tiny track segment (step)
-    double                       _time_start_;     //!< Start time at start position
-    double                       _time_stop_;      //!< Stop time at stop position
-    geomtools::vector_3d         _momentum_start_; //!< Momentum at start position
-    geomtools::vector_3d         _momentum_stop_;  //!< Momentum at stop position
-    double                       _energy_deposit_; //!< Energy deposit along the track segment (step)
-    std::string                  _particle_name_;  //!< Name of the particle associated to the hit
+    geomtools::vector_3d _position_start_ = geomtools::invalid_vector_3d(); //!< Start position : beginning of the tiny track segment (step)
+    geomtools::vector_3d _position_stop_ = geomtools::invalid_vector_3d();  //!< Stop position  : end of the tiny track segment (step)
+    double               _time_start_ = datatools::invalid_real();     //!< Start time at start position
+    double               _time_stop_ = datatools::invalid_real();      //!< Stop time at stop position
+    geomtools::vector_3d _momentum_start_ = geomtools::invalid_vector_3d(); //!< Momentum at start position
+    geomtools::vector_3d _momentum_stop_ = geomtools::invalid_vector_3d();  //!< Momentum at stop position
+    double               _energy_deposit_ = datatools::invalid_real(); //!< Energy deposit along the track segment (step)
+    std::string          _particle_name_ = "";  //!< Name of the particle associated to the hit
 
     // Original attributes in version 1:
-    double                       _biasing_weight_; //!< The biasing weight of the particle track
+    double               _biasing_weight_ = datatools::invalid_real(); //!< The biasing weight of the particle track
 
     // Added attributes in version 2:
-    double                       _kinetic_energy_start_;
-    double                       _kinetic_energy_stop_;
-    double                       _step_length_;
-    bool                         _entering_volume_flag_ = false; 
-    bool                         _leaving_volume_flag_ = false; 
-    std::string                  _creator_process_name_;
-    bool                         _primary_particle_flag_ = false; 
-    bool                         _major_track_flag_ = false; 
-    bool                         _delta_ray_from_alpha_flag_ = false; 
-    int                          _track_id_ = -1;
-    int                          _parent_track_id_ = -1;
-    std::string                  _material_name_;
-    std::string                  _sensitive_category_;
-    std::string                  _g4_volume_name_;
-    int                          _g4_volume_copy_number_ = -1;
-    std::string                  _hit_processor_;
-    bool                         _visu_highlight_ = false; 
+    double               _kinetic_energy_start_ = datatools::invalid_real();
+    double               _kinetic_energy_stop_ = datatools::invalid_real();
+    double               _step_length_ = datatools::invalid_real();
+    bool                 _entering_volume_flag_ = false; 
+    bool                 _leaving_volume_flag_ = false; 
+    std::string          _creator_process_name_ = "";
+    bool                 _primary_particle_flag_ = false; 
+    bool                 _major_track_flag_ = false; 
+    bool                 _delta_ray_from_alpha_flag_ = false; 
+    int                  _track_id_ = -1;
+    int                  _parent_track_id_ = -1;
+    std::string          _material_name_ = "";
+    std::string          _sensitive_category_ = "";
+    std::string          _g4_volume_name_ = "";
+    int                  _g4_volume_copy_number_ = -1;
+    std::string          _hit_processor_ = "";
+    bool                 _visu_highlight_ = false; 
 
     DATATOOLS_SERIALIZATION_DECLARATION()
     

@@ -27,16 +27,8 @@ namespace datatools {
   const char event_id::IO_FORMAT_ANY;
   const char event_id::IO_FORMAT_INVALID;
 
-  event_id::event_id()
-    : _run_number_(INVALID_RUN_NUMBER)
-    , _event_number_(INVALID_EVENT_NUMBER)
-  {
-    return;
-  }
-
   event_id::event_id(int event_number_)
-    : _run_number_(INVALID_RUN_NUMBER)
-    ,  _event_number_(INVALID_EVENT_NUMBER)
+    : event_id()
   {
     this->set_event_number(event_number_);
     return;
@@ -45,11 +37,6 @@ namespace datatools {
   event_id::event_id(int run_number_, int event_number_)
   {
     this->set(run_number_, event_number_);
-    return;
-  }
-
-  event_id::~event_id()
-  {
     return;
   }
 

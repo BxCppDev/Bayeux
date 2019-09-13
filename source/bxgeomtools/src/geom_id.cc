@@ -229,12 +229,6 @@ namespace geomtools {
     return;
   }
 
-  geom_id::~geom_id()
-  {
-    _addresses_.clear();
-    return;
-  }
-
   void geom_id::reset()
   {
     _type_ = INVALID_TYPE;

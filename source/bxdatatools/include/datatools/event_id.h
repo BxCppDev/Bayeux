@@ -77,7 +77,7 @@ namespace datatools {
     //! The default constructor.
     /** Initialized to an invalid id.
      */
-    event_id();
+    event_id() = default;
 
     //! A constructor that sets only the event number.
     explicit event_id(int e_);
@@ -89,7 +89,19 @@ namespace datatools {
     event_id(int r_, int e_);
 
     //! The destructor.
-    virtual ~event_id();
+    virtual ~event_id() = default;
+
+    //! Copy constructor
+    event_id(const event_id &) = default;
+
+    //! Copy assignment
+    event_id & operator=(const event_id &) = default;
+
+    //! Move constructor
+    event_id(event_id &&) = default;
+
+    //! Move assignment
+    event_id & operator=(event_id &&) = default;    
 
     //! Invalidate the id.
     virtual void clear();
@@ -187,8 +199,8 @@ namespace datatools {
 
   private:
 
-    int32_t _run_number_;   //!< The number of the run.
-    int32_t _event_number_; //!< The number of the event within the run.
+    int32_t _run_number_ = INVALID_RUN_NUMBER;   //!< The number of the run.
+    int32_t _event_number_ = INVALID_EVENT_NUMBER; //!< The number of the event within the run.
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(event_id)

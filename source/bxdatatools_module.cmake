@@ -456,11 +456,13 @@ ${module_test_dir}/test_cloneable_2.cxx
 ${module_test_dir}/test_cloneable.cxx
 ${module_test_dir}/test_data_serialization.cxx
 ${module_test_dir}/test_dummy_service.cxx
+${module_test_dir}/test_event_id.cxx
 ${module_test_dir}/test_exception.cxx
 ${module_test_dir}/test_factory.cxx
 ${module_test_dir}/test_handle_1.cxx
 ${module_test_dir}/test_handle_2.cxx
 ${module_test_dir}/test_handle_3.cxx
+${module_test_dir}/test_handle_construction.cxx
 ${module_test_dir}/test_handle_macros.cxx
 ${module_test_dir}/test_handle_operators.cxx
 ${module_test_dir}/test_integer_range.cxx
@@ -549,7 +551,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     ${module_test_dir}/test_introspection_data_description.cxx
     ${module_test_dir}/test_introspection_argument.cxx
     ${module_test_dir}/test_introspection_method.cxx
-    ${module_test_dir}/test_event_id.cxx
     )
 endif()
 

@@ -35,11 +35,19 @@ namespace mctools {
 
       typedef std::vector<sensitive_hit*> hit_collection_type;
 
-      sensitive_hit_collection ();
+      sensitive_hit_collection () = default;
 
       sensitive_hit_collection (G4String a_detector_name, G4String a_collection_name);
 
-      virtual ~sensitive_hit_collection ();
+      virtual ~sensitive_hit_collection () = default;
+
+      sensitive_hit_collection(const sensitive_hit_collection&) = default;
+      
+      sensitive_hit_collection& operator=(const sensitive_hit_collection&) = default;
+      
+      sensitive_hit_collection(sensitive_hit_collection&&) = default;
+      
+      sensitive_hit_collection& operator=(sensitive_hit_collection&&) = default;
 
       G4int operator==(const sensitive_hit_collection & right) const;
 
