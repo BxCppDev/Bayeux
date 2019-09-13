@@ -401,7 +401,7 @@ namespace mctools {
     double               _biasing_weight_ = datatools::invalid_real(); //!< The biasing weight of the particle track
 
     // Added attributes in version 2:
-    double               _kinetic_energy_start_ = datatools::invalid_real();;
+    double               _kinetic_energy_start_ = datatools::invalid_real();
     double               _kinetic_energy_stop_ = datatools::invalid_real();
     double               _step_length_ = datatools::invalid_real();
     bool                 _entering_volume_flag_ = false; 
