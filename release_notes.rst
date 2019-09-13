@@ -23,7 +23,7 @@ Additions
 
 * PR #49:       Modernize      ``datatools::properties``      and
   ``datatools::multi_properties`` classes (B.Morgan).
-* PR #50:       Modernize some other *data model* classes.
+* PR #50:       Modernize some other *data model* classes (B.Morgan).
 
 Removals
 =========
