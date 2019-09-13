@@ -345,7 +345,74 @@ namespace datatools {
     void write(const std::string & filename_,
                uint32_t options_ = config::HEADER_FOOTER | config::SKIP_PRIVATE_SECTIONS) const;
 
-    /// Read from a configuration file
+    /// Read a multi_properties container from an input stream
+    ///
+    /// This method is the base of configuration file parsing.
+    ///
+    /// Example of input file to be parsed:
+    /// \code
+    ///
+    /// # Format:
+    /// # - Comment lines start with a '#'.
+    /// # This is a  comment line...
+    /// # ...and this is another one.
+    /// 
+    /// # - Blank lines are ignored.
+    /// # - Lines starting with '#@' are considered as optional metacomments
+    /// #   with special embedded parsing options and/or actions.
+    ///
+    /// #@description The main configuration file for the application
+    /// #  This optional metacomment provides the general description of the multi_properties container.
+    /// #  This directive must be given before any *section* (see below).
+    ///
+    /// #@key_label   name
+    /// #  This metacomment provides the key use to identify the name of a *section*.
+    /// #  (see below).
+    /// #  Syntax is ``[name="foo" ... ]``.
+    /// #  This directive must be given before any *section* (see below).
+    ///
+    /// #@meta_label  type
+    /// #  This metacomment provides the key use to identify the meta information of a *section*
+    /// #  (see below).
+    /// #  Syntax is ``[name="foo"   type="my_model_1" ]``.
+    /// #  This directive must be given before any *section* (see below).
+    ///
+    /// # Sections:
+    /// # Each section in a multi_properties container implements a single properties container
+    /// # associated to a unique identifier (in the scope of the multi_properties container)
+    /// # and eventually a meta information, usually documenting the type/category of object
+    /// # or component the section refers to.
+    ///
+    /// [name="core"  type="algo::calibration"]
+    /// #  This directive above starts a new section with a given *name* and *type* (meta information)
+    ///
+    /// ...
+    ///
+    /// [name="display"  type="algo::calibration::gui"]
+    /// #  This directive above starts a new section with a given *name* and *type* (meta information)
+    ///
+    /// ...
+    ///
+    /// # Each section contains a set of properties as illustrated in the ``properties`` class.
+    ///
+    /// [name="debug"  type="algo::calibration::debugger"]
+    /// #  This directive above starts the section named 'debug' for a component
+    /// #  of which the type is ``algo::calibration::debugger``.
+    ///
+    /// #@description Verbosity level of the debugger
+    /// verbosity : integer = 4
+    ///
+    /// #@description List of components with active debugging support
+    /// active : string[2] = "core" "gui"
+    ///
+    /// [name="log"  type="algo::calibration::logger"]
+    /// #  This directive above starts a new section with a given *name* and *type* (meta information)
+    ///
+    /// #@include "~/.config/logger/main.conf"
+    ///
+    ///
+    /// \endcode 
+    /// 
     void read(const std::string & filename_, uint32_t options_ = 0);
 
     /// Basic print

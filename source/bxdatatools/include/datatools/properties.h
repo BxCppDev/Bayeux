@@ -3,7 +3,7 @@
  * Creation date: 2008-02-19
  * Last modified: 2019-01-17
  *
- * License:
+ * License: GPL3
  *
  * Copyright (C) 2008-2019 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -499,29 +499,37 @@ namespace datatools {
       /// test : boolean = true # The end of this property directive line is ignored.
       /// 
       /// # - Blank lines are ignored.
-      /// # - Lines starting with '#@' are considered as metacomments
+      /// # - Lines starting with '#@' are considered as optional metacomments
       /// #   with special embedded parsing options and/or actions.
+      ///
+      /// #@topic rootfinding
+      /// #  This optional metacomment provides a conventional keyword that
+      /// #  identifies the functionnality of the properties container
+      /// #  accessed by an external tool / user.
+      /// #  This directive must be given before any property directive.
       ///
       /// #@config Configuration parameters for a root finding algorithm
       /// #  This metacomment provides the general description of the set of properties.
       /// #  This directive must be given before any property directive.
       /// 
       /// #@description The name of the method
+      /// #  This metacomment provides the specific description of next property record.
       /// root_finder_type : string = "Newton-Raphson"
       /// 
       /// #@description The path of the log file
-      /// #  The 'as path' directive indicates that the string value must
+      /// #  The 'as path' directive below indicates that the string value must
       /// #  be considered as a filesystem path.
       /// log_file : string as path = "/tmp/root_finding.log"
       ///
       /// #@description Relative tolerance (dimensionless)
+      /// #  The property record below shows a pure dimensionless quantity.
       /// relative_epsilon : real = 5e-6
       ///
       /// #@description Absolute tolerance (with explicit dimension and associated unit)
-      /// #  The 'as length' directive indicates that the real value has an explicit
+      /// #  The 'as length' directive below indicates that the real value has an explicit
       /// #  dimension. The explicit 'um' unit symbol after the numerical value must
       /// #  match the required dimension.
-      /// absolute_epsilon : real as length = 1.5 um # micrometer
+      /// absolute_epsilon : real as length = 1.5 um    # micrometer
       ///
       /// #@description A constant value
       /// #  The 'const' directive will prevent any modification of the property
@@ -529,7 +537,7 @@ namespace datatools {
       /// time_duration : const real as time = 0.05 ms
       ///
       /// #@verbose_parsing
-      /// #  Special directive which activates, from this point verbose parsing for debug purpose.
+      /// #  Special directive which activates, from this point, verbose parsing for debug purpose.
       ///
       /// #@description Maximum number of iterations
       /// max_iterations : integer = 100
@@ -550,26 +558,27 @@ namespace datatools {
       ///
       /// #@allow_key_override 
       /// #  From this point, overriding already defined/duplicated properties is allowed.
+      /// #  By default, overriding properties is forbidden.
       ///
       /// #@description Overriden algorithm verbosity (discard the first value above)
       /// logging : string = "debug" # print debug messages
       ///
       /// #@forbid_key_override # Special directive
-      /// #  From this point, overriding already defined propertie is forbidden.
+      /// #  From this point, overriding already defined properties is forbidden.
       ///
       /// #@enable_variants
       /// #  Enable the parsing of variant preprocessor directives.
       ///
       /// #@variant_only math:numerical_library/if_gsl
       /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:numerical_library/if_gsl" variant condition is set.
+      /// #  if the "math:numerical_library/if_gsl" variant condition is set (boolean).
       /// #@description GSL error handling flag is set only if the GSL library is used
       /// gsl_error_support : boolean = true
       ///
       /// #@description Default tolerance on double precision floats
       /// #@variant_only math:tolerance/is_native|true
       /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:epsilon/is_native" variant condition is set.
+      /// #  if the "math:epsilon/is_native" variant condition is set (boolean).
       /// #  If the variant system is not activated, the 'true' value after
       /// #  the '|' character in the "@variant_only" directive is used to
       /// #  consider the condition set by default.
@@ -634,8 +643,12 @@ namespace datatools {
       /// #@description GUI colors (background, foreground then alarm foreground)
       /// gui.colors : string[3] = "grey" "black" "red"
       ///
+      /// # Load default parameters from another ``properties`` container.
+      /// # Can be useful from a *section* in a ``multi_properties`` configuration file.
+      /// #@include : string = "~/.defaults.conf"
+      ///
       /// #@end
-      /// #  Special directive which forces the end of parsing so that
+      /// #  Special directives which forces the end of parsing so that
       /// #  next lines will be ignored.
       /// not_parsed : string = "unused"  # This property directive will not be parsed.
       ///
