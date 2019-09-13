@@ -123,16 +123,16 @@ namespace geomtools {
     virtual ~base_hit() = default;
 
     /// Copy constructor
-    base_hit(const base_hit&) = default;
+    base_hit(const base_hit &) = default;
 
     /// Copy assignment
-    base_hit& operator=(const base_hit&) = default;
+    base_hit & operator=(const base_hit &) = default;
 
     /// Move constructor
-    base_hit(base_hit&&) = default;
+    base_hit(base_hit &&) = default;
 
     /// Move assignment
-    base_hit& operator=(base_hit&&) = default;
+    base_hit & operator=(base_hit &&) = default;
 
     /// Check if the hit is valid
     /** We consider a base hit valid if:

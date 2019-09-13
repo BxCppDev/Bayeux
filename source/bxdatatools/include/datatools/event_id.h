@@ -92,16 +92,16 @@ namespace datatools {
     virtual ~event_id() = default;
 
     //! Copy constructor
-    event_id(const event_id&) = default;
+    event_id(const event_id &) = default;
 
     //! Copy assignment
-    event_id& operator=(const event_id&) = default;
+    event_id & operator=(const event_id &) = default;
 
     //! Move constructor
-    event_id(event_id&&) = default;
+    event_id(event_id &&) = default;
 
     //! Move assignment
-    event_id& operator=(event_id&&) = default;    
+    event_id & operator=(event_id &&) = default;    
 
     //! Invalidate the id.
     virtual void clear();

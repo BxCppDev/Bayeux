@@ -181,16 +181,16 @@ namespace datatools {
     virtual ~handle() = default;
 
     //! Copy constructor
-    handle(const handle&) = default;
+    handle(const handle &) = default;
 
     //! Copy assignment
-    handle& operator=(const handle& rhs) = default;
+    handle & operator=(const handle& rhs) = default;
 
     //! Move constructor
-    handle(handle&&) = default;
+    handle(handle &&) = default;
 
     //! Move assignment
-    handle& operator=(handle&&) = default;
+    handle & operator=(handle &&) = default;
 
     //! Return number of handle objects referring to the referenced object
     size_t use_count() const 
@@ -253,7 +253,7 @@ namespace datatools {
 
     //! Dereferences the stored pointer
     //! \exception std::logic_error when managed instance is null
-    T* operator->()
+    T * operator->()
     {
       DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
       return _sp_.get();
@@ -261,7 +261,7 @@ namespace datatools {
 
     //! Dereferences the stored pointer in const context
     //! \exception std::logic_error when managed instance is null
-    T const* operator->() const
+    T const * operator->() const
     {
       DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
       return _sp_.get();
@@ -270,7 +270,7 @@ namespace datatools {
 
     //! Dereferences the stored pointer
     //! \exception std::logic_error when managed instance is null
-    T& operator*()
+    T & operator*()
     {
       DT_THROW_IF(!_sp_, std::logic_error, "Handle holds no data!");
       return *(_sp_.get());

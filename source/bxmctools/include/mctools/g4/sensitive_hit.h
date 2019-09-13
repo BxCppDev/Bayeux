@@ -45,16 +45,16 @@ namespace mctools {
       virtual ~sensitive_hit() = default;
 
       /// Copy Constructor
-      sensitive_hit(const sensitive_hit&) = default;
+      sensitive_hit(const sensitive_hit &) = default;
 
-      // Copy assignment
-      sensitive_hit& operator=(const sensitive_hit&) = default;
+      /// Copy assignment
+      sensitive_hit & operator=(const sensitive_hit &) = default;
 
-      // Move Constructor
-      sensitive_hit(sensitive_hit&&) = default;
+      /// Move Constructor
+      sensitive_hit(sensitive_hit &&) = default;
       
-      // Copy assignment
-      sensitive_hit& operator=(sensitive_hit&&) = default;
+      /// Move assignment
+      sensitive_hit & operator=(sensitive_hit &&) = default;
 
       /// Reset to default values
       void reset ();
