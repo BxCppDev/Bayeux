@@ -148,14 +148,14 @@ namespace datatools {
     //! Check if a unit value given by id (name or symbol) is in a dimension
     //! @param unit_id_ the name or the symbol of the unit
     //! @param unit_dimension_label_ the label of the unit dimension
-    //! @return the value associated to the unit
+    //! @return true is the unit symbol is associated to the unit dimension
     //! \code
-    //! double mm = get_unit_in_dimension_from("mm", "length"); // success
-    //! double xx = get_unit_in_dimension_from("kg", "length"); // throw an exception
-    //! double kg = get_unit_in_dimension_from("kg", "mass");   // success
+    //! is_unit_in_dimension_from("mm", "length"); // true
+    //! is_unit_in_dimension_from("kg", "length"); // false
+    //! is_unit_in_dimension_from("kg", "mass");   // true
     //! \endcode
-    bool is_unit_in_dimension_from(const std::string& unit_id_,
-                                   const std::string& unit_dimension_label_);
+    bool is_unit_in_dimension_from(const std::string & unit_id_,
+                                   const std::string & unit_dimension_label_);
 
     //! Return the unit value associated to an unit given its id (name or symbol) and dimension
     //! @param unit_id_ the name or the symbol of the unit
@@ -166,8 +166,8 @@ namespace datatools {
     //! double xx = get_unit_in_dimension_from("kg", "length"); // throw an exception
     //! double kg = get_unit_in_dimension_from("kg", "mass");   // success
     //! \endcode
-    double get_unit_in_dimension_from(const std::string& unit_id_,
-                                      const std::string& unit_dimension_label_);
+    double get_unit_in_dimension_from(const std::string & unit_id_,
+                                      const std::string & unit_dimension_label_);
 
     //! Get the length unit value from a string.
     //! @param unit_id_ the name or the symbol of the unit
@@ -177,79 +177,79 @@ namespace datatools {
     //! double xx = get_length_unit_from("kg"); // throw an exception
     //! double yy = get_length_unit_from("yy"); // throw an exception
     //! \endcode
-    double get_length_unit_from(const std::string& unit_id_);
+    double get_length_unit_from(const std::string & unit_id_);
 
     //! Get the surface unit value from a string.
-    double get_surface_unit_from(const std::string&);
+    double get_surface_unit_from(const std::string &);
 
     //! Get the volume unit value from a string.
-    double get_volume_unit_from(const std::string&);
+    double get_volume_unit_from(const std::string &);
 
     //! Get the time unit value from a string.
-    double get_time_unit_from(const std::string&);
+    double get_time_unit_from(const std::string &);
 
     //! Get the angle unit value from a string.
-    double get_angle_unit_from(const std::string&);
+    double get_angle_unit_from(const std::string &);
 
     //! Get the solid angle unit value from a string.
-    double get_solid_angle_unit_from(const std::string&);
+    double get_solid_angle_unit_from(const std::string &);
 
     //! Get the energy unit from a string.
-    double get_energy_unit_from(const std::string&);
+    double get_energy_unit_from(const std::string &);
 
     //! Get the mass unitvalue  from a string.
-    double get_mass_unit_from(const std::string&);
+    double get_mass_unit_from(const std::string &);
 
     //! Get the pressure unit value from a string.
-    double get_pressure_unit_from(const std::string&);
+    double get_pressure_unit_from(const std::string &);
 
     //! Get the magnetic field unit value from a string.
-    double get_magnetic_flux_density_unit_from(const std::string&);
+    double get_magnetic_flux_density_unit_from(const std::string &);
 
     //! @deprecated Get the magnetic field unit value from a string.
-    double get_magnetic_field_unit_from(const std::string&);
+    double get_magnetic_field_unit_from(const std::string &);
 
     //! Get the electric field unit value from a string.
-    double get_electric_field_unit_from(const std::string&);
+    double get_electric_field_unit_from(const std::string &);
 
     //! Get the electric potential unit value from a string.
-    double get_electric_potential_unit_from(const std::string&);
+    double get_electric_potential_unit_from(const std::string &);
 
     //! @deprecated Get the electric tension unit value from a string.
-    double get_electric_tension_unit_from(const std::string&);
+    double get_electric_tension_unit_from(const std::string &);
 
     //! Get the temperature unit value from a string.
-    double get_temperature_unit_from(const std::string&);
+    double get_temperature_unit_from(const std::string &);
 
     //! Get the density unit value from a string.
-    double get_density_unit_from(const std::string&);
+    double get_density_unit_from(const std::string &);
 
     //! Get the activity unit value from a string.
-    double get_activity_unit_from(const std::string&);
+    double get_activity_unit_from(const std::string &);
 
     //! Get the surface activity unit value from a string.
-    double get_surface_activity_unit_from(const std::string&);
+    double get_surface_activity_unit_from(const std::string &);
 
     //! Get the volume activity unit value from a string.
-    double get_volume_activity_unit_from(const std::string&);
+    double get_volume_activity_unit_from(const std::string &);
 
     //! Get the mass activity unit value from a string.
-    double get_mass_activity_unit_from(const std::string&);
+    double get_mass_activity_unit_from(const std::string &);
 
     //! Get the frequency unit value from a string.
-    double get_frequency_unit_from(const std::string&);
+    double get_frequency_unit_from(const std::string &);
 
     //! Get the electric charge unit value from a string.
-    double get_electric_charge_unit_from(const std::string&);
+    double get_electric_charge_unit_from(const std::string &);
 
     //! Get the electric current unit value from a string.
-    double get_electric_current_unit_from(const std::string&);
+    double get_electric_current_unit_from(const std::string &);
 
     //! Get the velocity unit value from a string.
-    double get_velocity_unit_from(const std::string&);
+    double get_velocity_unit_from(const std::string &);
 
     //! @deprecated Get the speed unit value from a string.
-    double get_speed_unit_from(const std::string&);
+    double get_speed_unit_from(const std::string &);
 
 
     //! Get the CLHEP unit value from a string specifiying the unit type.
@@ -260,8 +260,8 @@ namespace datatools {
      *   double lu = datatools::units::get_unit_from("length", "cm");
      *   \endcode
      */
-    double get_unit_from(const std::string& unit_type_,
-                         const std::string& unit_str_);
+    double get_unit_from(const std::string & unit_type_,
+                         const std::string & unit_str_);
 
     //! Get the CLHEP unspecified unit value from a string.
     /**
@@ -271,7 +271,7 @@ namespace datatools {
      *   double u = datatools::units::get_unit("cm");
      *   \endcode
      */
-    double get_unit(const std::string& unit_str_, bool throw_ = false);
+    double get_unit(const std::string & unit_str_, bool throw_ = false);
 
     //! Return an array containing the labels associated to all type of units supported  by the datatools::units class.
     // const std::vector<std::string>& get_unit_labels_registry();
@@ -326,7 +326,7 @@ namespace datatools {
      *   double val = datatools::units::get_value_with_unit("2.54 cm");
      *   \endcode
      */
-    double get_value_with_unit(const std::string& word_);
+    double get_value_with_unit(const std::string & word_);
 
     //! Get a value from a string taking into account the unit symbol.
     /**
@@ -358,10 +358,10 @@ namespace datatools {
      *     unit_symbol = "cm"
      *     unit_label  = "length"
      */
-    bool parse_value_with_unit(const std::string& word,
+    bool parse_value_with_unit(const std::string & word,
                                double& value,
-                               std::string& unit_symbol,
-                               std::string& unit_label,
+                               std::string & unit_symbol,
+                               std::string & unit_label,
                                uint32_t flags = 0);
 
     //! \brief The description of an unit
