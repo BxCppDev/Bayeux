@@ -162,7 +162,9 @@ namespace datatools {
     bool data_description::is_dimensionless() const
     {
       if (has_implicit_unit()) return false;
-      if (has_explicit_unit_dimension()) return false;
+      if (has_explicit_unit_dimension()) {
+        if (get_explicit_unit_dimension_label() != "fraction") return false;
+      }
       return true;
     }
 
