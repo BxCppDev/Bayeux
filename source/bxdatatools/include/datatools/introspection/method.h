@@ -89,7 +89,7 @@ namespace datatools {
       //! Check if the method has a single returned value/argument
       bool has_unique_returned() const;
 
-      //! Return the unique returned argument (if any)
+      //! Return the unique returned argument (if unique output argument is set)
       const argument & get_unique_returned() const;
 
       //! Add an argument
