@@ -151,10 +151,6 @@ namespace datatools {
        *  unit.explicit_unit_dimension : string = "mass"
        *  unit.preferred_unit          : string = "kg"
        *  \endcode
-       *
-       *
-       *
-       *
        */
       void initialize(const datatools::properties &);
 
