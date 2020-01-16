@@ -173,7 +173,11 @@ target_link_libraries(Bayeux
     ${CMAKE_DL_LIBS}
   )
 if(Bayeux_WITH_QT_GUI)
-  target_link_libraries(Bayeux PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui Qt5::Svg)
+  target_link_libraries(Bayeux PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui)
+endif()
+# Split Qt SVG from other Qt components (not sure it is useful)
+if(Bayeux_WITH_QT_SVG)
+  target_link_libraries(Bayeux PUBLIC Qt5::Svg)
 endif()
 
 # - Use IWYU, if available

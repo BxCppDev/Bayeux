@@ -5,7 +5,7 @@
 # Copyright 2012,2013 Ben Morgan <bmorgan.warwick@gmail.com>
 # Copyright 2012,2013 University of Warwick
 # Copyright 2012,2019 François Mauger <mauger@lpccaen.in2p3.fr>
-# Copyright 2012,2013 University of Caen Normandie
+# Copyright 2012,2019 Université de Caen Normandie
 #
 # This file is part of Bayeux.
 #
@@ -121,10 +121,16 @@ endif()
 set(Bayeux_WITH_QT 0)
 option(BAYEUX_WITH_QT_GUI "Build Qt-based GUI components" OFF)
 mark_as_advanced(BAYEUX_WITH_QT_GUI)
+option(BAYEUX_WITH_QT_SVG "Build Qt-based SVG components" OFF)
+mark_as_advanced(BAYEUX_WITH_QT_SVG)
 set(Bayeux_WITH_QT_GUI 0)
 if (BAYEUX_WITH_QT_GUI)
   set(Bayeux_WITH_QT 1)
   set(Bayeux_WITH_QT_GUI 1)
+endif()
+set(Bayeux_WITH_QT_SVG 0)
+if (BAYEUX_WITH_QT_SVG)
+  set(Bayeux_WITH_QT_SVG 1)
 endif()
 
 #-----------------------------------------------------------------------

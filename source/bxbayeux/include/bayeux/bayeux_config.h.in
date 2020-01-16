@@ -78,17 +78,23 @@
 //! Evaluates to true if Bayeux was built with Qt
 #define BAYEUX_WITH_QT @Bayeux_WITH_QT@
 
+//! Qt support:
 #if BAYEUX_WITH_QT == 1
 
-//! The version of CLHEP used by Bayeux
+//! The version of Qt used by Bayeux
 #define BAYEUX_QT_VERSION "@Qt5Core_VERSION@"
 
 //! Evaluates to true if Bayeux was built with Qt-based GUI components
 #define BAYEUX_WITH_QT_GUI @Bayeux_WITH_QT_GUI@
 
+//! Evaluates to true if Bayeux was built with Qt-based SVG components
+#define BAYEUX_WITH_QT_SVG @Bayeux_WITH_QT_SVG@
+
 #else // BAYEUX_WITH_QT != 1
 
 #define BAYEUX_WITH_QT_GUI 0
+
+#define BAYEUX_WITH_QT_SVG 0
 
 #endif // BAYEUX_WITH_QT == 1
 
