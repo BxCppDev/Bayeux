@@ -38,7 +38,7 @@ namespace datatools {
       UNIT_SUPPORT_INVALID            = -1, //!< Invalid unit support
       UNIT_SUPPORT_NONE               =  0, //!< No unit management (plain float/double)
       UNIT_SUPPORT_IMPLICIT_UNIT      =  1, //!< Implicit unit associated to the parameter
-      UNIT_SUPPORT_EXPLICIT_DIMENSION =  2  //!< Explicit unit associated to the parameter
+      UNIT_SUPPORT_EXPLICIT_DIMENSION =  2  //!< Explicit unit dimension associated to the parameter
     };
 
     //! Convert an unit support type to a string
@@ -82,7 +82,7 @@ namespace datatools {
       //! Check the implicit unit trait
       bool has_implicit_unit() const;
 
-      //! Check the explicit unitdimension  trait
+      //! Check the explicit unit dimension trait
       bool has_explicit_unit_dimension() const;
 
       //! Set the unit support
