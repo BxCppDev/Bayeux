@@ -182,7 +182,7 @@ namespace mctools {
       double _a_rise_; //!< Linear slope of the rising edge
       double _b_rise_; //!< Intercept of the rising edge
       double _a_fall_; //!< Linear slope of the falling edge
-      double _b_fall_; //!< Intercept of thefalling edge
+      double _b_fall_; //!< Intercept of the falling edge
 
       //! Registration of the functor class
       MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(triangle_gate_signal_shape)
