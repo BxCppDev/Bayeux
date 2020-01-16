@@ -72,7 +72,7 @@ void test_signal_data_1(bool draw_)
   const int tracker_cell_category = 1023;
   const int tracker_cell_anode_category = 1024;
   const int tracker_cell_cathode_category = 1025;
-  const double cm_per_us = CLHEP::cm/CLHEP::microsecond;
+  const double cm_per_us = CLHEP::cm / CLHEP::microsecond;
   const double millivolt = 1e-3 * CLHEP::volt;
   const double mV = millivolt;
   const int cathode_bottom = 0;
