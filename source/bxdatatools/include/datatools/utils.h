@@ -225,10 +225,10 @@ namespace datatools {
   ///     "urn:snemo:analysis:logo:small@image"
   ///     "urn:snemo:analysis:run:1234@data"
   ///
-  bool fetch_path_with_env(std::string& word_);
+  bool fetch_path_with_env(std::string & word_);
 
   //! Extract the expanded path computed from the 'word' string.
-  bool fetch_path_with_env(std::string& word_, std::string & errmsg_);
+  bool fetch_path_with_env(std::string & word_, std::string & errmsg_);
 
   /** Extract the expanded path computed from a string.
    * Internally uses the datatools::library_info
@@ -237,26 +237,26 @@ namespace datatools {
    * @return true if the processing was successful (successfully resolved
    *         registered library path)
    */
-  bool fetch_path_without_env(std::string& word_);
+  bool fetch_path_without_env(std::string & word_);
 
   /** Extract the expanded path computed from a string.
    *  Internally uses the getenv function and the datatools::library_info
    *  register.
    */
-  bool fetch_path_with_env_p(std::string& word_,
+  bool fetch_path_with_env_p(std::string & word_,
                              const std::string & parent_path_);
 
   /** Extract the expanded path computed from a string.
    * Internally uses the getenv function and the datatools::library_info
    * register.
    */
-  bool fetch_path_with_env_g(std::string& word_);
+  bool fetch_path_with_env_g(std::string & word_);
 
   /** Extract the expanded path computed from a string.
    * Internally uses the getenv function and the datatools::library_info
    * register.
    */
-  bool fetch_path_with_env_pg(std::string& word_,
+  bool fetch_path_with_env_pg(std::string & word_,
                               const std::string & parent_path_);
 
   /** Check if datatools has its global path activated */
@@ -282,7 +282,7 @@ namespace datatools {
   //!
   //! Example: '$HOME/foo.dat' is expanded to '/home/&gt;login&lt;/foo.dat'
   //! @deprecated Use the fetch_path or fetch_path_with_env functions.
-  std::string expand_path(const std::string& path_str_);
+  std::string expand_path(const std::string & path_str_);
 
   /** The function splits a string using separators
    *   and provides a list of tokens.
@@ -291,9 +291,9 @@ namespace datatools {
    * the tokenizer class and split string algorithms.
    * @deprecated Use the Boost string split function or tokenizer class
    */
-  void split_string(const std::string& word_,
-                    const std::string& separators_,
-                    std::list<std::string>& words_);
+  void split_string(const std::string & word_,
+                    const std::string & separators_,
+                    std::list<std::string> & words_);
 
   /* Bit manipulation utility template functions */
 
@@ -342,7 +342,7 @@ namespace datatools {
   /// @arg number the integral number
   /// @arg pos the bit index
   template<typename Integral>
-  bool check_bit(Integral& number_, int pos_)
+  bool check_bit(Integral & number_, int pos_)
   {
     DT_THROW_IF(pos_ < 0 || pos_ >= (int) sizeof(Integral) * 8,
                 std::range_error,
