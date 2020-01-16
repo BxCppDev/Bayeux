@@ -62,8 +62,8 @@ namespace genbb {
       case MODEBB_14: return "0nuM2bb (Majoron, SI=2)   0+ -> 0+,      2n";
       case MODEBB_15: return "2nubb with bosonic nu's   0+ -> 0+";
       case MODEBB_16: return "2nubb with bosonic nu's   0+ -> 2+";
-      case MODEBB_17: return "onubb with rhc-eta        0+ -> 0+       simplified expression";
-      case MODEBB_18: return "onubb with rhc-eta        0+ -> 0+       with specific NMEs";
+      case MODEBB_17: return "0nubb with rhc-eta        0+ -> 0+       simplified expression";
+      case MODEBB_18: return "0nubb with rhc-eta        0+ -> 0+       with specific NMEs";
       default : return "";
       }
       return "";
