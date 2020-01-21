@@ -20,6 +20,9 @@ int main (int argc_, char ** argv_)
     bool dump  = false;
     int  max_count = 10;
     bool high_energy_cut = false;
+    bool zero_nu = false;
+    int dbd_mode = 4;
+    std::string isotope = "Se82";
     
     int iarg = 1;
     while (iarg < argc_) {
@@ -28,15 +31,20 @@ int main (int argc_, char ** argv_)
       if (arg == "-D" || arg == "--dump") dump = true;
       if (arg == "-L" || arg == "--lots") max_count = 100000;
       if (arg == "-H" || arg == "--high-energy-cut")  high_energy_cut = true;
+      if (arg == "-Z" || arg == "--0nubb") zero_nu = true;
+      if (arg == "-M" || arg == "--Mo100") isotope =  "Mo100";
       iarg++;
     }
 
+    if (zero_nu) {
+      dbd_mode = 1;
+    }
     datatools::properties config;
     config.store("seed", 314159);
     config.store("decay_type", "DBD");
-    config.store("decay_isotope", "Se82");
+    config.store("decay_isotope", isotope);
     config.store("decay_dbd_level", 0);
-    config.store("decay_dbd_mode", 4);
+    config.store("decay_dbd_mode", dbd_mode);
     if (high_energy_cut) {
       config.store("energy_min", 2.0);
       config.store("energy_max", 3.2);
@@ -51,9 +59,11 @@ int main (int argc_, char ** argv_)
 
     // Working primary event:
     genbb::primary_event pe;
-    mygsl::histogram h_esum(300, 0.0, 3.0);
-    mygsl::histogram h_e1(300, 0.0, 3.0);
-    mygsl::histogram h_e2(300, 0.0, 3.0);
+
+    // Histograms:
+    mygsl::histogram h_esum(320, 0.0, 3.2);
+    mygsl::histogram h_e1(320, 0.0, 3.2);
+    mygsl::histogram h_e2(320, 0.0, 3.2);
     mygsl::histogram h_cos12(50.0, -1.0, 1.0);
     
     for (int i = 0; i < (int) max_count; i++) {
