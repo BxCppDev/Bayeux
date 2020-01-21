@@ -1,6 +1,13 @@
 # --------------------------------------------------
 message( STATUS "[info] Define Bayeux dependencies")
 
+if(Bayeux_WITH_BXDECAY0)
+  find_package(BxDecay0 CONFIG)
+  message(STATUS "Found BxDecay0 ${BxDecay0_VERSION}")
+  message(STATUS " - BxDecay0 include dirs : '${BxDecay0_INCLUDE_DIRS}'")
+  message(STATUS " - BxDecay0 library dir  : '${BxDecay0_LIBRARY_DIR}'")
+  message(STATUS " - BxDecay0 libraries    : '${BxDecay0_LIBRARIES}'")
+endif()
 
 #-----------------------------------------------------------------------
 # Configure build of Bayeux library

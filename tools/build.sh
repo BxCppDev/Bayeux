@@ -33,6 +33,7 @@ Options:
    --build-base-dir path   : Select the Bayeux build directory
    --clean-build-dir       : Clean the the Bayeux build directory 
                              after successfull installation
+   --with-bxdecay0         : Use the BxDecay0 library
    --without-geant4        : Do not build the Geant4 module
    --with-geant4           : Build the Geant4 module
    --with-geant4-experimental : 
@@ -59,6 +60,7 @@ install_base_dir=$(pwd)/_install.d
 build_base_dir=$(pwd)/_build.d
 clean_build_dir=false
 bayeux_suffix=
+with_bxdecay0=false
 with_geant4=true
 with_geant4_experimental=false
 with_qt=true
@@ -101,6 +103,8 @@ function cl_parse()
 	    boost_root="$1"
 	elif [ "${arg}" = "--clean-build-dir" ]; then
 	    clean_build_dir=true
+	elif [ "${arg}" = "--with-bxdecay0" ]; then
+	    with_bxdecay0=true
 	elif [ "${arg}" = "--with-geant4" ]; then
 	    with_geant4=true
 	elif [ "${arg}" = "--with-geant4-experimental" ]; then
@@ -191,12 +195,16 @@ else
     echo >&2 "[info] Found ninja  : $(which ninja)"
 fi
 
+clhep_checked=false
 which clhep-config > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    echo >&2 "[error] CLHEP is not setup!"
-    my_exit 1
+if [ $? -eq 0 ]; then
+    clhep_checked=true
 else
     echo >&2 "[info] Found CLHEP  : $(which clhep-config)"
+fi
+if [ ${clhep_checked} = false ]; then
+    echo >&2 "[error] CLHEP is not setup!"
+    my_exit 1
 fi
 
 if [ ${minimal_build} == false -a ${with_geant4} == true ]; then
@@ -239,6 +247,13 @@ else
 fi
 
 if [ "x${boost_root}" = "x" ]; then
+    which spack 2>&1 > /dev/null
+    if [ $? -eq 0 ]; then
+	boost_root=$(spack find --format '{prefix}' boost)
+    fi
+fi
+
+if [ "x${boost_root}" = "x" ]; then
     if [ "x${BX_BOOST_INSTALL_DIR}" != "x" ]; then
 	boost_root="${BX_BOOST_INSTALL_DIR}"
     # else
@@ -251,6 +266,12 @@ fi
 boost_option="-DBOOST_ROOT=${boost_root} -DBoost_ADDITIONAL_VERSIONS=1.69"
 
 camp_prefix=""
+if [ "x${camp_prefix}" = "x" ]; then
+    which spack 2>&1 > /dev/null
+    if [ $? -eq 0 ]; then
+	camp_prefix=$(spack find --format '{prefix}' camp)
+    fi
+fi
 if [ "x${camp_prefix}" = "x" ]; then
     if [ "x${BX_CAMP_INSTALL_DIR}" != "x" ]; then
 	camp_prefix="${BX_CAMP_INSTALL_DIR}"
@@ -265,13 +286,37 @@ if [ ! -d ${camp_dir} ]; then
 fi
 camp_option="-DCAMP_DIR=${camp_dir}"
 
-clhep_prefix="$(clhep-config --prefix | tr -d '"')"
+clhep_prefix=""
+which clhep-config 2>&1 > /dev/null
+if [ $? -eq 0 ]; then
+    clhep_prefix="$(clhep-config --prefix | tr -d '"')"
+else
+    which spack 2>&1 > /dev/null
+    if [ $? -eq 0 ]; then
+	clhep_prefix=$(spack find --format "{prefix}" "clhep")
+    fi
+fi
+if [ "x${clhep_prefix}" = "x" ]; then
+    my_exit 1 "Missing CLHEP prefix!"   
+fi
+export PATH="${clhep_prefix}/bin:${PATH}"
 clhep_dir="${clhep_prefix}/lib/CLHEP-$(clhep-config --version | cut -d' ' -f2)"
 if [ ! -d ${clhep_dir} ]; then
       my_exit 1 "CLHEP dir '${clhep_dir}' does not exist!"
 fi
 clhep_option="-DCLHEP_DIR=${clhep_dir}"
 
+bxdecay0_option=
+# bxdecay0_dir="/opt/sw/Spack/install.d/linux-ubuntu18.04-ivybridge/gcc-7.4.0/bxdecay0-1.0.0-beta2-swxftf7we6v5rzez265ujc4spd7oobf2"
+bxdecay0_dir="/home/mauger/Documents/Private/Software/BxCppDev/BxDecay0/bxdecay0/_install.d/lib/cmake/BxDecay0-1.0.0/"
+if [ ${with_bxdecay0} = true ]; then
+    which spack 2>&1 > /dev/null
+    if [ $? -eq 0 ]; then
+	bxdecay0_dir="$(spack find --format '{prefix}' bxdecay0)"
+    fi
+    # export PATH="${bxdecay0_prefix}/bin:${PATH}"
+    bxdecay0_option="-DBxDecay0_DIR=${bxdecay0_dir}/lib/cmake"
+fi
 qt_option0=
 qt_option1=
 qt_option2=
@@ -345,6 +390,9 @@ fi
 if [ ${with_geant4} == true ]; then
     echo >&2 " - GEANT4 dir       = ${geant4_dir}"
 fi
+if [ ${with_bxdecay0} == true ]; then
+    echo >&2 " - BxDecay0 dir     = ${bxdecay0_dir}"
+fi
 
 if [ ${dry_run} = True ]; then
       my_exit 0
@@ -415,7 +463,7 @@ if [ $? -ne 0 ]; then
     echo >&2 "[error] Bayeux ${bayeux_version} configuration failed!"
     my_exit 1
 fi
-
+ 
 if [ ${only_configure} -eq 0 ]; then
 
     echo >&2 ""

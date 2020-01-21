@@ -37,6 +37,7 @@ namespace genbb {
       case MODEBB_8:
       case MODEBB_10:
       case MODEBB_13:
+      case MODEBB_14:
         return true;
       default:
         return false;

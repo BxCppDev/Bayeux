@@ -115,6 +115,12 @@ if(Bayeux_WITH_BRIO)
   set(Bayeux_WITH_ROOTDICT 1)
 endif()
 
+set(Bayeux_WITH_BXDECAY0 0)
+option(BAYEUX_WITH_BXDECAY0 "Use the BxDecay0 library" OFF)
+if (BAYEUX_WITH_BXDECAY0)
+  set(Bayeux_WITH_BXDECAY0 1)
+endif()
+
 #-----------------------------------------------------------------------
 # Option for enabling Qt GUI components
 #

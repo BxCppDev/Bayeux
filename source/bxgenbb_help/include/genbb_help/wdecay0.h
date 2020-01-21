@@ -1,10 +1,10 @@
 /// \file genbb_help/wdecay0.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-04
- * Last modified: 2013-05-05
+ * Last modified: 2020-01-18
  *
  * License:
- * Copyright 2013 F. Mauger
+ * Copyright 2013-2020 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *
  * Description:
  *
- *   C++ wrapper GENBB/Decay0 C++ port generator.
+ *   C++ Decay0-base generator.
  *
  * History:
  *
@@ -45,17 +45,17 @@
 
 // This project:
 #include <genbb_help/i_genbb.h>
+#include <bayeux/bayeux_config.h>
+#if BAYEUX_WITH_BXDECAY0 == 1
+// #warning Bayeux is built with BxDecay0 linkage
+#include <bxdecay0/decay0_generator.h>
+#endif
 
 namespace genbb {
 
-  /// Nested namespace of the Bayeux/genbb_help module library (decay0 C++ port)
-  namespace decay0 {
-    //struct bkgpars;
-    struct bbpars;
-  }
-
   /// \brief Decay0/GENBB (C++ port) generator wrapper
-  class wdecay0 : public i_genbb
+  class wdecay0
+    : public i_genbb
   {
   public:
 
@@ -71,6 +71,10 @@ namespace genbb {
 
   public:
 
+    wdecay0();
+
+    virtual ~wdecay0();
+
     virtual bool can_external_random() const;
 
     const mygsl::rng & get_random() const;
@@ -81,13 +85,9 @@ namespace genbb {
 
     double get_to_all_events() const;
 
-    wdecay0();
-
-    virtual ~wdecay0();
-
-    virtual void tree_dump(std::ostream& out = std::clog,
-                           const std::string& title  = "",
-                           const std::string& indent = "",
+    virtual void tree_dump(std::ostream & out = std::clog,
+                           const std::string & title  = "",
+                           const std::string & indent = "",
                            bool inherit = false) const;
 
     void dump(std::ostream & = std::clog) const;
@@ -101,8 +101,6 @@ namespace genbb {
     virtual bool has_next();
 
     virtual bool is_initialized() const;
-
-    genbb::decay0::bbpars & bb_params();
 
   protected:
 
@@ -121,22 +119,26 @@ namespace genbb {
 
   private:
 
+    // Management:
     bool   _initialized_; //!< Initialization flag
 
+    // Configuration:
     int    _decay_type_;  //!< Type of the decay
     std::string _decay_isotope_; //!< Decaying isotope
     int    _decay_version_;
     int    _decay_dbd_level_;
     int    _decay_dbd_mode_;
     size_t _event_count_;
-
     double _energy_min_;
     double _energy_max_;
+    unsigned long _seed_; //!< PRNG seed (local or global)
 
-    unsigned long _seed_;   //!< PRNG seed (local or global)
-    mygsl::rng    _random_; //!< Local PRNG
+    // Working data:
+    mygsl::rng _random_; //!< Local PRNG
 
-    boost::scoped_ptr<genbb::decay0::bbpars> _bb_params_;
+    // Private implementation:
+    struct pimpl_type;
+    boost::scoped_ptr<pimpl_type> _pimpl_;
 
     GENBB_PG_REGISTRATION_INTERFACE(wdecay0)
 

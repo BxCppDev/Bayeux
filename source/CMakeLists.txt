@@ -180,6 +180,10 @@ if(Bayeux_WITH_QT_SVG)
   target_link_libraries(Bayeux PUBLIC Qt5::Svg)
 endif()
 
+if(Bayeux_WITH_BXDECAY0)
+  target_link_libraries(Bayeux PUBLIC ${BxDecay0_LIBRARIES})
+endif()
+
 # - Use IWYU, if available
 if(BAYEUX_WITH_IWYU_CHECK AND IWYU_EXECUTABLE)
   set_target_properties(Bayeux PROPERTIES CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXECUTABLE})

@@ -78,6 +78,9 @@
 //! Evaluates to true if Bayeux was built with Qt
 #define BAYEUX_WITH_QT @Bayeux_WITH_QT@
 
+//! Evaluates to true if Bayeux was built with BxDecay0
+#define BAYEUX_WITH_BXDECAY0 @Bayeux_WITH_BXDECAY0@
+
 //! Qt support:
 #if BAYEUX_WITH_QT == 1
 

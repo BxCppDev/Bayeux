@@ -217,7 +217,6 @@ namespace genbb {
       // Pb214 (for Pb214+Po214),
       // Po218 (for Po218+Rn218+Po214),
       // Rn222 (for Rn222+Ra222+Rn218+Po214)
-      // Rn226 (for Rn226)
       // =======> for i2bbs=2
       // Ac228,
       // Am241,

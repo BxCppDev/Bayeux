@@ -11,7 +11,7 @@ namespace genbb {
 
   namespace decay0 {
 
-    /// \brief Ttwo-dimensional probability distribution for energies of e-/e+ for
+    /// \brief Two-dimensional probability distribution for energies of e-/e+ for
     // modebb=4 (as tsimpr needs)
     // (2nu2b, 0+ -> 0+, 2n mechanism)
     double decay0_fe12_mod4(double e2, void * params);

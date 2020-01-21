@@ -43,11 +43,10 @@ namespace genbb {
     /// \brief Probability distribution for energy of second e-/e+ for modebb=16
     double decay0_fe2_mod16(double e2, void * params);
 
-
   } // end of namespace decay0 
 } // end of namespace genbb 
 
-#endif // GENBB_DECAY0_GAUSS_H_
+#endif // GENBB_DECAY0_FE2_MODS_H_
 // 
 // Local Variables: --
 // mode: c++ --

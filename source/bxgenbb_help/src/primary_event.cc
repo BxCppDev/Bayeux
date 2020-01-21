@@ -382,6 +382,72 @@ namespace genbb {
     return;
   }
 
+  void primary_event::print_tree(std::ostream & out_,
+                                 const boost::property_tree::ptree & options_) const
+  {
+    i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    std::ostringstream outs;
+    if (! popts.title.empty ()) {
+      outs << popts.indent << popts.title << std::endl;
+    }
+
+    outs << popts.indent << tag << "Auxiliary properties: ";
+    if (_auxiliaries_.size() == 0) {
+      outs << "<none>" << std::endl;
+    } else {
+      outs << '[' << _auxiliaries_.size() << ']' << std::endl;
+      std::ostringstream indent_oss;
+      indent_oss << popts.indent << skip_tag;
+      boost::property_tree::ptree options2;
+      options2.put("indent", indent_oss.str());
+      _auxiliaries_.print_tree(outs, options2);
+    }
+
+    outs << popts.indent << tag << "Label : '" << _label_ << "'" << std::endl;
+
+    outs << popts.indent << tag << "Time  : ";
+    if (has_time()) {
+      outs << _time_ / CLHEP::nanosecond << " ns";
+    } else {
+      outs << "<none>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag << "Particles: [" << _particles_.size() << "]" << std::endl;
+
+    int particle_counter = 0;
+    for (particles_col_type::const_iterator it = _particles_.begin();
+         it != _particles_.end();
+         it++) {
+      std::ostringstream indent_oss;
+      indent_oss << popts.indent << skip_tag;
+      particles_col_type::const_iterator jt = it;
+      jt++;
+      out_ << popts.indent << skip_tag;
+      if (jt == _particles_.end()) {
+        outs << last_tag;
+        indent_oss << last_skip_tag;
+      } else {
+        outs << tag;
+        indent_oss << skip_tag;
+      }
+      outs << "Particle #" << particle_counter << " : " << std::endl;
+      it->tree_dump(outs, "", indent_oss.str());
+      particle_counter++;
+    }
+    outs << popts.indent << tag
+         << "GENBB weight : " << get_genbb_weight()
+         << std::endl;
+
+    outs << popts.indent << inherit_tag(popts.inherit)
+         << "Classification : '" << get_classification()
+         << "'" << std::endl;
+
+    out_ << outs.str();
+    return;
+  }
+
   void primary_event::tree_dump(std::ostream & out_,
                                 const std::string & title_,
                                 const std::string & indent_,
