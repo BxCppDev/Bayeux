@@ -180,6 +180,7 @@ if(Bayeux_WITH_QT_SVG)
   target_link_libraries(Bayeux PUBLIC Qt5::Svg)
 endif()
 
+message(STATUS "BxDecay0_LIBRARIES='${BxDecay0_LIBRARIES}'")
 if(Bayeux_WITH_BXDECAY0)
   target_link_libraries(Bayeux PUBLIC ${BxDecay0_LIBRARIES})
 endif()

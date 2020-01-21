@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2019-07-05
+:Date:    2020-01-21
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -63,6 +63,7 @@ emfield
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
+  Depends on the external BxDecay0_ library.
 
 genvtx
   Vertex  random  generator tools providing input to  simulation
@@ -75,6 +76,8 @@ mctools
 lahague
   Utilities for dosimetry and radiation protection.
 
+
+.. _BxDecay0: https://github.com/BxCppDev/bxdecay0
 
 .. raw:: pdf
 
@@ -155,6 +158,11 @@ modern C++ compiler (example: GCC version >= 4.9).
 Using  the `bxcppdev/bxtap`_  `Linuxbrew`_ *tap*  provided by  the
 BxCppDev_  group  should help  you  to  provide a  suitable  working
 environment on your system.
+
+We consider to migrate soon to the Spack_ package manager.
+
+.. _`Spack`: https://spack.io/
+
 
 Releases
 --------
@@ -546,6 +554,9 @@ These options control the core configuration of Bayeux.
   Build and install additional tools for developers and *normal* users.
   Default is ON.
 
+``BAYEUX_WITH_BXDECAY0``
+  Build the Bayeux/genbb_help with linkage to the BxDecay0 library. Default is OFF.
+
 ``BAYEUX_WITH_GEANT4_MODULE``
   Build the Bayeux/mctools Geant4 library extension module. Default is ON.
 
@@ -557,7 +568,10 @@ These options control the core configuration of Bayeux.
   Build the Bayeux/lahague library module. Default is OFF.
 
 ``BAYEUX_WITH_QT_GUI``
-  Build the Qt-based GUI components (experimental). Default is OFF.
+  Build the Qt-based GUI basic components (experimental). Default is OFF.
+
+``BAYEUX_WITH_QT_SVG``
+  Build the specific Qt SVG component. Default is OFF.
 
 ``BAYEUX_ENABLE_TESTING``
   Build unit testing system for Bayeux. Default is OFF.
@@ -570,7 +584,24 @@ These options control the core configuration of Bayeux.
   documentation. Default is OFF. Implies ``BAYEUX_WITH_DOCS``.
 
 ``BAYEUX_MINIMAL_BUILD``
-  Build Bayeux core library only (datatools Bayeux/module). Default is OFF (experts only).
+  Build Bayeux core library only (datatools module). Default is OFF (experts only).
+
+``BAYEUX_WITH_xxx``
+  Build Bayeux library including up to the ``xxx`` module ( taking into account dependencies),
+  where ``xxx`` is taken from:
+
+  - ``CUTS``
+  - ``MATERIALS``
+  - ``MYGSL``
+  - ``BRIO``
+  - ``DPP``
+  - ``GEOMTOOLS``
+  - ``EMFIELD``
+  - ``GENBB``
+  - ``GENVTX``
+  - ``MCTOOLS``
+
+  Default is OFF (experts only).
 
   
 Building and Installing

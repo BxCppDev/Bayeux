@@ -70,8 +70,8 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   set(Bayeux_WITH_GEANT4_MODULE 1)
 endif()
 
-# # MCNP module
-# set(Bayeux_WITH_MCNP_MODULE 0)
+# MCNP module
+set(Bayeux_WITH_MCNP_MODULE 0)
 # if(BAYEUX_WITH_MCNP_MODULE)
 #   set(Bayeux_WITH_MCNP_MODULE 1)
 # endif()

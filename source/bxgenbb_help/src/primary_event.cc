@@ -385,7 +385,7 @@ namespace genbb {
   void primary_event::print_tree(std::ostream & out_,
                                  const boost::property_tree::ptree & options_) const
   {
-    i_tree_dumpable::base_print_options popts;
+    base_print_options popts;
     popts.configure_from(options_);
     std::ostringstream outs;
     if (! popts.title.empty ()) {
@@ -424,7 +424,7 @@ namespace genbb {
       indent_oss << popts.indent << skip_tag;
       particles_col_type::const_iterator jt = it;
       jt++;
-      out_ << popts.indent << skip_tag;
+      outs << popts.indent << skip_tag;
       if (jt == _particles_.end()) {
         outs << last_tag;
         indent_oss << last_skip_tag;
@@ -433,7 +433,10 @@ namespace genbb {
         indent_oss << skip_tag;
       }
       outs << "Particle #" << particle_counter << " : " << std::endl;
-      it->tree_dump(outs, "", indent_oss.str());
+      boost::property_tree::ptree popts2;
+      popts2.put("indent", indent_oss.str());
+      it->print_tree(outs, popts2);
+      // it->tree_dump(outs, "", indent_oss.str());
       particle_counter++;
     }
     outs << popts.indent << tag

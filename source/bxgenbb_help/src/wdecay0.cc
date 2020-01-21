@@ -31,6 +31,7 @@
 
 // Third party:
 // - Bayeux/datatools:
+#include <bayeux/version.h>
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
@@ -362,6 +363,7 @@ namespace genbb {
     event_.reset();
 
 #if BAYEUX_WITH_BXDECAY0 == 1
+    // Use the external BxDecay0:
     bxdecay0::event decay;
     _pimpl_->generator.shoot(*_pimpl_->prng, decay);
     if (decay.has_time()) {
@@ -430,6 +432,9 @@ namespace genbb {
                        decay0::GENBBSUB_ISTART_GENERATE,
                        error,
                        _pimpl_->bb_params);
+      event_.grab_auxiliaries().store("generator.library", "Bayeux/genbb_help");
+      event_.grab_auxiliaries().store("generator.library_version", BAYEUX_LIB_VERSION);
+      // event_.grab_auxiliaries().store("generator", decay.get_generator());
       DT_THROW_IF(error != 0, std::logic_error, "genbbsub background generation failed !");
     }
 #endif // BAYEUX_WITH_BXDECAY0

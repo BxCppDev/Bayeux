@@ -71,7 +71,9 @@ int main (int argc_, char ** argv_)
         std::clog << "Count : " << i << std::endl;
       }
       WD0.load_next(pe);
-      if (dump) pe.dump();
+      if (dump) {
+        pe.print_tree(std::clog);
+      }
       double e1 = pe.get_particle(0).get_kinetic_energy();
       double e2 = pe.get_particle(1).get_kinetic_energy();
       double esum = e1 + e2;

@@ -17,6 +17,7 @@
 #  Bayeux_DOXYGEN_TAGFILE  - path to Doxygen tagfile for Bayeux's docs
 #                            Empty if docs were not built
 #  Bayeux_INCLUDE_DIRS     - Bayeux include dirs
+#  Bayeux_bxdecay0_FOUND   - BxDecay0 usage flag
 
 #----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -44,13 +45,29 @@ set(Bayeux_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}")
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_LIST_DIR}/@PROJECT_CMAKEDIR_TO_CMAKEMODULEDIR@")
 
 # Component Availability
-set(Bayeux_qt_FOUND     "@Bayeux_WITH_QT@")
-set(Bayeux_geant4_FOUND "@BAYEUX_WITH_GEANT4_MODULE@")
-set(Bayeux_mcnp_FOUND   "@BAYEUX_WITH_MCNP_MODULE@")
-set(Bayeux_root_FOUND   "@Bayeux_WITH_ROOT@")
-set(Bayeux_lahague_FOUND "@BAYEUX_WITH_LAHAGUE@")
-set(Bayeux_developer_tools_FOUND "@BAYEUX_WITH_DEVELOPER_TOOLS@")
-set(Bayeux_docs_FOUND "@BAYEUX_WITH_DOCS@")
+set(Bayeux_qt_FOUND        @Bayeux_WITH_QT@)
+set(Bayeux_qt_gui_FOUND    @Bayeux_WITH_QT_GUI@)
+set(Bayeux_qt_svg_FOUND    @Bayeux_WITH_QT_SVG@)
+set(Bayeux_root_FOUND      @Bayeux_WITH_ROOT@)
+set(Bayeux_lahague_FOUND   @Bayeux_WITH_LAHAGUE@)
+set(Bayeux_developer_tools_FOUND @Bayeux_WITH_DEVELOPER_TOOLS@)
+set(Bayeux_docs_FOUND      @Bayeux_WITH_DOCS@)
+set(Bayeux_docs_ocd_FOUND  @Bayeux_WITH_DOCS_OCD@)
+
+# Bayeux modules:
+set(Bayeux_WITH_CUTS      @Bayeux_WITH_CUTS@)
+set(Bayeux_WITH_MATERIALS @Bayeux_WITH_MATERIALS@)
+set(Bayeux_WITH_MYGSL     @Bayeux_WITH_MYGSL@)
+set(Bayeux_WITH_BRIO      @Bayeux_WITH_BRIO@)
+set(Bayeux_WITH_DPP       @Bayeux_WITH_DPP@)
+set(Bayeux_WITH_GEOMTOOLS @Bayeux_WITH_GEOMTOOLS@)
+set(Bayeux_WITH_EMFIELD   @Bayeux_WITH_EMFIELD@)
+set(Bayeux_WITH_GENBB     @Bayeux_WITH_GENBB@)
+set(Bayeux_WITH_BXDECAY0  @Bayeux_WITH_BXDECAY0@)
+set(Bayeux_WITH_GENVTX    @Bayeux_WITH_GENVTX@)
+set(Bayeux_WITH_MCTOOLS   @Bayeux_WITH_MCTOOLS@)
+set(Bayeux_WITH_GEANT4_MODULE @Bayeux_WITH_GEANT4_MODULE@)
+set(Bayeux_WITH_MCNP_MODULE   @Bayeux_WITH_MCNP_MODULE@)
 
 #-----------------------------------------------------------------------
 # Start of CMake Generated
@@ -84,6 +101,15 @@ find_package(Boost ${BAYEUX_BOOST_VERSION} EXACT REQUIRED
 if (Boost_VERSION VERSION_GREATER 106800)
   # - Use explicitely the Boost/Math fp utilities for 
   add_definitions("-DBOOST_MATH_DISABLE_STD_FPCLASSIFY")
+endif()
+
+if (Bayeux_WITH_GENBB)
+  if (Bayeux_WITH_BXDECAY0)
+    # BxDecay0
+    set(BAYEUX_BXDECAY0_VERSION @BxDecay0_VERSION@)
+    set(BxDecay0_DIR @BxDecay0_DIR@)
+    find_package(BxDecay0 ${BAYEUX_BXDECAY0_VERSION} EXACT REQUIRED) 
+  endif()
 endif()
 
 # - CAMP
@@ -126,11 +152,13 @@ if(Bayeux_qt_FOUND)
   set(Qt5Core_DIR    @Qt5Core_DIR@)
   set(Qt5Widgets_DIR @Qt5Widgets_DIR@)
   set(Qt5Gui_DIR     @Qt5Gui_DIR@)
-  set(Qt5Svg_DIR     @Qt5Svg_DIR@)
   find_package(Qt5Core    @Qt5Core_VERSION@    EXACT REQUIRED)
   find_package(Qt5Widgets @Qt5Widgets_VERSION@ EXACT REQUIRED)
   find_package(Qt5Gui     @Qt5Gui_VERSION@     EXACT REQUIRED)
-  find_package(Qt5Svg     @Qt5Svg_VERSION@     EXACT REQUIRED)
+  if(Bayeux_WITH_QT_SVG)
+    set(Qt5Svg_DIR     @Qt5Svg_DIR@)
+    find_package(Qt5Svg     @Qt5Svg_VERSION@     EXACT REQUIRED)
+  endif()
 endif()
 
 #-----------------------------------------------------------------------

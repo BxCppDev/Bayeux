@@ -108,6 +108,7 @@ function cl_parse()
 	elif [ "${arg}" = "--with-geant4" ]; then
 	    with_geant4=true
 	elif [ "${arg}" = "--with-geant4-experimental" ]; then
+	    with_geant4=true
 	    with_geant4_experimental=true
 	elif [ "${arg}" = "--without-geant4" ]; then
 	    with_geant4=false
@@ -126,9 +127,6 @@ function cl_parse()
     return 0
 }
 
-echo >&2 "[info] Bayeux source dir : '${bayeux_source_dir}'"
-echo >&2 "[info] GCC version       : ${gcc_version}"
-
 if [ "x${gcc_version}" != "x" ]; then
     export CC=$(which gcc-${gcc_version})
     export CXX=$(which g++-${gcc_version})
@@ -139,6 +137,18 @@ if [ $? -ne 0 ]; then
     echo >&2 "[error] Command line parsing failed!"
     my_exit 1
 fi
+
+echo >&2 "[info] Bayeux source dir : '${bayeux_source_dir}'"
+echo >&2 "[info] minimal_build     : ${minimal_build}"
+echo >&2 "[info] GCC version       : '${gcc_version}'"
+echo >&2 "[info] with_geant4       : ${with_geant4}"
+echo >&2 "[info] \`-- experimental  : ${with_geant4_experimental}"
+echo >&2 "[info] camp_prefix       : '${camp_prefix}'"
+echo >&2 "[info] with_qt           : ${with_qt}"
+echo >&2 "[info] with_bxdecay0     : ${with_bxdecay0}"
+echo >&2 "[info] boost_root        : ${boost_root}"
+echo >&2 "[info] bayeux_suffix     : ${bayeux_suffix}"
+# my_exit 1
 
 # Check distribution:
 if [ -f /etc/lsb-release ]; then
@@ -306,16 +316,44 @@ if [ ! -d ${clhep_dir} ]; then
 fi
 clhep_option="-DCLHEP_DIR=${clhep_dir}"
 
-bxdecay0_option=
+bxdecay0_options="-DBAYEUX_WITH_BXDECAY0=OFF"
+
 # bxdecay0_dir="/opt/sw/Spack/install.d/linux-ubuntu18.04-ivybridge/gcc-7.4.0/bxdecay0-1.0.0-beta2-swxftf7we6v5rzez265ujc4spd7oobf2"
-bxdecay0_dir="/home/mauger/Documents/Private/Software/BxCppDev/BxDecay0/bxdecay0/_install.d/lib/cmake/BxDecay0-1.0.0/"
+# bxdecay0_dir="/home/mauger/Documents/Private/Software/BxCppDev/BxDecay0/bxdecay0/_install.d/lib/cmake/BxDecay0-1.0.0/"
+bxdecay0_dir=""
 if [ ${with_bxdecay0} = true ]; then
-    which spack 2>&1 > /dev/null
-    if [ $? -eq 0 ]; then
-	bxdecay0_dir="$(spack find --format '{prefix}' bxdecay0)"
+    
+    if [ "x${bxdecay0_dir}" = "x" ]; then 
+	which spack 2>&1 > /dev/null
+	if [ $? -eq 0 ]; then
+	    bxdecay0_dir="$(spack find --format '{prefix}' bxdecay0)/lib/cmake"
+	fi
     fi
-    # export PATH="${bxdecay0_prefix}/bin:${PATH}"
-    bxdecay0_option="-DBxDecay0_DIR=${bxdecay0_dir}/lib/cmake"
+    
+    if [ "x${bxdecay0_dir}" = "x" ]; then 
+	which bxdecay0-query 2>&1 > /dev/null
+	if [ $? -eq 0 ]; then
+	    bxdecay0_dir="$(bxdecay0-query --prefix)/lib/cmake"
+	fi
+    fi
+   
+    if [ "x${bxdecay0_dir}" = "x" ]; then 
+	pkg-config --exists bxdecay0 2>&1 > /dev/null
+	if [ $? -eq 0 ]; then
+	    bxdecay0_dir="$(pkg-config pkg-config --variable=prefix bxdecay0)/lib/cmake"
+	fi
+    fi
+
+    if [ "x${bxdecay0_dir}" = "x" ]; then 
+      my_exit 1 "BxDecay0 was not found!"
+    fi
+
+    if [ ! -d "${bxdecay0_dir}" ]; then 
+      my_exit 1 "BxDecay0 dir '${bxdecay0_dir}' does not exists!"
+    fi
+
+    bxdecay0_options="-DBAYEUX_WITH_BXDECAY0=ON -DBxDecay0_DIR=${bxdecay0_dir}"
+    
 fi
 qt_option0=
 qt_option1=
@@ -444,6 +482,7 @@ cmake \
     -DBAYEUX_WITH_GEOMTOOLS=${default_with_module} \
     -DBAYEUX_WITH_EMFIELD=${default_with_module} \
     -DBAYEUX_WITH_GENBB=${default_with_module} \
+    ${bxdecay0_options} \
     -DBAYEUX_WITH_GENVTX=${default_with_module} \
     -DBAYEUX_WITH_MCTOOLS=${default_with_module} \
     -DBAYEUX_WITH_LAHAGUE=OFF \

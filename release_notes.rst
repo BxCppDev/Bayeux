@@ -24,6 +24,14 @@ Additions
 * PR #49:       Modernize      ``datatools::properties``      and
   ``datatools::multi_properties`` classes (B.Morgan).
 * PR #50:       Modernize some other *data model* classes (B.Morgan).
+* Add  optional  support  for  external BxDecay0_  C++  library  (from
+  version 1) in place of the  C++ port of the legacy Decay0/Genbb code
+  embedded in the  genbb_help module.  The BxDecay0  is an independant
+  reimplementation  of the  Decay0 Fortran  code which  should be  far
+  easier  to maintain  and keep  synchronized with  Vladimir Tretiak's
+  work.
+* Describe more available build options.
+* Implement the new ``print_tree`` method for various classes.
 
 Removals
 =========
@@ -34,12 +42,14 @@ Removals
 
 Changes
 =======
-
+  
 Fixes
 =====
 
 Bugs
 ====
 
+
+.. _BxDecay0: https://github.com/BxCppDev/bxdecay0
 
 .. end

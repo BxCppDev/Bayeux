@@ -102,6 +102,10 @@ endif()
 #
 option(BAYEUX_WITH_DEVELOPER_TOOLS "Build/install developer tools" ON)
 mark_as_advanced(BAYEUX_WITH_DEVELOPER_TOOLS)
+set(Bayeux_WITH_DEVELOPER_TOOLS 0)
+if(BAYEUX_WITH_DEVELOPER_TOOLS)
+  set(Bayeux_WITH_DEVELOPER_TOOLS 1)
+endif()
 
 #-----------------------------------------------------------------------
 # Options for Bayeux modules
@@ -175,6 +179,14 @@ endif()
 option(BAYEUX_WITH_DOCS "Build Bayeux documentation products" ON)
 cmake_dependent_option(BAYEUX_WITH_DOCS_OCD "Build Plugin Module documentation" OFF "BAYEUX_WITH_DOCS" OFF)
 mark_as_advanced(BAYEUX_WITH_DOCS BAYEUX_WITH_DOCS_OCD)
+set(Bayeux_WITH_DOCS 0)
+set(Bayeux_WITH_DOCS_OCD 0)
+if(BAYEUX_WITH_DOCS)
+  set(Bayeux_WITH_DOCS 1)
+  if(BAYEUX_WITH_DOCS_OCD)
+    set(Bayeux_WITH_DOCS_OCD 1)
+  endif()
+endif()
 
 #-----------------------------------------------------------------------
 include(BayeuxDependencies)

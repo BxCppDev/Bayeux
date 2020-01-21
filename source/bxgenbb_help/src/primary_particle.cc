@@ -912,6 +912,125 @@ namespace genbb {
     return;
   }
 
+  void primary_particle::print_tree(std::ostream & out_,
+                                 const boost::property_tree::ptree & options_) const
+  {
+    i_tree_dumpable::base_print_options popts;
+    popts.configure_from(options_);
+    std::ostringstream outs;
+    if (! popts.title.empty ()) {
+      outs << popts.indent << popts.title << std::endl;
+    }
+    
+    outs << popts.indent << tag
+         << "Generation Id  : ";
+    if (has_generation_id()) {
+      outs << _generation_id_;
+    } else {
+      outs << "<none>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "Type           : ";
+    if (_type_ == PARTICLE_UNDEFINED) {
+      outs << "<none>";
+    } else {
+      outs << _type_;
+      if (has_particle_label()) {
+        outs << " (label='" << get_particle_label() << "')";
+      }
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "PDG code       : ";
+    if (has_pdg_code()) {
+      outs << _pdg_code_;
+    } else {
+      outs << "<none>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "Mass           : ";
+    if (mass_is_known()) {
+      outs << get_mass() / CLHEP::MeV << " MeV";
+    } else {
+      outs << "<unknown>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "Charge         : ";
+    if (charge_is_known()) {
+      outs << get_charge() << " e";
+    } else {
+      outs << "<unknown>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "Time           : ";
+    double time = _time_;
+    if (has_time()) {
+      std::ostringstream time_oss;
+      time_oss.precision(15);
+      time_oss << time / CLHEP::ns;
+      outs << time_oss.str() << " ns";
+    } else {
+      outs << "<unknown>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "Kinetic energy : ";
+    double kenergy = get_kinetic_energy();
+    if (datatools::is_valid(kenergy)) {
+      outs << kenergy / CLHEP::MeV << " MeV";
+    } else {
+      outs << "<unknown>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "Momentum       : ";
+    if (geomtools::is_valid(_momentum_)) {
+      outs << _momentum_ / CLHEP::MeV << " MeV";
+    } else {
+      outs << "<unknown>";
+    }
+    outs << std::endl;
+
+    outs << popts.indent << tag
+         << "Vertex         : ";
+    if (has_vertex()) {
+      outs << _vertex_ / CLHEP::mm
+           << " mm" << std::endl;
+    } else {
+      outs << "<no vertex>" << std::endl;
+    }
+
+    outs << popts.indent << tag
+         << "Auxiliary properties: ";
+    if (_auxiliaries_.size() == 0) {
+      outs << "<none>" << std::endl;
+    } else {
+      outs << '[' << _auxiliaries_.size() << ']' << std::endl;
+      std::ostringstream indent_oss;
+      indent_oss << popts.indent << skip_tag;
+      boost::property_tree::ptree popts2;
+      popts2.put("indent", indent_oss.str());
+      _auxiliaries_.print_tree(outs, popts2);
+    }
+
+    outs << popts.indent << inherit_tag(popts.inherit)
+         << "Valid          : " << is_valid() << std::endl;
+
+    out_ << outs.str();
+    return;
+  }
+  
   void primary_particle::tree_dump(std::ostream & out_,
                                    const std::string & title_,
                                    const std::string & indent_,
