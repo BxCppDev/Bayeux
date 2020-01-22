@@ -458,6 +458,9 @@ if [ "x${gcc_version}" != "x" ]; then
     "
 fi
 
+# bayeux_mcnp_option="-DBAYEUX_WITH_MCNP_MODULE=OFF"
+bayeux_mcnp_option=""
+
 cd ${build_dir}
 echo >&2 ""
 echo >&2 "[info] Configuring..."
@@ -486,7 +489,7 @@ cmake \
     -DBAYEUX_WITH_GENVTX=${default_with_module} \
     -DBAYEUX_WITH_MCTOOLS=${default_with_module} \
     -DBAYEUX_WITH_LAHAGUE=OFF \
-    -DBAYEUX_WITH_MCNP_MODULE=OFF \
+    ${bayeux_mcnp_option} \
     ${geant4_option} \
     ${qt_option0} \
     ${qt_option1} \

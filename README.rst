@@ -63,7 +63,7 @@ emfield
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
-  Depends on the external BxDecay0_ library.
+  Depends on the external BxDecay0_ library (option).
 
 genvtx
   Vertex  random  generator tools providing input to  simulation
@@ -351,6 +351,13 @@ to host  and use  Bayeux, due  to rapidly  changing brew  formulas and
 their dependencies from the homebrew core  tap.  We try to provide the
 proper formulas for Ubuntu Linux. However you could be forced to adapt
 some formulas to your own system.
+
+  
+
+Install dependencies with Spack
+...................................
+
+Work under progress.
 
 
 Additional Software Required
