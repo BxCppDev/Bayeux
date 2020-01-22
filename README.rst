@@ -298,7 +298,7 @@ Core Libraries Required
   libraries:    filesystem,    system,    serialization,    iostreams,
   program_options, regex and thread.
 
-  **Beware** Boost versions 1.65 (default on Ubuntu 18.04) to 1.68 are
+  **Beware**: Boost versions 1.65 (default on Ubuntu 18.04) to 1.68 are
   expected to  cause some crash with  GCC under Linux due  to a subtle
   bug concerning the Boost/Serialization singleton class. Boost 1.69 should
   fix this issue.
@@ -327,6 +327,10 @@ Core Libraries Required
 
 * Qt5 (optional)
 
+* BxDecay0 1.0 (optional) : https://github.com/BxCppDev/bxdecay0
+
+  **Warning** : BxDecay0 will become in a near future the
+  only Decay0 C++ port supported by Bayeux.
   
 
 Install dependencies with LinuxBrew
