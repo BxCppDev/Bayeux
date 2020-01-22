@@ -581,8 +581,8 @@ These options control the core configuration of Bayeux.
 ``BAYEUX_WITH_QT_GUI``
   Build the Qt-based GUI basic components (experimental). Default is OFF.
 
-``BAYEUX_WITH_QT_SVG``
-  Build the specific Qt SVG component. Default is OFF.
+.. removed : ``BAYEUX_WITH_QT_SVG``
+..   Build the specific Qt SVG component. Default is OFF.
 
 ``BAYEUX_ENABLE_TESTING``
   Build unit testing system for Bayeux. Default is OFF.
@@ -612,7 +612,7 @@ These options control the core configuration of Bayeux.
   - ``GENVTX``
   - ``MCTOOLS``
 
-  Default is OFF (experts only).
+  Default is ON (forcing OFF is for experts only).
 
   
 Building and Installing
