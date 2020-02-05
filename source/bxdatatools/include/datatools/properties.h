@@ -54,6 +54,7 @@
 #include <datatools/i_cloneable.h>
 #include <datatools/bit_mask.h>
 #include <datatools/exception.h>
+#include <datatools/file_include.h>
 
 namespace datatools {
 
@@ -117,7 +118,6 @@ namespace datatools {
    *
    * // Fetch properties:
    * bool test2 = my_parameters2.fetch_boolean("test");
-   *
    * 
    * \endcode
    * 
@@ -445,10 +445,10 @@ namespace datatools {
         SMART_MODULO       = bit_mask::bit05, ///< Use smart modulo (write)
         HEADER_FOOTER      = bit_mask::bit06, ///< Use header/footer (write)
         REQUESTED_TOPIC    = bit_mask::bit07, ///< Requested topic (read/write)
-        FORBID_INCLUDES    = bit_mask::bit08, ///< Forbid include directives bit
+        FORBID_INCLUDE     = bit_mask::bit08, ///< Forbid include directives bit (read)
         DONT_CLEAR         = bit_mask::bit09, ///< Don't clear before parsing bit (read)
         RESOLVE_PATH       = bit_mask::bit10, ///< Resolve path for input filename (read/write)
-        ALLOW_KEY_OVERRIDE = bit_mask::bit11, ///< Allow key override (write)
+        ALLOW_KEY_OVERRIDE = bit_mask::bit11, ///< Allow key override (read)
         LOG_WARNING        = bit_mask::bit12  ///< Warning mode activation bit
       };
 
@@ -467,19 +467,24 @@ namespace datatools {
       /// Set the logging priority threshold
       void set_logging(datatools::logger::priority);
 
-      /// Read a properties container from an input stream
+      /// \brief Read a properties container from an input stream
       ///
-      /// This method is the base of configuration file parsing.
+      /// This method is the main parsing tool for datatools::properties-based configuration files.
       ///
       /// Example of usage which loads a configuration file to store the configuration parameters
-      /// of an algorithm in a properties object:
+      /// of an algorithm in a datatools::properties object:
       /// \code
-      /// // A dictionary of configuration parameters
+      /// // A properties container:
       /// datatools::properties algo_parameters; 
+      ///
+      /// // A parser for configuration parameters:
       /// uint32_t parser_options = 0;                                   // No print option
       /// parser_options |= datatools::properties::config::LOG_DEBUG;    // Add debug option
       /// parser_options |= datatools::properties::config::RESOLVE_PATH; // Add path resolving option
-      /// algo_parameters.read_configuration("${MYSETUP}/config/algo.conf", parser_options);
+      /// datatools::properties::config parser(parser_options);
+      ///
+      /// // Parse a file and fill the properties object:
+      /// parser.read("${MYSETUP}/config/algo.conf", algo_parameters);
       /// {
       ///   // Smart print:
       ///   boost::property_tree::ptree smart_print_options;
@@ -492,28 +497,55 @@ namespace datatools {
       /// Example of input file to be parsed:
       /// \code
       ///
-      /// # Format:
-      /// # - Comment lines start with a '#'.
-      /// # This is a  comment line...
-      /// # ...and this is another one.
-      /// test : boolean = true # The end of this property directive line is ignored.
-      /// 
-      /// # - Blank lines are ignored.
-      /// # - Lines starting with '#@' are considered as optional metacomments
+      /// # Supported format:
+      /// # - Comment lines start with a '#' and any segment of a line
+      /// #   starting with '#' is also ignored;
+      /// # - Blank lines are ignored;
+      /// # - Lines starting with '#@' are considered as optional meta-comments
       /// #   with special embedded parsing options and/or actions.
+      /// 
+      /// ### Header ###
+      /// #
+      /// # The directives in this section can only be placed at the beginning of the 
+      /// # file, always before the definitions of properties.
       ///
-      /// #@topic rootfinding
-      /// #  This optional metacomment provides a conventional keyword that
+      /// #@topic "rootfinding"
+      /// #  This optional meta-comment provides a conventional keyword that
       /// #  identifies the functionnality of the properties container
       /// #  accessed by an external tool / user.
       /// #  This directive must be given before any property directive.
       ///
       /// #@config Configuration parameters for a root finding algorithm
-      /// #  This metacomment provides the general description of the set of properties.
+      /// #  This meta-comment provides the general description of the set of properties.
       /// #  This directive must be given before any property directive.
       /// 
+      /// #@include_dir "${DATATOOLS_TESTING_DIR}/config/user"
+      /// #@include_dir "${DATATOOLS_TESTING_DIR}/config/defaults"
+      /// #@include_dir "/var/${USER}/config"
+      /// #@include_dir "/etc/config"
+      /// #  These meta-comments set the ordered list of absolute paths from which
+      /// #  other properties files to be included are resolved. The first directive
+      /// #  has the highest priority.
+      /// #  This directive must be given before any property directive.
+      /// 
+      /// #@include_path_env "DATATOOLS_INCLUDE_PATH"
+      /// #  This meta-comment specifies the name of an environment variable which
+      /// #  sets a list of absolute paths from which other properties files to
+      /// #  be included are resolved. This list is preprended to the specified list
+      /// #  above, if any.
+      /// #  This directive must be given before any property directive.
+      /// 
+      /// #@include_no_propagate
+      /// #  This meta-comment specifies that the file inclusion rules are not
+      /// #  propagated to included files which use their own rules.
+      /// #  This directive must be given before any property directive.
+      /// 
+      /// ### Definitions of properties ###
+      ///
+      /// # The '#@description text' optional meta-comments is used to document the next property to
+      /// # be parsed.
       /// #@description The name of the method
-      /// #  This metacomment provides the specific description of next property record.
+      /// #  This meta-comment provides the specific description of next 'root_finder_type' property record.
       /// root_finder_type : string = "Newton-Raphson"
       /// 
       /// #@description The path of the log file
@@ -522,22 +554,22 @@ namespace datatools {
       /// log_file : string as path = "/tmp/root_finding.log"
       ///
       /// #@description Relative tolerance (dimensionless)
-      /// #  The property record below shows a pure dimensionless quantity.
+      /// #  The property record below shows a pure dimensionless floating-point based quantity.
       /// relative_epsilon : real = 5e-6
       ///
       /// #@description Absolute tolerance (with explicit dimension and associated unit)
       /// #  The 'as length' directive below indicates that the real value has an explicit
       /// #  dimension. The explicit 'um' unit symbol after the numerical value must
-      /// #  match the required dimension.
-      /// absolute_epsilon : real as length = 1.5 um    # micrometer
+      /// #  match the required dimension. 
+      /// absolute_epsilon : real as length = 1.5 um  # Symbol for micrometer
       ///
       /// #@description A constant value
-      /// #  The 'const' directive will prevent any modification of the property
+      /// #  The 'const' directive will prevent any further modification of the property
       /// #  value after parsing.
       /// time_duration : const real as time = 0.05 ms
       ///
       /// #@verbose_parsing
-      /// #  Special directive which activates, from this point, verbose parsing for debug purpose.
+      /// #  Special directive which activates, from this point, verbose parsing for debugging purpose.
       ///
       /// #@description Maximum number of iterations
       /// max_iterations : integer = 100
@@ -545,14 +577,14 @@ namespace datatools {
       /// #@description Array of guess values to start with (unit is explicitely given)
       /// #  The 'in mm' directive indicates that all real values in the array
       /// #  are explicitly expressed in 'mm' unit (of 'length' dimension).
-      /// #  Also a long property directive can be splitted on several lines
-      /// #  using a final '\' (after which no character is allowed).
-      /// guess_values : real[4] in mm = \ # no additional character after '\', even a space 
-      ///   1.0 \  # no additional character after '\', even a space or comment
-      ///   1.2 \  # no additional character after '\'
-      ///   2.4 \  # no additional character after '\'
-      ///   4.8    # last value
-      ///
+      /// #  Also a 'long' property directive can be splitted on several lines
+      /// #  using a final '\' (after which no character, is allowed).
+      /// guess_values : real[4] in mm = \  # no space is allowed after '\'
+      ///   1.0 \   # no space is allowed after '\'
+      ///   1.2 \   # no space is allowed after '\'
+      ///   2.4 \   # no space is allowed after '\'
+      ///   4.8     # last value
+      ///    
       /// #@description Algorithm verbosity
       /// logging : string = "mute"  # no print at all
       ///
@@ -569,9 +601,9 @@ namespace datatools {
       /// #@enable_variants
       /// #  Enable the parsing of variant preprocessor directives.
       ///
-      /// #@variant_only math:numerical_library/if_gsl
+      /// #@variant_only math:numerical_library/with_gsl
       /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:numerical_library/if_gsl" variant condition is set (boolean).
+      /// #  if the "math:numerical_library/with_gsl" variant condition is set (boolean).
       /// #@description GSL error handling flag is set only if the GSL library is used
       /// gsl_error_support : boolean = true
       ///
@@ -582,26 +614,27 @@ namespace datatools {
       /// #  If the variant system is not activated, the 'true' value after
       /// #  the '|' character in the "@variant_only" directive is used to
       /// #  consider the condition set by default.
-      /// default_epsilon : real = 1e-15
+      /// default_epsilon : real = 1e-16
       ///
       /// #@variant_only math:tolerance/is_user|false
       /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:epsilon/is_user" variant condition is set.
+      /// #  if the "math:tolerance/is_user" variant condition is set.
       /// #  The parsed value is extracted by the variant preprocessor
       /// #  from a special variant variable (math:epsilon/is_user/epsilon) available
-      /// #  only when the "math:epsilon/is_user" condition is set.
+      /// #  only when the "math:tolerance/is_user" condition is set.
       /// #  If the variant system is not activated, the 'false' value after
       /// #  the '|' character in the "@variant_only" directive is used to consider
       /// #  the condition unset by default.
       /// #  If the variant system is not activated, the value '1.e-7' after
       /// #  the '|' character is used as a fallback value for this property.
       /// # 
-      /// default_epsilon : real = @variant(math:epsilon/is_user/epsilon|1.e-7)
+      /// default_epsilon : real = @variant(math:tolerance/is_user/epsilon|1.e-7)
       ///
-      /// #@variant_if math:numerical_library/if_std
+      /// #@variant_if math:numerical_library/with_std
       /// #  This variant directive starts a conditional block of property directives.
-      /// #  The block is activated if and only if the "math:numerical_library/if_std"
-      /// #  variant condition is set.
+      /// #  The block is activated if and only if the "math:numerical_library/with_std"
+      /// #  variant condition is set. This directive implies the use of a matching
+      /// # '#@variant_endif' closing directive (see below).
       /// 
       /// #@description The identifier of the base pseudo-random number generator (PRNG)
       /// random_prng : string = "mersenne_twister"
@@ -617,6 +650,8 @@ namespace datatools {
       /// random_output_state_path : string as path = "${MYSETUP}/run_42/product/prng_state_out.data"
       ///
       /// #@variant_endif # End of the variant conditional block of property directives
+      /// # Optionaly the '#@variant_endif' can specify the variant condition is refers to :
+      /// # #@variant_endif math:numerical_library/with_std
       ///
       /// #@description The Pi constant in explicit angular unit
       /// #  The variant system provides three different options associated to the
@@ -643,9 +678,10 @@ namespace datatools {
       /// #@description GUI colors (background, foreground then alarm foreground)
       /// gui.colors : string[3] = "grey" "black" "red"
       ///
-      /// # Load default parameters from another ``properties`` container.
-      /// # Can be useful from a *section* in a ``multi_properties`` configuration file.
-      /// #@include : string = "~/.defaults.conf"
+      /// # Load properties from another ``properties`` container which is merged in
+      /// # in the current container. Key overriding is allowed by default and inhibited
+      /// # only if "#@forbid_key_override" is explicitely set
+      /// #@include : string as path = "~/myconfig/defaults.conf"
       ///
       /// #@end
       /// #  Special directives which forces the end of parsing so that
@@ -697,10 +733,19 @@ namespace datatools {
       /// Return the section start line
       int get_section_start_line_number() const;
 
+      /// Return the embedded file inclusion solver 
+      const file_include & get_fi() const;
+
+      /// Return the mutable embedded file inclusion solver 
+      file_include & grab_fi();
+
+      /// Override the embedded file inclusion solver 
+      void set_fi(const file_include &);
+
       /// Reset
       void reset();
 
-      /// Write metacomment
+      /// Write meta-comment
       void write_metacomment(std::ostream & out_,
                              const std::string & tag_,
                              const std::string & value_ = "",
@@ -734,7 +779,7 @@ namespace datatools {
       bool   _use_smart_modulo_;  ///< Use multiline formatting for vector data (write)
       bool   _write_public_only_; ///< Only output public properties
       bool   _forbid_variants_;   ///< Flag to forbid variant directives (read)
-      bool   _forbid_includes_;   ///< Flag to forbid include directives (read)
+      bool   _forbid_include_ = false; ///< Flag to forbid include directives (read)
       bool   _requested_topic_;   ///< Flag to activate topic matching (read)
       bool   _resolve_path_;      ///< Explicitely resolve path for input/output filenames (read/write)
       bool   _allow_key_override_ = false; ///< Allow key override when duplicated keys are parsed (read)
@@ -745,6 +790,7 @@ namespace datatools {
       // Working parsing data:
       size_t      _current_line_number_; ///< Current input line number
       std::string _current_filename_;    ///< Current filename
+      file_include _fi_;                 ///< File inclusion solver
 
     }; //----- end of class config
 
@@ -768,8 +814,6 @@ namespace datatools {
   public:
 
     typedef std::vector<std::string> keys_col_type;
-
-  public:
     
     /// Default constructor
     properties() = default;
@@ -847,11 +891,17 @@ namespace datatools {
     //! Returns the list of keys stored in the map (read-only).
     std::vector<std::string> keys() const;
 
+    //! Returns the set of keys stored in the map (read-only).
+    std::set<std::string> get_keys() const;
+
     //! Returns the ith key
     const std::string & key(int) const;
 
     //! Set the list of keys.
     void keys(std::vector<std::string> &) const;
+
+    //! Compute the set of keys.
+    void compute_keys(std::set<std::string> &) const;
 
     //! Access to a non-mutable reference to a property data object
     const data & get(const std::string & prop_key_) const;
@@ -1363,6 +1413,12 @@ namespace datatools {
     void print_tree(std::ostream & out_ = std::clog,
                     const boost::property_tree::ptree & options_ = empty_options()) const override;
 
+    /// Merge with another properties with overriding possibilities
+    ///
+    /// If the allow_override_ flag is set, any key also existing in other_,
+    /// with the same type, is overriden by the value stored in other_. 
+    void merge_with(const properties & other_, bool allow_overrride_ = false);
+    
     std::string key_to_string(const std::string & key_) const;
 
     std::string key_to_property_string(const std::string & key_) const;

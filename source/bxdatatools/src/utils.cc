@@ -235,12 +235,18 @@ namespace datatools {
   {
     static const std::string _base_allowed_chars =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.:-";
+    static const std::string _upper_chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static const std::string _lower_chars =
+      "abcdefghijklmnopqrstuvwxyz";
     if (name_.empty()) return false;
     bool forbid_colon  = flags_ & NV_NO_COLON;
     bool forbid_dot    = flags_ & NV_NO_DOT;
     bool forbid_hyphen = flags_ & NV_NO_HYPHEN;
     bool forbid_underscore = flags_ & NV_NO_UNDERSCORE;
     bool allow_leading_digit = flags_ & NV_LEADING_DIGIT;
+    bool forbid_lower_case = flags_ & NV_NO_LOWER_CASE;
+    bool forbid_upper_case = flags_ & NV_NO_UPPER_CASE;
     if (forbid_colon) {
       if (name_.find(':') != name_.npos) return false;
     }
@@ -252,6 +258,12 @@ namespace datatools {
     }
     if (forbid_underscore) {
       if (name_.find('_') != name_.npos) return false;
+    }
+    if (forbid_lower_case) {
+      if (name_.find_first_of(_lower_chars) != name_.npos) return false;
+    }
+    if (forbid_upper_case) {
+      if (name_.find_first_of(_upper_chars) != name_.npos) return false;
     }
     if (name_.find_first_not_of(_base_allowed_chars) != name_.npos) return false;
     if (!allow_leading_digit) {

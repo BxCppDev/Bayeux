@@ -2,11 +2,11 @@
 /* multi_properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009
- * Last modified: 2019-01-29
+ * Last modified: 2020-01-28
  *
  * License:
  *
- * Copyright (C) 2011-2019 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2009-2020 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@
 #include <datatools/properties.h>
 #include <datatools/bit_mask.h>
 #include <datatools/logger.h>
+#include <datatools/file_include.h>
 
 namespace datatools {
 
@@ -192,9 +193,9 @@ namespace datatools {
   private:
 
     /// Private initialization
-    void _init_ (const std::string & key_label_,
-                 const std::string & meta_label_,
-                 const std::string & description_);
+    void _init_(const std::string & key_label_,
+                const std::string & meta_label_,
+                const std::string & description_);
 
     /// Private copy
     void _copy_impl_(const multi_properties &);
@@ -274,16 +275,16 @@ namespace datatools {
     virtual void clear();
 
     /// Return the const reference to the collection of entries
-    const entries_col_type& entries() const;
+    const entries_col_type & entries() const;
 
     /// Return the const reference to the ordered collection of entries
-    const entries_ordered_col_type& ordered_entries() const;
+    const entries_ordered_col_type & ordered_entries() const;
 
     /// Return a const reference to the stored entry
-    const entry& get(const std::string & key_) const;
+    const entry & get(const std::string & key_) const;
 
     /// Return a mutable reference to the stored entry
-    entry& grab(const std::string & key_);
+    entry & grab(const std::string & key_);
 
     /// Check if a section with a given key exists
     bool has_key(const std::string & key_) const;
@@ -301,7 +302,7 @@ namespace datatools {
     std::vector<std::string> keys() const;
 
     /// Build an array of keys
-    void keys(std::vector<std::string>  & keys_) const;
+    void keys(std::vector<std::string> & keys_) const;
 
     /// Return an array of orderered keys
     std::vector<std::string> ordered_keys() const;
@@ -313,13 +314,13 @@ namespace datatools {
     bool has_section(const std::string & key_) const;
 
     /// Return the const reference to the properties store in a section
-    const properties& get_section(const std::string & key_) const;
+    const properties & get_section(const std::string & key_) const;
 
     /// Return the const reference to the properties store in a section
-    const properties& get_section_const(const std::string & key_) const;
+    const properties & get_section_const(const std::string & key_) const;
 
     /// Return the mutable reference to the properties store in a section
-    properties& grab_section(const std::string & key_);
+    properties & grab_section(const std::string & key_);
 
     /// Add a new section with primary key, meta information text and a collection of properties
     void add(const std::string & key_,
@@ -335,8 +336,8 @@ namespace datatools {
              const std::string & meta_ = "");
 
     /// Add a new section with primary key and meta information text and return a mutable reference to the store collection of properties
-    properties& add_section(const std::string & key_,
-                            const std::string & meta_ = "");
+    properties & add_section(const std::string & key_,
+                             const std::string & meta_ = "");
 
     /// Remove a section
     void remove(const std::string & key_);
@@ -365,31 +366,59 @@ namespace datatools {
     /// #  This optional metacomment provides the general description of the multi_properties container.
     /// #  This directive must be given before any *section* (see below).
     ///
-    /// #@key_label   name
+    /// #@key_label "name"
     /// #  This metacomment provides the key use to identify the name of a *section*.
     /// #  (see below).
     /// #  Syntax is ``[name="foo" ... ]``.
     /// #  This directive must be given before any *section* (see below).
     ///
-    /// #@meta_label  type
+    /// #@meta_label "type"
     /// #  This metacomment provides the key use to identify the meta information of a *section*
     /// #  (see below).
-    /// #  Syntax is ``[name="foo"   type="my_model_1" ]``.
+    /// #  Syntax is ``[name="foo" type="my_model_1" ]``.
     /// #  This directive must be given before any *section* (see below).
     ///
+    /// #@variant_devel
+    /// #  This metacomment activates development logging from the variant mechanism
+    ///
+    /// #@variant_section_only "variant-expression"
+    /// #  This metacomment corresponds to a directive which accept a given section only if
+    ///
+    /// #@forbid_include
+    /// #  This metacomment inhibits the file inclusion inclusion mechanism
+    ///
+    /// #@include_debug
+    /// #  This metacomment activates debug logging from the file inclusion mechanism
+    ///
+    /// #@include_dir "path"
+    /// #  This metacomment specifies a directory from which files to be included are searched for.
+    ///
+    /// #@include_path_env "name"
+    /// #  This metacomment specifies the name of an environment variable which contains
+    /// #  an ordered list of priority directories from which files to be included are searched for.
+    ///
+    /// #@include_path_env_strategy "label"
+    /// #  This metacomment specifies the strategy for resolving the include directories from the
+    /// #  environment variable set by the "@include_path_env" directive. Supported strategies are:
+    /// #  - prepend (default) : directories from the environment variable have priority on explicit
+    /// #    directories set through "@include_dir" directive. 
+    /// #  - append : directories from the environment variable have priority on explicit
+    /// #    directories set through "@include_dir" directive. 
+    /// #  - clear : directories from the environment variable are the only ones used.
+    ///
     /// # Sections:
-    /// # Each section in a multi_properties container implements a single properties container
-    /// # associated to a unique identifier (in the scope of the multi_properties container)
+    /// # Each section in a "multi_properties" container implements a single "properties" container
+    /// # associated to a unique key/identifier (in the scope of the "multi_properties" container)
     /// # and eventually a meta information, usually documenting the type/category of object
     /// # or component the section refers to.
     ///
     /// [name="core"  type="algo::calibration"]
-    /// #  This directive above starts a new section with a given *name* and *type* (meta information)
+    /// #  The directive above starts a new section with a given *name* and *type* (meta information)
     ///
     /// ...
     ///
     /// [name="display"  type="algo::calibration::gui"]
-    /// #  This directive above starts a new section with a given *name* and *type* (meta information)
+    /// #  The directive above starts a new section with a given *name* and *type* (meta information)
     ///
     /// ...
     ///
@@ -403,17 +432,42 @@ namespace datatools {
     /// verbosity : integer = 4
     ///
     /// #@description List of components with active debugging support
-    /// active : string[2] = "core" "gui"
+    /// active : string[2] = "core" "display"
     ///
     /// [name="log"  type="algo::calibration::logger"]
-    /// #  This directive above starts a new section with a given *name* and *type* (meta information)
+    /// #  The directive above starts a new section with a given *name* and *type* (meta information)
     ///
+    /// # This directive include the definitions of some properties of the current section
     /// #@include "~/.config/logger/main.conf"
     ///
+    /// [name="foo"  type="algo::foo"]
+    /// #@variant_section_only "variant-expression"
+    /// #  The directive above corresponds to a directive which accepts a given section only if
+    /// #  a the variant-expression is true. It must be placed at the very beginning of a section.
+    ///
+    /// # The following directives include some multi-properties files and merge their contents
+    /// # in the current one. Existing sections are merged and their properties are overriden
+    /// # if they appear both in the current and includes files.
+    /// #@include_sections "more_sections.conf"
+    /// #@include_sections "overriden_sections.conf"
+    ///
+    /// # Same as the former directive but failure to resolve the file to be include
+    /// # does not fail the parsing.
+    /// #@include_sections_try "optional_sections.conf"
     ///
     /// \endcode 
     /// 
     void read(const std::string & filename_, uint32_t options_ = 0);
+
+    /// Merge with another multi_properties with overriding possibilities
+    ///
+    /// If the allow_override_sections_ flag is set, any section key existing in both multi_propreties
+    /// as records of the same type is overriden by the full section stored in other_. 
+    /// If the allow_override_section_ flag is set, any overridenkey existing in both propreties as records
+    /// of the same type is overriden by the value stored in other_. 
+    void merge_with(const multi_properties & other_,
+                    bool allow_override_sections_ = false,
+                    bool allow_override_props_ = false);
 
     /// Basic print
     void dump(std::ostream & out_ = std::clog) const;
@@ -448,7 +502,8 @@ namespace datatools {
         REQUESTED_TOPIC       = bit_mask::bit08, ///< Requested topic (read/write)
         RESOLVE_PATH          = bit_mask::bit09, ///< Resolve path for input filename (read/write)
         START_WITHOUT_LABELS  = bit_mask::bit10, ///< Start without key/meta labels and let the reader set them
-        WITHOUT_DECORATION    = bit_mask::bit11  ///< Do not use decoration
+        WITHOUT_DECORATION    = bit_mask::bit11, ///< Do not use decoration
+        FORBID_INCLUDE        = bit_mask::bit12  ///< Do not allow file inclusion
       };
 
       /// Default constructor
@@ -470,7 +525,7 @@ namespace datatools {
       void read(std::istream & in_, multi_properties & target_);
 
       /// Write to an output stream
-      void write(std::ostream& out_, const multi_properties & source_);
+      void write(std::ostream & out_, const multi_properties & source_);
 
       /// Write to an output file
       void write(const std::string & filename_, const multi_properties & source_);
@@ -483,6 +538,15 @@ namespace datatools {
 
       /// Return the topic
       const std::string & get_topic() const;
+
+      /// Return the embedded file inclusion solver 
+      const file_include & get_fi() const;
+
+      /// Return the mutable embedded file inclusion solver 
+      file_include & grab_fi();
+
+      /// Set the embedded file inclusion solver 
+      void set_fi(const file_include &);
 
     protected:
 
@@ -497,7 +561,7 @@ namespace datatools {
 
       /// Store the current filename
       void _set_current_filename(const std::string & filename_);
-
+      
     private:
 
       // Configuration:
@@ -511,10 +575,12 @@ namespace datatools {
       bool _resolve_path_;            ///< Explicitely resolve path for input/output filenames (read/write)
       bool _start_without_labels_;    ///< Start without labels (read)
       bool _without_decoration_;      ///< Flag to disable decoration (write)
+      bool _forbid_include_ = false;  ///< Flag to forbid file inclusion (read)
 
       // Working parsing data:
       std::string _current_filename_;    ///< Current filename
       int         _current_line_number_; ///< Current line number
+      file_include _fi_;                 ///< File inclusion solver
 
     }; //----- end of class config
 
@@ -528,7 +594,7 @@ namespace datatools {
                   const std::string & meta_ = "");
 
     /// Add section implementation
-    properties& add_impl2(const std::string & key_,
+    properties & add_impl2(const std::string & key_,
                           const std::string & meta_ = "");
 
     /// Set default values at construction

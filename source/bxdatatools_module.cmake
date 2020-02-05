@@ -81,6 +81,7 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/datatools_init.h
   ${module_include_dir}/${module_name}/datatools.h
   ${module_include_dir}/${module_name}/datatools_config.h.in
+  ${module_include_dir}/${module_name}/file_include.h
   ${module_include_dir}/${module_name}/detail/api.h
   ${module_include_dir}/${module_name}/detail/Configure.h
   ${module_include_dir}/${module_name}/detail/DynamicLoader.h
@@ -284,6 +285,7 @@ ${module_source_dir}/kernel.cc
 ${module_source_dir}/library_info.cc
 ${module_source_dir}/library_query_service.cc
 ${module_source_dir}/library_loader.cc
+${module_source_dir}/file_include.cc
 ${module_source_dir}/logger.cc
 ${module_source_dir}/memory_streambuf.cc
 ${module_source_dir}/multi_properties.cc
@@ -449,6 +451,7 @@ set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_RESOURCE_DIR=${module_resource_di
 # ls -1 bxdatatools/testing/*.cxx | sed -e 's@bxdatatools/testing@${module_test_dir}@g'
 
 set(${module_name}_MODULE_TESTS
+${module_test_dir}/test_file_include.cxx
 ${module_test_dir}/test_reflection_0.cxx
 ${module_test_dir}/test_enriched_base.cxx
 ${module_test_dir}/test_binary_serialization.cxx
@@ -474,6 +477,8 @@ ${module_test_dir}/test_library_loader_1.cxx
 ${module_test_dir}/test_logger.cxx
 ${module_test_dir}/test_multi_properties_0.cxx
 ${module_test_dir}/test_multi_properties.cxx
+${module_test_dir}/test_multi_properties_merging.cxx
+${module_test_dir}/test_multi_properties_include.cxx
 ${module_test_dir}/test_named.cxx
 ${module_test_dir}/test_nans_ar.cxx
 ${module_test_dir}/test_OCD.cxx
@@ -484,6 +489,8 @@ ${module_test_dir}/test_properties_2.cxx
 ${module_test_dir}/test_properties_3.cxx
 ${module_test_dir}/test_properties_4.cxx
 ${module_test_dir}/test_properties.cxx
+${module_test_dir}/test_properties_merging.cxx
+${module_test_dir}/test_properties_include.cxx
 ${module_test_dir}/test_real_range.cxx
 ${module_test_dir}/test_ser_bitset.cxx
 ${module_test_dir}/test_serializable_1.cxx

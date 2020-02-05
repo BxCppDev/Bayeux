@@ -143,7 +143,9 @@ namespace datatools {
     NV_LEADING_DIGIT = bit_mask::bit04, ///< Allow leading digit
     NV_DEFAULT       = NV_NO_HYPHEN ,   ///< Default validation rule
     NV_INSTANCE      = NV_NO_HYPHEN | NV_NO_COLON, ///< Default validation rule for object instance
-    NV_MODEL         = NV_NO_HYPHEN     ///< Default validation rule for object model
+    NV_MODEL         = NV_NO_HYPHEN,   ///< Default validation rule for object model
+    NV_NO_LOWER_CASE = bit_mask::bit05, ///< Forbid lower case characters
+    NV_NO_UPPER_CASE = bit_mask::bit06  ///< Forbid upper case characters
   };
 
   /// Check if a name (object identifier) is valid using simple criteria
