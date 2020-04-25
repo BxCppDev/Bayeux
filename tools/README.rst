@@ -18,16 +18,32 @@ From the Bayeux base source directory, use the build/installation script:
 ..
 
 
-New build script
+Usage
 ================
+
+
+Build and install
+-----------------
+
+.. code:: bash
+
+   $ bayeux_build_g49_setup
+   $ ./tools/build.sh --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "-boost169-g49"
+..
+
+
+
+Old stuff
+====================
+
 
 Build Bayeux with Boost 1.68
 ----------------------------
 
 .. code:: bash
 
-   $ bxdev_setup
-   $ ./tools/build_exp.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.68.0 --bayeux-prefix "_boost168"
+   $ bayeux_build_g49_setup
+   $ ./tools/build.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.68.0 --bayeux-prefix "_boost168"
 ..
 
 It breaks as shown in https://github.com/BxCppDev/Bayeux/issues/39 and,
@@ -43,8 +59,8 @@ Build Bayeux with Boost 1.69
 
 .. code:: bash
 
-   $ bxdev_setup
-   $ ./tools/build_exp.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169"
+   $ bayeux_build_g49_setup
+   $ ./tools/build.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169"
 ..
 
 From the build directory:
@@ -55,13 +71,13 @@ From the build directory:
 ..
 
 
-.. code:: bash
-
 With Geant4
 -----------
 
-   $ bxdev_setup
-   $ ./tools/build_exp.sh --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169_withg4"
+.. code:: bash
+
+   $ bayeux_build_g49_setup
+   $ ./tools/build.sh --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169_withg4"
 ..
 
 From the build directory:
