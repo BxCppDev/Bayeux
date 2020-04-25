@@ -540,6 +540,14 @@ namespace datatools {
       /// #  propagated to included files which use their own rules.
       /// #  This directive must be given before any property directive.
       /// 
+      /// #@include "path"
+      /// #  This meta-comment specifies the path of a file to be included.
+      /// #  This directive must be given before any property directive.
+      /// 
+      /// #@include_try "path"
+      /// #  This meta-comment specifies the path of a file to try to include.
+      /// #  This directive must be given before any property directive.
+      /// 
       /// ### Definitions of properties ###
       ///
       /// # The '#@description text' optional meta-comments is used to document the next property to

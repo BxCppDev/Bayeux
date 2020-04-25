@@ -1538,7 +1538,9 @@ namespace datatools {
 
       if (paths_to_be_included.size()) {
         DT_LOG_DEBUG(_logging_, "Before inclusion : ");
-        target_.print_tree(std::cerr);                    
+        if (datatools::logger::is_debug(_logging_)) {
+          target_.print_tree(std::cerr);
+        }
         // Trigger the inclusion of external file:
         for (const std::string & inc_path : paths_to_be_included) {
           DT_LOG_DEBUG(_logging_, "About to include file with path '" << inc_path << "'");
@@ -1548,7 +1550,7 @@ namespace datatools {
           }
           multi_properties::config reader(reader_options);
           if (include_file_propagate) {
-            // Propagate the resolving rules of the local file_inclusion :
+            // Propagate the resolving rules of the local file inclusion helper :
             reader.set_fi(_fi_);
           }
           multi_properties inc_mconf;
@@ -1572,7 +1574,7 @@ namespace datatools {
         && target_.size() == 0) {
       DT_LOG_WARNING(_logging_,
                      "Could not load any configuration section from the input stream !"
-                     << "The input stream seems not to have to proper \"datatools::multi_properties\" format! "
+                     << "The input stream seems not to have the proper \"datatools::multi_properties\" format! "
                      << "Please check the input file/stream!");
     }
     return;

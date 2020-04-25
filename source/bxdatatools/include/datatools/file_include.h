@@ -56,7 +56,7 @@ namespace datatools {
     enum ev_strategy {
       EV_PREPEND = 1, ///< Environment variable has higher priority than the explicit list of include paths
       EV_APPEND = 2,  ///< Environment variable has lower priority than the explicit list of include paths
-      EV_CLEAR = 3    ///< Environment variable discard the explicit list of include paths
+      EV_CLEAR = 3    ///< Environment variable discards the explicit list of include paths
     };
 
     /// Constructor

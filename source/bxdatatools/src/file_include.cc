@@ -96,6 +96,7 @@ namespace datatools {
   void file_include::set_include_path_env_strategy(const ev_strategy s_)
   {
     _include_path_env_strategy_ = s_;
+    _has_changed_ = true;
     return;
   }
   
@@ -171,7 +172,7 @@ namespace datatools {
     }
     DT_THROW_IF(to_be_included_path_.empty(),
                 std::logic_error,
-                "Missing path of the file to be included!");
+                "Missing path for the file to be included!");
     DT_LOG_DEBUG(_logging_, "=== resolving path : '" << to_be_included_path_ << "'");
     boost::filesystem::path bfullpath;
     if (bfullpath.empty()) {

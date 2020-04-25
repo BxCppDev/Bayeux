@@ -397,14 +397,22 @@ namespace datatools {
     /// #  This metacomment specifies the name of an environment variable which contains
     /// #  an ordered list of priority directories from which files to be included are searched for.
     ///
-    /// #@include_path_env_strategy "label"
-    /// #  This metacomment specifies the strategy for resolving the include directories from the
-    /// #  environment variable set by the "@include_path_env" directive. Supported strategies are:
-    /// #  - prepend (default) : directories from the environment variable have priority on explicit
-    /// #    directories set through "@include_dir" directive. 
-    /// #  - append : directories from the environment variable have priority on explicit
-    /// #    directories set through "@include_dir" directive. 
-    /// #  - clear : directories from the environment variable are the only ones used.
+    /// #@include_sections "path"
+    /// #  This metacomment specifies the path of a file to be included
+    ///
+    /// #@include_sections_try "path"
+    /// #  This metacomment specifies the path of a file to be included if possible
+    ///
+    // # NOT SUPPORTED"
+    // #@include_path_env_strategy "label"
+    // #  This metacomment specifies the strategy for resolving the include directories from the
+    // #  environment variable set by the "@include_path_env" directive. Supported strategies are:
+    // #  - prepend (default) : directories from the environment variable have priority on explicit
+    // #    directories set through "@include_dir" directive. 
+    // #  - append : directories from the environment variable do not have priority on explicit
+    // #    directories set through "@include_dir" directive. 
+    // #  - clear : directories from the environment variable are the only ones used.
+    //
     ///
     /// # Sections:
     /// # Each section in a "multi_properties" container implements a single "properties" container
