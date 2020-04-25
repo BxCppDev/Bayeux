@@ -114,9 +114,4 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_bayeux.cxx
 )
 
-# Unused 'catch' system:
-# set(${module_name}_MODULE_TESTS_CATCH
-#   # ${module_test_dir}/test_bayeux_catch.cxx
-# )
-
 # end
