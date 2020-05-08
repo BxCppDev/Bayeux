@@ -77,6 +77,7 @@ public:
     std::string base_dir;
     std::string pattern;
     std::string run_list_file;
+    bool        append_run_list;
     std::string list_mount_point;
     bool        no_safe_checks = false;
     bool        no_run_list_file = false;
@@ -232,6 +233,12 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
      ->value_name("name"),
      "Set the name of the run list file")
 
+    ("append-run-list,a",
+     po::value<bool>(&params_.append_run_list)
+     ->zero_tokens()
+     ->default_value(false),
+     "Append/extend an existing run list")
+
     ("no-safe-checks,k",
      po::value<bool>(&params_.no_safe_checks)
      ->zero_tokens()
@@ -299,11 +306,87 @@ g4_seed_generator::~g4_seed_generator()
 
 void g4_seed_generator::run()
 {
-  // GENERATE
+  std::string run_list_file_path;
+  std::map<uint32_t, std::string> seedfiles_per_run;
   std::map<uint32_t, std::string> seeds_per_run;
   std::set<std::string> check_signatures;
   std::size_t max_count = 3;
   std::size_t last_run = _params_.run_start + _params_.number_of_runs;
+  
+  // CHECK run_list_file
+  if (!_params_.no_run_list_file && !_params_.run_list_file.empty()) {
+    bool full_list_path = false;
+    {
+      std::string test_lis = _params_.run_list_file;
+      datatools::fetch_path_with_env(test_lis);
+      if (test_lis.size() > 0) {
+        if (test_lis[0] == '/') full_list_path = true;
+      }
+    }
+    if (! full_list_path) {
+      run_list_file_path = _params_.base_dir + "/" + _params_.run_list_file;
+    } else {
+      run_list_file_path = _params_.run_list_file;
+    }
+    boost::replace_all(run_list_file_path, "//", "/");
+    datatools::fetch_path_with_env(run_list_file_path);
+    if (boost::filesystem::exists(run_list_file_path)) {
+      if (!_params_.append_run_list)
+	DT_THROW_IF(! _params_.no_safe_checks,
+		    std::runtime_error,
+		    "File '" << run_list_file_path << "' already exists!");
+    }
+  }
+  
+  // RETRIEVE EXISTING SEEDS (if append option)
+  if (_params_.append_run_list) {
+
+    std::size_t number_of_runs_existing = 0;
+
+    std::ifstream foldrunlist (run_list_file_path.c_str());
+    DT_THROW_IF(!foldrunlist, std::runtime_error, "Cannot open run list file '" << run_list_file_path << "'");
+
+    uint32_t irun;
+    std::string seed_path_pattern;
+
+    while (foldrunlist >> irun >> seed_path_pattern) {
+
+      DT_THROW_IF(number_of_runs_existing!=irun, std::runtime_error, "existing runs in " << run_list_file_path << " are not ordered as expected");
+
+      seeds_per_run[irun] = seed_path_pattern;
+
+      // open and read the run seed file
+      std::string path_pattern = _params_.base_dir + "/" + _params_.pattern;
+      boost::replace_all(path_pattern, "//", "/");
+      boost::replace_all(path_pattern, "%n", boost::lexical_cast<std::string>(irun));
+      boost::replace_all(seed_path_pattern, "%n", boost::lexical_cast<std::string>(irun));
+      
+      std::ifstream foldrunfile (path_pattern.c_str());
+      DT_THROW_IF(!foldrunfile, std::runtime_error, "Cannot open run file '" << path_pattern << "'");
+
+      std::string signature;
+      getline(foldrunfile, signature);
+      DT_THROW_IF(check_signatures.count(signature) != 0, std::runtime_error, "found 2 runs with same seeds signature  ! this is not supposed to append...");
+      check_signatures.insert(signature);
+      seeds_per_run[irun] = signature;
+
+      std::cout << "found '" << seed_path_pattern << "' for run " << irun << " with seeds: " << signature << std::endl;
+
+      number_of_runs_existing++;
+      foldrunfile.close();
+    }
+    
+    foldrunlist.close();
+    
+    DT_THROW_IF(_params_.number_of_runs <= number_of_runs_existing,
+		std::runtime_error,
+		"requested to extend a run list with lower or same number of runs !");
+    
+    _params_.run_start = number_of_runs_existing;
+  }
+      
+
+  // GENERATE
   for (std::size_t irun {_params_.run_start};
        irun != last_run;
        irun++) {
@@ -343,17 +426,18 @@ void g4_seed_generator::run()
 
   // WRITE
   // Require unique directory
-  if (boost::filesystem::exists(_params_.base_dir)) {
-    DT_THROW_IF(! _params_.no_safe_checks,
-                std::runtime_error,
-                "Requested output directory '" << _params_.base_dir << "' already exists");
-  } else {
-    DT_THROW_IF(!boost::filesystem::create_directories(_params_.base_dir),
-                std::runtime_error,
-                "Could not create directories '" << _params_.base_dir << "'");
+  if (!_params_.append_run_list) {
+    if (boost::filesystem::exists(_params_.base_dir)) {
+      DT_THROW_IF(! _params_.no_safe_checks,
+		  std::runtime_error,
+		  "Requested output directory '" << _params_.base_dir << "' already exists");
+    } else {
+      DT_THROW_IF(!boost::filesystem::create_directories(_params_.base_dir),
+		  std::runtime_error,
+		  "Could not create directories '" << _params_.base_dir << "'");
+    }
   }
-
-  std::map<uint32_t, std::string> seedfiles_per_run;
+  
   std::ostringstream list_out;
   for (const auto& iseed : seeds_per_run) {
     uint32_t irun = iseed.first;
@@ -362,51 +446,34 @@ void g4_seed_generator::run()
     boost::replace_all(path_pattern, "//", "/");
     boost::replace_all(path_pattern, "%n", boost::lexical_cast<std::string>(irun));
     boost::replace_all(seed_path_pattern, "%n", boost::lexical_cast<std::string>(irun));
-    {
-      std::string test_path = path_pattern;
-      datatools::fetch_path_with_env(test_path);
-      if (boost::filesystem::exists(test_path)) {
-        DT_THROW_IF(! _params_.no_safe_checks,
-                    std::logic_error,
-                    "File '" << path_pattern << "' already exists");
+    // only create new file (if append)
+    if (irun >= _params_.run_start) {
+      {
+	std::string test_path = path_pattern;
+	datatools::fetch_path_with_env(test_path);
+	if (boost::filesystem::exists(test_path)) {
+	  DT_THROW_IF(! _params_.no_safe_checks,
+		      std::logic_error,
+		      "File '" << path_pattern << "' already exists");
+	}
       }
+
+      std::ofstream fout(path_pattern.c_str());
+      DT_THROW_IF(!fout, std::runtime_error, "Cannot open file '" << path_pattern << "'");
+      fout << iseed.second << std::endl;
     }
-    std::ofstream fout(path_pattern.c_str());
-    DT_THROW_IF(!fout, std::runtime_error, "Cannot open file '" << path_pattern << "'");
-    fout << iseed.second << std::endl;
     seedfiles_per_run[irun] = seed_path_pattern; //path_pattern;
   }
 
   std::unique_ptr<std::ofstream> frunlist;
-  std::string run_list_file_path;
-  if (!_params_.no_run_list_file && !_params_.run_list_file.empty()) {
-    bool full_list_path = false;
-    {
-      std::string test_lis = _params_.run_list_file;
-      datatools::fetch_path_with_env(test_lis);
-      if (test_lis.size() > 0) {
-        if (test_lis[0] == '/') full_list_path = true;
-      }
-    }
-    if (! full_list_path) {
-      run_list_file_path = _params_.base_dir + "/" + _params_.run_list_file;
-    } else {
-      run_list_file_path = _params_.run_list_file;
-    }
-    boost::replace_all(run_list_file_path, "//", "/");
-    datatools::fetch_path_with_env(run_list_file_path);
-    if (boost::filesystem::exists(run_list_file_path)) {
-      DT_THROW_IF(! _params_.no_safe_checks,
-                  std::runtime_error,
-                  "File '" << run_list_file_path << "' already exists!");
-    }
-    frunlist.reset(new std::ofstream);
-    frunlist->open(run_list_file_path.c_str());
-    if (!(*frunlist.get())) {
-      frunlist.reset();
-      DT_THROW(std::runtime_error, "Cannot open file '" << run_list_file_path << "'!");
-    }
+
+  frunlist.reset(new std::ofstream);
+  frunlist->open(run_list_file_path.c_str());
+  if (!(*frunlist.get())) {
+    frunlist.reset();
+    DT_THROW(std::runtime_error, "Cannot open file '" << run_list_file_path << "'!");
   }
+  
 
   if (frunlist) {
     for (const auto& iseedfile : seedfiles_per_run) {
@@ -419,5 +486,5 @@ void g4_seed_generator::run()
       *frunlist.get() << iseedfile.second << std::endl;
     }
   }
-
+  
 }
