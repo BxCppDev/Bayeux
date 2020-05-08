@@ -335,7 +335,7 @@ namespace genbb {
 
         if (delayed_event.get_number_of_particles() > 0) {
           if (working_event.has_time()) {
-            delayed_event.set_time(working_event.get_time() + first_delayed_time);
+            delayed_event.set_time(working_event.get_time() - first_delayed_time);
           }
           delayed_event.shift_particles_time(-first_delayed_time);
           if (working_event.has_vertex()) {
