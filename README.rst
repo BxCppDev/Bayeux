@@ -252,7 +252,7 @@ distributions  derived from  Debian and Fedora (RedHat) provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
--  Ubuntu 16.04LTS, 18.04LTS (current development system):
+-  Ubuntu 16.04LTS, 18.04LTS, 20.04LTS (current development system):
    http://www.ubuntu.com
 -  CentOS 7.5: https://www.centos.org/
 
@@ -270,6 +270,7 @@ Core Software Required
   (GNU/Clang/Intel)
   
   * Ubuntu 18.04 provides GCC version 6.5 and 7.3.
+  * Ubuntu 20.04 provides GCC version 9.3.
 
   
 On Linux,  you should  install these through  the package  manager for
@@ -294,7 +295,7 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 Core Libraries Required
 .......................
 
-* Boost  1.63.0 or  1.69.0:  http://www.boost.org  with the  following
+* Boost  1.63.0, 1.69.0, 1.71.0:  http://www.boost.org  with the  following
   libraries:    filesystem,    system,    serialization,    iostreams,
   program_options, regex and thread.
 
@@ -302,21 +303,34 @@ Core Libraries Required
   expected to  cause some crash with  GCC under Linux due  to a subtle
   bug concerning the Boost/Serialization singleton class. Boost 1.69 should
   fix this issue.
+
+  Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
   
-* Camp 0.8.2 : https://github.com/fw4spl-org/camp
+  
+* Camp >=0.8.2 : https://github.com/fw4spl-org/camp
   
   Former version 0.8.0 can be found at: https://github.com/tegesoft/camp
   and should work.
 
+  Ubuntu 20.04 provides version 0.8.4 (libcamp-dev)
+
 * GSL 2.4 (default in Ubuntu 18.04) or higher: http://www.gnu.org/s/gsl
-* CLHEP 2.4.1.0: http://proj-clhep.web.cern.ch
- 
-  Former version is 2.1.3.1.
+
+  Ubuntu 20.04 provides version 2.5 (libgsl-dev)
   
+* CLHEP 2.1.3.1, 2.1.4.1, 2.4.1.0: http://proj-clhep.web.cern.ch
+  
+  Ubuntu 20.04 provides version 2.1.4.1 (libclhep-dev)
+ 
 * Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
 
   Geant4 version 10.5 support is not ready (issue #43).
+
+* Xerces-C (optional, needed for GDML support and Geant4 bridge)
+ 
+  Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
+ 
 
 * ROOT 6.12.04 or 6.16.00: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
@@ -327,7 +341,9 @@ Core Libraries Required
 
 * Qt5 (optional)
 
-* BxDecay0 1.0 (optional) : https://github.com/BxCppDev/bxdecay0
+  Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5)
+
+* BxDecay0 1.0.2 (optional) : https://github.com/BxCppDev/bxdecay0
 
   **Warning** : BxDecay0 will become in a near future the
   only Decay0 C++ port supported by Bayeux.
@@ -335,7 +351,11 @@ Core Libraries Required
 
 Install dependencies with LinuxBrew
 ...................................
-  
+
+
+To be deprecated very soon
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
 Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
 clients of Bayeux.  It is advised to use this bundle if you don't know
@@ -375,7 +395,7 @@ Additional Software Required
   .. code:: sh
 
      $ sudo apt-get install libqt5core5a libqt5gui5 libqt5svg5 \
-	    libqt5svg5-dev libqt5widgets5 qtbase5-dev qtbase5-dev-tools \
+	    libqt5svg5-dev libqt5widgets5  \
 	    qt5-default
   ..
 
@@ -383,11 +403,11 @@ Additional Software Required
   
 * Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
 
-  On Ubuntu 16.04/18.04, this implies the installation of the following packages:
+  On Ubuntu 16.04/18.04/20.04, this implies the installation of the following packages:
 
   .. code:: sh
 
-     $ sudo apt-get install gnuplot-x11 gnuplot-doc gnuplot-mode
+     $ sudo apt-get install gnuplot 
   ..
 
 * Bayeux/datatools and Bayeux/geomtools uses the Readline library, if available:
@@ -395,18 +415,11 @@ Additional Software Required
   * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
   * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
 
-  On Ubuntu 16.04, this implies the installation of the following packages:
+  On Ubuntu 20.04, this implies the installation of the following packages:
 
   .. code:: sh
 
-     $ sudo apt-get install libreadline6-dev readline-common
-  ..
-
-  On Ubuntu 18.04, this implies the installation of the following packages:
-
-  .. code:: sh
-
-     $ sudo apt-get install libreadline7-dev readline-common
+     $ sudo apt-get install libreadline-dev
   ..
 
   **Note:** Linuxbrew provides a ``readline`` formula.
@@ -419,7 +432,7 @@ Additional Software Required
 
   .. code:: sh
 
-     $ sudo apt-get install pandoc pandoc-data
+     $ sudo apt-get install pandoc
   ..
 
 * docutils  (http://docutils.sourceforge.net/)  is also  useful  to
@@ -429,7 +442,7 @@ Additional Software Required
 
   .. code:: sh
 
-     $ sudo apt-get install docutils-common docutils-doc python-docutils
+     $ sudo apt-get install python-docutils
      $ sudo apt-get install rst2pdf
   ..
 
@@ -439,10 +452,10 @@ Known Issues on Tested Platforms
 
 - Boost/Serialization library  from version  1.65 to 1.68  introduced a
   bug  in the  implementation of  the singleton  template class.  As a
-  consequence, only Boost version 1.63 and 1.69 are supported so far.
+  consequence, only Boost version 1.63 and 1.69 and above should be supported so far.
 - Despite our efforts, Geant4 10.5 (no  MT build) is not supported yet
   since  the implementation  of  hit collections  has  changed in  some
-  undocumented  way  and  now  causes  segfault  in the  Bayeux/mctools
+  undocumented  way (as usual!) and  now  causes  segfault  in the  Bayeux/mctools
   Geant4 extension module.
   
 .. raw:: pdf
@@ -863,3 +876,5 @@ indirect contributions to the Bayeux library:
   .. image:: source/bxbayeux/logo/bayeux_tapestry_slice-1-small.png
      :align: center
      :width: 100%
+
+.. end

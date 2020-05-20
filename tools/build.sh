@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04) or CentOS (7.5).
+# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04) or CentOS (7.5).
 
 opwd=$(pwd)
 
@@ -160,8 +160,8 @@ if [ -f /etc/lsb-release ]; then
 	my_exit 1
     fi
     
-    if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" ]; then
-	echo >&2 "[error] Not an Ubuntu Linux version 16.04 or 18.04! Abort!"
+    if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" -a "${distrib_release}" != "20.04" ]; then
+	echo >&2 "[error] Not an Ubuntu Linux version 16.04, 18.04 or 20.04! Abort!"
 	my_exit 1
     else
 	echo >&2 "[info] Found Ubuntu Linux ${distrib_release}"

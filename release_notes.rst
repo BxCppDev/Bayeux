@@ -32,7 +32,11 @@ Additions
   work.
 * Describe more available build options.
 * Implement the new ``print_tree`` method for various classes.
-
+* Implement new file inclusion mechanism from  ``datatools::properties``
+  and ``datatools::multi_properties`` formatted files.
+* PR #57 : The ``bxg4_seeds`` program allows to extend a list of simulation runs
+  with statistically independant PRNG seeds.
+  
 Removals
 =========
 
@@ -45,6 +49,8 @@ Changes
   
 Fixes
 =====
+
+* PR #58 : Fix a badly computed event timestamp in the ``genbb::time_slicer_generator`` class
 
 Bugs
 ====

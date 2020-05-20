@@ -105,6 +105,7 @@ if(Bayeux_WITH_QT)
   #  - Ubuntu 14.04: 5.2.1
   #  - Ubuntu 16.04: 5.5.1
   #  - Ubuntu 18.04: 5.9.5
+  #  - Ubuntu 20.04: 5.12.8
   # Linuxbrew : 5.10.0 (March 2019)
   set(BAYEUX_QT5_MIN_VERSION "5.2.1")
   find_package(Qt5Core    ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
