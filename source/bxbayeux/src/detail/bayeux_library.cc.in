@@ -152,6 +152,7 @@ namespace bayeux {
       if (! bayeux_library::is_instantiated()) {
         if (! _bxlib_handler) {
           // Allocate the Bayeux library singleton and initialize it:
+          //std::cerr << "[devel] " << "Allocate the Bayeux library singleton and initialize it\n";
           _bxlib_handler.reset(new bayeux_library);
         }
       }
@@ -277,11 +278,14 @@ namespace bayeux {
       {
 
         // datatools:
+        DT_LOG_TRACE(_logging_, "Datatools version = '" << datatools::version::get_version() << "'");
         datatools::properties & datatools_lib_infos =
           lib_info_reg.registration("bxdatatools",
                                     "Serializable data structures based on Boost "
                                     "and general purpose utility classes and macros.",
                                     datatools::version::get_version());
+        std::string dtresdir = datatools::get_resource_dir(false);
+        DT_LOG_TRACE(_logging_, "Datatools resource dir = '" << dtresdir << "'");
         datatools_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                                          datatools::get_resource_dir(false)
                                          );

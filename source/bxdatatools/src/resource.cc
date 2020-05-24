@@ -41,9 +41,11 @@
 #include <bayeux/reloc.h>
 
 namespace {
+
   //! Return the path to the root resource directory
-  std::string get_resource_root(bool overriden_env) {
-    if (overriden_env) {
+  std::string get_resource_root(bool overriden_env_)
+  {
+    if (overriden_env_) {
       const char * env_key = DATATOOLS_ENV_RESOURCE_DIR;
       if (std::getenv(env_key)) {
         return std::string(std::getenv(env_key));
@@ -51,27 +53,32 @@ namespace {
     }
     static boost::filesystem::path install_resource_root;
     if (install_resource_root.empty()) {
+      // std::cerr << "[devel] " << "[datatools] Bayeux resource dir = '" << bayeux::get_resource_dir() << "'\n";
       install_resource_root = bayeux::get_resource_dir();
       install_resource_root /= "datatools";
     }
     return install_resource_root.string();
   }
+  
 } // namespace
 
 namespace datatools {
 
-std::string get_resource_dir(bool overriden_env) {
-  return get_resource_root(overriden_env);
-}
+  std::string get_resource_dir(bool overriden_env_)
+  {
+    return get_resource_root(overriden_env_);
+  }
 
-std::string get_resource(const std::string& rname, bool overriden_env) {
-  DT_THROW_IF(rname[0] == '/', std::logic_error, "invalid resource name");
-
-  std::string fullpath(get_resource_root(overriden_env) + "/" + rname);
-  std::ifstream check(fullpath.c_str());
-  DT_THROW_IF(!check.good(),
-              std::runtime_error,
-              "Unreadable resource '" << fullpath << "'")
-  return fullpath;
-}
+  std::string get_resource(const std::string & rname_, bool overriden_env_)
+  {
+    DT_THROW_IF(rname_[0] == '/', std::logic_error, "invalid resource name");
+    
+    std::string fullpath(get_resource_root(overriden_env_) + "/" + rname_);
+    std::ifstream check(fullpath.c_str());
+    DT_THROW_IF(!check.good(),
+                std::runtime_error,
+                "Unreadable resource '" << fullpath << "'");
+    return fullpath;
+  }
+  
 } // namespace datatools
