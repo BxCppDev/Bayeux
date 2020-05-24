@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2020-01-21
+:Date:    2020-05-25
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -63,7 +63,7 @@ emfield
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
-  Depends on the external BxDecay0_ library (option).
+  Depends on the external BxDecay0_ library (optional).
 
 genvtx
   Vertex  random  generator tools providing input to  simulation
@@ -74,7 +74,7 @@ mctools
   a Geant4 interface.
 
 lahague
-  Utilities for dosimetry and radiation protection.
+  Utilities for dosimetry and radiation protection (optional).
 
 
 .. _BxDecay0: https://github.com/BxCppDev/bxdecay0
@@ -155,11 +155,12 @@ with some work of adapting.
 Bayeux uses the C++11 standard by default so this implies the use of a
 modern C++ compiler (example: GCC version >= 4.9).
 
-Using  the `bxcppdev/bxtap`_  `Linuxbrew`_ *tap*  provided by  the
-BxCppDev_  group  should help  you  to  provide a  suitable  working
-environment on your system. However we consider Linuxbrew as 
-error-prone and we recommend to use as far as possible the package manager of your system.
-You may consider to use the Spack_ package manager to satisfy Bayeux's software dependencies.
+You may  use a dedicated `Linuxbrew`_  *tap* like the one  proposed by
+the BxCppDev_  group (`bxcppdev/bxtap`_). It  may help you to  setup a
+suitable  working environment  on  your system.   However we  consider
+Linuxbrew as  error-prone and we recommend  to use as far  as possible
+the package manager of your system.   You may also consider to use the
+Spack_ package manager to satisfy Bayeux's software dependencies.
 
 .. _`Spack`: https://spack.io/
 
@@ -216,7 +217,7 @@ build/installation  procedures,  so  you  should  read  carefully  the
 ``README.rst`` file supplied with the source code.
 
 
-If you  want to use  the development version (possibly  unstable), use
+If you  want to use  the development version (possibly  unstable), please use
 Git:
 
 .. code:: sh
@@ -252,7 +253,7 @@ distributions  derived from  Debian and Fedora (RedHat) provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
--  Ubuntu 16.04LTS, 18.04LTS, 20.04LTS (current development system):
+-  Ubuntu 16.04LTS (deprecated but should work), 18.04LTS, 20.04LTS (current development system):
    http://www.ubuntu.com
 -  CentOS 7.5: https://www.centos.org/
 
@@ -277,7 +278,7 @@ Core Software Required
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
 institutional computing clusters) may  not provide CMake  3.3. If this  is the case,  then you
-should download the latest Linux *binary .sh* file from:
+should download the latest Linux *binary .sh* file (example: ``cmake-3.17.2-Linux-x86_64.sh``) from:
 
   http://www.cmake.org/cmake/resources/software.html
 
@@ -326,10 +327,11 @@ Core Libraries Required
 * Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
 
-  Geant4 version 10.5 support is not ready (issue #43).
+  **Warning:** Geant4 version 10.5 support is not ready (issue #43).
 
-  You must install Geant4 and its associated datasets by yourself. Please do not use internal CLHEP build
-  but the system CLHEP.
+  You must install Geant4 and its associated datasets by yourself.
+  Please do not use internal CLHEP build but the CLHEP system or manual
+  install above.
 
 * Xerces-C (optional, needed for GDML support and Geant4 bridge)
  
@@ -353,8 +355,8 @@ Core Libraries Required
 
   **Remark** : This C++ port of the legacy Fortran decay0 program is now an independant project which
   has been extracted from the ``Bayeux/genbb_help module``.
-  BxDecay0 will become in a near future the only Decay0 C++ port supported by Bayeux. Bayeux will use
-  it as an external dependency.
+  BxDecay0 will become in a near future the only Decay0 C++ port supported by
+  Bayeux. Bayeux will use it as an external dependency.
   
 
 Install dependencies with LinuxBrew
@@ -398,7 +400,7 @@ Additional Software Required
 * Bayeux/datatools requires the Qt5 library when the ``BAYEUX_WITH_QT_GUI``
   option is set (experimental).
 
-  On Ubuntu 16.04/18.04/20.04, this implies the installation of the following packages:
+  On Ubuntu 18.04/20.04, this implies the installation of the following packages:
 
   .. code:: sh
 
@@ -411,7 +413,7 @@ Additional Software Required
   
 * Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
 
-  On Ubuntu 16.04/18.04/20.04, this implies the installation of the following packages:
+  On Ubuntu 18.04/20.04, this implies the installation of the following packages:
 
   .. code:: sh
 
@@ -463,7 +465,7 @@ Known Issues on Tested Platforms
   consequence, only Boost version 1.63 and 1.69 and above should be supported so far.
 - Despite our efforts, Geant4 10.5 (no  MT build) is not supported yet
   since  the implementation  of  hit collections  has  changed in  some
-  undocumented  way (as usual!) and  now  causes  segfault  in the  Bayeux/mctools
+  undocumented  way (as usual with Geant4!) and  now  causes  segfault  in the  Bayeux/mctools
   Geant4 extension module.
   
 .. raw:: pdf
