@@ -37,7 +37,7 @@ find_package(Boost ${BAYEUX_BOOST_MIN_VERSION}
   )
 message(STATUS "Boost version ${Boost_VERSION} has been detected.")
 
-set(Bayeux_SUPPORTED_BOOST_VERSIONS 106300 106900)
+set(Bayeux_SUPPORTED_BOOST_VERSIONS 106300 106900 107000 107100)
 message(STATUS "Supported Boost versions: ${Bayeux_SUPPORTED_BOOST_VERSIONS}.")
 set(_bx_boost_ver_index -1)
 list(FIND Bayeux_SUPPORTED_BOOST_VERSIONS ${Boost_VERSION} _bx_boost_ver_index)
@@ -69,7 +69,7 @@ endforeach()
 get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 
 # - Camp
-set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
+set(BAYEUX_CAMP_MIN_VERSION "0.8.2")
 find_package(CAMP ${BAYEUX_CAMP_MIN_VERSION} REQUIRED NO_MODULE)
 message(STATUS "Found CAMP at CAMP_DIR      = '${CAMP_DIR}'")
 
@@ -78,8 +78,15 @@ message(STATUS "Found CAMP at CAMP_DIR      = '${CAMP_DIR}'")
 # and thus refind it for us. We don't want to override their
 # found version for compatibility reasons.
 set(BAYEUX_CLHEP_MIN_VERSION "2.1.3.1")
-find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
-message(STATUS "Found CLHEP at CLHEP_DIR    = '${CLHEP_DIR}'")
+if (CLHEP_DIR)
+  find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
+  message(STATUS "Found CLHEP at CLHEP_DIR    = '${CLHEP_DIR}'")
+else()
+  find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED MODULE)
+  message(STATUS "Found CLHEP")
+endif()
+# message(STATUS "************** CLHEP_INCLUDE_DIRS ='${CLHEP_INCLUDE_DIRS}'")
+# message(STATUS "************** CLHEP_LIBRARIES    ='${CLHEP_LIBRARIES}'")
 
 # - GSL
 set(BAYEUX_GSL_MIN_VERSION "2.1")
@@ -111,13 +118,15 @@ if(Bayeux_WITH_QT)
   find_package(Qt5Core    ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
   find_package(Qt5Gui     ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
   find_package(Qt5Widgets ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
+  find_package(Qt5Svg ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
   message(STATUS "Found Qt5 at Qt5Core_DIR    = '${Qt5Core_DIR}'")
   message(STATUS "Found Qt5 at Qt5Gui_DIR     = '${Qt5Gui_DIR}'")
   message(STATUS "Found Qt5 at Qt5Widgets_DIR = '${Qt5Widgets_DIR}'")
-  if(Bayeux_WITH_QT_SVG)
-    find_package(Qt5Svg     ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
-    message(STATUS "Found Qt5 at Qt5Svg_DIR     = '${Qt5Svg_DIR}'")
-  endif()
+  message(STATUS "Found Qt5 at Qt5Svg_DIR     = '${Qt5Svg_DIR}'")
+  # if(Bayeux_WITH_QT_SVG)
+  #   find_package(Qt5Svg     ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
+  #   message(STATUS "Found Qt5 at Qt5Svg_DIR     = '${Qt5Svg_DIR}'")
+  # endif()
 endif()
 
 # - Geant4 if building the MCTools extension library

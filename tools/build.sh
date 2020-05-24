@@ -277,6 +277,12 @@ boost_option="-DBOOST_ROOT=${boost_root} -DBoost_ADDITIONAL_VERSIONS=1.69"
 
 camp_prefix=""
 if [ "x${camp_prefix}" = "x" ]; then
+    dpkg -l | grep libcamp-dev
+    if [ $? -eq 0 ]; then
+	camp_prefix="/usr"
+    fi
+fi
+if [ "x${camp_prefix}" = "x" ]; then
     which spack 2>&1 > /dev/null
     if [ $? -eq 0 ]; then
 	camp_prefix=$(spack find --format '{prefix}' camp)
@@ -310,11 +316,18 @@ if [ "x${clhep_prefix}" = "x" ]; then
     my_exit 1 "Missing CLHEP prefix!"   
 fi
 export PATH="${clhep_prefix}/bin:${PATH}"
-clhep_dir="${clhep_prefix}/lib/CLHEP-$(clhep-config --version | cut -d' ' -f2)"
+if [ "${clhep_prefix}" = "/usr" ]; then
+    clhep_dir="/usr/lib/x86_64-linux-gnu"
+    clhep_option="-DCLHEP_ROOT_DIR=${clhep_prefix}"
+else
+    clhep_dir="${clhep_prefix}/lib/CLHEP-$(clhep-config --version | cut -d' ' -f2)"
+fi
 if [ ! -d ${clhep_dir} ]; then
       my_exit 1 "CLHEP dir '${clhep_dir}' does not exist!"
 fi
-clhep_option="-DCLHEP_DIR=${clhep_dir}"
+if [ "x${clhep_option}" = "x" ]; then
+    clhep_option="-DCLHEP_DIR=${clhep_dir}"
+fi
 
 bxdecay0_options="-DBAYEUX_WITH_BXDECAY0=OFF"
 
@@ -376,13 +389,17 @@ if [ ${minimal_build} == false -a ${with_qt} == true ]; then
 	my_exit 1 "Qt5Widgets dir '${qt5widgets_dir}' does not exist!"
     fi
     if [ ! -d ${qt5svg_dir} ]; then
-	my_exit 1 "Qt5Svg dir '${qt5svg_dir}' does not exist!"
+	echo >&2 "[warning] Qt5Svg dir '${qt5svg_dir}' does not exist!"
+	# my_exit 1 "Qt5Svg dir '${qt5svg_dir}' does not exist!"
     fi
     qt_option0="-DBAYEUX_WITH_QT_GUI=ON"
     qt_option1="-DQt5Core_DIR=${qt5core_dir}"
     qt_option2="-DQt5Gui_DIR=${qt5gui_dir}"
     qt_option3="-DQt5Widgets_DIR=${qt5widgets_dir}"
     qt_option4="-DQt5Svg_DIR=${qt5svg_dir}"
+    if [ ! -d ${qt5svg_dir} ]; then    
+	qt_option4=""
+    fi
 else
     qt_option0="-DBAYEUX_WITH_QT_GUI=OFF"
 fi

@@ -451,6 +451,7 @@ set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_RESOURCE_DIR=${module_resource_di
 # ls -1 bxdatatools/testing/*.cxx | sed -e 's@bxdatatools/testing@${module_test_dir}@g'
 
 set(${module_name}_MODULE_TESTS
+${module_test_dir}/test_datatools.cxx
 ${module_test_dir}/test_file_include.cxx
 ${module_test_dir}/test_reflection_0.cxx
 ${module_test_dir}/test_enriched_base.cxx
@@ -528,7 +529,6 @@ ${module_test_dir}/test_urn_to_path.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
 ${module_test_dir}/test_urn_query_service.cxx
 ${module_test_dir}/test_dependency_graph.cxx
-# ${module_test_dir}/test_url.cxx
 # ${module_test_dir}/test_log_record.cxx
 # ${module_test_dir}/test_rst_tools.cxx
 ${module_test_dir}/test_configuration_parameter_model.cxx
