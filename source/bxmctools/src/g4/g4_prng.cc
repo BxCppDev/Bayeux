@@ -117,10 +117,8 @@ namespace mctools {
 
 }  // end of namespace mctools
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

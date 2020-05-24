@@ -281,7 +281,7 @@ int main(int argc_, char * argv_[])
     testIHS.set_terse_description("A test interface hierarchical system (IHS)");
     testIHS.set_logging_priority(datatools::logger::PRIO_TRACE);
     testIHS.set_scheme("test+ihs");
-    testIHS.tree_dump(std::clog, testIHS.get_display_name());
+    testIHS.tree_dump(std::clog, testIHS.get_display_name() + " [1]");
     std::clog << std::endl;
 
     testIHS.add_interface("/", "test");
@@ -292,20 +292,22 @@ int main(int argc_, char * argv_[])
     testIHS.add_interface("/", joeCmdInter);
     testIHS.add_interface("/bar", "truc");
     testIHS.add_interface("/bar", "chose");
-    testIHS.tree_dump(std::clog, testIHS.get_display_name());
+    testIHS.tree_dump(std::clog, testIHS.get_display_name() + " [2]");
     testIHS.remove_command("/joe/test");
-    testIHS.tree_dump(std::clog, testIHS.get_display_name());
+    testIHS.tree_dump(std::clog, testIHS.get_display_name() + " [3]");
     std::clog << std::endl;
 
     testIHS.remove_interface("/joe", true);
-    testIHS.tree_dump(std::clog, testIHS.get_display_name());
+    
+    testIHS.tree_dump(std::clog, testIHS.get_display_name() + " [4]");
     std::clog << std::endl;
 
     testIHS.add_interface("/test/bidule", joeCmdInter);
-    testIHS.tree_dump(std::clog, testIHS.get_display_name());
+    testIHS.tree_dump(std::clog, testIHS.get_display_name() + " [5]");
     std::clog << std::endl;
 
     foo_shell testShell(testIHS);
+    std::clog << "interactive=" << std::boolalpha << interactive << std::endl;
     testShell.run(interactive);
 
   } catch (std::exception & error) {
