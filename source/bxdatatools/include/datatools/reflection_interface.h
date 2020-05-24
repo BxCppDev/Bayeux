@@ -24,6 +24,8 @@
 #define DATATOOLS_REFLECTION_INTERFACE_H
 
 // Third Party:
+// - Boost:
+#include <boost/utility.hpp> // 2020-05-20 : fix missing header in CAMP 0.8.4
 // - Camp:
 #include <camp/detail/typeid.hpp>
 #include <camp/camptype.hpp>
