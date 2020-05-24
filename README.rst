@@ -157,9 +157,9 @@ modern C++ compiler (example: GCC version >= 4.9).
 
 Using  the `bxcppdev/bxtap`_  `Linuxbrew`_ *tap*  provided by  the
 BxCppDev_  group  should help  you  to  provide a  suitable  working
-environment on your system.
-
-We consider to migrate soon to the Spack_ package manager.
+environment on your system. However we consider Linuxbrew as 
+error-prone and we recommend to use as far as possible the package manager of your system.
+You may consider to use the Spack_ package manager to satisfy Bayeux's software dependencies.
 
 .. _`Spack`: https://spack.io/
 
@@ -264,7 +264,8 @@ Core Software Required
 
 * CMake 3.3.0 or higher: http://www.cmake.org
   
-  * Ubuntu 18.04 provides GCC version  3.10.2.
+  * Ubuntu 18.04 provides CMake version 3.10.2.
+  * Ubuntu 20.04 provides CMake version 3.16.3.
 
 * C/C++ compiler supporting at least C++11 standard
   (GNU/Clang/Intel)
@@ -327,6 +328,9 @@ Core Libraries Required
 
   Geant4 version 10.5 support is not ready (issue #43).
 
+  You must install Geant4 and its associated datasets by yourself. Please do not use internal CLHEP build
+  but the system CLHEP.
+
 * Xerces-C (optional, needed for GDML support and Geant4 bridge)
  
   Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
@@ -339,22 +343,26 @@ Core Libraries Required
   * GDML,
   * OpenGL.
 
+  You must install ROOT by yourself. 
+
 * Qt5 (optional)
 
   Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5)
 
 * BxDecay0 1.0.2 (optional) : https://github.com/BxCppDev/bxdecay0
 
-  **Warning** : BxDecay0 will become in a near future the
-  only Decay0 C++ port supported by Bayeux.
+  **Remark** : This C++ port of the legacy Fortran decay0 program is now an independant project which
+  has been extracted from the ``Bayeux/genbb_help module``.
+  BxDecay0 will become in a near future the only Decay0 C++ port supported by Bayeux. Bayeux will use
+  it as an external dependency.
   
 
 Install dependencies with LinuxBrew
 ...................................
 
 
-To be deprecated very soon
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Deprecated**
+~~~~~~~~~~~~~~
 
 For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
 Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
@@ -390,7 +398,7 @@ Additional Software Required
 * Bayeux/datatools requires the Qt5 library when the ``BAYEUX_WITH_QT_GUI``
   option is set (experimental).
 
-  On Ubuntu 16.04/18.04, this implies the installation of the following packages:
+  On Ubuntu 16.04/18.04/20.04, this implies the installation of the following packages:
 
   .. code:: sh
 
@@ -399,7 +407,7 @@ Additional Software Required
 	    qt5-default
   ..
 
-  **Note:** bxcppdev/bxtap provides a ``qt5-base`` formula.
+  .. **Note:** bxcppdev/bxtap provides a ``qt5-base`` formula.
   
 * Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
 
@@ -409,6 +417,8 @@ Additional Software Required
 
      $ sudo apt-get install gnuplot 
   ..
+
+  Gnuplot uses by default the ``gnuplot-qt`` interface. You may want to use the ``gnuplot-x11`` package.
 
 * Bayeux/datatools and Bayeux/geomtools uses the Readline library, if available:
 
@@ -421,8 +431,6 @@ Additional Software Required
 
      $ sudo apt-get install libreadline-dev
   ..
-
-  **Note:** Linuxbrew provides a ``readline`` formula.
 
 * pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
   documentation in user friendly format:
@@ -579,7 +587,7 @@ These options control the core configuration of Bayeux.
   Default is ON.
 
 ``BAYEUX_WITH_BXDECAY0``
-  Build the Bayeux/genbb_help with linkage to the BxDecay0 library. Default is OFF.
+  Build the Bayeux/genbb_help with linkage to the external BxDecay0 library. Default is OFF.
 
 ``BAYEUX_WITH_GEANT4_MODULE``
   Build the Bayeux/mctools Geant4 library extension module. Default is ON.
@@ -627,7 +635,88 @@ These options control the core configuration of Bayeux.
 
   Default is ON (forcing OFF is for experts only).
 
+Dependency Options
+----------------------------
+
+``BOOST_ROOT``, ``Boost_ADDITIONAL_VERSIONS`` :
+  Set the directory where Boost is installed.
+ 
+  Example:
+
+  .. code:: sh
+ 
+     $ cmake ... -DBOOST_ROOT="/usr" -DBoost_ADDITIONAL_VERSIONS=1.74 ...
+  ..  
+ 
+``CAMP_DIR`` :
+  Set the directory where CAMP's Cmake support is available.
+ 
+  Example:
+
+  .. code:: sh
+ 
+     $ cmake ... -DCAMP_DIR="/usr/lib/camp/cmake" ...
+  ..  
+ 
+``CLHEP_ROOT_DIR`` :
+  Set the directory where CLHEP header and library files are installed.
+ 
+  Example:
+
+  .. code:: sh
+
+     $ cmake ... -DCLHEP_ROOT_DIR=$(clhep-config --prefix | tr -d '"') ...
+  ..  
+
+ 
+``BxDecay0_DIR`` :
+   Set the directory where BxDecay0's Cmake support is available.
+
+  Example:
+
+  .. code:: sh
+
+     $ cmake ... -DBAYEUX_WITH_BXDECAY0=ON  -DBxDecay0_DIR="$(bxdecay0-config --cmakedir)" ...
+  ..  
+ 
+ 
+``Qt5Core_DIR``, ``Qt5Gui_DIR``, ``Qt5Widgets_DIR``, ``Qt5Svg_DIR``:
+   Set the directories where Qt5 libraries' Cmake support is available.
+
+  Example:
+
+  .. code:: sh
+
+     $ cmake ... -DBAYEUX_WITH_QT_GUI=ON \
+                 -DQt5Core_DIR="/usr/lib/x86_64-linux-gnu/cmake/Qt5Core" \ 
+                 -DQt5Gui_DIR="/usr/lib/x86_64-linux-gnu/cmake/Qt5Gui" \ 
+                 -DQt5Widgets_DIR="/usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets" \ 
+                 -DQt5Svg_DIR="/usr/lib/x86_64-linux-gnu/cmake/Qt5Svg" ...
+  ..  
+
+``ROOT_DIR`` :
+  Set the directory where ROOT's Cmake support is available.
+ 
+  Example:
+
+  .. code:: sh
+ 
+     $ cmake ... -DROOT_DIR="$(root-config --prefix)/share/root/cmake" ...
+  ..  
+ 
+
+``Geant4_DIR`` :
+  Set the directory where Geant4's Cmake support is available.
   
+  Example:
+
+  .. code:: sh
+ 
+     $ cmake ... \
+        -DBAYEUX_WITH_GEANT4_MODULE=ON \
+        -DGeant4_DIR"$(geant4-config --prefix)/lib/Geant4-$(geant4-config --version | cut -d' ' -f2)" ...
+  ..  
+ 
 Building and Installing
 -----------------------
 
