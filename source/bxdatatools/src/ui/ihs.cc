@@ -891,7 +891,9 @@ namespace datatools {
 
     void ihs::remove_interface(const std::string & interface_path_, bool recursive_)
     {
-      DT_LOG_TRACE_ENTERING(get_logging_priority());
+      auto logging = get_logging_priority();
+      logging = datatools::logger::PRIO_DEBUG;
+      DT_LOG_TRACE_ENTERING(logging);
       DT_THROW_IF(interface_path_ == datatools::ui::path::root_path(),
                   std::logic_error,
                   "Cannot remove the root node!");
@@ -901,34 +903,34 @@ namespace datatools {
       DT_THROW_IF(! the_node.is_interface(),
                   std::logic_error,
                   "Node '" << interface_path_ << "' is not a command interface node!");
-      DT_LOG_TRACE(get_logging_priority(),
+      DT_LOG_DEBUG(logging,
                    "About to remove interface node '" << interface_path_ << "'...");
       if (the_node.has_children()) {
         DT_THROW_IF(!recursive_, std::logic_error,
                     "Cannot remove command interface '" << interface_path_ << "' because it contains child nodes!");
         // Recursive removal of child nodes...
-        for (std::set<node *>::iterator inode = the_node._children_.begin();
-             inode != the_node._children_.end();
-             inode++) {
-          node * the_local_node = *inode;
+        while (the_node._children_.size()) {
+          node * the_local_node = *the_node._children_.begin();
           if (the_local_node->is_interface()) {
-            DT_LOG_TRACE(get_logging_priority(),
+            DT_LOG_DEBUG(logging,
                          "Removing interface node '" << the_local_node->get_full_path() << "'...");
             remove_interface(the_local_node->get_full_path(), recursive_);
           } else if (the_local_node->is_command()) {
-            DT_LOG_TRACE(get_logging_priority(),
+            DT_LOG_DEBUG(logging,
                          "Removing command node '" << the_local_node->get_full_path() << "'...");
             remove_command(the_local_node->get_full_path());
-          }
+            DT_LOG_DEBUG(logging,
+                         "Command node '" << the_local_node->get_full_path() << "' has been removed.");
+           }
         }
       }
-      DT_LOG_TRACE(get_logging_priority(),
+      DT_LOG_DEBUG(logging,
                    "Removing interface node '" << interface_path_ << "'...");
       if (the_node.has_parent_node()) {
         the_node.unset_parent_node();
       }
       _nodes_.erase(interface_path_);
-      DT_LOG_TRACE(get_logging_priority(), "Done.");
+      DT_LOG_DEBUG(logging, "Done.");
       DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
