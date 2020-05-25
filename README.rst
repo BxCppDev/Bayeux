@@ -308,12 +308,8 @@ Core Libraries Required
 
   Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
   
+* Camp >=0.8.2 : https://github.com/IRCAD-IHU/camp
   
-* Camp >=0.8.2 : https://github.com/fw4spl-org/camp
-  
-  Former version 0.8.0 can be found at: https://github.com/tegesoft/camp
-  and should work.
-
   Ubuntu 20.04 provides version 0.8.4 (libcamp-dev)
 
 * GSL 2.4 (default in Ubuntu 18.04) or higher: http://www.gnu.org/s/gsl
@@ -336,7 +332,6 @@ Core Libraries Required
 * Xerces-C (optional, needed for GDML support and Geant4 bridge)
  
   Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
- 
 
 * ROOT 6.12.04 or 6.16.00: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
@@ -793,33 +788,7 @@ bayeux  activation  shell  function  from  your  Bash  startup  script
       if [ -n "${BAYEUX_INSTALL_DIR}" ]; then
 	  echo >&2 "[error] bayeux_setup: Bayeux is already setup!"
 	  return 2
-      fi
-      
-      ### Uncomment the following lines if your Bayeux depends on Linuxbrew:
-      # which brew > /dev/null 2>&1
-      # if [ $? -ne 0 ]; then
-      #   # You have forgotten to setup Linuxbrew:
-      #	  echo >&2 "[error] bayeux_setup: Linuxbrew is not setup! "
-      #	  echo >&2 "[error] bayeux_setup: Bayeux depends on software managed by Linuxbrew."
-      #	  echo >&2 "[error] bayeux_setup: Please setup Linuxbrew"
-      #	  echo >&2 "[error]               on your system first!" 
-      #	  return 1	
-      # fi
-      
-      ### Or, to automate the setup of Linuxbrew, uncomment the following lines,
-      ### as illustrated at https://github.com/BxCppDev/homebrew-bxtap.git :
-      # which brew > /dev/null 2>&1
-      # if [ $? -ne 0 ]; then
-      #    do_linuxbrew_setup
-      #    # In case Linuxbrew provides its own version of Bayeux:
-      #    brew list | tr -s [[:space:]] | grep bayeux
-      #    if [ $? -eq 0 ]; then
-      #        # Disable Linuxbrew's Bayeux:
-      #        # Beware, this can break some dependencies!
-      #        brew unlink bayeux
-      #    fi
-      # fi
-      
+      fi     
       export BAYEUX_INSTALL_DIR="/path/to/Bayeux/installation/dir"
       export PATH="${BAYEUX_INSTALL_DIR}/bin:${PATH}"
       echo >&2 "[info] bayeux_setup: Bayeux $(bxquery --version) is now setup!"
@@ -905,12 +874,6 @@ To do
 * Provide official example code for many classes.
 * Migrate some deprecated  Boost classes to some  C++11 classes (smart
   pointers...)
-* Implement  support for  radioactive  decays using  ENSDF files  from
-  Geant4 in the Bayeux/genbb_help module.
-* Implement  a  Bayeux/mctools  MCNP   extension  library  module  and
-  companion tools.
-* Split  the  historical  GENBB/Decay0   C++  port  into  an  external
-  standalone project and make Bayeux/genbb depends on it.
 
 .. raw:: pdf
 
