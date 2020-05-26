@@ -68,6 +68,7 @@ camp_prefix=""
 boost_root=""
 minimal_build=false
 gcc_version=
+use_ninja=false
 
 function cl_parse()
 {
@@ -197,12 +198,18 @@ bayeux_version="${bx_branch}"
 install_dir=${install_base_dir}/${bayeux_version}${bayeux_suffix}
 build_dir=${build_base_dir}/${bayeux_version}${bayeux_suffix}
 
+make_bin=
 which ninja > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo >&2 "[error] ninja builder not found!"
-    my_exit 1
+    echo >&2 "[warning] ninja builder not found!"
+    # my_exit 1
 else
     echo >&2 "[info] Found ninja  : $(which ninja)"
+    use_ninja=true
+    make_bin=$(which ninja)
+fi
+if [ "x${make_bin}" = "x" ]; then
+    make_bin=$(which make)
 fi
 
 clhep_checked=false
@@ -478,6 +485,11 @@ fi
 # bayeux_mcnp_option="-DBAYEUX_WITH_MCNP_MODULE=OFF"
 bayeux_mcnp_option=""
 
+ninja_option=
+if [ ${use_ninja} = true ]; then
+    ninja_option="-GNinja"
+fi
+
 cd ${build_dir}
 echo >&2 ""
 echo >&2 "[info] Configuring..."
@@ -516,7 +528,7 @@ cmake \
     -DBAYEUX_ENABLE_TESTING=ON \
     -DBAYEUX_WITH_DOCS=ON \
     -DBAYEUX_WITH_DOCS_OCD=ON \
-    -GNinja \
+    ${ninja_option} \
     ${bayeux_source_dir}
 if [ $? -ne 0 ]; then
     echo >&2 "[error] Bayeux ${bayeux_version} configuration failed!"
@@ -527,7 +539,7 @@ if [ ${only_configure} -eq 0 ]; then
 
     echo >&2 ""
     echo >&2 "[info] Building..."
-    ninja -j${nprocs}
+    ${make_bin} -j${nprocs}
     if [ $? -ne 0 ]; then
 	echo >&2 "[error] Bayeux ${bayeux_version} build failed!"
 	my_exit 1
@@ -535,7 +547,7 @@ if [ ${only_configure} -eq 0 ]; then
 
     echo >&2 ""
     echo >&2 "[info] Testing..."
-    ninja test
+    ${make_bin} test
     if [ $? -ne 0 ]; then
 	echo >&2 "[error] Bayeux ${bayeux_version} testing failed!"
 	my_exit 1
@@ -543,7 +555,7 @@ if [ ${only_configure} -eq 0 ]; then
 
     echo >&2 ""
     echo >&2 "[info] Installing..."
-    ninja install
+    ${make_bin} install
     if [ $? -ne 0 ]; then
 	echo >&2 "[error] Bayeux ${bayeux_version} installation failed!"
 	my_exit 1
