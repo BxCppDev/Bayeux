@@ -175,8 +175,8 @@ elif [ -f /etc/redhat-release ]; then
 	my_exit 1
     fi
     
-    if [ "${distrib_release}" != "7.5" ]; then
-	echo >&2 "[error] Not an CentOS Linux version 7.5! Abort!"
+    if [ "${distrib_release}" != "7.5" -a  "${distrib_release}" != "7.7" ]; then
+	echo >&2 "[error] Not an CentOS Linux version 7.5 or 7.7! Abort!"
 	my_exit 1
     else
 	echo >&2 "[info] Found CentOS Linux ${distrib_release}"
