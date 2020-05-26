@@ -40,6 +40,7 @@ Options:
                              Build the Geant4 module (experimental mode).
 			     Allows Geant4 10.5
    --without-qt            : Do not build the Qt-based GUI material
+   --boost-root path       : Set the CAMP prefix path
    --camp-prefix path      : Set the CAMP prefix path
    --minimal-build         : Minimal build
    --bayeux-suffix name    : Set a special suffix for the build directory
@@ -264,7 +265,7 @@ else
 fi
 
 if [ "x${boost_root}" = "x" ]; then
-    which spack 2>&1 > /dev/null
+    which spack > /dev/null 2>&1
     if [ $? -eq 0 ]; then
 	boost_root=$(spack find --format '{prefix}' boost)
     fi
@@ -282,7 +283,6 @@ if [ ! -d ${boost_root} ]; then
 fi
 boost_option="-DBOOST_ROOT=${boost_root} -DBoost_ADDITIONAL_VERSIONS=1.69"
 
-camp_prefix=""
 if [ "x${camp_prefix}" = "x" ]; then
     dpkg -l | grep libcamp-dev
     if [ $? -eq 0 ]; then
