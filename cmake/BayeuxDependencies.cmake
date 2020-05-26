@@ -50,7 +50,7 @@ if (NOT _bx_boost_ver_index EQUAL -1)
 endif()
 set(_bx_boost_ver_index -1)
 list(FIND Bayeux_SUPPORTED_BOOST_VERSIONS ${Boost_VERSION} _bx_boost_ver_index)
-if (NOT _bx_boost_ver_index EQUAL -1)
+if (_bx_boost_ver_index EQUAL -1)
   message(STATUS "Bayeux does not officially support Boost version ${Boost_VERSION}\n"
     "but this version may work.\n"
     "In doubt, please use preferably Boost version in: ${Bayeux_SUPPORTED_BOOST_VERSIONS}")
@@ -82,6 +82,9 @@ get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 
 # - Camp
 set(BAYEUX_CAMP_MIN_VERSION "0.8.2")
+if (BAYEUX_CAMP_LEGACY)
+  set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
+endif()
 find_package(CAMP ${BAYEUX_CAMP_MIN_VERSION} REQUIRED NO_MODULE)
 message(STATUS "Found CAMP ${CAMP_VERSION} at CAMP_DIR      = '${CAMP_DIR}'")
 

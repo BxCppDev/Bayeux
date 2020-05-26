@@ -42,6 +42,7 @@ Options:
    --without-qt            : Do not build the Qt-based GUI material
    --boost-root path       : Set the CAMP prefix path
    --camp-prefix path      : Set the CAMP prefix path
+   --camp-legacy           : Allow legacy version of CAMP (0.8.0)
    --minimal-build         : Minimal build
    --bayeux-suffix name    : Set a special suffix for the build directory
    --gcc-version version   : Set GC version
@@ -66,6 +67,7 @@ with_geant4=true
 with_geant4_experimental=false
 with_qt=true
 camp_prefix=""
+camp_legacy=false
 boost_root=""
 minimal_build=false
 gcc_version=
@@ -120,6 +122,8 @@ function cl_parse()
 	elif [ "${arg}" = "--camp-prefix" ]; then
 	    shift 1
 	    camp_prefix="$1"
+	elif [ "${arg}" = "--camp-legacy" ]; then
+	    camp_legacy=true
 	elif [ "${arg}" = "--gcc-version" ]; then
 	    shift 1
 	    gcc_version="$1"
@@ -146,6 +150,7 @@ echo >&2 "[info] GCC version       : '${gcc_version}'"
 echo >&2 "[info] with_geant4       : ${with_geant4}"
 echo >&2 "[info] \`-- experimental  : ${with_geant4_experimental}"
 echo >&2 "[info] camp_prefix       : '${camp_prefix}'"
+echo >&2 "[info] camp_legacy       : '${camp_legacy}'"
 echo >&2 "[info] with_qt           : ${with_qt}"
 echo >&2 "[info] with_bxdecay0     : ${with_bxdecay0}"
 echo >&2 "[info] boost_root        : ${boost_root}"
@@ -198,6 +203,14 @@ bayeux_version="${bx_branch}"
 
 install_dir=${install_base_dir}/${bayeux_version}${bayeux_suffix}
 build_dir=${build_base_dir}/${bayeux_version}${bayeux_suffix}
+
+which cmake > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo >&2 "[error] CMake not found!"
+    my_exit 1
+else
+    echo >&2 "[info] CMake $(cmake --version | head -1  | cut -d' ' -f3) found at $(which cmake)!"
+fi
 
 make_bin=
 which ninja > /dev/null 2>&1
@@ -290,7 +303,7 @@ if [ "x${camp_prefix}" = "x" ]; then
     fi
 fi
 if [ "x${camp_prefix}" = "x" ]; then
-    which spack 2>&1 > /dev/null
+    which spack  > /dev/null 2>&1
     if [ $? -eq 0 ]; then
 	camp_prefix=$(spack find --format '{prefix}' camp)
     fi
@@ -308,13 +321,15 @@ if [ ! -d ${camp_dir} ]; then
     my_exit 1 "CAMP dir '${camp_dir}' does not exist!"
 fi
 camp_option="-DCAMP_DIR=${camp_dir}"
-
+if [ ${camp_legacy} = true ]; then
+    camp_option="${camp_option} -DBAYEUX_CAMP_LEGACY=ON"
+fi
 clhep_prefix=""
-which clhep-config 2>&1 > /dev/null
+which clhep-config > /dev/null 2>&1 
 if [ $? -eq 0 ]; then
     clhep_prefix="$(clhep-config --prefix | tr -d '"')"
 else
-    which spack 2>&1 > /dev/null
+    which spack > /dev/null 2>&1
     if [ $? -eq 0 ]; then
 	clhep_prefix=$(spack find --format "{prefix}" "clhep")
     fi
@@ -344,21 +359,21 @@ bxdecay0_dir=""
 if [ ${with_bxdecay0} = true ]; then
     
     if [ "x${bxdecay0_dir}" = "x" ]; then 
-	which spack 2>&1 > /dev/null
+	which spack > /dev/null 2>&1 
 	if [ $? -eq 0 ]; then
 	    bxdecay0_dir="$(spack find --format '{prefix}' bxdecay0)/lib/cmake"
 	fi
     fi
     
     if [ "x${bxdecay0_dir}" = "x" ]; then 
-	which bxdecay0-query 2>&1 > /dev/null
+	which bxdecay0-query> /dev/null 2>&1 
 	if [ $? -eq 0 ]; then
 	    bxdecay0_dir="$(bxdecay0-query --prefix)/lib/cmake"
 	fi
     fi
    
     if [ "x${bxdecay0_dir}" = "x" ]; then 
-	pkg-config --exists bxdecay0 2>&1 > /dev/null
+	pkg-config --exists bxdecay0> /dev/null 2>&1
 	if [ $? -eq 0 ]; then
 	    bxdecay0_dir="$(pkg-config pkg-config --variable=prefix bxdecay0)/lib/cmake"
 	fi
