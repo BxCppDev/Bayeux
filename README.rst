@@ -263,7 +263,7 @@ though support will be on a best effort basis.
 Core Software Required
 ......................
 
-* CMake 3.3.0 or higher: http://www.cmake.org
+* CMake 3.10.2 or higher: http://www.cmake.org
   
   * Ubuntu 18.04 provides CMake version 3.10.2.
   * Ubuntu 20.04 provides CMake version 3.16.3.
@@ -301,24 +301,30 @@ Core Libraries Required
   libraries:    filesystem,    system,    serialization,    iostreams,
   program_options, regex and thread.
 
+  * Ubuntu 18.04 provides broken (for Bayeux) version 1.65.0 
+  * Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
+
   **Beware**: Boost versions 1.65 (default on Ubuntu 18.04) to 1.68 are
   expected to  cause some crash with  GCC under Linux due  to a subtle
   bug concerning the Boost/Serialization singleton class. Boost 1.69 should
   fix this issue.
-
-  Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
   
 * Camp >=0.8.2 : https://github.com/IRCAD-IHU/camp
   
-  Ubuntu 20.04 provides version 0.8.4 (libcamp-dev)
+  * Ubuntu 18.04 does not provide Camp
+  * Ubuntu 20.04 provides version 0.8.4 (libcamp-dev)
 
-* GSL 2.4 (default in Ubuntu 18.04) or higher: http://www.gnu.org/s/gsl
+* GSL 2.1 or higher: http://www.gnu.org/s/gsl
 
-  Ubuntu 20.04 provides version 2.5 (libgsl-dev)
+  * Ubuntu 18.04 provides version 2.4 (libgsl-dev)
+  * Ubuntu 20.04 provides version 2.5 (libgsl-dev)
   
-* CLHEP 2.1.3.1, 2.1.4.1, 2.4.1.0: http://proj-clhep.web.cern.ch
+* CLHEP 2.1.3.1, 2.1.4.2, 2.4.1.0: http://proj-clhep.web.cern.ch
   
-  Ubuntu 20.04 provides version 2.1.4.1 (libclhep-dev)
+  * Ubuntu 18.04 does not provide CLHEP
+  * Ubuntu 20.04   provides   version   2.1.4.1   (libclhep-dev)   but
+    unfortunately  this  version has  no  CMake  support so  you  should
+    install this library by yourself.
  
 * Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
@@ -331,7 +337,7 @@ Core Libraries Required
 
 * Xerces-C (optional, needed for GDML support and Geant4 bridge)
  
-  Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
+  * Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
 
 * ROOT 6.12.04 or 6.16.00: http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
@@ -344,14 +350,17 @@ Core Libraries Required
 
 * Qt5 (optional)
 
-  Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5)
+  * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5)
 
-* BxDecay0 1.0.2 (optional) : https://github.com/BxCppDev/bxdecay0
+* BxDecay0 1.0.2 (optional, see below) : https://github.com/BxCppDev/bxdecay0
 
-  **Remark** : This C++ port of the legacy Fortran decay0 program is now an independant project which
-  has been extracted from the ``Bayeux/genbb_help module``.
-  BxDecay0 will become in a near future the only Decay0 C++ port supported by
-  Bayeux. Bayeux will use it as an external dependency.
+  You must install BxDecay0 by yourself. 
+
+  **Remark** : This  C++ port of the legacy Fortran  decay0 program is
+  now  an  independant  project  which has  been  extracted  from  the
+  ``Bayeux/genbb_help module``.  BxDecay0 will become in a near future
+  the only Decay0 C++ port supported  by Bayeux. Bayeux will use it as
+  an external dependency.
   
 
 Install dependencies with LinuxBrew

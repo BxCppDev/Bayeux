@@ -36,6 +36,10 @@ Additions
   and ``datatools::multi_properties`` formatted files.
 * PR #57 : The ``bxg4_seeds`` program allows to extend a list of simulation runs
   with statistically independant PRNG seeds.
+* Support with GCC 9.3.0 (default on Ubuntu 20.04)
+* Support Boost 1.71 (default on Ubuntu 20.04)
+* Support CLHEP 2.1.4.2
+* Support CAMP 0.8.4 (default on Ubuntu 20.04)
   
 Removals
 =========
@@ -50,8 +54,16 @@ Changes
 Fixes
 =====
 
-* PR #58 : Fix a badly computed event timestamp in the ``genbb::time_slicer_generator`` class
-
+* PR   #58  :   Fix  a   badly   computed  event   timestamp  in   the
+  ``genbb::time_slicer_generator`` class
+* Add some pragmas for GCC (9) to workaround warnings from Geant4 (for
+  the G4 plugin only)
+* Fix a bug in ``datatools::ui::ihs`` class 
+* Fix a bug  in ``BinReloc`` that occurs with GCC  9 : unresolved path
+  due  to an  unexpected ``r--p``  access mode  in ``/proc/self/maps``
+  while ``r-xp`` was used before  (no documentation found so far about
+  it)
+  
 Bugs
 ====
 
