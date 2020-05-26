@@ -438,8 +438,19 @@ Additional Software Required
      $ sudo apt-get install libreadline-dev
   ..
 
+* Doxygen is  used to generate some
+  documentation:
+
+  On Ubuntu, this implies  the installation of the following
+  packages:
+
+  .. code:: sh
+
+     $ sudo apt-get install doxygen
+  ..
+
 * pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
-  documentation in user friendly format:
+  documentation in user friendly format (optional):
 
   On Ubuntu, this implies  the installation of the following
   packages:
@@ -450,13 +461,13 @@ Additional Software Required
   ..
 
 * docutils  (http://docutils.sourceforge.net/)  is also  useful  to
-  generate documentation from ReST format in user friendly format:
+  generate documentation from ReST format in user friendly format (optional):
 
-  On Ubuntu, this implies the installation of the following packages:
+  On Ubuntu 20.04, this implies the installation of the following packages:
 
   .. code:: sh
 
-     $ sudo apt-get install python-docutils
+     $ sudo apt-get install docutils-common python-docutils
      $ sudo apt-get install rst2pdf
   ..
 

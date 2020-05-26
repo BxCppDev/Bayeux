@@ -142,10 +142,6 @@ if(Bayeux_WITH_QT)
   message(STATUS "Found Qt5 at Qt5Gui_DIR     = '${Qt5Gui_DIR}'")
   message(STATUS "Found Qt5 at Qt5Widgets_DIR = '${Qt5Widgets_DIR}'")
   message(STATUS "Found Qt5 at Qt5Svg_DIR     = '${Qt5Svg_DIR}'")
-  # if(Bayeux_WITH_QT_SVG)
-  #   find_package(Qt5Svg     ${BAYEUX_QT5_MIN_VERSION} REQUIRED)
-  #   message(STATUS "Found Qt5 at Qt5Svg_DIR     = '${Qt5Svg_DIR}'")
-  # endif()
 endif()
 
 # - Geant4 if building the MCTools extension library

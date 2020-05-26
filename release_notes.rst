@@ -14,7 +14,7 @@ the `release notes archive`_.
 Requirements
 ============
 
-Bayeux 3.4.2 requires Linux (recommended Ubuntu >=18.04, CentOS >=7.5),
+Bayeux 3.4.2 requires Linux (recommended Ubuntu >=18.04 (preferred 20.04), CentOS >=7.5),
 or macOS 10.
 
 
@@ -63,7 +63,8 @@ Fixes
   due  to an  unexpected ``r--p``  access mode  in ``/proc/self/maps``
   while ``r-xp`` was used before  (no documentation found so far about
   it)
-  
+ * Remove deprecated Doxygen directives
+    
 Bugs
 ====
 
