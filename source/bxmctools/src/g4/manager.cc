@@ -83,7 +83,6 @@
 #endif
 #endif
 
-
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh" // For terminal tcsh use
 // #pragma message("NOTE: G4UI_USE_TCSH is set")
@@ -91,7 +90,15 @@
 
 #ifdef G4VIS_USE
 // #pragma message("NOTE: G4VIS_USE is set")
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include "G4VisExecutive.hh"
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #endif // G4VIS_USE
 
 namespace mctools {

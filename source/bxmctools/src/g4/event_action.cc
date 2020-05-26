@@ -27,7 +27,16 @@
 #include <G4EventManager.hh>
 #include <G4TrajectoryContainer.hh>
 #include <G4Trajectory.hh>
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include <G4VVisManager.hh>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #include <G4ios.hh>
 // - Bayeux/datatools:
 #include <datatools/ioutils.h>

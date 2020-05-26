@@ -44,7 +44,17 @@
 #include <G4FieldManager.hh>
 #include <G4ChordFinder.hh>
 #include <G4TransportationManager.hh>
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include <G4GDMLParser.hh>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
 #include <G4SDManager.hh>
 #include <G4LogicalVolumeStore.hh>
 #include <G4Color.hh>

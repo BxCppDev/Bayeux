@@ -48,7 +48,15 @@
 #endif
 
 #include <G4UImanager.hh>
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include <G4VVisManager.hh>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #include <G4ios.hh>
 
 // This project:
