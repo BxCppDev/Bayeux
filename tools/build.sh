@@ -40,6 +40,8 @@ Options:
                              Build the Geant4 module (experimental mode).
 			     Allows Geant4 10.5
    --without-qt            : Do not build the Qt-based GUI material
+   --system-find-boost     : Use the system FindBoost CMake script
+   --add-boost-version ver : Add a Boost version
    --boost-root path       : Set the CAMP prefix path
    --camp-prefix path      : Set the CAMP prefix path
    --camp-legacy           : Allow legacy version of CAMP (0.8.0)
@@ -69,6 +71,8 @@ with_qt=true
 camp_prefix=""
 camp_legacy=false
 boost_root=""
+system_find_boost=false
+boost_versions_added=
 minimal_build=false
 gcc_version=
 use_ninja=false
@@ -105,6 +109,16 @@ function cl_parse()
 	elif [ "${arg}" = "--boost-root" ]; then
 	    shift 1
 	    boost_root="$1"
+	elif [ "${arg}" = "--add-boost-version" ]; then
+	    shift 1
+	    added_boost_version="$1"
+	    if [  "x${boost_versions_added}" = "x"]; then
+		boost_versions_added="${added_boost_version}"
+	    else
+		boost_versions_added="${boost_versions_added};${added_boost_version}"
+	    fi	    		       
+	elif [ "${arg}" = "--system-find-boost" ]; then
+	    system_find_boost=true
 	elif [ "${arg}" = "--clean-build-dir" ]; then
 	    clean_build_dir=true
 	elif [ "${arg}" = "--with-bxdecay0" ]; then
@@ -144,17 +158,26 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo >&2 "[info] Bayeux source dir : '${bayeux_source_dir}'"
-echo >&2 "[info] minimal_build     : ${minimal_build}"
-echo >&2 "[info] GCC version       : '${gcc_version}'"
-echo >&2 "[info] with_geant4       : ${with_geant4}"
-echo >&2 "[info] \`-- experimental  : ${with_geant4_experimental}"
-echo >&2 "[info] camp_prefix       : '${camp_prefix}'"
-echo >&2 "[info] camp_legacy       : '${camp_legacy}'"
-echo >&2 "[info] with_qt           : ${with_qt}"
-echo >&2 "[info] with_bxdecay0     : ${with_bxdecay0}"
-echo >&2 "[info] boost_root        : ${boost_root}"
-echo >&2 "[info] bayeux_suffix     : ${bayeux_suffix}"
+echo >&2 "[info] Configuration :"
+echo >&2 "[info]   # processors      : ${nprocs}"
+echo >&2 "[info]   dry_run           : ${dry_run}"
+echo >&2 "[info]   Bayeux source dir : '${bayeux_source_dir}'"
+echo >&2 "[info]   Bayeux version    : '${bayeux_version}'"
+echo >&2 "[info]   Bayeux install base dir : '${install_base_dir}'"
+echo >&2 "[info]   Bayeux build base dir : '${build_base_dir}'"
+echo >&2 "[info]   minimal_build     : ${minimal_build}"
+echo >&2 "[info]   GCC version       : '${gcc_version}'"
+echo >&2 "[info]   with_geant4       : ${with_geant4}"
+echo >&2 "[info]   \`-- experimental  : ${with_geant4_experimental}"
+echo >&2 "[info]   camp_prefix       : '${camp_prefix}'"
+echo >&2 "[info]   camp_legacy       : ${camp_legacy}"
+echo >&2 "[info]   with_qt           : ${with_qt}"
+echo >&2 "[info]   with_bxdecay0     : ${with_bxdecay0}"
+echo >&2 "[info]   boost_root        : ${boost_root}"
+echo >&2 "[info]   |-- system_find_boost : ${system_find_boost}"
+echo >&2 "[info]   \`-- boost_versions_added : '${boost_versions_added}'"
+echo >&2 "[info]   bayeux_suffix     : '${bayeux_suffix}'"
+echo >&2 "[info]   use_ninja         : ${use_ninja}"
 # my_exit 1
 
 # Check distribution:
@@ -182,7 +205,7 @@ elif [ -f /etc/redhat-release ]; then
 	my_exit 1
     fi
     
-    if [ "${distrib_release}" != "7.5" -a  "${distrib_release}" != "7.7"  -a  "${distrib_release}" != "7.8" ]; then
+    if [ "${distrib_release}" != "7.5" -a  "${distrib_release}" != "7.7" -a  "${distrib_release}" != "7.8" ]; then
 	echo >&2 "[error] Not an CentOS Linux version 7.5, 7.7 or 7.8! Abort!"
 	my_exit 1
     else
@@ -192,7 +215,7 @@ fi
 
 # Check Git source repository:
 echo >&2 "[info] Bayeux source directory: '${bayeux_source_dir}'"
-ls -l ${bayeux_source_dir}/.git
+# ls -l ${bayeux_source_dir}/.git
 if [ ! -d ${bayeux_source_dir}/.git ]; then
     echo >&2 "[error] Not the Bayeux source directory."
     app_exit 1
@@ -294,16 +317,22 @@ fi
 if [ ! -d ${boost_root} ]; then
       my_exit 1 "Boost root '${boost_root}' does not exist!"
 fi
-boost_option="-DBOOST_ROOT=${boost_root} -DBoost_ADDITIONAL_VERSIONS=1.69"
+boost_option="-DBOOST_ROOT=${boost_root}"
+if [ "x${boost_versions_added}" != "x" ]; then
+    boost_option="${boost_option} -DBoost_ADDITIONAL_VERSIONS=${boost_versions_added}"
+fi
 
 if [ "x${camp_prefix}" = "x" ]; then
-    dpkg -l | grep libcamp-dev
-    if [ $? -eq 0 ]; then
-	camp_prefix="/usr"
+    if [ "${distrib_id}" = "Ubuntu" ]; then
+	dpkg -l | grep libcamp-dev > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+	    echo >&2 "[info] Found system CAMP..."
+	    camp_prefix="/usr"
+	fi
     fi
 fi
 if [ "x${camp_prefix}" = "x" ]; then
-    which spack  > /dev/null 2>&1
+    which spack > /dev/null 2>&1
     if [ $? -eq 0 ]; then
 	camp_prefix=$(spack find --format '{prefix}' camp)
     fi
@@ -316,6 +345,7 @@ fi
 if [ "x${camp_prefix}" = "x" ]; then
     my_exit 1 "Missing CAMP prefix!"   
 fi
+echo >&2 "[info] CAMP prefix : ${camp_prefix}"
 camp_dir="${camp_prefix}/lib/camp/cmake"
 if [ ! -d ${camp_dir} ]; then
     my_exit 1 "CAMP dir '${camp_dir}' does not exist!"
@@ -503,6 +533,11 @@ bayeux_mcnp_option=""
 ninja_option=
 if [ ${use_ninja} = true ]; then
     ninja_option="-GNinja"
+fi
+if [ ${system_find_boost} = true ]; then
+    if [ -f ${bayeux_source_dir}/cmake/FindBoost.cmake -a ! -f ${bayeux_source_dir}/cmake/FindBoost.cmake.orig ]; then
+	mv ${bayeux_source_dir}/cmake/FindBoost.cmake ${bayeux_source_dir}/cmake/FindBoost.cmake.orig
+    fi
 fi
 
 cd ${build_dir}
