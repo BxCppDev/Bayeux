@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04) or CentOS (7.5).
+# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04) or CentOS (7.5/7.7/7.8).
 
 opwd=$(pwd)
 
@@ -182,8 +182,8 @@ elif [ -f /etc/redhat-release ]; then
 	my_exit 1
     fi
     
-    if [ "${distrib_release}" != "7.5" -a  "${distrib_release}" != "7.7" ]; then
-	echo >&2 "[error] Not an CentOS Linux version 7.5 or 7.7! Abort!"
+    if [ "${distrib_release}" != "7.5" -a  "${distrib_release}" != "7.7"  -a  "${distrib_release}" != "7.8" ]; then
+	echo >&2 "[error] Not an CentOS Linux version 7.5, 7.7 or 7.8! Abort!"
 	my_exit 1
     else
 	echo >&2 "[info] Found CentOS Linux ${distrib_release}"
