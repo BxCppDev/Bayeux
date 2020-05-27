@@ -186,7 +186,7 @@ echo >&2 "[info]   camp_prefix       : '${camp_prefix}'"
 echo >&2 "[info]   camp_legacy       : ${camp_legacy}"
 echo >&2 "[info]   with_qt           : ${with_qt}"
 echo >&2 "[info]   |-- Qt prefix : '${qt_prefix}'"
-echo >&2 "[info]   \`-- Qt prdir : '${qt_dir}'"
+echo >&2 "[info]   \`-- Qt dir    : '${qt_dir}'"
 echo >&2 "[info]   with_bxdecay0     : ${with_bxdecay0}"
 echo >&2 "[info]   boost_root        : ${boost_root}"
 echo >&2 "[info]   |-- system_find_boost : ${system_find_boost}"
@@ -461,6 +461,8 @@ if [ ${with_qt} == true ]; then
     if [ "x${qt_dir}" != "x" ]; then
 	if [ ! -d ${qt_dir} ]; then
 	    my_exit 1 "Qt dir '${qt_dir}' does not exist!"
+	else
+	    echo >&2 "[info] Found Qt dir : '${qt_dir}'"
 	fi
     else
 	my_exit 1 "No Qt dir is set!"
