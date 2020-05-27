@@ -40,10 +40,12 @@ Options:
                              Build the Geant4 module (experimental mode).
 		  	     Allows Geant4 10.5
    --with-qt               : Do build the Qt-based GUI material
+   --qt-prefix path        : Set the Qt prefix path
+   --qt-dir path           : Set the Qt base dir for CMake
    --without-qt            : Do not build the Qt-based GUI material
    --system-find-boost     : Use the system FindBoost CMake script
    --add-boost-version ver : Add a Boost version
-   --boost-root path       : Set the CAMP prefix path
+   --boost-root path       : Set the Boost root path
    --camp-prefix path      : Set the CAMP prefix path
    --camp-legacy           : Allow legacy version of CAMP (0.8.0)
    --minimal-build         : Minimal build
@@ -69,6 +71,8 @@ with_bxdecay0=false
 with_geant4=true
 with_geant4_experimental=false
 with_qt=true
+qt_prefix=""
+qt_dir=""
 camp_prefix=""
 camp_legacy=false
 boost_root=""
@@ -136,6 +140,12 @@ function cl_parse()
 	    with_qt=true
 	elif [ "${arg}" = "--without-qt" ]; then
 	    with_qt=false
+	elif [ "${arg}" = "--qt-prefix" ]; then
+	    shift 1
+	    qt_prefix="$1"
+	elif [ "${arg}" = "--qt-dir" ]; then
+	    shift 1
+	    qt_dir="$1"
 	elif [ "${arg}" = "--camp-prefix" ]; then
 	    shift 1
 	    camp_prefix="$1"
@@ -430,8 +440,30 @@ qt_option3=
 qt_option4=
 # if [ ${minimal_build} == false -a ${with_qt} == true ]; then
 if [ ${with_qt} == true ]; then
-    qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
-    qt5core_dir="${qt5_dir}/Qt5Core"
+    if [ "x${qt_dir}" = "x" ]; then
+	if [ "x${qt_prefix}" != "x" ]; then
+	    qt5corecfg=$(find ${qt_prefix} -name "Qt5CoreConfig.cmake" | head -1)
+	    if [ "x${qt5corecfg}" != "x" ]
+	       _tmpdir=$(dirname $qt5corecfg)
+	        qt5_dir=$(_tmpdir)
+	    fi 
+	else
+	    if [ "${distrib_id}" != "Ubuntu" ]; then
+		dpkg -l | grep libqt5svg5-dev > /dev/null 2>&1
+		if [ $? -eq 0 ]; then
+		    qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
+		fi
+	    fi
+	fi
+    fi
+    if [ "x${qt_dir}" != "x" ]; then
+	if [ ! -d ${qt_dir} ]; then
+	    my_exit 1 "Qt dir '${qt_dir}' does not exist!"
+	fi
+    else
+	my_exit 1 "No Qt dir is set!"
+    fi
+    qt5core_dir="${qt5_dir}/Qt5Core"	
     qt5gui_dir="${qt5_dir}/Qt5Gui"
     qt5widgets_dir="${qt5_dir}/Qt5Widgets"
     qt5svg_dir="${qt5_dir}/Qt5Svg"
