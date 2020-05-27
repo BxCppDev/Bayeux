@@ -534,10 +534,10 @@ echo >&2 " - ROOT dir         = ${root_dir}"
 if [ ${with_qt} == true ]; then
     echo >&2 " - Qt5 dir          = ${qt5_dir}"
 fi
-if [ ${with_geant4} == true ]; then
+if [ ${minimal_build} == false -a ${with_geant4} == true ]; then
     echo >&2 " - GEANT4 dir       = ${geant4_dir}"
 fi
-if [ ${with_bxdecay0} == true ]; then
+if [ ${minimal_build} == false -a ${with_bxdecay0} == true ]; then
     echo >&2 " - BxDecay0 dir     = ${bxdecay0_dir}"
 fi
 
@@ -552,11 +552,11 @@ if [ ${minimal_build} == true ]; then
     minimal_build_option="-DBAYEUX_MINIMAL_BUILD=ON"
     root_option=
     geant4_option=
-    qt_option0=
-    qt_option1=
-    qt_option2=
-    qt_option3=
-    qt_option4=
+    # qt_option0=
+    # qt_option1=
+    # qt_option2=
+    # qt_option3=
+    # qt_option4=
 fi
 
 compiler_options=
