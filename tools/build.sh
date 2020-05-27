@@ -38,7 +38,8 @@ Options:
    --with-geant4           : Build the Geant4 module
    --with-geant4-experimental : 
                              Build the Geant4 module (experimental mode).
-			     Allows Geant4 10.5
+		  	     Allows Geant4 10.5
+   --with-qt               : Do build the Qt-based GUI material
    --without-qt            : Do not build the Qt-based GUI material
    --system-find-boost     : Use the system FindBoost CMake script
    --add-boost-version ver : Add a Boost version
@@ -131,6 +132,8 @@ function cl_parse()
 	elif [ "${arg}" = "--without-geant4" ]; then
 	    with_geant4=false
 	    with_geant4_experimental=false
+	elif [ "${arg}" = "--with-qt" ]; then
+	    with_qt=true
 	elif [ "${arg}" = "--without-qt" ]; then
 	    with_qt=false
 	elif [ "${arg}" = "--camp-prefix" ]; then
@@ -425,7 +428,8 @@ qt_option1=
 qt_option2=
 qt_option3=
 qt_option4=
-if [ ${minimal_build} == false -a ${with_qt} == true ]; then
+# if [ ${minimal_build} == false -a ${with_qt} == true ]; then
+if [ ${with_qt} == true ]; then
     qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
     qt5core_dir="${qt5_dir}/Qt5Core"
     qt5gui_dir="${qt5_dir}/Qt5Gui"
