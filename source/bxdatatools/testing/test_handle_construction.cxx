@@ -29,19 +29,22 @@ void test()
   // Test move construction
   {
       auto a = make_handle<double>(3.14);
-      auto b{std::move(a)};
+      // auto b{std::move(a)};
+      handle<double> b{std::move(a)};
 
       DT_THROW_IF(a, std::logic_error, "Moved handle still holds data");
       DT_THROW_IF(a.use_count() != 0, std::logic_error, "Moved handle has non-null use count");
 
-      DT_THROW_IF(!b, std::logic_error, "Move constructed handle does not hold data");
+      // DT_THROW_IF(!b, std::logic_error, "Move constructed handle does not hold data"); // Fails with g++ 4.9 and Boost 1.63
+      DT_THROW_IF(!b.has_data(), std::logic_error, "Move constructed handle does not hold data");
       DT_THROW_IF(b.use_count() != 1, std::logic_error, "Move constructed handle has incorrect use count");
   }
 
   // Test move assignment
   {
       auto a = make_handle<std::string>("hello");
-      auto b = std::move(a);
+      // auto b = std::move(a);
+      handle<std::string> b{std::move(a)};
       DT_THROW_IF(a, std::logic_error, "Moved handle still holds data");
       DT_THROW_IF(a.use_count() != 0, std::logic_error, "Moved handle has non-null use count");
 
