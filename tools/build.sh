@@ -71,8 +71,8 @@ with_bxdecay0=false
 with_geant4=true
 with_geant4_experimental=false
 with_qt=true
-qt_prefix=""
-qt_dir=""
+qt5_prefix=""
+qt5_dir=""
 camp_prefix=""
 camp_legacy=false
 boost_root=""
@@ -142,10 +142,10 @@ function cl_parse()
 	    with_qt=false
 	elif [ "${arg}" = "--qt-prefix" ]; then
 	    shift 1
-	    qt_prefix="$1"
+	    qt5_prefix="$1"
 	elif [ "${arg}" = "--qt-dir" ]; then
 	    shift 1
-	    qt_dir="$1"
+	    qt5_dir="$1"
 	elif [ "${arg}" = "--camp-prefix" ]; then
 	    shift 1
 	    camp_prefix="$1"
@@ -185,8 +185,8 @@ echo >&2 "[info]   \`-- experimental  : ${with_geant4_experimental}"
 echo >&2 "[info]   camp_prefix       : '${camp_prefix}'"
 echo >&2 "[info]   camp_legacy       : ${camp_legacy}"
 echo >&2 "[info]   with_qt           : ${with_qt}"
-echo >&2 "[info]   |-- Qt prefix : '${qt_prefix}'"
-echo >&2 "[info]   \`-- Qt dir    : '${qt_dir}'"
+echo >&2 "[info]   |-- Qt prefix : '${qt5_prefix}'"
+echo >&2 "[info]   \`-- Qt dir    : '${qt5_dir}'"
 echo >&2 "[info]   with_bxdecay0     : ${with_bxdecay0}"
 echo >&2 "[info]   boost_root        : ${boost_root}"
 echo >&2 "[info]   |-- system_find_boost : ${system_find_boost}"
@@ -442,12 +442,12 @@ qt_option3=
 qt_option4=
 # if [ ${minimal_build} == false -a ${with_qt} == true ]; then
 if [ ${with_qt} == true ]; then
-    if [ "x${qt_dir}" = "x" ]; then
-	if [ "x${qt_prefix}" != "x" ]; then
-	    qt5corecfg=$(find ${qt_prefix} -name "Qt5CoreConfig.cmake" | head -1)
+    if [ "x${qt5_dir}" = "x" ]; then
+	if [ "x${qt5_prefix}" != "x" ]; then
+	    qt5corecfg=$(find ${qt5_prefix} -name "Qt5CoreConfig.cmake" | head -1)
 	    if [ "x${qt5corecfg}" != "x" ]; then
-	       _tmpdir=$(dirname "${qt5corecfg}")
-	        qt5_dir=$(dirname "${_tmpdir}")
+	       _qt5tmpdir=$(dirname "${qt5corecfg}")
+	       qt5_dir=$(dirname "${_qt5tmpdir}")
 	    fi 
 	else
 	    if [ "${distrib_id}" != "Ubuntu" ]; then
@@ -458,11 +458,11 @@ if [ ${with_qt} == true ]; then
 	    fi
 	fi
     fi
-    if [ "x${qt_dir}" != "x" ]; then
-	if [ ! -d ${qt_dir} ]; then
-	    my_exit 1 "Qt dir '${qt_dir}' does not exist!"
+    if [ "x${qt5_dir}" != "x" ]; then
+	if [ ! -d ${qt5_dir} ]; then
+	    my_exit 1 "Qt dir '${qt5_dir}' does not exist!"
 	else
-	    echo >&2 "[info] Found Qt dir : '${qt_dir}'"
+	    echo >&2 "[info] Found Qt dir : '${qt5_dir}'"
 	fi
     else
 	my_exit 1 "No Qt dir is set!"
