@@ -81,10 +81,11 @@ endforeach()
 get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 
 # - Camp
-set(BAYEUX_CAMP_MIN_VERSION "0.8.2")
-if (BAYEUX_CAMP_LEGACY)
-  set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
-endif()
+set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
+# set(BAYEUX_CAMP_MIN_VERSION "0.8.2")
+# if (BAYEUX_CAMP_LEGACY)
+#   set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
+# endif()
 find_package(CAMP ${BAYEUX_CAMP_MIN_VERSION} REQUIRED NO_MODULE)
 message(STATUS "Found CAMP ${CAMP_VERSION} at CAMP_DIR      = '${CAMP_DIR}'")
 

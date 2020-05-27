@@ -48,15 +48,16 @@ Options:
    --system-find-boost     : Use the system FindBoost CMake script
    --add-boost-version ver : Add a Boost version
    --boost-root path       : Set the Boost installation prefix path
-   --camp-prefix path      : Set the CAMP installation prefix path
    --camp-legacy           : Allow legacy version of CAMP (0.8.0)
    --minimal-build         : Minimal build
    --bayeux-suffix name    : Set a special suffix for the build directory
    --gcc-version version   : Set GC version
 
 EOF
+###--camp-prefix path      : Set the CAMP installation prefix path
     return
 }
+
 
 nprocs=4
 dry_run=False
@@ -77,7 +78,7 @@ with_qt=true
 qt5_prefix=""
 qt5_dir=""
 camp_prefix=""
-camp_legacy=false
+# camp_legacy=false
 boost_root=""
 system_find_boost=false
 boost_versions_added=
@@ -160,8 +161,8 @@ function cl_parse()
 	elif [ "${arg}" = "--camp-prefix" ]; then
 	    shift 1
 	    camp_prefix="$1"
-	elif [ "${arg}" = "--camp-legacy" ]; then
-	    camp_legacy=true
+	# elif [ "${arg}" = "--camp-legacy" ]; then
+	#     camp_legacy=true
 	elif [ "${arg}" = "--gcc-version" ]; then
 	    shift 1
 	    gcc_version="$1"
@@ -194,7 +195,7 @@ echo >&2 "[info]   GCC version       : '${gcc_version}'"
 echo >&2 "[info]   with_geant4       : ${with_geant4}"
 echo >&2 "[info]   \`-- experimental  : ${with_geant4_experimental}"
 echo >&2 "[info]   camp_prefix       : '${camp_prefix}'"
-echo >&2 "[info]   camp_legacy       : ${camp_legacy}"
+# echo >&2 "[info]   camp_legacy       : ${camp_legacy}"
 echo >&2 "[info]   with_qt           : ${with_qt}"
 echo >&2 "[info]   |-- Qt prefix : '${qt5_prefix}'"
 echo >&2 "[info]   \`-- Qt dir    : '${qt5_dir}'"
@@ -378,9 +379,9 @@ if [ ! -d ${camp_dir} ]; then
     my_exit 1 "CAMP dir '${camp_dir}' does not exist!"
 fi
 camp_option="-DCAMP_DIR=${camp_dir}"
-if [ ${camp_legacy} = true ]; then
-    camp_option="${camp_option} -DBAYEUX_CAMP_LEGACY=ON"
-fi
+# if [ ${camp_legacy} = true ]; then
+#     camp_option="${camp_option} -DBAYEUX_CAMP_LEGACY=ON"
+# fi
 clhep_prefix=""
 which clhep-config > /dev/null 2>&1 
 if [ $? -eq 0 ]; then

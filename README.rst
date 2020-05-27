@@ -309,7 +309,7 @@ Core Libraries Required
   bug concerning the Boost/Serialization singleton class. Boost 1.69 should
   fix this issue.
   
-* Camp >=0.8.2 : https://github.com/IRCAD-IHU/camp
+* Camp >=0.8.2 (or 0.8.0, see below) : https://github.com/IRCAD-IHU/camp
   
   * Ubuntu 18.04 does not provide Camp
   * Ubuntu 20.04 provides version 0.8.4 (libcamp-dev)
@@ -656,7 +656,8 @@ Dependency Options
 ----------------------------
 
 ``BOOST_ROOT``, ``Boost_ADDITIONAL_VERSIONS`` :
-  Set the directory where Boost is installed.
+  Set the directory where Boost is installed and optionally allow a unsupported newer version of Boost
+  (may not work).
  
   Example:
 
@@ -675,6 +676,7 @@ Dependency Options
      $ cmake ... -DCAMP_DIR="/usr/lib/camp/cmake" ...
   ..  
  
+
 ``CLHEP_ROOT_DIR`` :
   Set the directory where CLHEP header and library files are installed.
  
