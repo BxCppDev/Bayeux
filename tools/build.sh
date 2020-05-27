@@ -456,18 +456,31 @@ qt_option4=
 # if [ ${minimal_build} == false -a ${with_qt} == true ]; then
 if [ ${with_qt} == true ]; then
     if [ "x${qt5_dir}" = "x" ]; then
+	echo >&2 "[info] Empty Qt dir"
 	if [ "x${qt5_prefix}" != "x" ]; then
+	    echo >&2 "[info] Trying to use the Qt prefix..."
 	    qt5corecfg=$(find ${qt5_prefix} -name "Qt5CoreConfig.cmake" | head -1)
 	    if [ "x${qt5corecfg}" != "x" ]; then
 	       _qt5tmpdir=$(dirname "${qt5corecfg}")
 	       qt5_dir=$(dirname "${_qt5tmpdir}")
+	       echo >&2 "[info] Found Qt dir from Qt prefix : '${qt5_dir}'"
 	    fi 
 	else
-	    if [ "${distrib_id}" != "Ubuntu" ]; then
+	    echo >&2 "[info] Trying to find a system Qt..."
+	    if [ "${distrib_id}" = "Ubuntu" ]; then
+		echo >&2 "[info] ... for ${distrib_id}..."
 		dpkg -l | grep libqt5svg5-dev > /dev/null 2>&1
 		if [ $? -eq 0 ]; then
 		    qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
 		fi
+	    elif [ "${distrib_id}" = "CentOS" ]; then
+		echo >&2 "[info] ... for ${distrib_id}..."
+		rpm -qa | grep qt5-qtbase-devel > /dev/null 2>&1 
+		if [ $? -eq 0 ]; then
+		    qt5_dir="/usr/lib64/cmake"
+		fi
+	    else
+		echo >&2 "[info] ... no rule for '${distrib_id}'..."
 	    fi
 	fi
     fi

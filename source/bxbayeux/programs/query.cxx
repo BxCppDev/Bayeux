@@ -2,8 +2,8 @@
 //! \brief Query information about Bayeux
 //! \details
 //
-// Copyright (c) 2013-2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013-2017 by Université de Caen
+// Copyright (c) 2013-2020 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2020 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -122,6 +122,18 @@ int main(int argc_, char * argv_[])
        "Print 1 if Bayeux was built with Geant4 \n"
        "extension module, else print 0.         \n"
        )
+      ("with-bxdecay0",
+       bpo::value<bool>()
+       ->zero_tokens(),
+       "Print 1 if Bayeux is built and linked with bxdecay0, \n"
+       "else print 0.             \n"
+       )
+      ("with-qt",
+       bpo::value<bool>()
+       ->zero_tokens(),
+       "Print 1 if Bayeux is built and linked with Qt5, \n"
+       "else print 0.             \n"
+       )
       ;
     bpo::positional_options_description args;
     bpo::variables_map vm;
@@ -202,6 +214,16 @@ int main(int argc_, char * argv_[])
       bool has_geant4 = vm["has-geant4-module"].as<bool>();
       if (has_geant4) {
         std::cout << BAYEUX_WITH_GEANT4_MODULE << std::endl;
+      }
+    } else if (vm.count("with-bxdecay0")) {
+      bool with_bxdecay0 = vm["with-bxdecay0"].as<bool>();
+      if (with_bxdecay0) {
+        std::cout << BAYEUX_WITH_BXDECAY0 << std::endl;
+      }
+    } else if (vm.count("with-qt")) {
+      bool with_qt = vm["with-qt"].as<bool>();
+      if (with_qt) {
+        std::cout << BAYEUX_WITH_QT << std::endl;
       }
     } else if (vm.count("description")) {
       std::string module_name = vm["description"].as<std::string>();

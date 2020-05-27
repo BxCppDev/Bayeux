@@ -27,6 +27,7 @@
 
 // Standard Library
 #include <iosfwd>
+#include <string>
 
 //----------------------------------------------------------------------
 // - Compile Time API

@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2013-2019 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013-2019 by Université de Caen
+// Copyright (c) 2013-2020 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2020 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -69,8 +69,8 @@
 #define BAYEUX_GEANT4_VERSION "@Geant4_VERSION@"
 #endif // BAYEUX_WITH_GEANT4_MODULE == 1
 
-//! Evaluates to true if Bayeux was built with MCNP extension module
-#define BAYEUX_WITH_MCNP_MODULE @Bayeux_WITH_MCNP_MODULE@
+// //! Evaluates to true if Bayeux was built with MCNP extension module
+// #define BAYEUX_WITH_MCNP_MODULE @Bayeux_WITH_MCNP_MODULE@
 
 //! Evaluates to true if Bayeux was built with the lahague module
 #define BAYEUX_WITH_LAHAGUE @Bayeux_WITH_LAHAGUE@
@@ -90,14 +90,14 @@
 //! Evaluates to true if Bayeux was built with Qt-based GUI components
 #define BAYEUX_WITH_QT_GUI @Bayeux_WITH_QT_GUI@
 
-//! Evaluates to true if Bayeux was built with Qt-based SVG components
-#define BAYEUX_WITH_QT_SVG @Bayeux_WITH_QT_SVG@
+// //! Evaluates to true if Bayeux was built with Qt-based SVG components
+// #define BAYEUX_WITH_QT_SVG @Bayeux_WITH_QT_SVG@
 
 #else // BAYEUX_WITH_QT != 1
 
 #define BAYEUX_WITH_QT_GUI 0
 
-#define BAYEUX_WITH_QT_SVG 0
+// #define BAYEUX_WITH_QT_SVG 0
 
 #endif // BAYEUX_WITH_QT == 1
 
