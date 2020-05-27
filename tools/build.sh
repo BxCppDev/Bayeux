@@ -33,20 +33,22 @@ Options:
    --build-base-dir path   : Select the Bayeux build directory
    --clean-build-dir       : Clean the the Bayeux build directory 
                              after successfull installation
+   --without-bxdecay0      : Do not use the BxDecay0 library
    --with-bxdecay0         : Use the BxDecay0 library
+   --bxdecay0-dir path     : Set the BxDecay0 base dir for CMake
    --without-geant4        : Do not build the Geant4 module
    --with-geant4           : Build the Geant4 module
    --with-geant4-experimental : 
                              Build the Geant4 module (experimental mode).
 		  	     Allows Geant4 10.5
    --with-qt               : Do build the Qt-based GUI material
-   --qt-prefix path        : Set the Qt prefix path
+   --qt-prefix path        : Set the Qt installation prefix path
    --qt-dir path           : Set the Qt base dir for CMake
    --without-qt            : Do not build the Qt-based GUI material
    --system-find-boost     : Use the system FindBoost CMake script
    --add-boost-version ver : Add a Boost version
-   --boost-root path       : Set the Boost root path
-   --camp-prefix path      : Set the CAMP prefix path
+   --boost-root path       : Set the Boost installation prefix path
+   --camp-prefix path      : Set the CAMP installation prefix path
    --camp-legacy           : Allow legacy version of CAMP (0.8.0)
    --minimal-build         : Minimal build
    --bayeux-suffix name    : Set a special suffix for the build directory
@@ -68,6 +70,7 @@ build_base_dir=$(pwd)/_build.d
 clean_build_dir=false
 bayeux_suffix=
 with_bxdecay0=false
+bxdecay0_dir=""
 with_geant4=true
 with_geant4_experimental=false
 with_qt=true
@@ -128,6 +131,12 @@ function cl_parse()
 	    clean_build_dir=true
 	elif [ "${arg}" = "--with-bxdecay0" ]; then
 	    with_bxdecay0=true
+	elif [ "${arg}" = "--without-bxdecay0" ]; then
+	    with_bxdecay0=false
+	elif [ "${arg}" = "--bxdecay0-dir" ]; then
+	    shift 1
+	    bxdecay0_dir="$1"
+	    with_bxdecay0=true
 	elif [ "${arg}" = "--with-geant4" ]; then
 	    with_geant4=true
 	elif [ "${arg}" = "--with-geant4-experimental" ]; then
@@ -143,9 +152,11 @@ function cl_parse()
 	elif [ "${arg}" = "--qt-prefix" ]; then
 	    shift 1
 	    qt5_prefix="$1"
+	    with_qt=true
 	elif [ "${arg}" = "--qt-dir" ]; then
 	    shift 1
 	    qt5_dir="$1"
+	    with_qt=true
 	elif [ "${arg}" = "--camp-prefix" ]; then
 	    shift 1
 	    camp_prefix="$1"
@@ -188,6 +199,7 @@ echo >&2 "[info]   with_qt           : ${with_qt}"
 echo >&2 "[info]   |-- Qt prefix : '${qt5_prefix}'"
 echo >&2 "[info]   \`-- Qt dir    : '${qt5_dir}'"
 echo >&2 "[info]   with_bxdecay0     : ${with_bxdecay0}"
+echo >&2 "[info]   \`-- BxDecay0 dir : '${bxdecay0_dir}'"
 echo >&2 "[info]   boost_root        : ${boost_root}"
 echo >&2 "[info]   |-- system_find_boost : ${system_find_boost}"
 echo >&2 "[info]   \`-- boost_versions_added : '${boost_versions_added}'"
@@ -400,7 +412,7 @@ bxdecay0_options="-DBAYEUX_WITH_BXDECAY0=OFF"
 
 # bxdecay0_dir="/opt/sw/Spack/install.d/linux-ubuntu18.04-ivybridge/gcc-7.4.0/bxdecay0-1.0.0-beta2-swxftf7we6v5rzez265ujc4spd7oobf2"
 # bxdecay0_dir="/home/mauger/Documents/Private/Software/BxCppDev/BxDecay0/bxdecay0/_install.d/lib/cmake/BxDecay0-1.0.0/"
-bxdecay0_dir=""
+# bxdecay0_dir=""
 if [ ${with_bxdecay0} = true ]; then
     
     if [ "x${bxdecay0_dir}" = "x" ]; then 
@@ -411,21 +423,21 @@ if [ ${with_bxdecay0} = true ]; then
     fi
     
     if [ "x${bxdecay0_dir}" = "x" ]; then 
-	which bxdecay0-query> /dev/null 2>&1 
+	which bxdecay0-config> /dev/null 2>&1 
 	if [ $? -eq 0 ]; then
-	    bxdecay0_dir="$(bxdecay0-query --prefix)/lib/cmake"
+	    bxdecay0_dir="$(bxdecay0-config --cmakedir)"
 	fi
     fi
    
     if [ "x${bxdecay0_dir}" = "x" ]; then 
-	pkg-config --exists bxdecay0> /dev/null 2>&1
+	pkg-config --exists bxdecay0 > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
 	    bxdecay0_dir="$(pkg-config pkg-config --variable=prefix bxdecay0)/lib/cmake"
 	fi
     fi
 
     if [ "x${bxdecay0_dir}" = "x" ]; then 
-      my_exit 1 "BxDecay0 was not found!"
+      my_exit 1 "BxDecay0 dir was not found!"
     fi
 
     if [ ! -d "${bxdecay0_dir}" ]; then 
@@ -509,6 +521,8 @@ if [ ${minimal_build} == false -a ${with_geant4} == true ]; then
     geant4_dir="${geant4_prefix}/lib/Geant4-$(geant4-config --version | cut -d' ' -f2)"
     if [ ! -d ${geant4_dir} ]; then
 	my_exit 1 "GEANT4 dir '${geant4_dir}' does not exist!"
+    else
+	echo >&2 "[info] Geant4 found at '${geant4_dir}'" 
     fi
     geant4_option="-DBAYEUX_WITH_GEANT4_MODULE=ON -DGeant4_DIR=${geant4_dir}"
     if [ ${with_geant4_experimental} == true ]; then
@@ -530,7 +544,9 @@ echo >&2 " - install_dir      = ${install_dir}"
 echo >&2 " - Boost root       = ${boost_root}"
 echo >&2 " - CAMP dir         = ${camp_dir}"
 echo >&2 " - CLHEP dir        = ${clhep_dir}"
-echo >&2 " - ROOT dir         = ${root_dir}"
+if [ ${minimal_build} == false ]; then
+    echo >&2 " - ROOT dir         = ${root_dir}"
+fi
 if [ ${with_qt} == true ]; then
     echo >&2 " - Qt5 dir          = ${qt5_dir}"
 fi
