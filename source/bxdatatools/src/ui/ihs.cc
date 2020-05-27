@@ -911,16 +911,17 @@ namespace datatools {
         // Recursive removal of child nodes...
         while (the_node._children_.size()) {
           node * the_local_node = *the_node._children_.begin();
+          std::string fpath = the_local_node->get_full_path();
           if (the_local_node->is_interface()) {
             DT_LOG_DEBUG(logging,
-                         "Removing interface node '" << the_local_node->get_full_path() << "'...");
-            remove_interface(the_local_node->get_full_path(), recursive_);
+                         "Removing interface node '" << fpath << "'...");
+            remove_interface(fpath, recursive_);
           } else if (the_local_node->is_command()) {
             DT_LOG_DEBUG(logging,
-                         "Removing command node '" << the_local_node->get_full_path() << "'...");
-            remove_command(the_local_node->get_full_path());
+                         "Removing command node '" << fpath << "'...");
+            remove_command(fpath);
             DT_LOG_DEBUG(logging,
-                         "Command node '" << the_local_node->get_full_path() << "' has been removed.");
+                         "Command node '" << fpath << "' has been removed.");
            }
         }
       }
