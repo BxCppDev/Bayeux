@@ -444,8 +444,8 @@ if [ ${with_qt} == true ]; then
 	if [ "x${qt_prefix}" != "x" ]; then
 	    qt5corecfg=$(find ${qt_prefix} -name "Qt5CoreConfig.cmake" | head -1)
 	    if [ "x${qt5corecfg}" != "x" ]
-	       _tmpdir=$(dirname $qt5corecfg)
-	        qt5_dir=$(_tmpdir)
+	       _tmpdir=$(dirname "${qt5corecfg}")
+	        qt5_dir=$(dirname "${_tmpdir}")
 	    fi 
 	else
 	    if [ "${distrib_id}" != "Ubuntu" ]; then
