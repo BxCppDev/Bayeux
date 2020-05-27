@@ -445,7 +445,7 @@ if [ ${with_qt} == true ]; then
     if [ "x${qt_dir}" = "x" ]; then
 	if [ "x${qt_prefix}" != "x" ]; then
 	    qt5corecfg=$(find ${qt_prefix} -name "Qt5CoreConfig.cmake" | head -1)
-	    if [ "x${qt5corecfg}" != "x" ]
+	    if [ "x${qt5corecfg}" != "x" ]; then
 	       _tmpdir=$(dirname "${qt5corecfg}")
 	        qt5_dir=$(dirname "${_tmpdir}")
 	    fi 
