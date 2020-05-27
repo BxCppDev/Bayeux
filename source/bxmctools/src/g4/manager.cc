@@ -90,13 +90,13 @@
 
 #ifdef G4VIS_USE
 // #pragma message("NOTE: G4VIS_USE is set")
-#ifdef __GNUC__
+#if __GNUC__ >= 9
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-copy"
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif
 #include "G4VisExecutive.hh"
-#ifdef __GNUC__
+#if __GNUC__ >= 9
 #pragma GCC diagnostic pop
 #endif
 #endif // G4VIS_USE
