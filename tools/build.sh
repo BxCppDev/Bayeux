@@ -277,7 +277,7 @@ if [ ${minimal_build} == false ]; then
 	echo >&2 "[error] ROOT is not setup!"
 	my_exit 1
     else
-	echo >&2 "[info] Found ROOT   : $(which root-config)"
+	echo >&2 "[info] Found ROOT $(root-config --version) : $(which root-config)"
     fi
 fi
 
