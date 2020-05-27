@@ -207,11 +207,14 @@ install(DIRECTORY ${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_TAG}
   )
 
 #-----------------------------------------------------------------------
-# Install CMake scripts
-install(FILES
-  ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake
-  # ${CMAKE_SOURCE_DIR}/cmake/FindReadline.cmake
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_TAG}/cmake/
-  )
-
+# Install CMake scripts if needed
+# ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake
+# ${CMAKE_SOURCE_DIR}/cmake/FindReadline.cmake
+if(EXISTS ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake)
+  install(FILES
+    ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_TAG}/cmake/
+    )
+endif()
+  
 # - end
