@@ -47,6 +47,7 @@ Removals
 * Remove   unused  ``debug``   attribute   and   related  methods   in
   ``datatools::multi_properties``  class, propagate  this change  to a
   few places in the library.
+* Remove deprecated Doxygen directives
 
 Changes
 =======
@@ -60,10 +61,9 @@ Fixes
   the G4 plugin only)
 * Fix a bug in ``datatools::ui::ihs`` class 
 * Fix a bug  in ``BinReloc`` that occurs with GCC  9 : unresolved path
-  due  to an  unexpected ``r--p``  access mode  in ``/proc/self/maps``
+  due  to an  unexpected ``r--p``  permissions  in ``/proc/self/maps``
   while ``r-xp`` was used before  (no documentation found so far about
   it)
- * Remove deprecated Doxygen directives
     
 Bugs
 ====

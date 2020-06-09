@@ -99,7 +99,7 @@ if (CLHEP_DIR)
   find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
   message(STATUS "Found CLHEP ${CLHEP_VERSION} at CLHEP_DIR      = '${CLHEP_DIR}' [config]")
 else()
-  # This part was a test and should be removed
+  # This part tries to find CLHEP without CMake support:
   if(CLHEP_ROOT_DIR)
     find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED MODULE)
     message(STATUS "Found CLHEP ${CLHEP_VERSION} at CLHEP_ROOT_DIR = '${CLHEP_ROOT_DIR}' [module]")
@@ -112,7 +112,7 @@ message(STATUS "  * CLHEP_INCLUDE_DIRS ='${CLHEP_INCLUDE_DIRS}'")
 message(STATUS "  * CLHEP_LIBRARIES    ='${CLHEP_LIBRARIES}'")
 
 # - GSL
-set(BAYEUX_GSL_MIN_VERSION "2.1")
+set(BAYEUX_GSL_MIN_VERSION "2.4")
 find_package(GSL ${BAYEUX_GSL_MIN_VERSION} REQUIRED)
 
 # - ROOT
