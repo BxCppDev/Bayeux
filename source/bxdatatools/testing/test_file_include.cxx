@@ -62,7 +62,7 @@ void test_fi()
 {
   dir_store ds;
   
-  setenv("BAYEUX_GENERIC_INCLUDE_PATH", "/tmp/foo/more:/tmp/foo:${HOME}/foo", 1);
+  setenv("BAYEUX_GENERIC_INCLUDE_PATH", "/tmp/_foo/more:/tmp/_foo:${HOME}/_foo", 1);
   datatools::file_include fi;
   fi.set_logging(datatools::logger::PRIO_ERROR);
   fi.set_include_path_env_strategy(datatools::file_include::EV_PREPEND);
@@ -72,14 +72,14 @@ void test_fi()
   fi.append_explicit_include_path("/etc");
   fi.append_explicit_include_path("/var");
   fi.prepend_explicit_include_path("${HOME}");
-  fi.prepend_explicit_include_path("${HOME}/myfoo");
+  fi.prepend_explicit_include_path("${HOME}/_myfoo");
   fi.prepend_explicit_include_path("@datatools:variants/models/basic/1.0");
   
-  ds.create_dir("/tmp/foo");
-  ds.create_dir("/tmp/foo/more");
+  ds.create_dir("/tmp/_foo");
+  ds.create_dir("/tmp/_foo/more");
   ds.create_dir("${HOME}");
-  ds.create_dir("${HOME}/foo");
-  ds.create_dir("${HOME}/myfoo");
+  ds.create_dir("${HOME}/_foo");
+  ds.create_dir("${HOME}/_myfoo");
 
   fi.print_tree(std::clog);
 
