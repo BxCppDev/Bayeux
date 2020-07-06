@@ -216,7 +216,6 @@ namespace genbb {
     DT_THROW_IF(_initialized_, std::logic_error, "Already initialized !");
     _initialize_base(config_);
 
-
     std::string decay_isotope;
     double energy_unit = CLHEP::MeV;
     double emin = 0.0;
@@ -242,7 +241,11 @@ namespace genbb {
                 std::logic_error,
                 "Invalid decay type '" << tmp << "' !");
     if (tmp == "background") {
+#if BAYEUX_WITH_BXDECAY0 == 1
+      _decay_type_ = bxdecay0::decay0_generator::DECAY_CATEGORY_BACKGROUND;
+#else
       _decay_type_ = DECAY_TYPE_BACKGROUND;
+#endif
     }
 
     if (tmp == "DBD") {
@@ -251,19 +254,16 @@ namespace genbb {
                   std::logic_error,
                   "Missing DBD decay level !");
       _decay_dbd_level_ = config_.fetch_integer("decay_dbd_level");
-
       
       if (config_.has_key("decay_dbd_mode")) {
         _decay_dbd_mode_ = config_.fetch_integer("decay_dbd_mode");
       }
       
 #if BAYEUX_WITH_BXDECAY0 == 1
-
       if (config_.has_key("decay_dbd_mode_label")) {
         std::string dbd_mode_label = config_.fetch_string("decay_dbd_mode_label");
         _decay_dbd_mode_ = bxdecay0::dbd_mode_from_label(dbd_mode_label);
-      }
-      
+      }      
 #endif
       DT_THROW_IF(_decay_dbd_mode_ == DBD_MODE_INVALID,
                   std::logic_error,
@@ -278,14 +278,20 @@ namespace genbb {
     _set_decay_isotope_(decay_isotope);
 
     if (_decay_type_ == DECAY_TYPE_DBD) {
+#if BAYEUX_WITH_BXDECAY0 == 0
       const std::vector<int> & dbdmwer
         = utils::get_dbd_modes_with_energy_range();
       if (std::find(dbdmwer.begin(), dbdmwer.end(),_decay_dbd_mode_) != dbdmwer.end()) {
+#else // BAYEUX_WITH_BXDECAY0 == 0
+      bxdecay0::dbd_mode_type bxdecay0_dbdm = static_cast<bxdecay0::dbd_mode_type>(_decay_dbd_mode_);
+      if (bxdecay0::dbd_supports_esum_range(bxdecay0_dbdm)) {
+#endif // BAYEUX_WITH_BXDECAY0 == 0
+        
         if (config_.has_key("energy_unit")) {
           std::string unit_str = config_.fetch_string("energy_unit");
           energy_unit = datatools::units::get_energy_unit_from(unit_str);
         }
-
+        
         if (config_.has_key("energy_max")) {
           emax = config_.fetch_real("energy_max");
           DT_THROW_IF(emax < 0.0, std::logic_error, "Invalid maximum value !");
@@ -318,8 +324,10 @@ namespace genbb {
         _energy_min_ = utils::DEFAULT_ENERGY_RANGE_MIN;
       }
     }
-    DT_THROW_IF(_energy_min_ >= _energy_max_, std::logic_error, "Invalid energy range !");
-
+    if (datatools::is_valid(_energy_max_) and datatools::is_valid(_energy_min_)) {
+      DT_THROW_IF(_energy_min_ >= _energy_max_, std::logic_error, "Invalid energy range !");
+    }
+    
     if (! has_external_random()) {
       DT_LOG_NOTICE(get_logging_priority(),"Initializing the local PRNG...");
       _random_.init("taus2", _seed_);
@@ -357,7 +365,7 @@ namespace genbb {
   void wdecay0::_load_next(primary_event & event_,
                            bool compute_classification_)
   {
-    DT_LOG_TRACE(get_logging_priority(),"Entering...");
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(! _initialized_, std::logic_error, "Not initialized !");
     // reset:
     event_.reset();
@@ -366,6 +374,9 @@ namespace genbb {
     // Use the external BxDecay0:
     bxdecay0::event decay;
     _pimpl_->generator.shoot(*_pimpl_->prng, decay);
+    if (datatools::logger::is_debug(get_logging_priority())) {
+      decay.print(std::cerr, "BxDecay0 original event:", "[debug] ");
+    }
     if (decay.has_time()) {
       event_.set_time(decay.get_time() * CLHEP::second);
     }
@@ -403,11 +414,18 @@ namespace genbb {
         new_particle.set_time(particle.get_time() * CLHEP::second);
       }
       if (particle.has_momentum()) {
-        new_particle.set_momentum( geomtools::vector_3d(particle.get_px() * CLHEP::MeV,
-                                                        particle.get_py() * CLHEP::MeV,
-                                                        particle.get_pz() * CLHEP::MeV));
+        new_particle.set_momentum(geomtools::vector_3d(particle.get_px() * CLHEP::MeV,
+                                                       particle.get_py() * CLHEP::MeV,
+                                                       particle.get_pz() * CLHEP::MeV));
       }
     }
+    if (datatools::logger::is_debug(get_logging_priority())) {
+      boost::property_tree::ptree prtoptions;
+      prtoptions.put("title", "Genbb::primary event: ");
+      prtoptions.put("indent", "[debug] ");
+      event_.print_tree(std::cerr, prtoptions);   
+    }
+
 #else
     // Use the embedded legacy Decay0:
     int error = 0;
@@ -484,7 +502,12 @@ namespace genbb {
     }
     
 #if BAYEUX_WITH_BXDECAY0 == 1
+    DT_LOG_DEBUG(get_logging_priority(),"Using BxDecay0...");
     if (_decay_type_ == DECAY_TYPE_DBD) {
+      DT_LOG_DEBUG(get_logging_priority(),"decay_type_ == DECAY_TYPE_DBD");
+      if (datatools::logger::is_debug(get_logging_priority())) {
+        _pimpl_->generator.set_debug(true);
+      }
       _pimpl_->generator.set_decay_category(bxdecay0::decay0_generator::DECAY_CATEGORY_DBD);
       _pimpl_->generator.set_decay_isotope(_decay_isotope_);
       _pimpl_->generator.set_decay_dbd_level(_decay_dbd_level_);
@@ -505,15 +528,18 @@ namespace genbb {
         ranged_energy = true;
       }
       if (ranged_energy) {
+        DT_LOG_DEBUG(get_logging_priority(),"ranged_energy");
         _pimpl_->generator.set_decay_dbd_esum_range(energy_min_MeV, energy_max_MeV);
       }
     } else if (_decay_type_ == DECAY_TYPE_BACKGROUND) {
+      DT_LOG_DEBUG(get_logging_priority(),"decay_type_ == DECAY_TYPE_BACKGROUND");
       _pimpl_->generator.set_decay_category(bxdecay0::decay0_generator::DECAY_CATEGORY_BACKGROUND);
       _pimpl_->generator.set_decay_isotope(_decay_isotope_);
     }
     _pimpl_->prng.reset(new gsl_random(grab_random()));
     _pimpl_->generator.initialize(*_pimpl_->prng);
 #else
+    DT_LOG_DEBUG(get_logging_priority(),"Using legacy Decay0 port...");
     //
     _pimpl_->bb_params.reset();
     if (_decay_type_ == DECAY_TYPE_DBD) {
