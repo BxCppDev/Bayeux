@@ -63,7 +63,7 @@ emfield
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
-  Depends on the external BxDecay0_ library (optional, recommended).
+  Now depends on the external BxDecay0_ library (optional, recommended).
 
 genvtx
   Vertex  random  generator tools providing input to  simulation
