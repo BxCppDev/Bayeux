@@ -801,22 +801,24 @@ Setup
 
 In order  to setup Bayeux  on your system,  we recommend to  provide a
 bayeux  activation  shell  function  from  your  Bash  startup  script
-(i.e. ``~/.bashrc``):
+(typically ``~/.bashrc``):
 
 .. code:: sh
  
-   function bayeux_setup()
+   function do_bayeux_setup()
    {
+      local _bayeux_install_dir="/path/to/bayeux/installation/dir"
       if [ -n "${BAYEUX_INSTALL_DIR}" ]; then
-	  echo >&2 "[error] bayeux_setup: Bayeux is already setup!"
+	  echo >&2 "[error] do_bayeux_setup: Bayeux is already setup!"
 	  return 2
       fi     
-      export BAYEUX_INSTALL_DIR="/path/to/Bayeux/installation/dir"
+      export BAYEUX_INSTALL_DIR="${_bayeux_install_dir}"
       export PATH="${BAYEUX_INSTALL_DIR}/bin:${PATH}"
-      echo >&2 "[info] bayeux_setup: Bayeux $(bxquery --version) is now setup!"
+      echo >&2 "[info] do_bayeux_setup: Bayeux $(bxquery --version) is now setup!"
       return 0
    }
-   export -f bayeux_setup	  
+   export -f do_bayeux_setup
+   alias bayeux_setup='do_bayeux_setup'
 ..
 
 When you need to use the Bayeux software from a bare Bash shell,
@@ -835,8 +837,9 @@ provided by Bayeux:
    $ bxquery --help
 ..
 
-Fell free to provide a ``bayeux_unsetup`` shell function to come back to
-the initial state of the shell.
+Fell free to provide a ``do_bayeux_unsetup`` shell function to come back to
+the initial state of the shell or simply terminate the shell when you are done
+with Bayeux.
 
 
 Documentation
@@ -847,14 +850,13 @@ Bayeux is built with *some* documentation, although incomplete:
 * From the  installation directory, provided  the ``BAYEUX_WITH_DOCS``
   and ``BAYEUX_WITH_DOCS_OCD`` options have been enabled, one can find
   a set of  Doxygen generated HTML pages. The main  page is located in
-  ``share/Bayeux-{Bayeux's
-  version}/Documentation/API/html/index.html``   from   the   Bayeux's
+  ``share/Bayeux-{Bayeux's version}/Documentation/API/html/index.html``   from   the   Bayeux's
   installation directory.
 * The Bayeux  source code  provides some test  programs that  *may* be
   used as sample code. However, it is not their original purpose.
 * Bayeux  modules  contains some  example  code  implemented as  small
-  project. See the source code for example in ``share/Bayeux-{Bayeux's
-  version}/examples/`` from the Bayeux's installation directory.
+  projects. See the source code for example in ``share/Bayeux-{Bayeux's version}/examples/``
+  from the Bayeux's installation directory.
   
 Troubleshooting
 ===============
@@ -894,7 +896,7 @@ To do
 =====
 
 * Provide official example code for many classes.
-* Migrate some deprecated  Boost classes to some  C++11 classes (smart
+* Migrate some  Boost classes to some  C++11 classes (smart
   pointers...).
 
 .. raw:: pdf
