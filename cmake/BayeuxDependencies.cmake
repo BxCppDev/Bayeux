@@ -2,7 +2,8 @@
 message( STATUS "[info] Define Bayeux dependencies")
 
 if(Bayeux_WITH_BXDECAY0)
-  find_package(BxDecay0 CONFIG)
+  set(BAYEUX_BXDECAY0_MIN_VERSION "1.0.3")
+  find_package(BxDecay0 ${BAYEUX_BXDECAY0_MIN_VERSION} REQUIRED CONFIG)
   message(STATUS "Found BxDecay0 ${BxDecay0_VERSION}")
   message(STATUS " - BxDecay0 include dirs : '${BxDecay0_INCLUDE_DIRS}'")
   message(STATUS " - BxDecay0 library dir  : '${BxDecay0_LIBRARY_DIR}'")
@@ -13,9 +14,7 @@ endif()
 # Configure build of Bayeux library
 # - Packages
 # - Boost
-### Should we use Boost 1.58 as the minimal version (system version on Ubuntu 16.04) ?
-### set(BAYEUX_BOOST_MIN_VERSION "1.58.0")
-set(BAYEUX_BOOST_MIN_VERSION "1.63.0")
+set(BAYEUX_BOOST_MIN_VERSION "1.69.0")
 set(BAYEUX_BOOST_COMPONENTS
   filesystem
   system
@@ -39,7 +38,7 @@ message(STATUS "Boost version ${Boost_VERSION} has been detected.")
 
 # Boost 1.64 has not been explicitely tested, so I remove it for safety 
 set(Bayeux_UNSUPPORTED_BOOST_VERSIONS 106400 106500 106600 106700 106800)
-set(Bayeux_SUPPORTED_BOOST_VERSIONS 106300 106900 107100)
+set(Bayeux_SUPPORTED_BOOST_VERSIONS 106900 107100)
 message(STATUS "Unsupported Boost versions : ${Bayeux_UNSUPPORTED_BOOST_VERSIONS}.")
 message(STATUS "Supported Boost versions   : ${Bayeux_SUPPORTED_BOOST_VERSIONS}.")
 set(_bx_boost_ver_index -1)
@@ -82,7 +81,7 @@ get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 
 # - Camp
 set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
-# set(BAYEUX_CAMP_MIN_VERSION "0.8.2")
+# set(BAYEUX_CAMP_MIN_VERSION "0.8.4")
 # if (BAYEUX_CAMP_LEGACY)
 #   set(BAYEUX_CAMP_MIN_VERSION "0.8.0")
 # endif()
