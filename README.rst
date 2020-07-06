@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2020-05-25
+:Date:    2020-07-06
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -63,7 +63,7 @@ emfield
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
-  Depends on the external BxDecay0_ library (optional).
+  Depends on the external BxDecay0_ library (optional, recommended).
 
 genvtx
   Vertex  random  generator tools providing input to  simulation
@@ -91,7 +91,7 @@ Corpusculaire de  Caen`_ (CNRS/IN2P3)  in the  framework of  the NEMO3
 double-beta  decay  experiment and  the  R&D  for its  successor:  the
 SuperNEMO experiment.  Bayeux  is developped by a  group of physicists
 working in Nuclear  and Particle Physics. It  provides generic classes
-and tools that can be used in  many different contexts.  It is now the
+and tools that can be used in  many different contexts.  It is the
 cornerstone of the SuperNEMO_  experiment's production software chain.
 As a  generic toolbox,  it is  also used by  several projects  for the
 simulation of  particle transport  through matter (through  its Geant4
@@ -551,7 +551,7 @@ to deal with the following three in most cases:
   .. code:: sh
 
      $ cmake -DCMAKE_PREFIX_PATH=$(brew --prefix)
-
+  ..
 
 ``CMAKE_BUILD_TYPE``
   Build type, e.g. ``Release``, ``Debug``. You will want this to be
@@ -895,7 +895,7 @@ To do
 
 * Provide official example code for many classes.
 * Migrate some deprecated  Boost classes to some  C++11 classes (smart
-  pointers...)
+  pointers...).
 
 .. raw:: pdf
 
