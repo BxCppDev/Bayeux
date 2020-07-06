@@ -1,0 +1,16 @@
+set grid
+set xlabel "E (MeV)"
+set ylabel "Counts"
+
+plot [0:][0:] \
+     'test_wdecay0-e1.his' using (0.5*(column(1)+column(2))):(column(3)) title "E1" with histeps, \
+     'test_wdecay0-e2.his' using (0.5*(column(1)+column(2))):(column(3)) title "E2" with histeps, \
+     'test_wdecay0-esum.his' using (0.5*(column(1)+column(2))):(column(3)) title "E1+E2" with histeps
+pause -1 "Hit [Enter]..."
+
+
+## end
+
+
+
+     

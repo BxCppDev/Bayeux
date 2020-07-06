@@ -1,5 +1,5 @@
 // -*- mode: c++; -*-
-// test_wdecay0.cxx
+// test_wdecay0_2.cxx
 
 // Standard library:
 #include <cstdlib>
@@ -19,10 +19,7 @@ int main (int argc_, char ** argv_)
     bool debug = false;
     bool dump  = false;
     int  max_count = 10;
-    bool high_energy_cut = false;
-    bool zero_nu = false;
-    bool gA_23 = false;
-    int dbd_mode = 4;
+    int dbd_mode = 21;
     std::string isotope = "Se82";
     
     int iarg = 1;
@@ -31,30 +28,17 @@ int main (int argc_, char ** argv_)
       if (arg == "-d" || arg == "--debug") debug = true;
       if (arg == "-D" || arg == "--dump") dump = true;
       if (arg == "-L" || arg == "--lots") max_count = 100000;
-      if (arg == "-H" || arg == "--high-energy-cut")  high_energy_cut = true;
-      if (arg == "-Z" || arg == "--0nubb") zero_nu = true;
-      if (arg == "-G" || arg == "--gA-23") gA_23 = true;
       if (arg == "-M" || arg == "--Mo100") isotope =  "Mo100";
+      if (arg == "-22" || arg == "--g22") dbd_mode = 22;
       iarg++;
     }
 
-    if (zero_nu) {
-      dbd_mode = 1;
-    }
-    if (gA_23) {
-      dbd_mode = 23;
-    }
     datatools::properties config;
     config.store("seed", 314159);
     config.store("decay_type", "DBD");
     config.store("decay_isotope", isotope);
     config.store("decay_dbd_level", 0);
     config.store("decay_dbd_mode", dbd_mode);
-    if (high_energy_cut) {
-      config.store("energy_min", 2.0);
-      config.store("energy_max", 3.2);
-      config.store("energy_unit", "MeV");
-    }
     if (debug) config.store("logging.priority", "trace");
     if (debug) config.tree_dump(std::clog, "Configuration: ", "debug: ");
 
@@ -92,25 +76,25 @@ int main (int argc_, char ** argv_)
     }
     h_esum.print_ascii(std::cout);
     {
-      std::string sname = "test_wdecay0-esum.his";
+      std::string sname = "test_wdecay0_2-esum.his";
       std::ofstream ofhist(sname.c_str());
       h_esum.print(ofhist);
       ofhist.close();
     }
     {
-      std::string sname = "test_wdecay0-e1.his";
+      std::string sname = "test_wdecay0_2-e1.his";
       std::ofstream ofhist(sname.c_str());
       h_e1.print(ofhist);
       ofhist.close();
     }
     {
-      std::string sname = "test_wdecay0-e2.his";
+      std::string sname = "test_wdecay0_2-e2.his";
       std::ofstream ofhist(sname.c_str());
       h_e2.print(ofhist);
       ofhist.close();
     }
     {
-      std::string sname = "test_wdecay0-cos12.his";
+      std::string sname = "test_wdecay0_2-cos12.his";
       std::ofstream ofhist(sname.c_str());
       h_cos12.print(ofhist);
       ofhist.close();
@@ -126,4 +110,4 @@ int main (int argc_, char ** argv_)
   return error_code;
 }
 
-// end of test_wdecay0.cxx
+// end of test_wdecay0_2.cxx
