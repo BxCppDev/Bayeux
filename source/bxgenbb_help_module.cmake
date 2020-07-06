@@ -483,6 +483,8 @@ if(NOT Bayeux_WITH_BXDECAY0)
     ${module_test_dir}/decay0/test_decay0_plog69.cxx
     ${module_test_dir}/decay0/test_decay0_tgold.cxx
     )
+else()
+  list(APPEND ${module_name}_MODULE_TESTS ${module_test_dir}/test_wdecay0_2.cxx)
 endif()
 
 # - Applications
