@@ -120,7 +120,7 @@ if(Bayeux_WITH_BRIO)
 endif()
 
 set(Bayeux_WITH_BXDECAY0 0)
-option(BAYEUX_WITH_BXDECAY0 "Use the BxDecay0 library" OFF)
+option(BAYEUX_WITH_BXDECAY0 "Use the BxDecay0 library" ON)
 if (BAYEUX_WITH_BXDECAY0)
   set(Bayeux_WITH_BXDECAY0 1)
 endif()
