@@ -3,19 +3,10 @@ Tools for Bayeux developpers only
 ====================================
 
 This directory hosts dedicated scripts for quick build test
-of the Bayeux library for Ubuntu Linux 18.04 and CentOS 7.5:
+of the Bayeux library for Ubuntu Linux 18.04/20.04 and CentOS 7.5:
 
 * ``build.sh``
 
-
-From the Bayeux base source directory, use the build/installation script:
-
-.. code:: bash
-
-   $ linuxbrew_setup # Please use her your own command(s) to setup Bayeux's dependencies
-   $ ./tools/build.sh --help   
-   $ ./tools/build.sh --nprocs 6	  
-..
 
 
 Usage
@@ -25,71 +16,39 @@ Usage
 Build and install
 -----------------
 
-.. code:: bash
+* From the Bayeux base source directory, use the build/installation script:
 
-   $ bayeux_build_g49_setup
-   $ ./tools/build.sh --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "-boost169-g49"
-..
+  .. code:: bash
+	    
+     $ linuxbrew_setup # Please use here your own command(s) to setup Bayeux's dependencies
+     $ ./tools/build.sh --help
+     $ rm -fr /scratch/sw/Bayeux/build-develop
+     $ ./tools/build.sh \
+	    --nprocs 6 \
+	    --build-base-dir /scratch/sw/Bayeux/build-develop \
+	    --install-base-dir /scratch/sw/Bayeux/install-develop 
+  ..
 
+  
+* Select a specific Boost prefix:
 
+  .. code:: bash
 
-Old stuff
-====================
-
-
-Build Bayeux with Boost 1.68
-----------------------------
-
-.. code:: bash
-
-   $ bayeux_build_g49_setup
-   $ ./tools/build.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.68.0 --bayeux-prefix "_boost168"
-..
-
-It breaks as shown in https://github.com/BxCppDev/Bayeux/issues/39 and,
-from the build directory:
-
-.. code:: bash
-
-   $ ctest -VV -I 41,41
-..
-   
-Build Bayeux with Boost 1.69
-----------------------------
-
-.. code:: bash
-
-   $ bayeux_build_g49_setup
-   $ ./tools/build.sh --without-geant4 --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169"
-..
-
-From the build directory:
-
-.. code:: bash
-
-   $ ctest -VV -I 41,41
-..
+     $ bayeux_build_g49_setup
+     $ ./tools/build.sh \
+	    --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 \
+	    --bayeux-prefix "-boost169-g49"
+  ..
 
 
-With Geant4
------------
+* Run a specific test:
+  
+  From the build directory:
 
-.. code:: bash
+  .. code:: bash
 
-   $ bayeux_build_g49_setup
-   $ ./tools/build.sh --boost-root /scratch/ubuntu18.04/BxInstall/boost-1.69.0 --bayeux-prefix "_boost169_withg4"
-..
-
-From the build directory:
-.. code:: bash
-
-   $ ctest -VV -I 41,41
-..
-
-
-
-
-
+     $ ctest -VV -I 41,41
+  ..
 
 
 .. end

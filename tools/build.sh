@@ -34,27 +34,27 @@ Options:
    --clean-build-dir       : Clean the the Bayeux build directory 
                              after successfull installation
    --without-bxdecay0      : Do not use the BxDecay0 library
-   --with-bxdecay0         : Use the BxDecay0 library
+   --with-bxdecay0         : Use the BxDecay0 library (default)
    --bxdecay0-dir path     : Set the BxDecay0 base dir for CMake
    --without-geant4        : Do not build the Geant4 module
-   --with-geant4           : Build the Geant4 module
+   --with-geant4           : Build the Geant4 module (default)
    --with-geant4-experimental : 
                              Build the Geant4 module (experimental mode).
 		  	     Allows Geant4 10.5
-   --with-qt               : Do build the Qt-based GUI material
+   --with-qt               : Do build the Qt-based GUI material (default)
    --qt-prefix path        : Set the Qt installation prefix path
    --qt-dir path           : Set the Qt base dir for CMake
    --without-qt            : Do not build the Qt-based GUI material
    --system-find-boost     : Use the system FindBoost CMake script
    --add-boost-version ver : Add a Boost version
    --boost-root path       : Set the Boost installation prefix path
-   --camp-legacy           : Allow legacy version of CAMP (0.8.0)
-   --minimal-build         : Minimal build
-   --bayeux-suffix name    : Set a special suffix for the build directory
-   --gcc-version version   : Set GC version
+   --boost-prefix path     : idem
+   --camp-prefix path      : Set the CAMP installation prefix path
+   --minimal-build         : Minimal build 
+   --bayeux-suffix name    : Set a special suffix for the build directory (default: branch name)
+   --gcc-version version   : Set GCC version
 
 EOF
-###--camp-prefix path      : Set the CAMP installation prefix path
     return
 }
 
@@ -70,7 +70,7 @@ install_base_dir=$(pwd)/_install.d
 build_base_dir=$(pwd)/_build.d
 clean_build_dir=false
 bayeux_suffix=
-with_bxdecay0=false
+with_bxdecay0=true
 bxdecay0_dir=""
 with_geant4=true
 with_geant4_experimental=false
@@ -78,7 +78,6 @@ with_qt=true
 qt5_prefix=""
 qt5_dir=""
 camp_prefix=""
-# camp_legacy=false
 boost_root=""
 system_find_boost=false
 boost_versions_added=
@@ -118,6 +117,9 @@ function cl_parse()
 	elif [ "${arg}" = "--boost-root" ]; then
 	    shift 1
 	    boost_root="$1"
+	elif [ "${arg}" = "--boost-prefix" ]; then
+	    shift 1
+	    boost_prefix="$1"
 	elif [ "${arg}" = "--add-boost-version" ]; then
 	    shift 1
 	    added_boost_version="$1"
@@ -161,8 +163,6 @@ function cl_parse()
 	elif [ "${arg}" = "--camp-prefix" ]; then
 	    shift 1
 	    camp_prefix="$1"
-	# elif [ "${arg}" = "--camp-legacy" ]; then
-	#     camp_legacy=true
 	elif [ "${arg}" = "--gcc-version" ]; then
 	    shift 1
 	    gcc_version="$1"
@@ -195,7 +195,6 @@ echo >&2 "[info]   GCC version       : '${gcc_version}'"
 echo >&2 "[info]   with_geant4       : ${with_geant4}"
 echo >&2 "[info]   \`-- experimental  : ${with_geant4_experimental}"
 echo >&2 "[info]   camp_prefix       : '${camp_prefix}'"
-# echo >&2 "[info]   camp_legacy       : ${camp_legacy}"
 echo >&2 "[info]   with_qt           : ${with_qt}"
 echo >&2 "[info]   |-- Qt prefix : '${qt5_prefix}'"
 echo >&2 "[info]   \`-- Qt dir    : '${qt5_dir}'"
@@ -379,9 +378,6 @@ if [ ! -d ${camp_dir} ]; then
     my_exit 1 "CAMP dir '${camp_dir}' does not exist!"
 fi
 camp_option="-DCAMP_DIR=${camp_dir}"
-# if [ ${camp_legacy} = true ]; then
-#     camp_option="${camp_option} -DBAYEUX_CAMP_LEGACY=ON"
-# fi
 clhep_prefix=""
 which clhep-config > /dev/null 2>&1 
 if [ $? -eq 0 ]; then
