@@ -46,10 +46,6 @@
 // This project:
 #include <genbb_help/i_genbb.h>
 #include <bayeux/bayeux_config.h>
-#if BAYEUX_WITH_BXDECAY0 == 1
-// #warning Bayeux is built with BxDecay0 linkage
-#include <bxdecay0/decay0_generator.h>
-#endif
 
 namespace genbb {
 
