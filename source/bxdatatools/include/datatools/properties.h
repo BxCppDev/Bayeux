@@ -515,7 +515,7 @@ namespace datatools {
       /// #  accessed by an external tool / user.
       /// #  This directive must be given before any property directive.
       ///
-      /// #@config Configuration parameters for a root finding algorithm
+      /// #@config[uration] Configuration parameters for a root finding algorithm
       /// #  This meta-comment provides the general description of the set of properties.
       /// #  This directive must be given before any property directive.
       /// 
@@ -551,7 +551,7 @@ namespace datatools {
       /// ### Definitions of properties ###
       ///
       /// # The '#@description text' optional meta-comments is used to document the next property to
-      /// # be parsed.
+      /// # be parsed (alternative: '#@parameter text')
       /// #@description The name of the method
       /// #  This meta-comment provides the specific description of next 'root_finder_type' property record.
       /// root_finder_type : string = "Newton-Raphson"

@@ -2974,16 +2974,16 @@ namespace datatools {
            << std::endl << std::endl;
     }
 
-    if (has_topic() && _requested_topic_) {
-      out_ << "#@topic" << _format::SPACE_CHAR << get_topic() << std::endl;
-    }
-
     if (!props_.get_description().empty()) {
-      out_ << "#@config" << _format::SPACE_CHAR << props_.get_description() << std::endl;
+      out_ << "#@configuration" << _format::SPACE_CHAR << props_.get_description() << std::endl;
       out_ << std::endl;
     }
 
-    for (const auto& p : props_._props_) {
+    if (has_topic() and _requested_topic_) {
+      out_ << "#@topic" << _format::SPACE_CHAR << get_topic() << std::endl;
+    }
+
+    for (const auto & p : props_._props_) {
       if (_write_public_only_) {
         if (key_is_private(p.first)) continue;
       }
@@ -3456,7 +3456,7 @@ namespace datatools {
                   // it is also for file inclusion mechanism:
                   include_file_allow_override = false;
                 }
-              } else if (token == "@config") {
+              } else if (token == "@config" or token == "@configuration") {
                 // Warn if more than one '@config' directive is set...
                 DT_PROP_CFG_READ_THROW_IF(property_parsing_started,
                                           std::logic_error,
@@ -3464,11 +3464,11 @@ namespace datatools {
                                           _section_name_,
                                           _section_start_line_number_,
                                           _current_line_number_,
-                                          "Directive '@config' is not allowed after first property record!");
+                                          "Directive '@config[uration]' is not allowed after first property record!");
                 iss >> std::ws;
                 std::string config_desc;
                 if (!prop_config.empty()) {
-                  DT_LOG_WARNING(logging, "Duplicated '@config' directive; "
+                  DT_LOG_WARNING(logging, "Duplicated '@config[uration]' directive; "
                                  << "Configuration description '" << props_.get_description() << "' already loaded!");
                 }
                 std::getline(iss, config_desc);
@@ -3634,7 +3634,7 @@ namespace datatools {
               } else if (token == "@disable_real_with_unit") {
                 DT_LOG_TRACE(logging, "Disable unit support for real properties");
                 enable_real_with_unit = false;
-              } else if (token == "@description") {
+              } else if (token == "@description" or token == "@parameter") {
                 DT_LOG_TRACE(logging, "Set the description of the next property to be parsed");
                 iss >> std::ws;
                 std::string desc;
