@@ -7,7 +7,8 @@
 # they #include other headers, so these also need to be present...
 #
 if(Bayeux_WITH_GEANT4_MODULE)
-
+   include(${Geant4_USE_FILE})
+  
   set(${module_name}_GEANT4_HEADERS
     ${module_include_dir}/${module_name}/g4/manager_parameters.h
     ${module_include_dir}/${module_name}/g4/manager.h
@@ -79,7 +80,6 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_source_dir}/g4/simulation_ctrl.cc
     ${module_source_dir}/g4/em_physics_constructor.cc
     ${module_source_dir}/g4/loggable_support.cc
-    ${module_source_dir}/g4/manager.cc
     ${module_source_dir}/g4/physics_list.cc
     ${module_source_dir}/g4/sensitive_hit.cc
     ${module_source_dir}/g4/stepping_verbose.cc
@@ -91,13 +91,14 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_source_dir}/g4/stepping_action.cc
     ${module_source_dir}/g4/sensitive_hit_collection.cc
     ${module_source_dir}/g4/primary_generator.cc
-    ${module_source_dir}/g4/simulation_module.cc
     ${module_source_dir}/g4/magnetic_field.cc
     ${module_source_dir}/g4/electromagnetic_field.cc
     ${module_source_dir}/g4/em_field_equation_of_motion.cc
     ${module_source_dir}/g4/em_field_g4_stuff.cc
     ${module_source_dir}/g4/neutrons_physics_constructor.cc
     ${module_source_dir}/g4/biasing_manager.cc
+    ${module_source_dir}/g4/manager.cc
+    ${module_source_dir}/g4/simulation_module.cc
     )
 
   list(APPEND ${module_name}_MODULE_TESTS
@@ -137,15 +138,19 @@ if(Bayeux_WITH_GEANT4_MODULE)
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
-
+  message(STATUS "Geant4_LIBRARIES='${Geant4_LIBRARIES}'")
+  message(STATUS "Geant4_LIBRARY_DIR='${Geant4_LIBRARY_DIR}'")
   target_link_libraries(Bayeux_mctools_geant4
     PUBLIC
-      ${Geant4_LIBRARIES} Boost::thread
-      )
+    # -L${Geant4_LIBRARY_DIR}
+    ${Geant4_LIBRARIES}
+    Boost::thread
+    )
 
   # - Set RPATH as needed
+  set_target_properties(Bayeux_mctools_geant4 PROPERTIES SKIP_BUILD_RPATH FALSE)
   set_target_properties(Bayeux_mctools_geant4 PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
-
+  set_target_properties(Bayeux_mctools_geant4 PROPERTIES BUILD_WITH_INSTALL_RPATH 0)
   if(UNIX AND NOT APPLE)
     set_target_properties(Bayeux_mctools_geant4
       PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
