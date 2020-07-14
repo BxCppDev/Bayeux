@@ -102,6 +102,31 @@ namespace {
     static const char METACOMMENT_CHAR = '@'; ///< Comment character
     static const char SPACE_CHAR   = ' '; ///< Space character
     static const char CONTINUATION_CHAR = '\\'; ///< Continuation character
+    static const char APPEND_CHAR = '+'; ///< Append character
+
+    static const std::string & boolean_label()
+    {
+      static const std::string _lbl("boolean");
+      return _lbl;
+    }
+
+    static const std::string & integer_label()
+    {
+      static const std::string _lbl("integer");
+      return _lbl;
+    }
+
+    static const std::string & real_label()
+    {
+      static const std::string _lbl("real");
+      return _lbl;
+    }
+
+    static const std::string & string_label()
+    {
+      static const std::string _lbl("string");
+      return _lbl;
+    }
   };
 
   const char kAllowedChars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
@@ -639,10 +664,10 @@ namespace datatools {
 
   std::string properties::data::get_type_label() const
   {
-    if (this->is_boolean()) return "boolean";
-    if (this->is_integer()) return "integer";
-    if (this->is_real()) return "real";
-    if (this->is_string()) return "string";
+    if (this->is_boolean()) return _format::boolean_label();
+    if (this->is_integer()) return _format::integer_label();
+    if (this->is_real())    return _format::real_label();
+    if (this->is_string())  return _format::string_label();
     return "none";
   }
 
@@ -1269,6 +1294,20 @@ namespace datatools {
   bool properties::is_public(const std::string & a_key) const
   {
     return !this->is_private(a_key);
+  }
+
+  int properties::get_type(const std::string & a_key) const
+  {
+    const data *data_ptr = nullptr;
+    this->_check_key_(a_key, &data_ptr);
+    return data_ptr->get_type();
+  }
+
+  std::string properties::get_type_label(const std::string & a_key) const
+  {
+    const data *data_ptr = nullptr;
+    this->_check_key_(a_key, &data_ptr);
+    return data_ptr->get_type_label();
   }
 
   bool properties::is_boolean(const std::string & a_key) const
@@ -3163,6 +3202,7 @@ namespace datatools {
     std::string prop_description;
     bool property_parsing_started = false;
     bool allow_key_override = _allow_key_override_;
+    // bool allow_array_override_index = true;
     bool line_goon = false;
     // 2013-04-05 FM : default is to allow unit directives for real numbers
     bool enable_real_with_unit = true;
@@ -3719,8 +3759,16 @@ namespace datatools {
                                     _current_line_number_,
                                     "Cannot find assign symbol '" << _format::ASSIGN_CHAR << "'!");
           property_parsing_started = true;
+          bool array_append = false;
+          bool array_override_item = false;
+          int array_override_index = -1;
+          if (flag_pos > 0) {
+            if (line_parsing.substr(flag_pos - 1, 2) == "+=") {
+              array_append = true;
+            } 
+          }
           // Parse property desc:
-          std::string property_desc_str = line_parsing.substr(0, flag_pos);
+          std::string property_desc_str = line_parsing.substr(0, flag_pos - (array_append ? 1 : 0));
           DT_LOG_TRACE(logging, "property_desc_str='" << property_desc_str << "'");
           // Parse property value:
           std::string property_value_str = line_parsing.substr(flag_pos+1);
@@ -3792,6 +3840,92 @@ namespace datatools {
               scalar = true;
               type_str2 = type_str;
             }
+
+            {
+              // Search for syntax like : 'array_foo[42]'
+              int open_index_pos = -1;
+              //std::size_t close_index_pos = -1;
+              open_index_pos = prop_key.find('[');
+              if (open_index_pos >= 0) {
+                DT_PROP_CFG_READ_THROW_IF(prop_key.back() != ']',
+                                          std::logic_error,
+                                          _current_filename_,
+                                          _section_name_,
+                                          _section_start_line_number_,
+                                          _current_line_number_,
+                                          "Invalid array item format for key '"
+                                          << prop_key
+                                          << "' at line '"
+                                          << line << "' !");
+                std::string array_prop_key = prop_key.substr(0, open_index_pos);
+                std::string array_index_token = prop_key.substr(open_index_pos + 1,
+                                                                prop_key.length() - array_prop_key.length() - 2);
+                // std::cerr << "******** DEVEL ***" << "array_prop_key = '" << array_prop_key << "'" << std::endl;
+                // std::cerr << "******** DEVEL ***" << "array_index_token = '" << array_index_token << "'" << std::endl;
+                std::istringstream array_index_ss(array_index_token);
+                int index = -1;
+                array_index_ss >> index;
+                DT_PROP_CFG_READ_THROW_IF(!array_index_ss or index < 0,
+                                          std::logic_error,
+                                          _current_filename_,
+                                          _section_name_,
+                                          _section_start_line_number_,
+                                          _current_line_number_,
+                                          "Invalid array item format from '" << array_index_token << "' for key '"
+                                          << prop_key
+                                          << "' at line '"
+                                          << line << "' !");
+                // std::cerr << "******** DEVEL ***" << "index = [" << index<< "]" << std::endl;
+                array_override_item = true;
+                array_override_index = index;
+                prop_key = array_prop_key;
+                // std::cerr << "******** DEVEL ***" << "array_override_item  = " << std::boolalpha << array_override_item << std::endl;
+                // std::cerr << "******** DEVEL ***" << "array_override_index = [" << array_override_index << "]" << std::endl;
+                // std::cerr << "******** DEVEL ***" << "prop_key_token       = '" << prop_key << "'" << std::endl;
+              }
+            }
+            if (array_override_item) {
+              DT_PROP_CFG_READ_THROW_IF(! allow_key_override,
+                                        std::logic_error,
+                                        _current_filename_,
+                                        _section_name_,
+                                        _section_start_line_number_,
+                                        _current_line_number_,
+                                        "Key override mode is not allowed for property with key '"
+                                        << prop_key
+                                        << "' at line '"
+                                        << line << "' !");            
+              DT_PROP_CFG_READ_THROW_IF(! props_.is_vector(prop_key),
+                                        std::logic_error,
+                                        _current_filename_,
+                                        _section_name_,
+                                        _section_start_line_number_,
+                                        _current_line_number_,
+                                        "Key override mode is only supported for array property with key '"
+                                        << prop_key
+                                        << "' at line '"
+                                        << line << "' !");
+              DT_PROP_CFG_READ_THROW_IF(array_override_index < 0 or array_override_index >= props_.key_size(prop_key),
+                                        std::logic_error,
+                                        _current_filename_,
+                                        _section_name_,
+                                        _section_start_line_number_,
+                                        _current_line_number_,
+                                        "Invalid array index [" << std::to_string(array_override_index) << "] for key override mode for array property with key '"
+                                        << prop_key
+                                        << "' at line '"
+                                        << line << "' !");      
+            }
+            DT_PROP_CFG_READ_THROW_IF(array_append and scalar,
+                                      std::logic_error,
+                                      _current_filename_,
+                                      _section_name_,
+                                      _section_start_line_number_,
+                                      _current_line_number_,
+                                      "Append mode is only supported for array property with key '"
+                                      << prop_key
+                                      << "' at line '"
+                                      << line << "' !");            
             std::istringstream type_ss(type_str2);
             std::string type_token;
             type_ss >> std::ws >> type_token >> std::ws;
@@ -3800,13 +3934,13 @@ namespace datatools {
               type_token.clear();
               type_ss >> std::ws >> type_token >> std::ws;
             }
-            if (type_token == "boolean") {
+            if (type_token == _format::boolean_label()) {
               type = properties::data::TYPE_BOOLEAN_SYMBOL;
-            } else if (type_token == "integer") {
+            } else if (type_token == _format::integer_label()) {
               type = properties::data::TYPE_INTEGER_SYMBOL;
-            } else if (type_token == "real") {
+            } else if (type_token == _format::real_label()) {
               type = properties::data::TYPE_REAL_SYMBOL;
-            } else if (type_token == "string") {
+            } else if (type_token == _format::string_label()) {
               type = properties::data::TYPE_STRING_SYMBOL;
             } else {
               DT_PROP_CFG_READ_THROW_IF(true,
@@ -3820,6 +3954,16 @@ namespace datatools {
                                         << "at key '"
                                         << prop_key << "' !");
             }
+            DT_PROP_CFG_READ_THROW_IF(array_override_item and props_.get_type_label(prop_key) != type_token,
+                                      std::logic_error,
+                                      _current_filename_,
+                                      _section_name_,
+                                      _section_start_line_number_,
+                                      _current_line_number_,
+                                      "Type mismatch '" << type_token << "' vs '" << props_.get_type_label(prop_key) << "' for array item override mode for key '"
+                                      << prop_key
+                                      << "' at line '"
+                                      << line << "' !");            
             if (! scalar && ! type_str3.empty()) {
               std::istringstream iss3(type_str3);
               std::string dummy;
@@ -3829,6 +3973,7 @@ namespace datatools {
                 type_ss.str(type_str3);
               }
             }
+            
             bool with_explicit_path = false;
             if (type == properties::data::TYPE_STRING_SYMBOL) {
               std::string token;
@@ -3945,6 +4090,7 @@ namespace datatools {
                                             << line << "' !");
                 }
               } // Token not emtpy
+  
               if (! enable_real_with_unit) {
                 DT_PROP_CFG_READ_THROW_IF(! requested_unit_label.empty()
                                           || ! requested_unit_symbol.empty(),
@@ -3958,6 +4104,21 @@ namespace datatools {
                                           << prop_key << "' at line '" << line << "' !");
               }
             } // End of REAL
+
+            {
+              std::string trailing_token;
+              type_ss >> std::ws >> trailing_token >> std::ws;
+              DT_PROP_CFG_READ_THROW_IF(! trailing_token.empty(),
+                                        std::logic_error,
+                                        _current_filename_,
+                                        _section_name_,
+                                        _section_start_line_number_,
+                                        _current_line_number_,
+                                        "Unsupported trailing token '" << trailing_token
+                                        << "' for key '"
+                                        << prop_key << "' at line '" << line << "' !");
+            }
+            
             DT_LOG_TRACE(logging, "type='"<< type << "'");
             DT_LOG_TRACE(logging, "locked='" << locked << "'");
             DT_LOG_TRACE(logging, "vsize='" << vsize << "'");
@@ -3970,28 +4131,30 @@ namespace datatools {
             std::vector<int>         v_integers;
             std::vector<double>      v_reals;
             std::vector<std::string> v_strings;
-            if (type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar) {
-              if (vsize > 0) {
-                v_booleans.assign(vsize,
-                                  properties::data::defaults::boolean_value());
+            if (!scalar) {
+              if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                if (vsize > 0) {
+                  v_booleans.assign(vsize,
+                                    properties::data::defaults::boolean_value());
+                }
               }
-            }
-            if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
-              if (vsize > 0) {
-                v_integers.assign(vsize,
-                                  properties::data::defaults::integer_value());
+              if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                if (vsize > 0) {
+                  v_integers.assign(vsize,
+                                    properties::data::defaults::integer_value());
+                }
               }
-            }
-            if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
-              if (vsize > 0) {
-                v_reals.assign(vsize,
-                               properties::data::defaults::real_value());
+              if (type == properties::data::TYPE_REAL_SYMBOL) {
+                if (vsize > 0) {
+                  v_reals.assign(vsize,
+                                 properties::data::defaults::real_value());
+                }
               }
-            }
-            if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
-              if (vsize > 0) {
-                v_strings.assign(vsize,
-                                 properties::data::defaults::string_value());
+              if (type == properties::data::TYPE_STRING_SYMBOL) {
+                if (vsize > 0) {
+                  v_strings.assign(vsize,
+                                   properties::data::defaults::string_value());
+                }
               }
             }
             // Property is enabled by default:
@@ -4327,51 +4490,252 @@ namespace datatools {
               //          }
               //        }
               // }
-              if (props_.has_key(prop_key)) {
-                if (allow_key_override) {
-                  DT_LOG_WARNING(get_logging(), "Overriding already defined property with key '" << prop_key << "'");
-                  props_.clean(prop_key);
-                } else {
-                  DT_THROW(std::logic_error, "Key '" << prop_key << "' is already used and override is not allowed!");
-                }
+              if (not scalar and array_append) {
+                DT_PROP_CFG_READ_THROW_IF(! allow_key_override,
+                                          std::logic_error,
+                                          _current_filename_,
+                                          _section_name_,
+                                          _section_start_line_number_,
+                                          _current_line_number_,
+                                          "Property override/append is not allowed for array with key '" << prop_key << "'!");
+                DT_PROP_CFG_READ_THROW_IF(! props_.has_key(prop_key),
+                                          std::logic_error,
+                                          _current_filename_,
+                                          _section_name_,
+                                          _section_start_line_number_,
+                                          _current_line_number_,
+                                          "Key '" << prop_key << "' is not used and no append action can be done on it!");
+                DT_PROP_CFG_READ_THROW_IF(! props_.is_vector(prop_key),
+                                          std::logic_error,
+                                          _current_filename_,
+                                          _section_name_,
+                                          _section_start_line_number_,
+                                          _current_line_number_,
+                                          "Key '" << prop_key << "' is not a vector property and no append action can be done on it!");
+              } else {
+                if (props_.has_key(prop_key)) {
+                  if (!allow_key_override) {
+                    DT_PROP_CFG_READ_THROW_IF(! array_override_item,
+                                              std::logic_error,
+                                              _current_filename_,
+                                              _section_name_,
+                                              _section_start_line_number_,
+                                              _current_line_number_,
+                                              "Key '" << prop_key << "' is already used and property override is not allowed!");
+                  }
+                  DT_LOG_WARNING(get_logging(), "Overriden property with key '" << prop_key << "' at line #" <<
+                                 std::to_string(_current_line_number_) << " : '" << line << "'");
+                  bool clean_key = true;
+                  if (scalar and array_override_item) {
+                    // std::cerr << "***** DEVEL ***" << "Clean existing array property '" << prop_key << "' ************" << std::endl;
+                    clean_key = false;
+                  }
+                  if (clean_key) {
+                    props_.clean(prop_key);
+                  }
+               }
               }
+              // std::cerr << "***** DEVEL ***" << "About to store property '" << prop_key << "' ************" << std::endl;
+
               if (store_it) {
+                // std::cerr << "***** DEVEL ***" << "Store property '" << prop_key << "' ************" << std::endl;
+                if (type != properties::data::TYPE_REAL_SYMBOL) {
+                  DT_PROP_CFG_READ_THROW_IF(with_explicit_unit or !unit_symbol.empty(),
+                                            std::logic_error,
+                                            _current_filename_,
+                                            _section_name_,
+                                            _section_start_line_number_,
+                                            _current_line_number_,
+                                            "Non-real property with key '" << prop_key << "' does not support explicit unit!");
+                }
+                if (type != properties::data::TYPE_STRING_SYMBOL) {
+                  DT_PROP_CFG_READ_THROW_IF(with_explicit_path,
+                                            std::logic_error,
+                                            _current_filename_,
+                                            _section_name_,
+                                            _section_start_line_number_,
+                                            _current_line_number_,
+                                            "Non-string property with key '" << prop_key << "' does not support explicit path!");
+                }
                 if (scalar) {
-                  if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
-                    props_.store(prop_key, a_boolean, prop_description, locked);
+                  // std::cerr << "***** DEVEL ***" << "Scalar property '" << prop_key << "' ************" << std::endl;
+                  if (! array_override_item) {
+                    // std::cerr << "***** DEVEL ***" << "Store normal scalar property '" << prop_key << "' ************" << std::endl;
+                    if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                      props_.store(prop_key, a_boolean, prop_description, locked);
+                    }
+                    if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                      props_.store(prop_key, a_integer, prop_description, locked);
+                    }
+                    if (type == properties::data::TYPE_REAL_SYMBOL) {
+                      props_.store(prop_key, a_real, prop_description, locked);
+                      if (with_explicit_unit) {
+                        props_.set_explicit_unit(prop_key, true);
+                      }
+                      if (!unit_symbol.empty()) {
+                        props_.set_unit_symbol(prop_key, unit_symbol);
+                      }
+                    }
+                    if (type == properties::data::TYPE_STRING_SYMBOL) {
+                      props_.store(prop_key, a_string, prop_description, locked);
+                      if (with_explicit_path) {
+                        props_.set_explicit_path(prop_key, true);
+                      }
+                    }
+                  } else {
+                    // Array override item:
+                    // std::cerr << "***** DEVEL ***" << "Array override item for key '" << prop_key << "'************" << std::endl;
+                    if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                      props_.change_boolean_vector(prop_key, a_boolean, array_override_index);
+                    }
+                    if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                      props_.change_integer_vector(prop_key, a_integer, array_override_index);
+                    }
+                    if (type == properties::data::TYPE_REAL_SYMBOL) {
+                      DT_PROP_CFG_READ_THROW_IF(with_explicit_unit != props_.has_explicit_unit(prop_key),
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Overriden item for real vector key '" << prop_key << "' has unmatching explicit unit ith original vector!");
+                      DT_PROP_CFG_READ_THROW_IF(props_.get_unit_symbol(prop_key) != unit_symbol,
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Overriden item for real vector key '" << prop_key
+                                                << "' has unmatching explicit unit '" << props_.get_unit_symbol(prop_key)
+                                                << "' with respect to original value with unit '" << unit_symbol << "'!");
+                      props_.change_real_vector(prop_key, a_real, array_override_index);
+                    }
+                    if (type == properties::data::TYPE_STRING_SYMBOL) {
+                      DT_PROP_CFG_READ_THROW_IF(with_explicit_path != props_.is_explicit_path(prop_key),
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Original string vector key '" << prop_key << "' has unmatching explicit path with respect to overriden vector item!");
+                      props_.change_string_vector(prop_key, a_string, array_override_index);
+                    }
                   }
-                  if (type == properties::data::TYPE_INTEGER_SYMBOL) {
-                    props_.store(prop_key, a_integer, prop_description, locked);
-                  }
-                  if (type == properties::data::TYPE_REAL_SYMBOL) {
-                    props_.store(prop_key, a_real, prop_description, locked);
-                  }
-                  if (type == properties::data::TYPE_STRING_SYMBOL) {
-                    props_.store(prop_key, a_string, prop_description, locked);
-                  }
+
                 } else {
-                  if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
-                    props_.store(prop_key, v_booleans, prop_description, locked);
+                  // std::cerr << "***** DEVEL ***" << "Vector property '" << prop_key << "' ************" << std::endl;
+                  if (not array_append) {
+                    // std::cerr << "***** DEVEL ***" << "Normal store Vector property '" << prop_key << "' ************" << std::endl;
+                    if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                      props_.store(prop_key, v_booleans, prop_description, locked);
+                    }
+                    if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                      props_.store(prop_key, v_integers, prop_description, locked);
+                    }
+                    if (type == properties::data::TYPE_REAL_SYMBOL) {
+                      props_.store(prop_key, v_reals, prop_description, locked);
+                      if (with_explicit_unit) {
+                        props_.set_explicit_unit(prop_key, true);
+                      }
+                      if (!unit_symbol.empty()) {
+                        props_.set_unit_symbol(prop_key, unit_symbol);
+                      }
+                    }
+                    if (type == properties::data::TYPE_STRING_SYMBOL) {
+                      props_.store(prop_key, v_strings, prop_description, locked);
+                      if (with_explicit_path) {
+                        props_.set_explicit_path(prop_key, true);
+                      }
+                    }
+                  } else {
+                    // std::cerr << "***** DEVEL ***" << "Append mode vector property '" << prop_key << "' ************" << std::endl;
+                    if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                      DT_PROP_CFG_READ_THROW_IF(not props_.is_boolean(prop_key) and not props_.is_vector(prop_key),
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Original property with key '" << prop_key << "' is not a boolean vector property!");
+                                  
+                      data::vbool v_booleans_appended;
+                      props_.fetch(prop_key, v_booleans_appended);
+                      for (auto val : v_booleans) {
+                        v_booleans_appended.push_back(val);
+                      }
+                      props_.update(prop_key, v_booleans_appended);
+                    }
+                    if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                      DT_PROP_CFG_READ_THROW_IF(not props_.is_integer(prop_key) and not props_.is_vector(prop_key),
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Original property with key '" << prop_key << "' is not an integer vector property!");
+                                  
+                      data::vint v_integers_appended;
+                      props_.fetch(prop_key, v_integers_appended);
+                      for (auto val : v_integers) {
+                        v_integers_appended.push_back(val);
+                      }
+                      props_.update(prop_key, v_integers_appended);
+                    }
+                    if (type == properties::data::TYPE_REAL_SYMBOL) {
+                      DT_PROP_CFG_READ_THROW_IF(not props_.is_real(prop_key) and not props_.is_vector(prop_key),
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Original property with key '" << prop_key << "' is not a real vector property!");
+                      data::vdouble v_reals_appended;
+                      props_.fetch(prop_key, v_reals_appended);
+                      for (auto val : v_reals) {
+                        v_reals_appended.push_back(val);
+                      }
+                      if (with_explicit_unit) {
+                        DT_PROP_CFG_READ_THROW_IF(not props_.has_explicit_unit(prop_key),
+                                                  std::logic_error,
+                                                  _current_filename_,
+                                                  _section_name_,
+                                                  _section_start_line_number_,
+                                                  _current_line_number_,
+                                                  "Original real vector key '" << prop_key << "' has no explicit unit!");
+                        DT_PROP_CFG_READ_THROW_IF(props_.has_unit_symbol(prop_key)
+                                                  and props_.get_unit_symbol(prop_key) != unit_symbol,
+                                                  std::logic_error,
+                                                  _current_filename_,
+                                                  _section_name_,
+                                                  _section_start_line_number_,
+                                                  _current_line_number_,
+                                                  "Original real vector key '" << prop_key << "' has unmatching explicit unit '" << props_.get_unit_symbol(prop_key) << "' with respect to appended values with unit '" << unit_symbol << "'!");
+                      }
+                      props_.update(prop_key, v_reals_appended);
+                    }
+                    if (type == properties::data::TYPE_STRING_SYMBOL) {
+                      DT_PROP_CFG_READ_THROW_IF(not props_.is_string(prop_key) and not props_.is_vector(prop_key),
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Original property with key '" << prop_key << "' is not a string vector property!");                                  
+                      DT_PROP_CFG_READ_THROW_IF(with_explicit_path != props_.is_explicit_path(prop_key),
+                                                std::logic_error,
+                                                _current_filename_,
+                                                _section_name_,
+                                                _section_start_line_number_,
+                                                _current_line_number_,
+                                                "Original string vector key '" << prop_key << "' has unmatching explicit path with respect to appended vector!");
+                      data::vstring v_strings_appended;
+                      props_.fetch(prop_key, v_strings_appended);
+                      for (auto val : v_strings) {
+                        v_strings_appended.push_back(val);
+                      }
+                      props_.update(prop_key, v_strings_appended);
+                    }                  
                   }
-                  if (type == properties::data::TYPE_INTEGER_SYMBOL) {
-                    props_.store(prop_key, v_integers, prop_description, locked);
-                  }
-                  if (type == properties::data::TYPE_REAL_SYMBOL) {
-                    props_.store(prop_key, v_reals, prop_description, locked);
-                  }
-                  if (type == properties::data::TYPE_STRING_SYMBOL) {
-                    props_.store(prop_key, v_strings, prop_description, locked);
-                  }
-                }
-                // Special flags:
-                if (type == properties::data::TYPE_STRING_SYMBOL && with_explicit_path) {
-                  props_.set_explicit_path(prop_key, true);
-                }
-                if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
-                  props_.set_explicit_unit(prop_key, true);
-                }
-                if (type == properties::data::TYPE_REAL_SYMBOL && !unit_symbol.empty()) {
-                  props_.set_unit_symbol(prop_key, unit_symbol);
                 }
                 prop_description.clear();
               } // if (store_it)

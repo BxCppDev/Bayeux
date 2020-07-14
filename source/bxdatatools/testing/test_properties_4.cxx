@@ -50,8 +50,8 @@ int main(void)
       setup.store_with_explicit_unit("width", 12.34 * CLHEP::meter, "The width of the table");
       setup.set_unit_symbol("width", "mm");
       std::vector<double> pos({ 1.2 * CLHEP::km, 3.4 * CLHEP::km});
-      setup.store("position", pos, "The position on the map");
-      setup.set_unit_symbol("position", "km");
+      setup.store("location", pos, "The location on the map");
+      setup.set_unit_symbol("location", "km");
       setup.tree_dump(std::clog, "Setup: ");
 
     }

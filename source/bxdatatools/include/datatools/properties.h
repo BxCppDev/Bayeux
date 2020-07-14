@@ -592,6 +592,12 @@ namespace datatools {
       ///   1.2 \   # no space is allowed after '\'
       ///   2.4 \   # no space is allowed after '\'
       ///   4.8     # last value
+      ///
+      /// #@description Here two more elements are appended to the original four items
+      /// in the 'guess_values' array so that it contains finally six elements.
+      /// In case of real values, the unit ('in UNITNAME') should be the same that
+      /// the one used for the previous definition in order to avoid confusion or inconsistency.
+      /// guess_values : real[2] in mm += 3.2 1.32
       ///    
       /// #@description Algorithm verbosity
       /// logging : string = "mute"  # no print at all
@@ -604,14 +610,18 @@ namespace datatools {
       /// logging : string = "debug" # print debug messages
       ///
       /// #@forbid_key_override # Special directive
-      /// #  From this point, overriding already defined properties is forbidden.
+      /// #  From this point, overriding already defined properties is forbidden again.
       ///
       /// #@enable_variants
       /// #  Enable the parsing of variant preprocessor directives.
       ///
-      /// #@variant_only math:numerical_library/with_gsl
+      /// #@variant_only math:numerical_library/with_gsl|true
       /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:numerical_library/with_gsl" variant condition is set (boolean).
+      /// #  if the "math:numerical_library/with_gsl" variant condition is set (boolean)
+      /// #  where 'math' is the name of the target variant registry and
+      /// # 'numerical_library/with_gsl' is the path of a variant condition within
+      /// # this registry. The '|true' tag indicates that the condition should be
+      /// # considered as true if no variant system is activated.
       /// #@description GSL error handling flag is set only if the GSL library is used
       /// gsl_error_support : boolean = true
       ///
@@ -638,7 +648,7 @@ namespace datatools {
       /// # 
       /// default_epsilon : real = @variant(math:tolerance/is_user/epsilon|1.e-7)
       ///
-      /// #@variant_if math:numerical_library/with_std
+      /// #@variant_if math:numerical_library/with_std|true
       /// #  This variant directive starts a conditional block of property directives.
       /// #  The block is activated if and only if the "math:numerical_library/with_std"
       /// #  variant condition is set. This directive implies the use of a matching
@@ -660,6 +670,7 @@ namespace datatools {
       /// #@variant_endif # End of the variant conditional block of property directives
       /// # Optionaly the '#@variant_endif' can specify the variant condition is refers to :
       /// # #@variant_endif math:numerical_library/with_std
+      /// # Variant conditional blocks can be nested.
       ///
       /// #@description The Pi constant in explicit angular unit
       /// #  The variant system provides three different options associated to the
@@ -965,6 +976,12 @@ namespace datatools {
     //! Check if data with name 'prop_key_' is public
     bool is_public(const std::string & prop_key_) const;
 
+    //! Return the type of the data
+    int get_type(const std::string & prop_key_) const;
+    
+    /// Get a string label associated to the type of the data
+    std::string get_type_label(const std::string & prop_key_) const;
+    
     //! Check if data with name 'prop_key_' is boolean
     bool is_boolean(const std::string & prop_key_) const;
 

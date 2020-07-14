@@ -22,8 +22,8 @@ Additions
 =========
 
 * PR #49:       Modernize      ``datatools::properties``      and
-  ``datatools::multi_properties`` classes (B.Morgan).
-* PR #50:       Modernize some other *data model* classes (B.Morgan).
+  ``datatools::multi_properties`` classes.
+* PR #50:       Modernize some other *data model* classes.
 * Add  optional  support  for  external BxDecay0_  C++  library  (from
   version 1) in place of the  C++ port of the legacy Decay0/Genbb code
   embedded in the  genbb_help module.  The BxDecay0  is an independant
@@ -34,10 +34,12 @@ Additions
 * Implement the new ``print_tree`` method for various classes.
 * Implement new file inclusion mechanism from  ``datatools::properties``
   and ``datatools::multi_properties`` formatted files.
+* Support array append mode for the ``datatools::properties`` parser
+* Support array item override mode for the ``datatools::properties`` parser
 * PR #57 : The ``bxg4_seeds`` program allows to extend a list of simulation runs
   with statistically independant PRNG seeds.
 * Support with GCC 9.3.0 (default on Ubuntu 20.04)
-* Support Boost 1.71 (default on Ubuntu 20.04)
+* Support Boost 1.71 (default on Ubuntu 20.04) and set minimum version for Boost at 1.69
 * Support CLHEP 2.1.4.2
 * Support CAMP 0.8.4 (default on Ubuntu 20.04)
   
