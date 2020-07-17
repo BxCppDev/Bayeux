@@ -1088,13 +1088,13 @@ namespace mctools {
               // Logicals are given by name :
               processor->get_auxiliaries().fetch("geometry.volumes", logicals);
             }
-            if (processor->get_auxiliaries().has_key("geometry.volumes_regex")) {
+            if (processor->get_auxiliaries().has_key("geometry.volumes.regex")) {
               std::set<std::string> log_volumes_regexp;
               DT_LOG_NOTICE(_logprio(),
                             "SHPF: Fetch the list of logical volumes associated to a sensitive category '"
                             << from_processor_sensitive_category << "'");
               // Logicals are given by name :
-              processor->get_auxiliaries().fetch("geometry.volumes_regex", log_volumes_regexp);
+              processor->get_auxiliaries().fetch("geometry.volumes.regex", log_volumes_regexp);
               if (log_volumes_regexp.size()) {
                 for (geomtools::logical_volume::dict_type::const_iterator ilogical
                        = _geom_manager_->get_factory().get_logicals().begin();
