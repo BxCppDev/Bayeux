@@ -19,9 +19,9 @@ int main (int argc_, char ** argv_)
     bool debug = false;
     bool dump  = false;
     int  max_count = 10;
-    int dbd_mode = 21;
     std::string isotope = "Se82";
-    
+    int dbd_mode = 4;
+  
     int iarg = 1;
     while (iarg < argc_) {
       std::string arg = argv_[iarg];
@@ -29,6 +29,7 @@ int main (int argc_, char ** argv_)
       if (arg == "-D" || arg == "--dump") dump = true;
       if (arg == "-L" || arg == "--lots") max_count = 100000;
       if (arg == "-M" || arg == "--Mo100") isotope =  "Mo100";
+      if (arg == "-21" || arg == "--g21") dbd_mode = 21;
       if (arg == "-22" || arg == "--g22") dbd_mode = 22;
       iarg++;
     }
