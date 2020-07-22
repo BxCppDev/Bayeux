@@ -118,6 +118,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/line_3d.h
   ${module_include_dir}/${module_name}/line_3d.ipp
   ${module_include_dir}/${module_name}/logical_volume.h
+  ${module_include_dir}/${module_name}/logical_volume_selector.h
   ${module_include_dir}/${module_name}/manager.h
   ${module_include_dir}/${module_name}/manager_macros.h
   ${module_include_dir}/${module_name}/mapping.h
@@ -227,6 +228,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/i_stackable.cc
   ${module_source_dir}/bounding_data.cc
   ${module_source_dir}/logical_volume.cc
+  ${module_source_dir}/logical_volume_selector.cc
   ${module_source_dir}/materials_plugin.cc
   ${module_source_dir}/materials_utils.cc
   ${module_source_dir}/mapping.cc
