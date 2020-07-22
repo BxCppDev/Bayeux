@@ -28,6 +28,7 @@
 #include <geomtools/materials_plugin.h>
 #include <geomtools/materials_utils.h>
 #include <geomtools/resource.h>
+#include <geomtools/logical_volume_selector.h>
 // - Bayeux/emfield :
 #include <emfield/base_electromagnetic_field.h>
 #include <emfield/electromagnetic_field_manager.h>
@@ -1007,7 +1008,7 @@ namespace mctools {
        * Possibly extends the list of "offical" sensitive detectors
        * from the list of step hit processors found in the SHPF factory
        * and creates the proper association to some logical volumes which must
-       * be specified using their respective names.
+       * be specified using their respective names or material ids.
        */
       for (SHPF_type::processor_dict_type::const_iterator iSHP
              = _SHPF_.get_processors().begin();
@@ -1061,181 +1062,20 @@ namespace mctools {
           _sensitive_detectors_[from_processor_sensitive_category] = SD;
 
           // Extract the logical volumes this sensitive detector is attached to:
-          std::vector<std::string> logicals;
-
-          bool all_logicals = false;
-          if (processor->get_auxiliaries().has_flag("geometry.volumes.all")) {
-            all_logicals = true;
+          datatools::properties geoLogVolSelection;
+          processor->get_auxiliaries().export_and_rename_starting_with(geoLogVolSelection,
+                                                                       "geometry.volumes.",
+                                                                       "");
+          if (processor->get_auxiliaries().has_key("geometry.volumes")) {
+            std::vector<std::string> log_volumes;
+            processor->get_auxiliaries().fetch("geometry.volumes", log_volumes);
+            geoLogVolSelection.store("names", log_volumes);
           }
-          if (all_logicals) {
-            for (geomtools::logical_volume::dict_type::const_iterator ilogical
-                   = _geom_manager_->get_factory().get_logicals().begin();
-                 ilogical != _geom_manager_->get_factory().get_logicals().end();
-                 ++ilogical) {
-              const std::string & logical_name = ilogical->first;
-              if (std::find(logicals.begin(), logicals.end(), logical_name) == logicals.end()) {
-                logicals.push_back(logical_name);
-              }
-            }
-          }
-
-          // Fetch the list of logical volumes associated to this 'sensitive category' :
-          if (! all_logicals) {
-            if (processor->get_auxiliaries().has_key("geometry.volumes")) {
-              DT_LOG_NOTICE(_logprio(),
-                            "SHPF: Fetch the list of logical volumes associated to a sensitive category '"
-                            << from_processor_sensitive_category << "'");
-              // Logicals are given by name :
-              processor->get_auxiliaries().fetch("geometry.volumes", logicals);
-            }
-            if (processor->get_auxiliaries().has_key("geometry.volumes.regex")) {
-              std::set<std::string> log_volumes_regexp;
-              DT_LOG_NOTICE(_logprio(),
-                            "SHPF: Fetch the list of logical volumes associated to a sensitive category '"
-                            << from_processor_sensitive_category << "'");
-              // Logicals are given by name :
-              processor->get_auxiliaries().fetch("geometry.volumes.regex", log_volumes_regexp);
-              if (log_volumes_regexp.size()) {
-                for (geomtools::logical_volume::dict_type::const_iterator ilogical
-                       = _geom_manager_->get_factory().get_logicals().begin();
-                     ilogical != _geom_manager_->get_factory().get_logicals().end();
-                     ++ilogical) {
-                  bool regex_matching = false;
-                  const std::string & log_name = ilogical->first;
-                  std::string log_name_regex;
-                  for (const std::string & log_vol_regex : log_volumes_regexp) {
-                    boost::regex e1(log_name_regex, boost::regex::extended);
-                    if (boost::regex_match(log_vol_regex, e1)) {
-                      regex_matching = true;
-                      log_name_regex = log_vol_regex;
-                      break;
-                    }
-                  }
-                  if (regex_matching) {
-                    if (std::find(logicals.begin(), logicals.end(), log_name) == logicals.end()) {
-                      std::ostringstream local_message;
-                      local_message << "SHPF: Associate the logical volume '" << log_name << "' with regex '"
-                                    << log_name_regex << "' to the new sensitive detector with category '"
-                                    << from_processor_sensitive_category << "'";
-                      DT_LOG_NOTICE(_logprio(), local_message.str());
-                      logicals.push_back(log_name);
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-          // Also fetch the list of logical volumes associated to this 'sensitive category'
-          // and *with* a given list of materials :
-          if (processor->get_auxiliaries().has_key("geometry.volumes.with_materials")) {
-            // Volumes are given by material(s) :
-            std::vector<std::string> materials;
-            DT_LOG_NOTICE(_logprio(),
-                          "SHPF: Fetch the list of materials for sensitive category '"
-                          << from_processor_sensitive_category << "'");
-            processor->get_auxiliaries().fetch("geometry.volumes.with_materials", materials);
-
-            std::ostringstream message;
-            message << "SHPF: Searching for logical volumes with material in (";
-            for (size_t j = 0; j < materials.size(); j++) {
-              if (j != 0) message << ',';
-              message << ' ' << '"' << materials[j] << '"';
-            }
-            message << ") to be associated to the new sensitive detector with category '"
-                    << from_processor_sensitive_category << "'";
-            DT_LOG_NOTICE(_logprio(), message.str());
-
-            // Traverse all logical volumes :
-            for (geomtools::logical_volume::dict_type::const_iterator ilogical
-                   = _geom_manager_->get_factory().get_logicals().begin();
-                 ilogical != _geom_manager_->get_factory().get_logicals().end();
-                 ++ilogical) {
-              const std::string & logical_name = ilogical->first;
-              const geomtools::logical_volume & log = *(ilogical->second);
-              bool checked_material = false;
-              std::string mat_name;
-              for (size_t imat = 0; imat < materials.size(); imat++) {
-                mat_name = materials[imat];
-                if (log.get_material_ref() == mat_name) {
-                  checked_material = true;
-                  break;
-                }
-              }
-              if (checked_material) {
-                if (std::find(logicals.begin(), logicals.end(), logical_name) == logicals.end()) {
-                  std::ostringstream local_message;
-                  message << "SHPF: Associate the logical volume '" << logical_name << "' with material '"
-                          << mat_name << "' to the new sensitive detector with category '"
-                          << from_processor_sensitive_category << "'";
-                  DT_LOG_NOTICE(_logprio(), local_message.str());
-                  logicals.push_back(logical_name);
-                }
-              }
-            }
-          }
-
-          // Also fetch the list of logical volumes associated to this 'sensitive category'
-          // and matching a given list of materials regex:
-          if (processor->get_auxiliaries().has_key("geometry.volumes.with_materials_regex")) {
-            std::set<std::string> materials_regexp;
-            DT_LOG_NOTICE(_logprio(),
-                          "SHPF: Fetch the list of logical volumes associated to a sensitive category '"
-                          << from_processor_sensitive_category << "'");
-            // Logicals are given by name :
-            processor->get_auxiliaries().fetch("geometry.with_materials_regex", materials_regexp);
-            if (materials_regexp.size()) {
-              for (geomtools::logical_volume::dict_type::const_iterator ilogical
-                     = _geom_manager_->get_factory().get_logicals().begin();
-                   ilogical != _geom_manager_->get_factory().get_logicals().end();
-                   ++ilogical) {
-                bool regex_matching = false;
-                const std::string & log_name = ilogical->first;
-                const geomtools::logical_volume & log = *(ilogical->second);
-                std::string mat_name = log.get_material_ref();
-                for (const std::string & matregex : materials_regexp) {
-                  boost::regex e1(matregex, boost::regex::extended);
-                  if (boost::regex_match(mat_name, e1)) {
-                    regex_matching = true;
-                    break;
-                  }
-                }
-                if (regex_matching) {
-                  if (std::find(logicals.begin(), logicals.end(), log_name) == logicals.end()) {
-                    std::ostringstream local_message;
-                    local_message << "SHPF: Associate the logical volume '" << log_name << "' with material '"
-                                  << mat_name << "' to the new sensitive detector with category '"
-                                  << from_processor_sensitive_category << "'";
-                    DT_LOG_NOTICE(_logprio(), local_message.str());
-                    logicals.push_back(log_name);
-                  }
-                }
-              }
-            }
-          }
-          DT_LOG_NOTICE(_logprio(), "SHPF: Number of logical volumes associated to sensitive category '"
-                        << from_processor_sensitive_category << "' : " << logicals.size());       
-          
-          // Skip the logical volumes that should be excluded :
-          if (processor->get_auxiliaries().has_key("geometry.volumes.excluded")) {
-            std::vector<std::string> excluded_logicals;
-            processor->get_auxiliaries().fetch("geometry.volumes.excluded", excluded_logicals);
-            std::ostringstream message;
-            message << "SHPF: Excluding logical volumes in (";
-            for (size_t j = 0; j < excluded_logicals.size(); j++) {
-              if (j != 0) message << ',';
-              message << ' ' << '"' << excluded_logicals[j] << '"';
-            }
-            message << ") from the list of volumes to be associated to the new sensitive detector from SHPF with category '"
-                    << from_processor_sensitive_category << "'";
-            DT_LOG_NOTICE(_logprio(), message.str());
-
-            for (size_t ixm = 0; ixm < excluded_logicals.size(); ixm++) {
-              logicals.erase(std::remove(logicals.begin(), logicals.end(), excluded_logicals[ixm]), logicals.end());
-            }
-          }
-
-          if (logicals.size() == 0) {
+          std::set<std::string> logical_names;
+          geomtools::logical_volume_selector logSelect(*_geom_manager_);
+          logSelect.initialize(geoLogVolSelection);
+          logSelect.resolve(logical_names);
+          if (logical_names.size() == 0) {
             DT_LOG_WARNING(_logprio(),
                            "SHPF: New sensitive category '" << from_processor_sensitive_category
                            << "' has no associated logical volumes !");
@@ -1245,8 +1085,8 @@ namespace mctools {
           // Loop on the specified logical volumes and make them sensitive
           // with the new sensitive detector.
           // Detect conflict (more than one sensitive detector per logical volume).
-          for (std::vector<std::string>::const_iterator ilogical = logicals.begin();
-               ilogical != logicals.end();
+          for (std::set<std::string>::const_iterator ilogical = logical_names.begin();
+               ilogical != logical_names.end();
                ++ilogical) {
             const std::string & logical_name = *ilogical;
             geomtools::logical_volume::dict_type::const_iterator found
@@ -1270,10 +1110,10 @@ namespace mctools {
             }
 
             // Pickup the corresponding G4 logical volume:
-            G4LogicalVolume * g4_log = 0;
+            G4LogicalVolume * g4_log = nullptr;
             G4String log_name = log.get_name().c_str();
             g4_log = g4_LV_store->GetVolume(log_name, false);
-            if (g4_log == 0) {
+            if (g4_log == nullptr) {
               DT_LOG_WARNING(_logprio(),
                              "SHPF: No logical volume has been found '" << log.get_name()
                              << "' in the G4LogicalVolumeStore !");
