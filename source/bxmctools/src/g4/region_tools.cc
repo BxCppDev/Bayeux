@@ -80,6 +80,8 @@ namespace mctools {
       // Fetch a list of regexps on volume names belonging to this region:
       if (config_.has_key("volumes_regexp")) {
         config_.fetch("volumes_regexp", the_log_volumes_regexp);
+      } else if (config_.has_key("volumes_regex")) {
+        config_.fetch("volumes_regex", the_log_volumes_regexp);
       }
  
       if (geom_manager_ != nullptr) {
@@ -94,7 +96,7 @@ namespace mctools {
         if (config_.has_key("materials")) {
           config_.fetch("materials", requested_material_refs);
           use_materials = true;
-        }
+        } 
 
         // Search for logical volumes with specific materials with density in a given range:
         double default_density_unit = CLHEP::g / CLHEP::cm3;
@@ -108,7 +110,7 @@ namespace mctools {
             }
             use_density_range = true;
           }
-          if (config_.has_key("material.requested_material_min_density")) {
+          if (config_.has_key("material.min_density")) {
             requested_material_min_density = config_.fetch_real("material.min_density");
             if (!config_.has_explicit_unit("material.min_density")) {
               requested_material_min_density *= default_density_unit;
