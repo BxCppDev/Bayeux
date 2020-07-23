@@ -9,8 +9,6 @@
  *
  *   A manager for isotopes, elements and materials (and material aliases)
  *
- * History:
- *
  */
 
 #ifndef MATERIALS_MANAGER_H
