@@ -42,7 +42,8 @@
 namespace geomtools {
 
   class manager;
-  
+
+  /// \brief Select a set of logical volumes from a geometry manager given some inclusion/exclusion rules
   class logical_volume_selector
   {
   public:
@@ -60,7 +61,6 @@ namespace geomtools {
     void initialize(const datatools::properties & config_);
     void reset();
     void resolve(std::set<std::string> & logical_volumes_names_);
-
 
   private:
 
