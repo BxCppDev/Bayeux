@@ -172,7 +172,7 @@ namespace mctools {
                             bool inherit_               = false) const;
 
     /// Load a configuration object
-    void load (const datatools::multi_properties & mprop_);
+    void load(const datatools::multi_properties & mprop_);
 
     /// Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;

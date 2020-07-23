@@ -356,7 +356,7 @@ namespace mctools {
       _region_definitions_.set_geometry_manager(*_geom_manager_);
       _region_definitions_.initialize(regions_setup_config);
       DT_LOG_NOTICE(_logprio(), "Definitions of regions: ");
-      if (_logprio() >= datatools::logger::PRIO_NOTICE) {
+      if (datatools::logger::is_notice(_logprio())) { // >= datatools::logger::PRIO_NOTICE) {
         _region_definitions_.tree_dump(std::clog, "", "[notice]: ");
       }
 
@@ -791,6 +791,7 @@ namespace mctools {
       std::map<std::string, std::string> lv_sd_associations;
 
       // Loop on sensitive logical volumes :
+      DT_LOG_NOTICE(_logprio(),"Loop on possibly sensitive logical volumes (as defined in geometry files)");
       for (geomtools::logical_volume::dict_type::const_iterator ilogical
              = _geom_manager_->get_factory().get_logicals().begin();
            ilogical != _geom_manager_->get_factory().get_logicals().end();
@@ -894,16 +895,16 @@ namespace mctools {
                       << sensitive_category << "' !");
 
         // Pickup the corresponding G4 logical volume :
-        G4LogicalVolume * g4_log = 0;
+        G4LogicalVolume * g4_log = nullptr;
         G4String log_name = log.get_name().c_str();
         g4_log = g4_LV_store->GetVolume(log_name, false);
-        if (g4_log == 0) {
+        if (g4_log == nullptr) {
           DT_LOG_WARNING(_logprio(), "Logical volume '" << log.get_name()
                          << "' is not used in G4LogicalVolumeStore ! "
                          << "Ignore this association with sensitive category '" << sensitive_category << "'!");
           continue;
         }
-        sensitive_detector * SD = 0;
+        sensitive_detector * SD = nullptr;
         // Search for the sensitive detector that uses this category:
         sensitive_detector_dict_type::iterator found = _sensitive_detectors_.find(sensitive_category);
         bool already_present = false;
@@ -949,6 +950,7 @@ namespace mctools {
 
       } // for (logical_volumes)
 
+      DT_LOG_DEBUG(_logprio(),"Logical volumes with explicit SD are done.");
 
       /****************************************
        * Setup the step hit processor factory *
@@ -988,14 +990,16 @@ namespace mctools {
         std::string config_file = config_files[i];
         datatools::fetch_path_with_env(config_file);
         datatools::multi_properties mconfig("name", "type");
-        DT_LOG_NOTICE(_logprio(), "SHPF: Parsing the SHPF configuration file...");
+        DT_LOG_NOTICE(_logprio(), "SHPF: Parsing the SHPF configuration file '" << config_file << "'...");
         mconfig.read(config_file);
-        DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF configuration file has been parsed.");
-        DT_LOG_NOTICE(_logprio(), "SHPF: Loading the hit processors from the SHPF...");
+        DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF configuration file '" << config_file << "' has been parsed.");
+        DT_LOG_NOTICE(_logprio(), "SHPF: Loading the hit processors in the SHPF...");
         _SHPF_.load(mconfig);
       }
+      DT_LOG_NOTICE(_logprio(), "SHPF: The step hit processors have been loaded in the SHPF.");
+      DT_LOG_NOTICE(_logprio(), "SHPF: Initializing the SHPF...");
       _SHPF_.initialize();
-      DT_LOG_NOTICE(_logprio(), "SHPF: The step hit processors have been loaded from the SHPF.");
+      DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF has been initialized.");
       if (_logprio() >= datatools::logger::PRIO_DEBUG) {
         _SHPF_.tree_dump(std::clog, "SHPF: ", "[debug]: ");
       }
@@ -1003,19 +1007,33 @@ namespace mctools {
       /*****************************************************************
        * Install some step hit processors into the sensitive detectors *
        *****************************************************************/
-
+      std::vector<std::string> vprocs;
+      _SHPF_.fetch_processor_names(vprocs, false);
+      for (auto proc_name : vprocs) {
+        // DT_LOG_NOTICE(_logprio(), "SHPF: Processor '" << proc_name << "'");
+        if (_SHPF_.is_processor_instantiable(proc_name)) {
+          const base_step_hit_processor & proc = _SHPF_.get_processor(proc_name);
+          proc.tree_dump(std::cerr, "SHPF: Step hit processor: '" + proc_name + "' (instantiated) :", "[notice] ");
+        } else {
+          DT_LOG_NOTICE(_logprio(), "SHPF: Step hit processor '" << proc_name << "' is not instantiable.");
+        }
+      }
+      
       /* Look for "non-offical" sensitive categories from the SHPF factory itself.
        * Possibly extends the list of "offical" sensitive detectors
        * from the list of step hit processors found in the SHPF factory
        * and creates the proper association to some logical volumes which must
        * be specified using their respective names or material ids.
        */
+      DT_LOG_NOTICE(_logprio(), "SHPF: Processing 'non-offical' sensitive categories...");
+      DT_LOG_NOTICE(_logprio(), "SHPF: Number of SHPF processors : " << _SHPF_.get_processors().size());
       for (SHPF_type::processor_dict_type::const_iterator iSHP
              = _SHPF_.get_processors().begin();
            iSHP != _SHPF_.get_processors().end();
            ++iSHP) {
         const base_step_hit_processor * processor = iSHP->second;
         const std::string & hit_category = processor->get_hit_category();
+        DT_LOG_NOTICE(_logprio(), "SHPF: hit_category = '" << hit_category << "'");
         if (_g4_manager_ != nullptr) {
           if (_g4_manager_->forbids_private_hits()) {
             if (boost::starts_with(hit_category, "_")) {
@@ -1027,7 +1045,7 @@ namespace mctools {
             }
           }
         } else {
-          DT_LOG_FATAL(_logprio(), "Missing G4 manager!!!");
+          DT_LOG_ERROR(_logprio(), "Missing G4 manager!!!");
         }
 
         const std::string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
@@ -1066,6 +1084,7 @@ namespace mctools {
           processor->get_auxiliaries().export_and_rename_starting_with(geoLogVolSelection,
                                                                        "geometry.volumes.",
                                                                        "");
+          // geoLogVolSelection.tree_dump(std::cerr, "[debug] ");
           if (processor->get_auxiliaries().has_key("geometry.volumes")) {
             std::vector<std::string> log_volumes;
             processor->get_auxiliaries().fetch("geometry.volumes", log_volumes);
@@ -1142,6 +1161,7 @@ namespace mctools {
           }
         }
       } // for (hit processors)
+      DT_LOG_NOTICE(_logprio(), "End of SHPF processors");
 
       // Associate a sensitive detector to a particular step hit processor
       // from the factory:

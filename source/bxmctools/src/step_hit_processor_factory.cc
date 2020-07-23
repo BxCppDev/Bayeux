@@ -120,7 +120,7 @@ namespace mctools {
 
   void step_hit_processor_factory::reset_output_profiles()
   {
-   _output_profiles_.clear();
+    _output_profiles_.clear();
     return;
   }
 
@@ -229,7 +229,7 @@ namespace mctools {
 
       if (! pe.handle.has_data()) {
         base_step_hit_processor * proc = _create(processor_name);
-        if (proc != 0) {
+        if (proc != nullptr) {
           DT_LOG_NOTICE(get_logging_priority(),
                         "Instantiation of step hit processor '" << processor_name << "' as "
                         << "a '" <<  pe.type << "'.");
@@ -381,10 +381,10 @@ namespace mctools {
     DT_THROW_IF (found == _entries_.end (), std::logic_error,
                  "No step hit processor named '" << name_ << "' !");
     processor_entry_type & pe = found->second;
-    base_step_hit_processor * proc_ptr = 0;
+    base_step_hit_processor * proc_ptr = nullptr;
     if (! pe.handle.has_data()) {
       proc_ptr = this->_create(name_);
-      DT_THROW_IF (proc_ptr == 0, std::logic_error,
+      DT_THROW_IF (proc_ptr == nullptr, std::logic_error,
                    "Step hit processor named '" << name_ << "' cannot be instantiated !");
 
     }
