@@ -3,13 +3,9 @@
  * Creation date: 2015-09-05
  * Last modified: 2015-09-05
  *
- * License:
- *
  * Description:
  *
  *   Tools to define regions in Geant4
- *
- * History:
  *
  */
 
@@ -40,7 +36,7 @@ namespace mctools {
     /// A Geant4  region can be  defined by  the explicit list  of its
     /// logical volumes.   It is  also possible to  specify a  list of
     /// materials of which the logical  volumes in the region are made
-    /// of and also asked for materials with a given range of density,
+    /// of and also ask for materials with a given range of density,
     /// a  specific state  (solid/liquid/gas).  Finally  one can  also
     /// explicitely remove some logical volumes  from a region if they
     /// have been  initially added  in the  region by  the definitions
@@ -132,7 +128,10 @@ namespace mctools {
 
       /// Check if a region exists given its name
       bool has_region(const std::string & region_id_) const;
+ 
 
+      // Fetch a list of regexps on volume names belonging to this region:
+      
       /// Smart print
       virtual void tree_dump(std::ostream      & out_    = std::clog,
                              const std::string & title_  = "",
@@ -171,10 +170,8 @@ DOCD_CLASS_DECLARATION(mctools::g4::region_info)
 
 #endif // MCTOOLS_G4_REGION_TOOLS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
