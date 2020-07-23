@@ -381,6 +381,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_logical_volume.cxx
   ${module_test_dir}/test_line_3d.cxx
   ${module_test_dir}/test_manager.cxx
+  ${module_test_dir}/test_logical_volume_selector.cxx
   ${module_test_dir}/test_model_factory.cxx
   ${module_test_dir}/test_multiple_placement.cxx
   ${module_test_dir}/test_physical_volume.cxx
