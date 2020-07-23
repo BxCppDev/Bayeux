@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2020-07-06
+:Date:    2020-07-23
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -63,7 +63,7 @@ emfield
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
-  Now depends on the external BxDecay0_ library (optional, recommended).
+  Now depends on the external BxDecay0_ library (optional but recommended).
 
 genvtx
   Vertex  random  generator tools providing input to  simulation

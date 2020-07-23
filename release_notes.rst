@@ -21,6 +21,8 @@ Bayeux  3.4.3 requires  Linux (recommended  Ubuntu >=18.04  (preferred
 Additions
 =========
 
+* Add class ``geomtools::logical_volume_selector`` and use it in ``mctools::g4::detector_construction`` for SD association. Add a related test program.
+
   
 Removals
 =========
@@ -28,10 +30,14 @@ Removals
 
 Changes
 =======
-  
+
+* Bump to BxDecay0 version 1.0.5
+
 Fixes
 =====
 
+* Fix syntax in ``mctools::g4::detector_construction`` config parsing.
+* Fix a few typos and comments.
     
 Bugs
 ====
