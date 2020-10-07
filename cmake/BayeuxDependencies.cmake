@@ -36,7 +36,7 @@ find_package(Boost ${BAYEUX_BOOST_MIN_VERSION}
   )
 message(STATUS "Boost version ${Boost_VERSION} has been detected.")
 
-# Boost 1.64 has not been explicitely tested, so I remove it for safety 
+# Boost 1.64 has not been explicitely tested, so I remove it for safety
 set(Bayeux_UNSUPPORTED_BOOST_VERSIONS 106400 106500 106600 106700 106800)
 set(Bayeux_SUPPORTED_BOOST_VERSIONS 106900 107100)
 message(STATUS "Unsupported Boost versions : ${Bayeux_UNSUPPORTED_BOOST_VERSIONS}.")
@@ -54,7 +54,7 @@ if (_bx_boost_ver_index EQUAL -1)
     "but this version may work.\n"
     "In doubt, please use preferably Boost version in: ${Bayeux_SUPPORTED_BOOST_VERSIONS}")
 else()
-  message(STATUS "Bayeux does officially support Boost version ${Boost_VERSION}\n")  
+  message(STATUS "Bayeux does officially support Boost version ${Boost_VERSION}\n")
 endif()
 
 message(STATUS "Found Boost ${Boost_VERSION}")
@@ -93,19 +93,7 @@ message(STATUS "Found CAMP ${CAMP_VERSION} at CAMP_DIR      = '${CAMP_DIR}'")
 # and thus refind it for us. We don't want to override their
 # found version for compatibility reasons.
 set(BAYEUX_CLHEP_MIN_VERSION "2.1.3.1")
-if (CLHEP_DIR)
-  # Use some 'CLHEPConfig.cmake' 
-  find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
-  message(STATUS "Found CLHEP ${CLHEP_VERSION} at CLHEP_DIR      = '${CLHEP_DIR}' [config]")
-else()
-  # This part tries to find CLHEP without CMake support:
-  if(CLHEP_ROOT_DIR)
-    find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED MODULE)
-    message(STATUS "Found CLHEP ${CLHEP_VERSION} at CLHEP_ROOT_DIR = '${CLHEP_ROOT_DIR}' [module]")
-  else()
-    message(FATAL "No CLHEP installation can be found!")
-  endif()
-endif()
+find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
 message(STATUS "  * CLHEP_VERSION      ='${CLHEP_VERSION}'")
 message(STATUS "  * CLHEP_INCLUDE_DIRS ='${CLHEP_INCLUDE_DIRS}'")
 message(STATUS "  * CLHEP_LIBRARIES    ='${CLHEP_LIBRARIES}'")
