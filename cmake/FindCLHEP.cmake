@@ -7,7 +7,8 @@ FindCLHEP
 
 Find the native CLHEP includes and libraries.
 
-The CLHEP Library is a numerical library for C++ programmers. 
+The CLHEP Library is a numerical library for C++
+programmers. 
 
 Imported Targets
 ^^^^^^^^^^^^^^^^
@@ -47,9 +48,9 @@ help this module find the correct files::
 
  CLHEP_LIBRARY            - Location of the CLHEP library.
  CLHEP_CONFIG_EXECUTABLE  - Location of the ``clhep-config`` script (if any).
-
-#]=======================================================================================]
  
+#]=======================================================================]
+
 include(FindPackageHandleStandardArgs)
 
 #=============================================================================
