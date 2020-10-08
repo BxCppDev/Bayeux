@@ -14,6 +14,10 @@ export USER=`whoami`
 SELFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECTDIR="$(dirname $(dirname "${SELFDIR}"))"
 
+echo "[log] USER=${USER}"
+echo "[log] SELFDIR=${SELFDIR}"
+echo "[log] PROJECTDIR=${PROJECTDIR}"
+
 # Compiler selection
 if [ `uname` == "Linux" ] ; then
   # GCC 7 is default
@@ -32,7 +36,6 @@ fi
 # Create build directory, deleting if present
 rm -Rf build && mkdir build
 cd build
-
 
 qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
 
