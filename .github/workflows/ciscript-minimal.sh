@@ -40,8 +40,7 @@ cd build
 qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
 
 # Configure, assuming presence of Ninja tool
-cmake -DCMAKE_PREFIX_PATH="$(brew --prefix);$(brew --prefix qt5-base)" \
-      -DBAYEUX_COMPILER_ERROR_ON_WARNING=ON \
+cmake -DBAYEUX_COMPILER_ERROR_ON_WARNING=ON \
       -DBAYEUX_WITH_IWYU_CHECK=OFF \
       -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
       -DBAYEUX_MINIMAL_BUILD=ON
