@@ -40,7 +40,7 @@ endif()
 #-----------------------------------------------------------------------
 # CMake/project requirements and configuration
 #
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(Bayeux)
 
 # - Load Custom Modules
@@ -141,7 +141,7 @@ endif()
 #   set(Bayeux_WITH_QT_SVG 1)
 # endif()
 # option(BAYEUX_WITH_QT_SVG "Build Qt-based SVG components" OFF)
-# mark_as_advanced(BAYEUX_WITH_QT_SVG)  
+# mark_as_advanced(BAYEUX_WITH_QT_SVG)
 # if (BAYEUX_WITH_QT_SVG)
 #   set(Bayeux_WITH_QT_SVG 1)
 # endif()
@@ -216,5 +216,5 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake)
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_TAG}/cmake/
     )
 endif()
-  
+
 # - end
