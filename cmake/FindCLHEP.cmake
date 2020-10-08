@@ -48,7 +48,7 @@ help this module find the correct files::
  CLHEP_LIBRARY            - Location of the CLHEP library.
  CLHEP_CONFIG_EXECUTABLE  - Location of the ``clhep-config`` script (if any).
 
-#]=========================================
+#]=======================================================================================]
  
 include(FindPackageHandleStandardArgs)
 
