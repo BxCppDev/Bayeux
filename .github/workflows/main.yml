@@ -42,6 +42,7 @@ jobs:
       - name: Configure, build, and test
         run: |
           echo "Running CI-minimal script..."
-          bash $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
+          ls -l $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
+          # bash $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
 
 
