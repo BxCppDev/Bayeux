@@ -50,20 +50,16 @@ cmake -DBAYEUX_COMPILER_ERROR_ON_WARNING=ON \
       -DBAYEUX_WITH_DOCS=OFF \
       -DBAYEUX_WITH_DOCS_OCD=OFF \
       -DCMAKE_INSTALL_LIBDIR=lib \
-      -DBAYEUX_WITH_QT_GUI=OFF \
+      -DBAYEUX_WITH_QT_GUI=ON \
+      -DQt5Core_DIR="${qt5_dir}/Qt5Core" \
+      -DQt5Gui_DIR="${qt5_dir}/Qt5Gui" \
+      -DQt5Widgets_DIR="${qt5_dir}/Qt5Widgets" \
+      -DQt5Svg_DIR="${qt5_dir}/Qt5Svg" \
       -DBAYEUX_WITH_CLHEP_MODULE_TRICK=ON \
       -DCLHEP_ROOT_DIR="${clhep_prefix_dir}" \
       -DCMAKE_PREFIX_PATH="${clhep_prefix_dir}" \
       -GNinja \
       $PROJECTDIR
-
-      # -DBAYEUX_WITH_QT_GUI=ON \
-      # -DQt5Core_DIR="${qt5_dir}/Qt5Core" \
-      # -DQt5Gui_DIR="${qt5_dir}/Qt5Gui" \
-      # -DQt5Widgets_DIR="${qt5_dir}/Qt5Widgets" \
-      # -DQt5Svg_DIR="${qt5_dir}/Qt5Svg" \
-      # -GNinja \
-      # $PROJECTDIR
 
 # Build using Ninja to auto-parallelize
 ninja
