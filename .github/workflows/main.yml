@@ -25,19 +25,12 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install minimal dependencies
         run: |
-          sudo apt-get install ninja-build 	 
-          sudo apt-get install cmake   
-          sudo apt-get install libcamp-dev   
-          sudo apt-get install libclhep-dev
-          sudo apt-get install libboost-all-dev    
+          sudo apt-get install ninja-build cmake 	 
+          sudo apt-get install libcamp-dev libclhep-dev libboost-all-dev libgsl-dev libreadline-dev   
           sudo apt-get install gnuplot-qt	  
-          sudo apt-get install libgsl-dev 
-          sudo apt-get install libqt5core5a  libqt5gui5, libqt5widgets5 libqt5svg5 libqt5svg5-dev libqt5widgets5 qt5-default
-          sudo apt-get install libreadline-dev
+          sudo apt-get install libqt5core5a libqt5gui5 libqt5widgets5 libqt5svg5 libqt5svg5-dev libqt5widgets5 qt5-default
           sudo apt-get install doxygen
-    
-         
-
+ 
       # Runs a set of commands using the runners shell
       - name: Configure, build, and test
         run: |
