@@ -41,6 +41,7 @@ qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
 
 # Configure, assuming presence of Ninja tool
 cmake -DBAYEUX_COMPILER_ERROR_ON_WARNING=ON \
+      -DBayeux_WITH_BXDECAY0=OFF \
       -DBAYEUX_WITH_IWYU_CHECK=OFF \
       -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
       -DBAYEUX_MINIMAL_BUILD=ON \
