@@ -119,10 +119,12 @@ if(Bayeux_WITH_BRIO)
   set(Bayeux_WITH_ROOTDICT 1)
 endif()
 
-set(Bayeux_WITH_BXDECAY0 0)
-option(BAYEUX_WITH_BXDECAY0 "Use the BxDecay0 library" ON)
-if (BAYEUX_WITH_BXDECAY0)
-  set(Bayeux_WITH_BXDECAY0 1)
+if(Bayeux_WITH_GENBB)
+  set(Bayeux_WITH_BXDECAY0 0)
+  option(BAYEUX_WITH_BXDECAY0 "Use the BxDecay0 library" ON)
+  if (BAYEUX_WITH_BXDECAY0)
+    set(Bayeux_WITH_BXDECAY0 1)
+  endif()
 endif()
 
 #-----------------------------------------------------------------------
