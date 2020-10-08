@@ -38,6 +38,7 @@ rm -Rf build && mkdir build
 cd build
 
 qt5_dir="/usr/lib/x86_64-linux-gnu/cmake"
+clhep_prefix_dir=$(clhep-config --prefix | tr -d '"')
 
 # Configure, assuming presence of Ninja tool
 cmake -DBAYEUX_COMPILER_ERROR_ON_WARNING=ON \
@@ -50,6 +51,9 @@ cmake -DBAYEUX_COMPILER_ERROR_ON_WARNING=ON \
       -DBAYEUX_WITH_DOCS_OCD=OFF \
       -DCMAKE_INSTALL_LIBDIR=lib \
       -DBAYEUX_WITH_QT_GUI=OFF \
+      -DBAYEUX_WITH_CLHEP_MODULE_TRICK=ON \
+      -DCLHEP_ROOT_DIR="${clhep_prefix_dir}" \
+      -DCMAKE_PREFIX_PATH="${clhep_prefix_dir}" \
       -GNinja \
       $PROJECTDIR
 
