@@ -107,7 +107,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 
 
 /** Intrusive macro invoked from the class declaration to
- *  declare serial tag support :
+ *  declare serial tag support for concrete classes of i_serializable:
  * Example:
  * \code
  * class Foo : public datatools::i_serializable
@@ -120,7 +120,24 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
   public:                                                 \
   static const std::string SERIAL_TAG;                    \
   static const std::string & serial_tag();                \
-  virtual const std::string& get_serial_tag() const;      \
+  virtual const std::string& get_serial_tag() const override;      \
+  /**/
+
+/** Intrusive macro invoked from the class declaration to
+ *  declare serial tag support for classes not inheriting from i_serializable:
+ * Example:
+ * \code
+ * class Foo
+ * {
+ *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION_NOINHERIT()
+ * };
+ * \endcode
+ */
+#define DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION_NOINHERIT()  \
+  public:                                                 \
+  static const std::string SERIAL_TAG;                    \
+  static const std::string & serial_tag();                \
+  const std::string& get_serial_tag() const;      \
   /**/
 
 
@@ -251,9 +268,8 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
                                                                         \
   /**/
 
-
 /** Intrusive macro invoked from the class declaration to activate
- *  basic serialization support for the class :
+ *  basic serialization support for the class inheriting from i_serializable :
  *
  * Example:
  * \code
@@ -268,6 +284,24 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()  \
   BOOST_SERIALIZATION_BASIC_DECLARATION ()          \
   /**/
+
+/** Intrusive macro invoked from the class declaration to activate
+ *  basic serialization support for the class without inheriting from i_serializable:
+ *
+ * Example:
+ * \code
+ *   class Foo
+ *   {
+ *      DATATOOLS_SERIALIZATION_DECLARATION_NOINHERIT();
+ *   };
+ * \endcode
+ */
+#define DATATOOLS_SERIALIZATION_DECLARATION_NOINHERIT()       \
+  public:                                           \
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION_NOINHERIT()  \
+  BOOST_SERIALIZATION_BASIC_DECLARATION ()          \
+  /**/
+
 
 /** Shortcut macro to generate the proper prototype of the
  * Boost serialization method :

@@ -74,7 +74,7 @@ namespace geomtools {
       virtual ~display_item();
       void reset();
       wires_type & grab_wires();
-      DATATOOLS_SERIALIZATION_DECLARATION()
+      DATATOOLS_SERIALIZATION_DECLARATION_NOINHERIT()
     };
 
     typedef std::map<int32_t, display_item> items_dict_type;
@@ -97,7 +97,7 @@ namespace geomtools {
       const display_item & get_framed_item(int frame_index_) const;
       bool has_framed_item(int frame_index_) const;
 
-      DATATOOLS_SERIALIZATION_DECLARATION()
+      DATATOOLS_SERIALIZATION_DECLARATION_NOINHERIT()
     };
 
     typedef std::map<std::string, display_entry> entries_dict_type;
