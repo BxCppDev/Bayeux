@@ -112,12 +112,12 @@ namespace datatools {
 
 #define DATATOOLS_CLONEABLE_DECLARATION(Copyable) \
   public:                                         \
-  virtual Copyable* clone(void) const;            \
+  virtual Copyable* clone(void) const override;            \
   /**/
 
 #define DATATOOLS_CLONEABLE_INLINE(Copyable)                  \
   public:                                                     \
-  virtual Copyable* clone(void) const {                       \
+  virtual Copyable* clone(void) const override {                       \
     return datatools::i_cloneable::clone_it<Copyable>(*this); \
   }
 /**/

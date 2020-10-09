@@ -29,10 +29,6 @@ namespace mygsl {
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(zero_function)
-
-    //! Cloneable interface
-    DATATOOLS_CLONEABLE_DECLARATION(zero_function)
-
   };
 
 } // namespace mygsl
