@@ -49,7 +49,7 @@ public:
   test_service();
 
   /// Destructor
-  virtual ~test_service();
+  ~test_service() override;
 
   /// Set the label
   void set_label(const std::string & a_label);
@@ -58,23 +58,23 @@ public:
   const std::string & get_label() const;
 
   /// Check initialization status
-  virtual bool is_initialized() const;
+  bool is_initialized() const override;
 
   /// Initialize the service
-  virtual int initialize(const datatools::properties& /* config_ */,
-                         datatools::service_dict_type& /* service_map_ */);
+  int initialize(const datatools::properties& /* config_ */,
+                 datatools::service_dict_type& /* service_map_ */) override;
 
   /// Reset the service
-  virtual int reset();
+  int reset() override;
 
   /// Use the service
   void use_me_after_initialization();
 
   /// Smart print
-  virtual void tree_dump(std::ostream& out = std::clog,
-                         const std::string & title = "",
-                         const std::string & indent = "",
-                         bool inherit = false) const;
+  void tree_dump(std::ostream& out = std::clog,
+                 const std::string & title = "",
+                 const std::string & indent = "",
+                 bool inherit = false) const override;
 
 private:
 

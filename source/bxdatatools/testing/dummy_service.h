@@ -52,26 +52,26 @@ namespace datatools {
     void set_label(const std::string & a_label);
 
     /// Check initialization
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Initialize
-    virtual int initialize(const datatools::properties & a_config,
-                           service_dict_type & a_service_dict);
+    int initialize(const datatools::properties & a_config,
+                   service_dict_type & a_service_dict) override;
 
     /// Reset
-    virtual int reset();
+    int reset() override;
 
     /// Default constructor
     dummy_service();
 
     /// Destructor
-    virtual ~dummy_service();
+    ~dummy_service() override;
 
     /// Smart print:
     virtual void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
-                           bool a_inherit          = false) const;
+                           bool a_inherit          = false) const override;
 
   private:
 
