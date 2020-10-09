@@ -190,7 +190,7 @@ namespace mctools {
     void signal_data::build_list_of_categories(std::vector<std::string> & cats_) const
     {
       cats_.clear();
-      for (const auto cat_entry : _signals_dict_) {
+      for (const auto& cat_entry : _signals_dict_) {
         cats_.push_back(cat_entry.first);
       }
       return;
@@ -222,7 +222,7 @@ namespace mctools {
         out_ << indent_ << datatools::i_tree_dumpable::tag
              << "Signal categories : " << '[' << _signals_dict_.size() << ']' << std::endl;
         std::size_t cat_counter = 0;
-        for (const auto cat_entry : _signals_dict_) {
+        for (const auto& cat_entry : _signals_dict_) {
           out_ << indent_ << datatools::i_tree_dumpable::skip_tag;
           if (++cat_counter != _signals_dict_.size()) {
             out_ << datatools::i_tree_dumpable::tag;
