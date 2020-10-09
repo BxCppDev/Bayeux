@@ -62,7 +62,7 @@ namespace datatools {
     public:
 
       /// Check if a name is valid
-      virtual bool is_name_valid(const std::string & name_) const;
+      bool is_name_valid(const std::string & name_) const override;
 
       /// \brief Parameter record
       struct parameter_record {
@@ -79,7 +79,7 @@ namespace datatools {
       variant_model();
 
       /// Destructor
-      virtual ~variant_model();
+      ~variant_model() override;
 
       /// Check if the documentation is empty
       bool has_documentation() const;
@@ -134,10 +134,10 @@ namespace datatools {
       const i_occurrence & get_parameter_occurrence(const std::string & parameter_name_) const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// \brief ReST formating flags
       enum rst_flags {

@@ -46,7 +46,7 @@ class simulation_ctrl : public loggable_support {
   simulation_ctrl(manager& simulation_manager_, uint32_t max_counts_ = 0);
 
   /// Destructor
-  ~simulation_ctrl();
+  ~simulation_ctrl() override;
 
   /// Set the Geant4 simulation manager
   void set_simulation_manager(manager & simulation_manager_);

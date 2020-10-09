@@ -18,12 +18,12 @@ namespace mygsl {
     identity_function();
 
     //! Destructor
-    virtual ~identity_function();
+    ~identity_function() override;
 
   protected:
 
     //! Evaluation method
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 

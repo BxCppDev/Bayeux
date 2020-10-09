@@ -29,7 +29,7 @@ namespace geomtools {
 
     i_boxed_model(const std::string & dummy_ = "");
 
-    virtual ~i_boxed_model();
+    ~i_boxed_model() override;
 
   };
 

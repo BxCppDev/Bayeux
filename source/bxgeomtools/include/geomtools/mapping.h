@@ -121,14 +121,14 @@ namespace geomtools {
     mapping ();
 
     //! Destructor
-    virtual ~mapping ();
+    ~mapping () override;
 
     //! Configure the mapping
     void initialize (const datatools::properties & config_);
 
     //! Build the mapping information
-    virtual void build_from (const model_factory & factory_,
-                             const std::string & mother_ = "world");
+    void build_from (const model_factory & factory_,
+                             const std::string & mother_ = "world") override;
 
     //! Basic print of the embedded mapping dictionary
     void dump_dictionnary (std::ostream & out_ = std::clog) const;

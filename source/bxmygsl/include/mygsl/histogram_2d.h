@@ -125,7 +125,7 @@ namespace mygsl {
     histogram_2d (const std::vector<double> & xranges_,
                   const std::vector<double> & yranges_);
 
-    virtual ~histogram_2d ();
+    ~histogram_2d () override;
 
     histogram_2d (const histogram_2d &);
 

@@ -74,16 +74,16 @@ namespace mctools {
       em_field_equation_of_motion(G4Field * field_);
 
       /// Destructor
-      virtual ~em_field_equation_of_motion();
+      ~em_field_equation_of_motion() override;
 
       /// Given the value of the mixed fields (magnetic + electric), this method
       /// calculates the value of the derivative dydx for position, momentum and
       //  spin of the particle.
       /// Derivatives are defined as:
       ///   dr/ds, dp/ds, dt/ds, dSpin/ds
-      virtual void EvaluateRhsGivenB(const G4double y_[],
+      void EvaluateRhsGivenB(const G4double y_[],
                                      const G4double field_[6],
-                                     G4double dydx_[]) const;
+                                     G4double dydx_[]) const override;
 
       /// Set the charge, momentum and mass of the current particle
       /// used to set the equation's coefficients
@@ -91,7 +91,7 @@ namespace mctools {
       /// Signature has changed for some Geant 4.10.X version (see below)
       void SetChargeMomentumMass(G4double particle_charge_, // in e+ units
                                  G4double particle_momentum_,
-                                 G4double particle_mass_);
+                                 G4double particle_mass_) override;
       
 #if G4VERSION_NUMBER >= 1000
       // New signature for this virtual method in Geant 4.10.X

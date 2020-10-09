@@ -68,7 +68,7 @@ namespace datatools {
       };
 
       /// Check if a name is valid
-      virtual bool is_name_valid(const std::string & name_) const;
+      bool is_name_valid(const std::string & name_) const override;
 
       /// Dictionary of variant physicals
       typedef std::map<std::string, variant_physical> variant_dict_type;
@@ -186,10 +186,10 @@ namespace datatools {
         void reset();
 
         /// Smart print
-        virtual void tree_dump(std::ostream & out_ = std::clog,
+        void tree_dump(std::ostream & out_ = std::clog,
                                const std::string & title_ = "",
                                const std::string & indent_ = "",
-                               bool inherit_ = false) const;
+                               bool inherit_ = false) const override;
 
         /// \brief Restructured text formatting
         enum rst_flags {
@@ -248,7 +248,7 @@ namespace datatools {
       parameter_model();
 
       /// Destructor
-      virtual ~parameter_model();
+      ~parameter_model() override;
 
       /// Check if the documentation is empty
       bool has_documentation() const;
@@ -678,10 +678,10 @@ namespace datatools {
       void reset();
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Check if a boolean value is valid
       bool is_boolean_valid(const bool) const;

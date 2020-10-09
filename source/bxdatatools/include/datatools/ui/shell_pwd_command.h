@@ -35,9 +35,9 @@ namespace datatools {
       : public const_target_command<basic_shell>
     {
       shell_pwd_command(const basic_shell &);
-      virtual ~shell_pwd_command();
+      ~shell_pwd_command() override;
     protected:
-      virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);
+      void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0) override;
     };
 
   } // namespace ui

@@ -38,7 +38,7 @@ namespace geomtools {
     static const std::string & circle_label();
 
     /// Check the validity of the circle
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Return the radius
     double get_r() const;
@@ -92,7 +92,7 @@ namespace geomtools {
     virtual unsigned int get_number_of_path() const;
 
     /// Return the length of the target paths
-    virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
+    double get_length(uint32_t flags_ = PATH_ALL_BITS) const override;
 
     /// Default constructor
     circle();
@@ -104,32 +104,32 @@ namespace geomtools {
     circle(double radius_, double start_angle_, double delta_angle_);
 
     /// Destructor
-    virtual ~circle();
+    ~circle() override;
 
     /// Return the name of this solid shape class
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out = std::clog,
+    void tree_dump(std::ostream & a_out = std::clog,
                            const std::string & a_title = "",
                            const std::string & a_indent = "",
-                           bool a_inherit= false) const;
+                           bool a_inherit= false) const override;
 
     /// Check if a point is on the curve
-    virtual bool is_on_curve(const vector_3d &,
-                             double a_tolerance = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_curve(const vector_3d &,
+                             double a_tolerance = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Returns the direction of a point on the curve
-    virtual vector_3d get_direction_on_curve(const vector_3d & a_tposition) const;
+    vector_3d get_direction_on_curve(const vector_3d & a_tposition) const override;
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_, uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_, uint32_t options_ = 0) const override;
 
     /// Initialize from properties and a dictionary of 3D-objects
-    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset
-    void reset();
+    void reset() override;
 
   protected:
 

@@ -58,22 +58,22 @@ namespace datatools {
       array_occurrence();
 
       /// Destructor
-      virtual ~array_occurrence();
+      ~array_occurrence() override;
 
       /// Return the dimension
-      virtual size_t get_dimension() const;
+      size_t get_dimension() const override;
 
       /// Return the number of occurrences
-      virtual size_t get_number_of_occurrences() const;
+      size_t get_number_of_occurrences() const override;
 
       /// Compute the occurrence associated to a given rank
-      virtual void compute_occurrence(int rank_, single_occurrence & occ_) const;
+      void compute_occurrence(int rank_, single_occurrence & occ_) const override;
 
       /// Compute a multidimensional index path from a rank
-      virtual size_t compute_index_path(std::vector<uint32_t> & path_, int rank_) const;
+      size_t compute_index_path(std::vector<uint32_t> & path_, int rank_) const override;
 
       /// Convert to a string
-      virtual std::string to_string() const;
+      std::string to_string() const override;
 
     private:
 

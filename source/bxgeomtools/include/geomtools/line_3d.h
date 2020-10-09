@@ -47,10 +47,10 @@ namespace geomtools {
     bool is_normal();
 
     /// Return the identifier/name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Check if the line is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Invalidate the line
     void invalidate();
@@ -77,7 +77,7 @@ namespace geomtools {
     vector_3d get_point(double t_) const;
 
     /// Return the length of the linear segment
-    virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
+    double get_length(uint32_t flags_ = PATH_ALL_BITS) const override;
 
     /// Default constructor
     line_3d();
@@ -94,13 +94,13 @@ namespace geomtools {
     line_3d(const segment_type & segment_);
 
     /// Destructor
-    virtual ~line_3d();
+    ~line_3d() override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// Print approximated data (x,y,z) triplets representing the line
     static void print_xyz(std::ostream & out_, const line_3d & line_);
@@ -161,11 +161,11 @@ namespace geomtools {
                        double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Check if a position is on the line segment
-    virtual bool is_on_curve(const vector_3d & position_,
-                             double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_curve(const vector_3d & position_,
+                             double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the direction at some position in on the line
-    virtual vector_3d get_direction_on_curve(const vector_3d & position_) const;
+    vector_3d get_direction_on_curve(const vector_3d & position_) const override;
 
     /// Compute a collection of vertexes representing the line
     void make_vertex_collection(polyline_type &) const;
@@ -174,8 +174,8 @@ namespace geomtools {
     polyline_type make_vertex_collection() const;
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
   private:
 

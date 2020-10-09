@@ -37,11 +37,11 @@ namespace geomtools {
 
     void invalidate();
 
-    virtual size_t get_dimension() const;
+    size_t get_dimension() const override;
 
-    virtual bool is_replica() const;
+    bool is_replica() const override;
 
-    virtual bool has_only_one_rotation() const;
+    bool has_only_one_rotation() const override;
 
     void set_rotation_axis(rotation_axis_type);
 
@@ -75,12 +75,12 @@ namespace geomtools {
 
     void set_number_of_items(size_t n_);
 
-    virtual size_t get_number_of_items() const;
+    size_t get_number_of_items() const override;
 
-    virtual void get_placement(int item_, placement & p_) const;
+    void get_placement(int item_, placement & p_) const override;
 
-    virtual size_t compute_index_map(std::vector<uint32_t> & map_,
-                                     int item_) const;
+    size_t compute_index_map(std::vector<uint32_t> & map_,
+                                     int item_) const override;
 
     /// Default constructor
     regular_circular_placement();
@@ -94,7 +94,7 @@ namespace geomtools {
                                rotation_axis_type rotation_axis_ = ROTATION_AXIS_Z);
 
     /// Destructor
-    virtual ~regular_circular_placement();
+    ~regular_circular_placement() override;
 
     /// Initialization
     void initialize(const vector_3d & center_,
@@ -108,10 +108,10 @@ namespace geomtools {
     virtual void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_  = std::clog,
+    void tree_dump(std::ostream & out_  = std::clog,
                            const std::string & title_ = "geomutils::regular_circular_placement",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected:
 

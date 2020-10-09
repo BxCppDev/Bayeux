@@ -63,7 +63,7 @@ namespace brio {
            datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Destructor
-    virtual ~writer();
+    ~writer() override;
 
     //! Lock the writer
     void lock();
@@ -125,10 +125,10 @@ namespace brio {
     int store(const T & data_, const std::string & label_ = "");
 
     //! Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     //! Print
     void print_info(std::ostream & out_ = std::clog) const;
@@ -144,7 +144,7 @@ namespace brio {
     template <typename T>
     int _at_store(const T & dat, store_info * store_info_);
 
-    virtual void _at_open(const std::string & filename_);
+    void _at_open(const std::string & filename_) override;
 
   private:
 

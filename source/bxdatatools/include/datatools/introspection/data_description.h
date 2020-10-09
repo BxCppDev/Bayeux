@@ -46,7 +46,7 @@ namespace datatools {
       data_description();
 
       //! Destructor
-      ~data_description();
+      ~data_description() override;
 
       //! Check if data type is defined
       bool has_type() const;
@@ -180,10 +180,10 @@ namespace datatools {
                             const std::string & prefix_ = "") const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       //! Build a scalar data
       void make_scalar(data_type, const std::string & info_ = "", const std::string & info2_ = "");

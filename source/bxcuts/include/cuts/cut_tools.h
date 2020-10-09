@@ -153,10 +153,10 @@ namespace cuts {
     cut_handle_type & grab_initialized_cut_handle();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
   private:
 

@@ -55,14 +55,14 @@ namespace geomtools {
   public:
 
     /// Check initialization flag
-    virtual bool is_initialized () const;
+    bool is_initialized () const override;
 
     /// Initialization
-    virtual int initialize (const datatools::properties & a_config,
-                            datatools::service_dict_type & a_service_dict);
+    int initialize (const datatools::properties & a_config,
+                            datatools::service_dict_type & a_service_dict) override;
 
     /// Termination
-    virtual int reset ();
+    int reset () override;
 
     /// Return a reference to the non mutable geoemtry manager
     const geomtools::manager & get_geom_manager () const;
@@ -71,13 +71,13 @@ namespace geomtools {
     geometry_service ();
 
     /// Destructor
-    virtual ~geometry_service ();
+    ~geometry_service () override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
+    void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
-                            bool a_inherit               = false) const;
+                            bool a_inherit               = false) const override;
 
   private:
 

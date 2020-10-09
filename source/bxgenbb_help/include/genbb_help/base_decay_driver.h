@@ -65,7 +65,7 @@ namespace genbb {
     base_decay_driver();
 
     /// Destructor
-    virtual ~base_decay_driver();
+    ~base_decay_driver() override;
 
     /// Return the logging priority threshold
     datatools::logger::priority get_logging() const;
@@ -74,10 +74,10 @@ namespace genbb {
     void set_logging(datatools::logger::priority);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Check initialization status
     bool is_initialized() const;

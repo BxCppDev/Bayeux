@@ -34,7 +34,7 @@ namespace mygsl {
     i_unary_function_with_derivative(double epsilon_ = 0.0);
 
     //! Destructor
-    virtual ~i_unary_function_with_derivative();
+    ~i_unary_function_with_derivative() override;
 
     virtual double eval_f(double x_) const;
 
@@ -65,24 +65,24 @@ namespace mygsl {
     //! Constructor
     unary_function_promoted_with_numeric_derivative(const i_unary_function & functor_);
 
-    virtual bool is_in_domain_of_definition(double x_) const;
+    bool is_in_domain_of_definition(double x_) const override;
 
-    virtual bool has_explicit_domain_of_definition() const;
+    bool has_explicit_domain_of_definition() const override;
 
-    virtual double get_non_zero_domain_min() const;
+    double get_non_zero_domain_min() const override;
 
-    virtual double get_non_zero_domain_max() const;
+    double get_non_zero_domain_max() const override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Reset the functor
-    virtual void reset();
+    void reset() override;
 
   protected:
 
     //! Evaluation
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 

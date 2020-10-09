@@ -30,45 +30,45 @@ namespace geomtools {
     static const std::string & union_3d_label();
 
     /// Return the name of the shape type
-    std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Default constructor
     union_3d();
 
     /// Destructor
-    virtual ~union_3d();
+    ~union_3d() override;
 
     /// Check if a point is inside the cylinder
-    virtual bool is_inside(const vector_3d & position_,
-                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_inside(const vector_3d & position_,
+                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the cylinder
-    virtual bool is_outside(const vector_3d & position_,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_outside(const vector_3d & position_,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
-    virtual face_identifier on_surface(const vector_3d &,
+    face_identifier on_surface(const vector_3d &,
                                        const face_identifier & a_surface_mask = face_identifier::face_invalid(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the vector normal to the surface at some position
-    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
-                                            const face_identifier & a_surface_bit) const;
+    vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const override;
 
     /// Find the intercept point of a segment with the surface
-    virtual bool find_intercept (const vector_3d & from_,
+    bool find_intercept (const vector_3d & from_,
                                  const vector_3d & direction_,
                                  face_intercept_info & intercept_,
-                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
   protected:
 
     /// Destructor
-    virtual void _build_bounding_data();
+    void _build_bounding_data() override;
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(union_3d)

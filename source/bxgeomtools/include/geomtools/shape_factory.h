@@ -41,7 +41,7 @@ namespace geomtools {
     shape_factory();
 
     //! Destructor
-    virtual ~shape_factory();
+    ~shape_factory() override;
 
     //! Return a reference to a non mutable dictionary of shapes
     const i_object_3d::handle_dict_type & get_shapes() const;
@@ -94,10 +94,10 @@ namespace geomtools {
     void parse_shapes(const datatools::properties & defs_);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
   protected:
 

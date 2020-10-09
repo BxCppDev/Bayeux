@@ -202,7 +202,7 @@ namespace datatools {
     urn_db_service();
 
     /// Destructor
-    virtual ~urn_db_service();
+    ~urn_db_service() override;
 
     //! Check if mounted URN are allowed
     bool is_allow_mounted() const;
@@ -256,20 +256,20 @@ namespace datatools {
     std::set<std::string> get_dependees() const;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialize the service from a list of properties
-    virtual int initialize(const datatools::properties & config_,
-                           datatools::service_dict_type & services_);
+    int initialize(const datatools::properties & config_,
+                           datatools::service_dict_type & services_) override;
 
     //! Reset
-    virtual int reset();
+    int reset() override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
+    void tree_dump(std::ostream& out = std::clog,
                            const std::string & title = "",
                            const std::string & indent = "",
-                           bool inherit = false) const;
+                           bool inherit = false) const override;
 
     //! Load an URN info definition file
     void load(const std::string & filename_);

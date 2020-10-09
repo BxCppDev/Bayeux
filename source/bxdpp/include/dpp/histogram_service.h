@@ -72,14 +72,14 @@ namespace dpp {
 
     histogram_service ();
 
-    virtual ~histogram_service ();
+    ~histogram_service () override;
 
-    virtual bool is_initialized () const;
+    bool is_initialized () const override;
 
-    virtual int initialize (const datatools::properties  & config_,
-                            datatools::service_dict_type & service_dict_);
+    int initialize (const datatools::properties  & config_,
+                            datatools::service_dict_type & service_dict_) override;
 
-    virtual int reset ();
+    int reset () override;
 
     void load_from_boost_file (const std::string & filename_);
 
@@ -87,10 +87,10 @@ namespace dpp {
 
     void store_as_root_file (const std::string & filename_) const;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
     static void export_to_root (const mygsl::histogram_1d & h1d_,
                                 const std::string & name_,

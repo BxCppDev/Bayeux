@@ -83,7 +83,7 @@ namespace mctools {
       detector_construction(manager & mgr_);
 
       /// Destructor
-      virtual ~detector_construction();
+      ~detector_construction() override;
 
       /// Check initialization flag
       bool is_initialized() const;
@@ -138,7 +138,7 @@ namespace mctools {
       void set_emfield_geom_plugin_name(const std::string & fpn_);
 
       /// G4 interface
-      G4VPhysicalVolume * Construct();
+      G4VPhysicalVolume * Construct() override;
 
       /** Generate the GDML file from the geometry manager */
       void write_tmp_gdml_file();

@@ -149,7 +149,7 @@ namespace mygsl {
     parameter_store();
 
     //! Destructor
-    virtual ~parameter_store();
+    ~parameter_store() override;
 
     //! Reset the store
     void reset();
@@ -187,10 +187,10 @@ namespace mygsl {
     void update();
 
     //! Main interface method for smart dump
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     //! Check is a subscriber object is currently a subscriber of the store
     bool is_registered_subscriber(const i_subscriber & s_) const;

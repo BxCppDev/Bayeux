@@ -61,19 +61,19 @@ namespace dpp {
 
   public:
 
-    virtual bool is_random() const;
+    bool is_random() const override;
 
-    virtual void open();
+    void open() override;
 
-    virtual bool store_next_record(const datatools::things & a_event_record);
+    bool store_next_record(const datatools::things & a_event_record) override;
 
-    virtual bool can_store_meta_data() const;
+    bool can_store_meta_data() const override;
 
-    virtual bool store_metadata(const datatools::properties & a_meta_data);
+    bool store_metadata(const datatools::properties & a_meta_data) override;
 
-    virtual void close();
+    void close() override;
 
-    virtual void reset();
+    void reset() override;
 
   public:
 
@@ -86,7 +86,7 @@ namespace dpp {
                           datatools::logger::priority a_priority = datatools::logger::PRIO_NOTICE);
 
     /// Destructor
-    virtual ~simple_brio_data_sink();
+    ~simple_brio_data_sink() override;
 
   private:
 

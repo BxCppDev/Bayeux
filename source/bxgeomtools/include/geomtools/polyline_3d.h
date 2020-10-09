@@ -42,10 +42,10 @@ namespace geomtools {
     typedef polyline_type point_col;
 
     /// Return the name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Check if the polyline is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Check if the polyline is closed
     bool is_closed() const;
@@ -63,7 +63,7 @@ namespace geomtools {
     polyline_3d(bool closed_);
 
     /// Destructor
-    virtual ~polyline_3d();
+    ~polyline_3d() override;
 
     /// Remove all points
     void clear();
@@ -87,7 +87,7 @@ namespace geomtools {
     const vector_3d & get_vertex(int i_) const;
 
     /// Return the length of the linear segment
-    virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
+    double get_length(uint32_t flags_ = PATH_ALL_BITS) const override;
 
     // inefficient algorithm:
     void make_vertex_collection(basic_polyline_3d &) const;
@@ -96,11 +96,11 @@ namespace geomtools {
     polyline_type make_vertex_collection() const;
 
     /// Check if a point belongs to the polyline
-    virtual bool is_on_curve(const vector_3d & position_,
-                             double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_curve(const vector_3d & position_,
+                             double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the direction at some position along the polyline
-    virtual vector_3d get_direction_on_curve(const vector_3d & position_) const;
+    vector_3d get_direction_on_curve(const vector_3d & position_) const override;
 
     /// Return a non mutable reference to the collection of points
     const polyline_type & get_points() const;
@@ -109,14 +109,14 @@ namespace geomtools {
     polyline_type & grab_points();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
   private:
 

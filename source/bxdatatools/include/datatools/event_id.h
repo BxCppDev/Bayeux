@@ -89,7 +89,7 @@ namespace datatools {
     event_id(int r_, int e_);
 
     //! The destructor.
-    virtual ~event_id() = default;
+    ~event_id() override = default;
 
     //! Copy constructor
     event_id(const event_id &) = default;
@@ -104,7 +104,7 @@ namespace datatools {
     event_id & operator=(event_id &&) = default;    
 
     //! Invalidate the id.
-    virtual void clear();
+    void clear() override;
 
     //! Invalidate the id.
     void reset();
@@ -182,10 +182,10 @@ namespace datatools {
      *   @param indent_ the indentation string
      *   @param inherit_ the inheritance flag.
      */
-    virtual void tree_dump(std::ostream & out_ = std::cerr,
+    void tree_dump(std::ostream & out_ = std::cerr,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     void smart_print(std::ostream & out_,
                      const std::string & title_,

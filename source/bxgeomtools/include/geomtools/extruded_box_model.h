@@ -53,16 +53,16 @@ namespace geomtools {
     extruded_box_model();
 
     /// Destructor
-    virtual ~extruded_box_model();
+    ~extruded_box_model() override;
 
     /// Return the string Id of the model
-    virtual std::string get_model_id() const;
+    std::string get_model_id() const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
 
     /// Return the embedded extruded box
     const geomtools::extruded_box & get_extruded_box() const;
@@ -75,19 +75,19 @@ namespace geomtools {
       wires_drawer(const extruded_box & eb_);
 
       //! Destructor
-      virtual ~wires_drawer();
+      ~wires_drawer() override;
 
       //! Generate a list of polylines representing the contour of the shape (for display clients)
-      virtual void generate_wires_self(wires_type & wires_,
-                                       uint32_t options_ = 0) const;
+      void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const override;
     };
 
    protected:
 
     /// Executed at construct
-    virtual void _at_construct(const std::string & name_,
+    void _at_construct(const std::string & name_,
                                const datatools::properties & config_,
-                               models_col_type * models_ = 0);
+                               models_col_type * models_ = 0) override;
 
   private:
 

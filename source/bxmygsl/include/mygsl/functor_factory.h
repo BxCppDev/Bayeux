@@ -61,7 +61,7 @@ namespace mygsl {
     functor_factory(uint32_t flags_);
 
     //! Destructor
-    virtual ~functor_factory();
+    ~functor_factory() override;
 
     //! Create a functor without initialization
     void create(unary_function_handle_type & handle_,
@@ -79,10 +79,10 @@ namespace mygsl {
                 unary_function_dict_type & functors_);
 
     //! Smart dump
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected:
 

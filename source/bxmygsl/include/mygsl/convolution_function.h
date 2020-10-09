@@ -60,17 +60,17 @@ namespace mygsl {
                          std::size_t size_ = 1000);
 
     //! Destructor
-    virtual ~convolution_function();
+    ~convolution_function() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the function
-    void reset();
+    void reset() override;
 
     //! Set the first functor
     void set_f(const i_unary_function &);
@@ -97,10 +97,10 @@ namespace mygsl {
     std::size_t get_limit() const;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// \brief Interface parameters for GSL function
     class convolution_term : public i_unary_function
@@ -111,10 +111,10 @@ namespace mygsl {
       convolution_term(const convolution_function & cf_, double t_);
 
       /// The minimum bound of the non-zero domain
-      /* virtual */ double get_non_zero_domain_min() const;
+      /* virtual */ double get_non_zero_domain_min() const override;
 
       /// The minimum bound of the non-zero domain
-      /* virtual */ double get_non_zero_domain_max() const;
+      /* virtual */ double get_non_zero_domain_max() const override;
 
       /// Smart print
       void print(std::ostream & = std::clog, const std::string & title_ = "") const;
@@ -122,7 +122,7 @@ namespace mygsl {
     protected:
 
       /// Function interface
-      virtual double _eval(double) const;
+      double _eval(double) const override;
 
     private:
 
@@ -139,7 +139,7 @@ namespace mygsl {
   protected:
 
     //! Evaluation
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
 
     void _at_init();
 

@@ -63,7 +63,7 @@ namespace brio {
            datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Destructor
-    virtual ~reader();
+    ~reader() override;
 
     /** By default, serialization tag are checked each time
      *  an object is deserialized.
@@ -113,16 +113,16 @@ namespace brio {
     int load(T & data_, const std::string & label_, int64_t nentry_ = -1);
 
     //! Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     //! Print
     void print_info(std::ostream& out_ = std::clog) const;
 
   protected:
-    virtual void _at_open(const std::string & filename_);
+    void _at_open(const std::string & filename_) override;
 
     template<class T>
     int _at_load(T & data_, store_info * ptr_si_, int64_t nentry_);

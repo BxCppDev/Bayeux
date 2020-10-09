@@ -74,7 +74,7 @@ namespace datatools {
       unit_info(unit_support_type, const std::string & unit_token_, const std::string & unit_token2_ = "");
 
       //! Destructor
-      virtual ~unit_info();
+      ~unit_info() override;
 
       //! Check validity
       bool is_valid() const;
@@ -166,10 +166,10 @@ namespace datatools {
                             const std::string & prefix_ = "") const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       //! Make the class "equality comparable" (needed by Boost/optional for some reason...)
       //! Do not understand why (see also the "data_description::has_unit_info()" method)

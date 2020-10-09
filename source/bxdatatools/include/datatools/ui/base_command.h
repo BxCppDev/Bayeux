@@ -56,7 +56,7 @@ namespace datatools {
       typedef boost::program_options::variables_map                  vmap_type;
 
       //! Check if a name is valid
-      virtual bool is_name_valid(const std::string & candidate_name_) const;
+      bool is_name_valid(const std::string & candidate_name_) const override;
 
       //! Default constructor
       base_command();
@@ -67,7 +67,7 @@ namespace datatools {
                    const version_id & vid_ = version_id::invalid());
 
       //! Destructor
-      virtual ~base_command();
+      ~base_command() override;
 
       //! Check if some generic options are described
       bool has_generic_opts() const;
@@ -154,10 +154,10 @@ namespace datatools {
       void print_version(std::ostream & out_, uint32_t flags_ = 0) const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     protected:
 

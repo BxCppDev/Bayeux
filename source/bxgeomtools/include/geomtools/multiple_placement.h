@@ -43,31 +43,31 @@ namespace geomtools {
 
     placement & get_placement(int index_);
 
-    virtual size_t get_dimension() const;
+    size_t get_dimension() const override;
 
-    virtual bool is_replica() const;
+    bool is_replica() const override;
 
-    virtual size_t get_number_of_items() const;
+    size_t get_number_of_items() const override;
 
-    virtual void get_placement(int item_, placement & p_) const;
+    void get_placement(int item_, placement & p_) const override;
 
-    virtual size_t compute_index_map(std::vector<uint32_t> & map_,
-                                     int item_) const;
+    size_t compute_index_map(std::vector<uint32_t> & map_,
+                                     int item_) const override;
 
     /// Default constructor
     multiple_placement();
 
     /// Destructor
-    virtual ~multiple_placement();
+    ~multiple_placement() override;
 
     /// Reset
     virtual void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "geomutils::multiple_placement",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   private:
 

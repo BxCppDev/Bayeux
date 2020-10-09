@@ -54,26 +54,26 @@ namespace genbb {
     from_file_generator();
 
     /// Destructor
-    virtual ~from_file_generator();
+    ~from_file_generator() override;
 
     /// Main initialization interface method
-    virtual void initialize(const datatools::properties & setup_,
+    void initialize(const datatools::properties & setup_,
                             datatools::service_manager & service_manager_,
-                            detail::pg_dict_type & dictionary_);
+                            detail::pg_dict_type & dictionary_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check if the generator has a next event
-    virtual bool has_next();
+    bool has_next() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
   protected:
 
-    virtual void _load_next(primary_event & event_,
-                            bool compute_classification_ = true);
+    void _load_next(primary_event & event_,
+                            bool compute_classification_ = true) override;
 
   private:
 

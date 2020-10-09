@@ -32,18 +32,18 @@ namespace geomtools {
     mapping_plugin ();
 
     /// Destructor
-    virtual ~mapping_plugin ();
+    ~mapping_plugin () override;
 
     /// Main plugin initialization method
-    virtual int initialize(const datatools::properties & config_,
+    int initialize(const datatools::properties & config_,
                            const geomtools::manager::plugins_dict_type & plugins_,
-                           const datatools::service_dict_type & services_);
+                           const datatools::service_dict_type & services_) override;
 
     /// Plugin reset method
-    virtual int reset();
+    int reset() override;
 
     /// Check if plugin is initialized
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Returns a non-mutable reference to the embeded mapping instance
     const geomtools::mapping & get_mapping () const;

@@ -103,11 +103,11 @@ namespace mygsl {
                            int i_,
                            const double * params_);
 
-    virtual ~unary_eval_from_multi ();
+    ~unary_eval_from_multi () override;
 
   protected:
 
-   double _eval(double x_) const;
+   double _eval(double x_) const override;
 
   private:
 

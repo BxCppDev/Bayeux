@@ -79,17 +79,17 @@ namespace mctools {
       triangle_signal_shape();
 
       //! Destructor
-      virtual ~triangle_signal_shape();
+      ~triangle_signal_shape() override;
 
       //! Initialization
-      virtual void initialize(const datatools::properties & config_,
-                              const mygsl::unary_function_dict_type & functors_);
+      void initialize(const datatools::properties & config_,
+                              const mygsl::unary_function_dict_type & functors_) override;
 
       //! Reset
-      virtual void reset();
+      void reset() override;
 
       //! Check initialization status
-      virtual bool is_initialized() const;
+      bool is_initialized() const override;
 
       //! Set the polarity of the signal
       void set_polarity(polarity_type);
@@ -125,10 +125,10 @@ namespace mctools {
       double get_amplitude() const;
 
       //! The minimum bound of the non-zero domain (default is minus infinity)
-      virtual double get_non_zero_domain_min() const;
+      double get_non_zero_domain_min() const override;
 
       //! The maximum bound of the non-zero domain (default is plus infinity)
-      virtual double get_non_zero_domain_max() const;
+      double get_non_zero_domain_max() const override;
 
       //! Return the width of the signal
       double get_duration() const;
@@ -146,10 +146,10 @@ namespace mctools {
       double get_q() const;
 
       //! Smart printing
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     protected:
 
@@ -160,7 +160,7 @@ namespace mctools {
       void _compute_parameters();
 
       //! Evaluation from parameters
-      double _eval(double x_) const;
+      double _eval(double x_) const override;
 
     private:
 

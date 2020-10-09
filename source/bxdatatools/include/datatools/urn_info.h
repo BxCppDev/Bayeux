@@ -118,7 +118,7 @@ namespace datatools {
              const std::string & description_ = "");
 
     /// Destructor
-    virtual ~urn_info();
+    ~urn_info() override;
 
     /// Check validity
     bool is_valid() const;
@@ -228,10 +228,10 @@ namespace datatools {
     std::vector<std::string> get_topics() const;
 
     /// Main interface method for smart dump
-    virtual void tree_dump(std::ostream& out = std::clog,
+    void tree_dump(std::ostream& out = std::clog,
                            const std::string& title  = "",
                            const std::string& indent = "",
-                           bool inherit = false) const;
+                           bool inherit = false) const override;
 
     /// Basic comparison with respect to the URN name
     bool operator<(const urn_info & other_) const;

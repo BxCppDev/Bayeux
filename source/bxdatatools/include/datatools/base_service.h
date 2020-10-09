@@ -80,7 +80,7 @@ namespace datatools {
                  logger::priority lp_ = logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~base_service();
+    ~base_service() override;
 
     /// Undocumented unused/unimplemented method
     virtual void fetch_dependencies(service_dependency_dict_type & /*dependencies_*/) const;
@@ -153,7 +153,7 @@ DR_CLASS_INIT(datatools::base_service)
   private:                                                              \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME) \
   public:                                                               \
-  virtual std::string service_class_id() const;                         \
+  std::string service_class_id() const override;                         \
   /**/
 
 #define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \

@@ -55,17 +55,17 @@ namespace dpp {
 
   public:
 
-    virtual void open();
+    void open() override;
 
-    virtual bool store_next_record(const datatools::things & event_record_);
+    bool store_next_record(const datatools::things & event_record_) override;
 
-    virtual bool can_store_meta_data() const;
+    bool can_store_meta_data() const override;
 
-    virtual bool store_metadata(const datatools::properties & meta_data_);
+    bool store_metadata(const datatools::properties & meta_data_) override;
 
-    virtual void close();
+    void close() override;
 
-    virtual void reset();
+    void reset() override;
 
     /// Constructor
     simple_data_sink(datatools::logger::priority priority_ = datatools::logger::PRIO_NOTICE);
@@ -76,7 +76,7 @@ namespace dpp {
                       datatools::logger::priority priority_ = datatools::logger::PRIO_NOTICE);
 
     /// Destructor
-    virtual ~simple_data_sink();
+    ~simple_data_sink() override;
 
   protected:
 

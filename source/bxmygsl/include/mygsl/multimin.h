@@ -313,11 +313,11 @@ namespace mygsl {
 
     struct default_step_action : public at_step_action
     {
-      virtual void action (int status_ ,
+      void action (int status_ ,
                            size_t iter_ ,
                            double * x_ ,
                            size_t   dim_ ,
-                           double f_);
+                           double f_) override;
     };
 
     static default_step_action _default_step_action_;

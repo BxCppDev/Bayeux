@@ -100,7 +100,7 @@ namespace mctools {
       magnetic_field ();
 
       /// Destructor
-      virtual ~magnetic_field ();
+      ~magnetic_field () override;
 
       /// Initialization
       void initialize (const datatools::properties & config_);
@@ -116,7 +116,7 @@ namespace mctools {
 
       // G4 interface:
       void GetFieldValue (const double position_[3],
-                          double * b_field_) const;
+                          double * b_field_) const override;
 
     protected:
 

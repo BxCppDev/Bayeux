@@ -60,27 +60,27 @@ namespace genbb {
     save_to_file_wrapper();
 
     /// Destructor
-    virtual ~save_to_file_wrapper();
+    ~save_to_file_wrapper() override;
 
     /// Main initialization interface method
-    virtual void initialize(const datatools::properties & setup_,
+    void initialize(const datatools::properties & setup_,
                             datatools::service_manager & service_manager_,
-                            detail::pg_dict_type & dictionary_);
+                            detail::pg_dict_type & dictionary_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check if the generator has a next event
-    virtual bool has_next();
+    bool has_next() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
   protected:
 
     /// Load next primary event from the generator algorithm
-    virtual void _load_next(primary_event & event_,
-                            bool compute_classification_ = true);
+    void _load_next(primary_event & event_,
+                            bool compute_classification_ = true) override;
 
   private:
 

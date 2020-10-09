@@ -31,13 +31,13 @@ namespace geomtools {
     static const std::string & plane_label();
 
     /// Check if the plane is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Initialize from properties and a dictionary of 3D-objects
-    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset the shape
-    void reset();
+    void reset() override;
 
     /// Return the first parameter
     double a() const;
@@ -90,26 +90,26 @@ namespace geomtools {
     geomtools::vector_3d projection(const geomtools::vector_3d & position_,
                                     const geomtools::vector_3d & direction_) const;
 
-    virtual bool is_on_surface(const geomtools::vector_3d & position_,
-                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_surface(const geomtools::vector_3d & position_,
+                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
-    virtual geomtools::vector_3d
+    geomtools::vector_3d
     get_normal_on_surface(const geomtools::vector_3d & position_,
                           bool check_ = true,
-                          double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                          double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
-    virtual bool find_intercept(const geomtools::vector_3d & from_,
+    bool find_intercept(const geomtools::vector_3d & from_,
                                 const geomtools::vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     void print_grid(std::ostream & out_, double padding_ = 1.0, int n1_ = 3, int n2_ = 3) const;
 
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
   protected:
 

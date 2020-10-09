@@ -83,7 +83,7 @@ namespace datatools {
     urn_to_path_resolver_service();
 
     //! Destructor
-    virtual ~urn_to_path_resolver_service();
+    ~urn_to_path_resolver_service() override;
 
     //! Add a known catagory
     void add_known_category(const std::string & cat_);
@@ -107,20 +107,20 @@ namespace datatools {
     void add_map(const std::string &);
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialize the service from a list of properties
-    virtual int initialize(const datatools::properties & config_,
-                           datatools::service_dict_type & services_);
+    int initialize(const datatools::properties & config_,
+                           datatools::service_dict_type & services_) override;
 
     //! Reset
-    virtual int reset();
+    int reset() override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
+    void tree_dump(std::ostream& out = std::clog,
                            const std::string & title = "",
                            const std::string & indent = "",
-                           bool inherit = false) const;
+                           bool inherit = false) const override;
 
     //! Load a URN/path map file
     void load_map(const std::string & map_filename_);

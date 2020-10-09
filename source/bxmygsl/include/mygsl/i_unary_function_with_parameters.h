@@ -48,17 +48,17 @@ namespace mygsl {
     i_unary_function_with_parameters(const parameter_store & store_);
 
     //! Destructor
-    virtual ~i_unary_function_with_parameters();
+    ~i_unary_function_with_parameters() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the functor
-    virtual void reset();
+    void reset() override;
 
     //! Check if an external parameter store is set
     bool has_parameter_store() const;
@@ -92,18 +92,18 @@ namespace mygsl {
     void fetch_parameter(int param_index_, std::string & value_) const;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     //! Update parameter
-    void update_parameters();
+    void update_parameters() override;
 
   protected:
 
     //! Evaluation
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
 
     //! Evaluation from parameters of the store
     virtual double _eval_from_parameters(double x_) const = 0;

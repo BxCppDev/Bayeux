@@ -39,7 +39,7 @@ namespace mctools {
 
       sensitive_hit_collection (G4String a_detector_name, G4String a_collection_name);
 
-      virtual ~sensitive_hit_collection () = default;
+      ~sensitive_hit_collection () override = default;
 
       sensitive_hit_collection(const sensitive_hit_collection&) = default;
       
@@ -57,9 +57,9 @@ namespace mctools {
 
       // G4VHitsCollection Interface :
 
-      virtual G4VHit * GetHit(size_t) const;
+      G4VHit * GetHit(size_t) const override;
 
-      virtual size_t GetSize() const;
+      size_t GetSize() const override;
 
     protected:
 

@@ -78,7 +78,7 @@ namespace mygsl {
 
     struct default_step_action : public at_step_action
     {
-      virtual void action ( double t_ , double * y_ , size_t dim_ );
+      void action ( double t_ , double * y_ , size_t dim_ ) override;
     };
 
     static default_step_action _default_step_action_;

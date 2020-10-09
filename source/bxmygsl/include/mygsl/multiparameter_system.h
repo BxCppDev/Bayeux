@@ -120,7 +120,7 @@ namespace mygsl {
 
   struct multiparameter_system_test : public multiparameter_system
   {
-    virtual void compute_automatic_params ()
+    void compute_automatic_params () override
     {
       for (size_t i = 0; i < get_number_of_auto_params (); i++)
 	{

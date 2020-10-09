@@ -50,10 +50,10 @@ namespace mygsl {
   public:
 
     /// Check if the function has an explicit domain of definition (default: false)
-    virtual bool has_explicit_domain_of_definition() const;
+    bool has_explicit_domain_of_definition() const override;
 
     /// Check if a value is in the domain of definition of the function (default: true)
-    virtual bool is_in_domain_of_definition(double x_) const;
+    bool is_in_domain_of_definition(double x_) const override;
 
     /// Default constructor
     tabulated_function(const std::string & interp_name_ = "");
@@ -62,7 +62,7 @@ namespace mygsl {
     tabulated_function(const tabulated_function & tab_func_);
 
     /// Destructor
-    virtual ~tabulated_function();
+    ~tabulated_function() override;
 
     /// Assignement
     tabulated_function & operator=(const tabulated_function& tab_func_);
@@ -135,25 +135,25 @@ namespace mygsl {
 
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the functor
-    void reset();
+    void reset() override;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected:
 
     //! Evaluation
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 

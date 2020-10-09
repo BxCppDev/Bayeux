@@ -149,7 +149,7 @@ namespace mctools {
       run_action(manager & a_mgr);
 
       /// Destructor
-      virtual ~run_action();
+      ~run_action() override;
 
       /// Register the event action
       void register_event_action(event_action &);
@@ -167,10 +167,10 @@ namespace mctools {
       void store_data(const mctools::simulated_data & esd_);
 
       /// Geant4 BeginOfRunAction mandatory interface
-      void BeginOfRunAction(const G4Run *);
+      void BeginOfRunAction(const G4Run *) override;
 
       /// Geant4 EndOfRunAction mandatory interface
-      void EndOfRunAction(const G4Run *);
+      void EndOfRunAction(const G4Run *) override;
 
     protected:
 

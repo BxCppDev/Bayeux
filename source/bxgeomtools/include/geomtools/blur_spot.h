@@ -163,16 +163,16 @@ namespace geomtools {
     const rotation_3d & get_inverse_rotation() const;
 
     /// Destructor
-    virtual ~blur_spot();
+    ~blur_spot() override;
 
     /// Invalidate the object
-    virtual void invalidate();
+    void invalidate() override;
 
     /// Reset internal data
     void reset();
 
     /// Check the validity of the object
-    virtual bool is_valid() const;
+    bool is_valid() const override;
 
     /// Return the transverse error of the spot along the X axis
     double get_x_error() const;
@@ -216,14 +216,14 @@ namespace geomtools {
                double nsigma3_or_tolerance_ = DEFAULT_VALUE) const;
 
     /// Generate rendering wires
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_    = std::clog,
+    void tree_dump(std::ostream & out_    = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// Smart print shortcut
     void print() const;

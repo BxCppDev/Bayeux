@@ -61,13 +61,13 @@ namespace datatools {
       static const std::string & default_top_variant_name();
 
       /// Check if a name is valid
-      virtual bool is_name_valid(const std::string & name_) const;
+      bool is_name_valid(const std::string & name_) const override;
 
       /// Default constructor
       variant_registry();
 
       /// Destructor
-      virtual ~variant_registry();
+      ~variant_registry() override;
 
       /// Check if the top variant name is set
       bool has_top_variant_name() const;
@@ -158,10 +158,10 @@ namespace datatools {
       void load_local_dependency_model(const datatools::properties & ldm_config_);
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & inden_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// \brief Flags for building the list of parameters
       enum list_flags {

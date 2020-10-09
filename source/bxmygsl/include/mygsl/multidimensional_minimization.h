@@ -53,7 +53,7 @@ namespace mygsl {
     multidimensional_minimization_system (double slope_ = DEFAULT_OUT_OF_LIMIT_SLOPE,
                                           bool use_numeric_eval_ = false);
 
-    virtual ~multidimensional_minimization_system ();
+    ~multidimensional_minimization_system () override;
 
     struct func_eval_f_param
       : public mygsl::i_unary_function
@@ -64,7 +64,7 @@ namespace mygsl {
                         multidimensional_minimization_system & sys_);
     protected:
       
-      virtual double _eval(double x_) const;
+      double _eval(double x_) const override;
 
     public:
       
@@ -151,11 +151,11 @@ namespace mygsl {
     struct default_step_action
       : public at_step_action
     {
-      virtual void action (int status_ ,
+      void action (int status_ ,
                            size_t iter_ ,
                            double * x_ ,
                            size_t   dim_ ,
-                           double f_);
+                           double f_) override;
     };
 
     static default_step_action __default_step_action;

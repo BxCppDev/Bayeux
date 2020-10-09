@@ -44,7 +44,7 @@ namespace geomtools {
     static const std::string & elliptical_cylinder_sector_label();
 
     /// Return the identifier/name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     double get_x_radius() const;
 
@@ -98,40 +98,40 @@ namespace geomtools {
                                double start_angle_, double delta_angle_);
 
     /// Destructor
-    virtual ~elliptical_cylinder_sector();
+    ~elliptical_cylinder_sector() override;
 
     /// Check the validity of the shape
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Initialize from properties and a dictionary of 3D-objects
-    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset the shape
-    void reset();
+    void reset() override;
 
     /// Return the surface
-    virtual double get_surface(uint32_t mask_ = i_shape_2d::FACE_ALL) const;
+    double get_surface(uint32_t mask_ = i_shape_2d::FACE_ALL) const override;
 
     /// Check if a point is on the surface
-    virtual bool is_on_surface(const vector_3d & ,
-                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_surface(const vector_3d & ,
+                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the normal at a given position of the surface
-    virtual vector_3d get_normal_on_surface(const vector_3d & position_,
+    vector_3d get_normal_on_surface(const vector_3d & position_,
                                             bool check_ = true,
-                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Find the intercept point of a segment with the surface
-    virtual bool find_intercept(const vector_3d & from_,
+    bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// \brief 3D rendering options
     enum ellcylsec_wires_rendering_option_type {
@@ -147,8 +147,8 @@ namespace geomtools {
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
   protected:
 

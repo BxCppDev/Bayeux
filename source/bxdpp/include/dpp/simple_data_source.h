@@ -73,26 +73,26 @@ namespace dpp {
 
   public:
 
-    virtual void open();
+    void open() override;
 
-    virtual bool has_next_record();
+    bool has_next_record() override;
 
-    virtual bool load_next_record(datatools::things & a_event_record_);
+    bool load_next_record(datatools::things & a_event_record_) override;
 
-    virtual int64_t get_number_of_metadata() const;
+    int64_t get_number_of_metadata() const override;
 
-    virtual bool load_metadata(datatools::properties & a_metadata_, int64_t a_entry_);
+    bool load_metadata(datatools::properties & a_metadata_, int64_t a_entry_) override;
 
-    virtual void close();
+    void close() override;
 
-    virtual void reset();
+    void reset() override;
 
     simple_data_source(datatools::logger::priority a_priority_ = datatools::logger::PRIO_NOTICE);
 
     simple_data_source(const std::string & a_source_label_,
                        datatools::logger::priority a_priority_ = datatools::logger::PRIO_NOTICE);
 
-    virtual ~simple_data_source();
+    ~simple_data_source() override;
 
   protected:
 
@@ -100,7 +100,7 @@ namespace dpp {
 
     virtual void _close_file_source();
 
-    virtual void _check_next_record();
+    void _check_next_record() override;
 
   private:
 

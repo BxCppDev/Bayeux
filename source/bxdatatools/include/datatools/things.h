@@ -71,9 +71,9 @@ namespace datatools {
 
     explicit bad_things_cast (const std::string & msg_);
 
-    virtual ~bad_things_cast() throw();
+    ~bad_things_cast() throw() override;
 
-    virtual const char* what() const throw();
+    const char* what() const throw() override;
 
   private:
 
@@ -100,7 +100,7 @@ namespace datatools {
 
       entry_type();
 
-      virtual ~entry_type();
+      ~entry_type() override;
 
       bool is_not_const() const;
 
@@ -114,10 +114,10 @@ namespace datatools {
 
       bool has_description() const;
 
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     public:
 
@@ -147,7 +147,7 @@ namespace datatools {
     things(const std::string & name_, const std::string & description_ = "");
 
     // Destructor
-    virtual ~things();
+    ~things() override;
 
     /// Return the name of the container
     const std::string & get_name() const;
@@ -186,7 +186,7 @@ namespace datatools {
     void reset();
 
     /// Clear the container
-    virtual void clear();
+    void clear() override;
 
     /// Return the number of objects stored in the container
     unsigned int size() const;
@@ -291,10 +291,10 @@ namespace datatools {
     std::string get_entry_introspection_id(const std::string & name_) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Basic print
     void dump(std::ostream & out_ = std::clog) const;

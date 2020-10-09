@@ -56,22 +56,22 @@ namespace mygsl {
     plain_function_wrapper(const plain_function_type &);
 
     //! Destructor
-    virtual ~plain_function_wrapper();
+    ~plain_function_wrapper() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the functor
-    virtual void reset();
+    void reset() override;
 
   protected:
 
     //! Evaluation method
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 

@@ -190,7 +190,7 @@ namespace datatools {
                int mode_ = io_factory::MODE_DEFAULT);
 
     /// Destructor
-    virtual ~io_factory();
+    ~io_factory() override;
 
     bool eof() const;
 
@@ -351,10 +351,10 @@ namespace datatools {
       return iof_;
     }
 
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     void dump(std::ostream & out_) const;
 
@@ -461,7 +461,7 @@ namespace datatools {
     io_reader(const std::string & stream_name_,
               int mode_ = io_factory::MODE_DEFAULT);
 
-    virtual ~io_reader();
+    ~io_reader() override;
   };
 
 
@@ -480,7 +480,7 @@ namespace datatools {
     io_writer(const std::string & stream_name_,
               int mode_ = io_factory::MODE_DEFAULT);
 
-    virtual ~io_writer();
+    ~io_writer() override;
   };
 
   //----------------------------------------------------------------------

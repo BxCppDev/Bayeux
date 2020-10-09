@@ -190,7 +190,7 @@ namespace geomtools {
     i_object_3d & operator=(const i_object_3d &);
 
     /// Destructor
-    virtual ~i_object_3d();
+    ~i_object_3d() override;
 
     /// Initialize the 3D object
     void initialize_simple();
@@ -202,10 +202,10 @@ namespace geomtools {
     virtual void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);

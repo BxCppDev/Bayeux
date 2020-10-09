@@ -95,7 +95,7 @@ namespace datatools {
                     uint32_t flag_ = BLANK);
 
     //! Destructor
-    virtual ~service_manager();
+    ~service_manager() override;
 
     //! Set the name of the service
     void set_name(const std::string& name_);
@@ -252,10 +252,10 @@ namespace datatools {
                        const std::string& indent_ = "") const;
 
     //! Smart print
-    virtual void tree_dump(std::ostream& out_         = std::clog,
+    void tree_dump(std::ostream& out_         = std::clog,
                            const std::string& title_  = "",
                            const std::string& indent_ = "",
-                           bool inherit_              = false) const;
+                           bool inherit_              = false) const override;
 
     //! Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);

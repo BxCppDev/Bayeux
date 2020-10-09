@@ -83,7 +83,7 @@ namespace mctools {
       event_action(run_action & a_run_action, const detector_construction & a_dctor);
 
       /// Destructor
-      virtual ~event_action();
+      ~event_action() override;
 
       /// Initialization from a set of configuration parameters
       void initialize(const ::datatools::properties & a_config);
@@ -93,9 +93,9 @@ namespace mctools {
 
       // Geant4 interface :
 
-      void BeginOfEventAction(const G4Event *);
+      void BeginOfEventAction(const G4Event *) override;
 
-      void EndOfEventAction(const G4Event *);
+      void EndOfEventAction(const G4Event *) override;
 
     private:
 

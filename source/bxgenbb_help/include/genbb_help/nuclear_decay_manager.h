@@ -74,7 +74,7 @@ namespace genbb {
     nuclear_decay_manager();
 
     /// Destructor
-    virtual ~nuclear_decay_manager();
+    ~nuclear_decay_manager() override;
 
     /// Load a nuclear level
     void load_level(const std::string & level_name_,
@@ -112,10 +112,10 @@ namespace genbb {
     const decay_dict_type & get_decays() const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected:
 

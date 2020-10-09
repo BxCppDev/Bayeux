@@ -69,19 +69,19 @@ namespace mctools {
     /// \brief Physics constructor proxy class with weak referencing
     struct physics_constructor_proxy : public G4VPhysicsConstructor {
       physics_constructor_proxy(base_physics_constructor & pc_);
-      virtual ~physics_constructor_proxy();
-      virtual void ConstructParticle();
-      virtual void ConstructProcess();
+      ~physics_constructor_proxy() override;
+      void ConstructParticle() override;
+      void ConstructProcess() override;
       base_physics_constructor * pc; //!< Reference to a mctools physics constructor object
     };
 
     /// \brief Physics list proxy class with weak referencing
     struct physics_list_proxy : public G4VModularPhysicsList {
       physics_list_proxy(G4VModularPhysicsList & pl_);
-      virtual ~physics_list_proxy();
-      virtual void ConstructParticle();
-      virtual void ConstructProcess();
-      virtual void SetCuts();
+      ~physics_list_proxy() override;
+      void ConstructParticle() override;
+      void ConstructProcess() override;
+      void SetCuts() override;
       G4VModularPhysicsList * pl; //!< Reference to a Geant4 physics list object
     };
 

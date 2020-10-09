@@ -131,7 +131,7 @@ namespace genbb {
     nuclear_level();
 
     /// Desstructor
-    virtual ~nuclear_level();
+    ~nuclear_level() override;
 
     /// Check validity
     bool is_valid() const;
@@ -233,10 +233,10 @@ namespace genbb {
     std::string to_string(unsigned int = 0) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Check initialization flag
     bool is_initialized() const;

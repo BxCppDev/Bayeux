@@ -52,7 +52,7 @@ namespace datatools {
       argument();
 
       //! Destructor
-      ~argument();
+      ~argument() override;
 
       //! Check if the method of which the argument belong to the list of arguments is set
       bool has_method() const;
@@ -205,10 +205,10 @@ namespace datatools {
                             const std::string & prefix_ = "") const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     private:
 

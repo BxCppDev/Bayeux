@@ -83,7 +83,7 @@ namespace datatools {
                          size_t increment_ = 1000,
                          size_t max_capacity_ = 0);
 
-    virtual ~vector_output_buffer();
+    ~vector_output_buffer() override;
 
     const std::vector<char>& buffer() const;
 
@@ -107,7 +107,7 @@ namespace datatools {
   public:
     void dump() const;
 
-    int overflow(int c_);
+    int overflow(int c_) override;
 
   private:
 

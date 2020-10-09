@@ -75,7 +75,7 @@ namespace datatools {
     factory_register(const std::string & label_, unsigned int flags_ = 0x0);
 
     /// Destructor
-    virtual ~factory_register();
+    ~factory_register() override;
 
     //! Returns logging priority
     datatools::logger::priority get_logging_priority() const;
@@ -151,10 +151,10 @@ namespace datatools {
     void print(std::ostream & out_, const std::string & indent_ = "") const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string& title_ = "",
                            const std::string& indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   private:
 

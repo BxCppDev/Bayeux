@@ -62,7 +62,7 @@ namespace genbb {
     nuclear_decay();
 
     /// Destructor
-    virtual ~nuclear_decay();
+    ~nuclear_decay() override;
 
     /// Check validity
     bool is_valid() const;
@@ -114,10 +114,10 @@ namespace genbb {
     std::string to_string(unsigned int = 0) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Check the decay driver avaibility
     bool has_decay_driver() const;

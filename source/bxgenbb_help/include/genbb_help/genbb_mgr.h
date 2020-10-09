@@ -85,26 +85,26 @@ namespace genbb {
     genbb_mgr (int format_ = FORMAT_GENBB);
 
     /// Destructor
-    virtual ~genbb_mgr ();
+    ~genbb_mgr () override;
 
     void dump (std::ostream & out_ = std::clog) const;
 
     void set (const std::string & filename_);
 
-    virtual bool is_initialized () const;
+    bool is_initialized () const override;
 
-    virtual void initialize (const datatools::properties & config_,
+    void initialize (const datatools::properties & config_,
                              datatools::service_manager & service_manager_,
-                             detail::pg_dict_type & dictionary_);
+                             detail::pg_dict_type & dictionary_) override;
 
-    virtual void reset ();
+    void reset () override;
 
-    virtual bool has_next ();
+    bool has_next () override;
 
   protected:
 
-    virtual void _load_next (primary_event & event_,
-                             bool compute_classification_ = true);
+    void _load_next (primary_event & event_,
+                             bool compute_classification_ = true) override;
 
   private:
 

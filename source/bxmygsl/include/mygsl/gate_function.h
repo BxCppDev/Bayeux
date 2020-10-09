@@ -63,17 +63,17 @@ namespace mygsl {
                   double amplitude_ = std::numeric_limits<double>::quiet_NaN());
 
     //! Destructor
-    virtual ~gate_function();
+    ~gate_function() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the function
-    virtual void reset();
+    void reset() override;
 
     //! Set the width
     void set_width(double width_);
@@ -94,21 +94,21 @@ namespace mygsl {
     double get_amplitude() const;
 
     //! The minimum bound of the non-zero domain (default is plus infinity)
-    double get_non_zero_domain_min() const;
+    double get_non_zero_domain_min() const override;
 
     //! The maximum bound of the non-zero domain (default is plus infinity)
-    double get_non_zero_domain_max() const;
+    double get_non_zero_domain_max() const override;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected :
 
     //! Evaluation
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
 
     //! Set default attributes values
     void _set_defaults();

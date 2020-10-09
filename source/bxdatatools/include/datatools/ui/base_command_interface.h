@@ -65,7 +65,7 @@ namespace datatools {
                              const version_id & vid_ = version_id::invalid());
 
       //! Destructor
-      virtual ~base_command_interface();
+      ~base_command_interface() override;
 
       //! Check if the version is set
       bool has_version() const;
@@ -129,10 +129,10 @@ namespace datatools {
       bool is_disabled() const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       //! Main command call operator
       int operator()(const std::vector<std::string> & argv_,

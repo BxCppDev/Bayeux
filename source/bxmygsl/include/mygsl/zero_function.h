@@ -18,12 +18,12 @@ namespace mygsl {
     zero_function();
 
     //! Destructor
-    virtual ~zero_function();
+    ~zero_function() override;
 
   protected:
 
     //! Evaluation method
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 

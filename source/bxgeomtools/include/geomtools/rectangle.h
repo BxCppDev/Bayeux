@@ -37,7 +37,7 @@ namespace geomtools {
     static const std::string & rectangle_label();
 
     /// Check if the rectangle is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Return the X dimension
     double get_x() const;
@@ -55,10 +55,10 @@ namespace geomtools {
     void set(double x_, double y_);
 
     /// Return the surface
-    virtual double get_surface(uint32_t flags_ = ALL_PIECES) const;
+    double get_surface(uint32_t flags_ = ALL_PIECES) const override;
 
     /// Return the perimeter
-    virtual double get_perimeter(uint32_t flags_ = ALL_PIECES) const;
+    double get_perimeter(uint32_t flags_ = ALL_PIECES) const override;
 
     /// Return the circumference
     double get_circumference() const;
@@ -73,28 +73,28 @@ namespace geomtools {
     rectangle(double x_, double y_);
 
     /// Destructor
-    virtual ~rectangle();
+    ~rectangle() override;
 
     /// Return the identifier/name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
-    virtual bool is_on_surface(const vector_3d &,
-                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_surface(const vector_3d &,
+                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
-    virtual vector_3d get_normal_on_surface(const vector_3d & position_,
+    vector_3d get_normal_on_surface(const vector_3d & position_,
                                             bool check_ = true,
-                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
-    virtual bool find_intercept(const vector_3d & from_,
+    bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_= false) const;
+                           bool inherit_= false) const override;
 
     /// \brief 3D rendering options
     enum rectangle_wires_rendering_option_type {
@@ -110,17 +110,17 @@ namespace geomtools {
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
     /// Build an ordered collection of vertexes
-    virtual unsigned int compute_vertexes(vertex_col_type & vertexes_) const;
+    unsigned int compute_vertexes(vertex_col_type & vertexes_) const override;
 
     /// Initialize from properties and a dictionary of 3D-objects
-    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset
-    void reset();
+    void reset() override;
 
   protected:
 

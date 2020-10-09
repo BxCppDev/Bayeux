@@ -54,31 +54,31 @@ namespace emfield {
     polynomial_magnetic_field(uint32_t flags_ = 0);
 
     /// Destructor
-    virtual ~polynomial_magnetic_field();
+    ~polynomial_magnetic_field() override;
 
     /// Initialization
-    virtual void initialize(const datatools::properties & setup_,
+    void initialize(const datatools::properties & setup_,
                             datatools::service_manager & service_manager_,
-                            emfield::base_electromagnetic_field::field_dict_type & dict_);
+                            emfield::base_electromagnetic_field::field_dict_type & dict_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Main function to compute electric field
-    virtual int compute_electric_field(const geomtools::vector_3d & position_,
+    int compute_electric_field(const geomtools::vector_3d & position_,
                                        double time_,
-                                       geomtools::vector_3d & electric_field_) const;
+                                       geomtools::vector_3d & electric_field_) const override;
 
     /// Main function to compute magnetic field
-    virtual int compute_magnetic_field(const geomtools::vector_3d & position_,
+    int compute_magnetic_field(const geomtools::vector_3d & position_,
                                        double time_,
-                                       geomtools::vector_3d & magnetic_field_) const;
+                                       geomtools::vector_3d & magnetic_field_) const override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
   private:
 

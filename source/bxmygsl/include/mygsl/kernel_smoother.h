@@ -26,7 +26,7 @@ namespace mygsl {
     /// Constructor
     gauss_kernel_smoother(const double b_);
 
-    virtual ~gauss_kernel_smoother();
+    ~gauss_kernel_smoother() override;
 
     double eval(double xs_, double x_) const override;
 
@@ -51,12 +51,12 @@ namespace mygsl {
                                  const double b_);
 
     /// Destructor
-    virtual ~nw_sampled_function_smoother();
+    ~nw_sampled_function_smoother() override;
     
   protected:
 
     /// Evaluation of the smoothed function
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
  
   private:
 

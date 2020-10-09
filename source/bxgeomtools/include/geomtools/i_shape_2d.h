@@ -71,7 +71,7 @@ namespace geomtools {
     virtual double get_surface(uint32_t flags_ = ALL_PIECES) const;
 
     /// Return the dimension of the object
-    int get_dimensional() const;
+    int get_dimensional() const override;
 
     /// Default constructor
     i_shape_2d();
@@ -83,7 +83,7 @@ namespace geomtools {
     i_shape_2d(double tolerance_, double angular_tolerance_);
 
     /// Destructor
-    virtual ~i_shape_2d();
+    ~i_shape_2d() override;
 
     /// Check is a given point belongs to the surface of the 2D shape
     ///

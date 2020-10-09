@@ -39,7 +39,7 @@ namespace geomtools {
 
     const MWIM & get_internals () const;
 
-    virtual const geomtools::box & get_box () const;
+    const geomtools::box & get_box () const override;
 
     const box & get_solid () const;
 
@@ -47,26 +47,26 @@ namespace geomtools {
 
     void set_material_name (const std::string &);
 
-    virtual std::string get_model_id () const;
+    std::string get_model_id () const override;
 
     /// Default constructor
     multiple_items_model ();
 
     /// Destructor
-    virtual ~multiple_items_model ();
+    ~multiple_items_model () override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
   protected:
 
     /// Construction
-    virtual void _at_construct (const std::string & label_,
+    void _at_construct (const std::string & label_,
                                 const datatools::properties & config_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) override;
 
   private:
 

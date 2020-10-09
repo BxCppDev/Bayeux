@@ -35,10 +35,10 @@ namespace datatools {
       : public target_command<basic_shell>
     {
       shell_load_command(basic_shell &);
-      virtual ~shell_load_command();
+      ~shell_load_command() override;
     protected:
-      virtual void _init(const datatools::properties & config_);
-      virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);
+      void _init(const datatools::properties & config_) override;
+      void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0) override;
     };
 
   } // namespace ui

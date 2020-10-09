@@ -125,7 +125,7 @@ namespace datatools {
             const std::string & meta_ = "");
 
       /// Destructor
-      virtual ~entry() = default;
+      ~entry() override = default;
 
       /// Copy constructor
       entry(const entry &) = default;
@@ -167,10 +167,10 @@ namespace datatools {
       /// Smart print
       ///
       /// \deprecated
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     private:
       std::string _key_;        //!< Primary key of the section
@@ -215,7 +215,7 @@ namespace datatools {
                      const std::string & description_);
 
     /// Destructor
-    virtual ~multi_properties() = default;
+    ~multi_properties() override = default;
 
     /// Copy constructor
     multi_properties(const multi_properties &);
@@ -272,7 +272,7 @@ namespace datatools {
     void reset();
 
     /// Clear the dictionary of sections
-    virtual void clear();
+    void clear() override;
 
     /// Return the const reference to the collection of entries
     const entries_col_type & entries() const;
@@ -487,10 +487,10 @@ namespace datatools {
     /// Smart print
     ///
     /// \deprecated
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// \brief Reader/writer class for multi_properties objects
     class config

@@ -40,7 +40,7 @@ namespace mctools {
         em_extra_model();
 
         /// Destructor
-        virtual ~em_extra_model();
+        ~em_extra_model() override;
 
         /// Check initialization
         bool is_initialized() const;
@@ -134,10 +134,10 @@ namespace mctools {
         static bool validate_g4_model_type_id(std::string & model_type_id_);
 
         /// Smart print
-        virtual void tree_dump(std::ostream      & out_    = std::clog,
+        void tree_dump(std::ostream      & out_    = std::clog,
                                const std::string & title_  = "",
                                const std::string & indent_ = "",
-                               bool inherit_               = false) const;
+                               bool inherit_               = false) const override;
 
       public:
 

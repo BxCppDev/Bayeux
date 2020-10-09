@@ -40,20 +40,20 @@ namespace geomtools {
 
     simple_world_model ();
 
-    virtual ~simple_world_model ();
+    ~simple_world_model () override;
 
-    virtual std::string get_model_id () const;
+    std::string get_model_id () const override;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
   protected:
 
-    virtual void _at_construct (const std::string & name_,
+    void _at_construct (const std::string & name_,
                                 const datatools::properties & setup_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) override;
 
   private:
 

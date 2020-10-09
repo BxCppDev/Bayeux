@@ -156,7 +156,7 @@ namespace genvtx {
     manager(datatools::logger::priority p_ = datatools::logger::PRIO_WARNING);
 
     /// Destructor
-    virtual ~manager();
+    ~manager() override;
 
     /// Reset
     void reset();
@@ -200,10 +200,10 @@ namespace genvtx {
     void shoot_vertex_and_time(geomtools::vector_3d & vertex_, double & time_);
 
     /// Smart print method
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
     const genvtx::i_vertex_generator & get(const std::string & vg_name_) const;
 

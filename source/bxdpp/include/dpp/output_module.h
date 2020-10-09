@@ -55,18 +55,18 @@ namespace dpp {
     output_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~output_module();
+    ~output_module() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties & /* config_ */,
+    void initialize(const ::datatools::properties & /* config_ */,
                             datatools::service_manager & /* service_mgr_ */,
-                            dpp::module_handle_dict_type & /* modules_map_ */);
+                            dpp::module_handle_dict_type & /* modules_map_ */) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Data record processing
-    virtual process_status process(::datatools::things & /* data_ */);
+    process_status process(::datatools::things & /* data_ */) override;
 
     /// Set limits
     void set_limits(int max_record_total_,
@@ -104,10 +104,10 @@ namespace dpp {
     void clear_metadata_store();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
 
     /// Check output termination
     bool is_terminated() const;

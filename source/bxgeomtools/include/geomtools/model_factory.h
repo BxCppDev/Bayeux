@@ -84,7 +84,7 @@ namespace geomtools {
     model_factory(bool debug_, bool core_factory_verbose_ = false);
 
     /// Destructor
-    virtual ~model_factory();
+    ~model_factory() override;
 
     /// Load a geometry models definition file
     void load(const std::string & mprop_file_);
@@ -108,10 +108,10 @@ namespace geomtools {
     const std::vector<std::string> & get_property_prefixes() const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// Check if an external shape factory is referenced
     bool has_shape_factory() const;

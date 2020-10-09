@@ -36,13 +36,13 @@ namespace geomtools {
     static const std::string & triangle_label();
 
     /// Check the validity of the triangle
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Return the perimeter
-    virtual double get_perimeter(uint32_t flags_ = ALL_PIECES) const;
+    double get_perimeter(uint32_t flags_ = ALL_PIECES) const override;
 
     /// Return the surface
-    virtual double get_surface(uint32_t flags_ = ALL_PIECES) const;
+    double get_surface(uint32_t flags_ = ALL_PIECES) const override;
 
     /// Check the alignment of 3 points candidate to make a triangle
     static bool check_alignement(const geomtools::vector_3d & v0_,
@@ -84,37 +84,37 @@ namespace geomtools {
     triangle(const vector_3d & p0_, const vector_3d & p1_, const vector_3d & p2_);
 
     /// Destructor
-    virtual ~triangle();
+    ~triangle() override;
 
     /// Initialize from properties and a dictionary of 3D-objects
-    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset
-    void reset();
+    void reset() override;
 
     /// Return the identifier/name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Check is a given point belongs to the surface of the 2D shape
-    virtual bool is_on_surface(const vector_3d &,
-                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_surface(const vector_3d &,
+                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the normal direction at some position on the 2D shape's path
-    virtual vector_3d get_normal_on_surface(const vector_3d & position_,
+    vector_3d get_normal_on_surface(const vector_3d & position_,
                                             bool check_ = false,
-                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Find the intercept of a ray with the 2D shape's surfaces
-    virtual bool find_intercept(const vector_3d & from_,
+    bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_= false) const;
+                           bool inherit_= false) const override;
 
     /// Compute the vectors of the proper frame (V0, VOV1, V0V2, V0V1^V0V1) system
     void compute_proper_frame(vector_3d & u0_, vector_3d & u1_, vector_3d & u2_) const;
@@ -140,11 +140,11 @@ namespace geomtools {
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
     /// Build an ordered collection of vertexes
-    virtual unsigned int compute_vertexes(vertex_col_type & vertexes_) const;
+    unsigned int compute_vertexes(vertex_col_type & vertexes_) const override;
 
   protected:
 

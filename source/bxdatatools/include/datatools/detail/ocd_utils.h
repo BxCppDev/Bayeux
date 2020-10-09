@@ -239,7 +239,7 @@ namespace datatools {
             _class_id_ = class_id_;
           }
         }
-        virtual ~system_factory_registrar() {
+        ~system_factory_registrar() override {
           DT_LOG_TRACE(_logging_, "Destruction of OCD system_factory_registrar for registered class '" << _class_id_ << "'...");
           ocd_registration & ocd_reg = ocd_registration::grab_system_registration();
           if (! _class_id_.empty() && ocd_reg.has_id(_class_id_)) {

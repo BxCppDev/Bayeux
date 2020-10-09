@@ -40,7 +40,7 @@ namespace genvtx {
     box_model_vg();
 
     /// Destructor
-    virtual ~box_model_vg();
+    ~box_model_vg() override;
 
     /// Check the validity of the mode
     bool is_mode_valid() const;
@@ -106,26 +106,26 @@ namespace genvtx {
     bool is_using_bounding_box();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties &,
+    void initialize(const ::datatools::properties &,
                             ::datatools::service_manager &,
-                            ::genvtx::vg_dict_type &);
+                            ::genvtx::vg_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
   protected :
 
     /// Randomize vertex
-    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+    void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_) override;
 
     /// Main vertex randomization algorithm
     void _shoot_vertex_boxes(mygsl::rng & random_, geomtools::vector_3d & vertex_);

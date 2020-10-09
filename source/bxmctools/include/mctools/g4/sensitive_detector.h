@@ -162,13 +162,13 @@ namespace mctools {
       sensitive_detector(const std::string & name_);
 
       /// Desctructor
-      virtual ~sensitive_detector();
+      ~sensitive_detector() override;
 
       /// Configure the sensitive detector from a container of parameters
       void configure(const datatools::properties & config_);
 
       /// Terminate
-      virtual void clear();
+      void clear() override;
 
       /// Smart print
       virtual void tree_dump(std::ostream      & out_    = std::clog,
@@ -177,13 +177,13 @@ namespace mctools {
                               bool inherit_               = false) const;
 
       /// Initialize the Geant4 collection of hits (Geant4 interface)
-      virtual void Initialize(G4HCofThisEvent *);
+      void Initialize(G4HCofThisEvent *) override;
 
       /// Terminate the Geant4 collection of hits (Geant4 interface)
-      virtual void EndOfEvent(G4HCofThisEvent *);
+      void EndOfEvent(G4HCofThisEvent *) override;
 
       /// Process the current Geant4 step (Geant4 interface)
-      virtual G4bool ProcessHits(G4Step *, G4TouchableHistory *);
+      G4bool ProcessHits(G4Step *, G4TouchableHistory *) override;
 
     protected:
 

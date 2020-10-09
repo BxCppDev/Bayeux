@@ -110,33 +110,33 @@ namespace genbb {
     bool is_record_original_event_id() const;
 
     /// Check if the generator accepts an external PRNG
-    virtual bool can_external_random() const;
+    bool can_external_random() const override;
 
     /// Constructor
     time_slicer_generator();
 
     /// Destructor
-    virtual ~time_slicer_generator();
+    ~time_slicer_generator() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Main initialization interface method
-    virtual void initialize(const datatools::properties & setup_,
+    void initialize(const datatools::properties & setup_,
                             datatools::service_manager & service_manager_,
-                            detail::pg_dict_type & dictionary_);
+                            detail::pg_dict_type & dictionary_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check if a next primary event is available
-    virtual bool has_next();
+    bool has_next() override;
 
   protected:
 
     /// Main generation function
-    virtual void _load_next(primary_event & event_,
-                            bool compute_classification_ = true);
+    void _load_next(primary_event & event_,
+                            bool compute_classification_ = true) override;
 
   private:
 

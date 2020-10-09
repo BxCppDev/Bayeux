@@ -31,12 +31,12 @@ namespace cuts {
             datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~nor_cut();
+    ~nor_cut() override;
 
   protected :
 
     /// Selection
-    virtual int _accept();
+    int _accept() override;
 
   private:
 

@@ -87,15 +87,15 @@ namespace geomtools {
     const std::list<const geom_info *> & get_ginfos () const;
 
     /// Check if a given geom Id is valid
-    virtual bool validate_id (const geom_id & id_) const;
+    bool validate_id (const geom_id & id_) const override;
 
     /// Retrieve the geometry info object from its geometry Id
-    virtual const geom_info & get_geom_info (const geom_id & id_) const;
+    const geom_info & get_geom_info (const geom_id & id_) const override;
 
     /// Retrieve the geometry Id of the volume from the world position
-    virtual const geom_id & get_geom_id (const vector_3d & world_position_,
+    const geom_id & get_geom_id (const vector_3d & world_position_,
                                          int type_ = geom_id::INVALID_TYPE,
-                                         double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                         double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
     void tree_dump(std::ostream & out_ = std::clog,

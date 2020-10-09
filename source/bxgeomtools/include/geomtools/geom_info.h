@@ -94,7 +94,7 @@ namespace geomtools {
     {
       return;
     }
-    bool operator () (const geom_info & ginfo_) const
+    bool operator () (const geom_info & ginfo_) const override
     {
       return (ginfo_.get_geom_id ().get_type () == _geom_type_);
     }

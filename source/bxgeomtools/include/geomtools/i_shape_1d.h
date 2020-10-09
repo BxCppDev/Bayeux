@@ -34,7 +34,7 @@ namespace geomtools {
   public:
 
     /// Return the dimension of the object
-    int get_dimensional() const;
+    int get_dimensional() const override;
 
     /// Check if the 1D shape knows its number of associated paths
     virtual bool has_number_of_paths() const;
@@ -58,7 +58,7 @@ namespace geomtools {
     i_shape_1d(double tolerance_, double angular_tolerance_);
 
     /// Destructor
-    virtual ~i_shape_1d();
+    ~i_shape_1d() override;
 
     /// Check is a given point belongs to the path of the 1D shape
     virtual bool is_on_curve(const vector_3d &,

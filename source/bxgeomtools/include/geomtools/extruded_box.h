@@ -79,22 +79,22 @@ namespace geomtools {
     };
 
     /// Return the min X coordinates (bounding box)
-    double get_xmin() const;
+    double get_xmin() const override;
 
     /// Return the max X coordinates (bounding box)
-    double get_xmax() const;
+    double get_xmax() const override;
 
     /// Return the min Y coordinates (bounding box)
-    double get_ymin() const;
+    double get_ymin() const override;
 
     /// Return the max Y coordinates (bounding box)
-    double get_ymax() const;
+    double get_ymax() const override;
 
     /// Return the min Z coordinates (bounding box)
-    double get_zmin() const;
+    double get_zmin() const override;
 
     /// Return the max Z coordinates (bounding box)
-    double get_zmax() const;
+    double get_zmax() const override;
 
     /// Return the X dimension
     double get_x() const;
@@ -176,46 +176,46 @@ namespace geomtools {
                  bool has_top_ = true, bool has_bottom_ = true);
 
     /// Destructor
-    virtual ~extruded_box();
+    ~extruded_box() override;
 
     /// Return the name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     // Check the validity of the object
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Initialize the extruded_box from properties
-    virtual void initialize(const datatools::properties &,
-                            const handle_dict_type *);
+    void initialize(const datatools::properties &,
+                            const handle_dict_type *) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Return the value of some parameter given by name
     double get_parameter(const std::string &) const;
 
     /// Return the cumulated surface of the extruded_box given a list of faces
-    virtual double get_surface(uint32_t mask_ = FACE_ALL) const;
+    double get_surface(uint32_t mask_ = FACE_ALL) const override;
 
     /// Return the volume of the extruded_box
-    virtual double get_volume(uint32_t flags_ = 0) const;
+    double get_volume(uint32_t flags_ = 0) const override;
 
     /// Check if a point is inside the extruded_box
-    virtual bool is_inside(const vector_3d &,
-                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_inside(const vector_3d &,
+                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is inside the extruded_box
-    virtual bool is_outside(const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_outside(const vector_3d &,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
-    virtual face_identifier on_surface(const vector_3d &,
+    face_identifier on_surface(const vector_3d &,
                                        const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the vector normal to the surface at some position
-    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
-                                            const face_identifier & a_surface_bit) const;
+    vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const override;
 
     /// Print operator
     friend std::ostream & operator<<( std::ostream &, const extruded_box & );
@@ -224,19 +224,19 @@ namespace geomtools {
     friend std::istream & operator>>( std::istream &, extruded_box & );
 
     /// Find the intercept point of a segment with the extruded_box
-    virtual bool find_intercept(const vector_3d & from_,
+    bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// Return a collection of face info objects
-    virtual unsigned int compute_faces(face_info_collection_type & faces_) const;
+    unsigned int compute_faces(face_info_collection_type & faces_) const override;
 
     /// Compute the outer box
     void compute_outer_box(box & outer_box_) const;
@@ -259,8 +259,8 @@ namespace geomtools {
     };
 
     /// Generate a list of polylines representing the contour of the shape (for display clients)
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
@@ -271,7 +271,7 @@ namespace geomtools {
     void _set_default();
 
     /// Build the bounding data
-    virtual void _build_bounding_data();
+    void _build_bounding_data() override;
 
   private:
 

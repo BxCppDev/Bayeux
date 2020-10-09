@@ -35,10 +35,10 @@ namespace datatools {
       : public const_target_command<basic_shell>
     {
       shell_tree_command(const basic_shell &);
-      virtual ~shell_tree_command();
+      ~shell_tree_command() override;
     protected:
-      virtual void _init(const datatools::properties & config_);
-      virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);
+      void _init(const datatools::properties & config_) override;
+      void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0) override;
 
       //! Recursive tree print
       void _tree_print_children(std::ostream & out_,

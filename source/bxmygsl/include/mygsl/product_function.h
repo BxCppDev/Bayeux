@@ -46,17 +46,17 @@ namespace mygsl {
     product_function(const i_unary_function & f_, const i_unary_function & g_);
 
     //! Destructor
-    virtual ~product_function();
+    ~product_function() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the composite function
-    void reset();
+    void reset() override;
 
     //! Set the first functor
     void set_f(const i_unary_function &);
@@ -71,24 +71,24 @@ namespace mygsl {
     bool has_g() const;
 
     //! Check if the function has an explicit domain of definition (default: false)
-    /* virtual */ bool has_explicit_domain_of_definition() const;
+    /* virtual */ bool has_explicit_domain_of_definition() const override;
 
-    /* virtual */ bool is_in_domain_of_definition(double x_) const;
+    /* virtual */ bool is_in_domain_of_definition(double x_) const override;
 
-    /* virtual */ double get_non_zero_domain_min() const;
+    /* virtual */ double get_non_zero_domain_min() const override;
 
-    /* virtual */ double get_non_zero_domain_max() const;
+    /* virtual */ double get_non_zero_domain_max() const override;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected :
 
     //! Evaluation
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 

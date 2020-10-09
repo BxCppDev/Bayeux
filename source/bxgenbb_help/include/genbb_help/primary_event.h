@@ -178,7 +178,7 @@ namespace genbb {
     primary_event();
 
     /// Destructor
-    virtual ~primary_event();
+    ~primary_event() override;
 
     /// Smart print
     void print_tree(std::ostream & out_ = std::clog,

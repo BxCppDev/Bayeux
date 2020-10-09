@@ -68,7 +68,7 @@ namespace mctools {
       base_physics_constructor();
 
       /// Desctructor
-      virtual ~base_physics_constructor();
+      ~base_physics_constructor() override;
 
       /// Initialization from a set of configuration properties and a dictionary of physics constructors
       virtual void initialize(const datatools::properties & config_,
@@ -83,10 +83,10 @@ namespace mctools {
       // G4 mandatory interface: construct particle and physics
 
       /// Construct the Geant4 particle list
-      virtual void ConstructParticle(); // Default empty implementation
+      void ConstructParticle() override; // Default empty implementation
 
       /// Construct the Geant4 processes list
-      virtual void ConstructProcess(); // Default empty implementation
+      void ConstructProcess() override; // Default empty implementation
 
       /// Check if the constructor has a mother physics list
       bool has_mother_physics_list() const;
@@ -95,10 +95,10 @@ namespace mctools {
       const physics_list & get_mother_physics_list() const;
 
       /// Smart print
-      virtual void tree_dump (std::ostream      & out_    = std::clog,
+      void tree_dump (std::ostream      & out_    = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
-                              bool inherit_               = false) const;
+                              bool inherit_               = false) const override;
 
     protected:
 

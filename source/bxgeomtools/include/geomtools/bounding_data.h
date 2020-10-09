@@ -58,7 +58,7 @@ namespace geomtools {
     bounding_data();
 
     /// Destructor
-    virtual ~bounding_data();
+    ~bounding_data() override;
 
     /// Make a bounding box
     void make_box(double xmin_, double xmax_,
@@ -117,16 +117,16 @@ namespace geomtools {
     void build_stackable(stackable_data & stackable_info_) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
+    void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
-                           bool a_inherit               = false) const;
+                           bool a_inherit               = false) const override;
 
     /// Parse enforced bounding data from a properties container
     void parse_bounding_data(const datatools::properties & config_);
 
     /// Generate wires associated to the bounding volume
-    void generate_wires_self(wires_type & wires_, uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_, uint32_t options_ = 0) const override;
 
   private:
 

@@ -51,7 +51,7 @@ namespace mctools {
       region_info();
 
       /// Destructor
-      virtual ~region_info();
+      ~region_info() override;
 
       /// Check initialization flag
       bool is_initialized() const;
@@ -82,10 +82,10 @@ namespace mctools {
       std::set<std::string> & grab_logical_ids();
 
       /// Smart print
-      virtual void tree_dump(std::ostream      & out_    = std::clog,
+      void tree_dump(std::ostream      & out_    = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
     private:
 
@@ -106,7 +106,7 @@ namespace mctools {
       regions_setup();
 
       /// Destructor
-      ~regions_setup();
+      ~regions_setup() override;
 
       /// Initialize
       void initialize(const datatools::properties &);
@@ -133,10 +133,10 @@ namespace mctools {
       // Fetch a list of regexps on volume names belonging to this region:
       
       /// Smart print
-      virtual void tree_dump(std::ostream      & out_    = std::clog,
+      void tree_dump(std::ostream      & out_    = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       // Validate for Geant4...
       // static bool validate_for_geant4(const region_infos_dict_type & region_infos_);

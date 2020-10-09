@@ -32,35 +32,35 @@ namespace emfield {
     uniform_electric_field(uint32_t = 0);
 
     /// Destructor
-    virtual ~uniform_electric_field();
+    ~uniform_electric_field() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties &,
+    void initialize(const ::datatools::properties &,
                             ::datatools::service_manager &,
-                            ::emfield::base_electromagnetic_field::field_dict_type &);
+                            ::emfield::base_electromagnetic_field::field_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Compute electric field
-    virtual int compute_electric_field(const ::geomtools::vector_3d & position_,
+    int compute_electric_field(const ::geomtools::vector_3d & position_,
                                        double time_,
-                                       ::geomtools::vector_3d & electric_field_) const;
+                                       ::geomtools::vector_3d & electric_field_) const override;
 
     /// Compute magnetic field
-    virtual int compute_magnetic_field(const ::geomtools::vector_3d & position_,
+    int compute_magnetic_field(const ::geomtools::vector_3d & position_,
                                        double time_,
-                                       geomtools::vector_3d & magnetic_field_) const;
+                                       geomtools::vector_3d & magnetic_field_) const override;
 
     const geomtools::vector_3d & get_uniform_electric_field () const;
 
     void set_uniform_electric_field (const geomtools::vector_3d & b_);
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
   protected:
 

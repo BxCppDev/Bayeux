@@ -100,7 +100,7 @@ namespace datatools {
       variant_dependency(const variant_registry & registry_);
 
       /// Destructor
-      ~variant_dependency();
+      ~variant_dependency() override;
 
       /// Check repository
       bool has_repository() const;
@@ -159,10 +159,10 @@ namespace datatools {
       const variant_object_info & get_dependee(const unsigned int slot_) const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Instantiate the embedded predicate:
       base_dependency_logic & create_logic(const std::string & guid_);

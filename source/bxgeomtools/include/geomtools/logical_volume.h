@@ -138,13 +138,13 @@ namespace geomtools {
     logical_volume (const std::string &, const i_shape_3d *);
 
     /// Desctructor
-    virtual ~logical_volume ();
+    ~logical_volume () override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
     bool has_physical (const std::string & name_) const;
 

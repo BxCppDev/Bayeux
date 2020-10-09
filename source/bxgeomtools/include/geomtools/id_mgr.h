@@ -143,7 +143,7 @@ namespace geomtools {
       category_info();
 
       /// Destructor
-      virtual ~category_info();
+      ~category_info() override;
 
       /// Returns the size of the list of addresses
       size_t get_depth() const;
@@ -169,8 +169,8 @@ namespace geomtools {
       //!   "full_categories" : true
       //! }
       //! \endcode
-      virtual void print_tree(std::ostream & out_ = std::clog,
-                              const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
+      void print_tree(std::ostream & out_ = std::clog,
+                              const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const override;
 
       /// Check lock status
       bool is_locked() const;
@@ -215,7 +215,7 @@ namespace geomtools {
     id_mgr();
 
     /// Destructor
-    virtual ~id_mgr();
+    ~id_mgr() override;
 
     void set_force_world(bool);
 
@@ -250,8 +250,8 @@ namespace geomtools {
     //                        bool inherit_               = false) const;
 
     /// Smart print
-    virtual void print_tree(std::ostream & out_ = std::clog,
-                            const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
+    void print_tree(std::ostream & out_ = std::clog,
+                            const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const override;
 
     /// Check if some category's description exists for a given type
     bool has_category_info(int type_) const;

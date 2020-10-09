@@ -66,7 +66,7 @@ namespace dpp {
     dummy_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~dummy_module();
+    ~dummy_module() override;
 
     /** Initialization method :
      *
@@ -77,18 +77,18 @@ namespace dpp {
      * \param mod_dict_ a reference to a dictionnary of pre-existing modules
      * (provided by some external agent)
      */
-    virtual void initialize(const datatools::properties & properties_,
+    void initialize(const datatools::properties & properties_,
                             datatools::service_manager & srv_mgr_,
-                            module_handle_dict_type & mod_dict_);
+                            module_handle_dict_type & mod_dict_) override;
 
     /// Termination method
-    virtual void reset();
+    void reset() override;
 
     /** Event processing method :
      *  \param data_record_ is a mutable reference to the data model instance to be processed.
      *  \return the error status of the data record processing
      */
-    virtual process_status process(datatools::things & data_record_);
+    process_status process(datatools::things & data_record_) override;
 
   private:
 

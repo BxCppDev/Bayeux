@@ -82,7 +82,7 @@ namespace mctools {
     simulated_data_reader(datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~simulated_data_reader();
+    ~simulated_data_reader() override;
 
     /// Check if reader is initialized
     bool is_initialized() const;
@@ -141,10 +141,10 @@ namespace mctools {
     int get_record_counter() const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
   protected:
 

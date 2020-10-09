@@ -91,10 +91,10 @@ namespace mctools {
       sampled_signal(const double sampling_frequency_, const std::size_t nsamples_, const int32_t value_ = INVALID_SAMPLE);
 
       //! Destructor
-      virtual ~sampled_signal();
+      ~sampled_signal() override;
 
       //! Check validity
-      virtual bool is_valid() const;
+      bool is_valid() const override;
 
       //! Check if sampling frequency is set
       bool has_sampling_frequency() const;
@@ -205,10 +205,10 @@ namespace mctools {
       void set_overflow_sample(const uint32_t index_, const bool update_ = false);
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       //! Update internal data
       void update();

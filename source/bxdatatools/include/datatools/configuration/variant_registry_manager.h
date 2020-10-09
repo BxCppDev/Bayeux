@@ -56,7 +56,7 @@ namespace datatools {
       variant_registry_manager();
 
       /// Destructor
-      virtual ~variant_registry_manager();
+      ~variant_registry_manager() override;
 
       /// Check initialization status
       bool is_initialized() const;
@@ -92,10 +92,10 @@ namespace datatools {
       const model_item_dict_type & get_configuration_items() const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// OCD support
       static void init_ocd(datatools::object_configuration_description &);

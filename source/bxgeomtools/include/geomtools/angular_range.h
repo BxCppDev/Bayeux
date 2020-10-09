@@ -137,10 +137,10 @@ namespace geomtools {
     void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_= false) const;
+                           bool inherit_= false) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &,
@@ -190,7 +190,7 @@ namespace geomtools {
       void tree_dump(std::ostream & out_ = std::clog,
                      const std::string & title_ = "",
                      const std::string & indent_ = "",
-                     bool inherit_= false) const;
+                     bool inherit_= false) const override;
 
       /// Indirection operator
       /// @return the current sampled angle

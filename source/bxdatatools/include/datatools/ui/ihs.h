@@ -97,7 +97,7 @@ namespace datatools {
         node(node_type type_, const std::string & full_path_);
 
         //! Destructor
-        virtual ~node();
+        ~node() override;
 
         //! Reset the node
         void reset();
@@ -211,10 +211,10 @@ namespace datatools {
         void set_ihs(ihs &);
 
         //! Smart print
-        virtual void tree_dump(std::ostream & out_ = std::clog,
+        void tree_dump(std::ostream & out_ = std::clog,
                                const std::string & title_  = "",
                                const std::string & indent_ = "",
-                               bool inherit = false) const;
+                               bool inherit = false) const override;
 
         //! Set trait flag
         void set_trait(const std::string & trait_label_, const bool set_ = true);
@@ -249,7 +249,7 @@ namespace datatools {
       ihs(const std::string & scheme_ = "");
 
       //! Destructor
-      virtual ~ihs();
+      ~ihs() override;
 
       // //! Return the root path
       // const std::string & get_root_path() const;
@@ -354,10 +354,10 @@ namespace datatools {
       std::string canonical_path(const std::string & path_) const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit = false) const;
+                             bool inherit = false) const override;
 
       //! Build a set of paths
       void build_path(std::set<std::string> & paths_, const uint32_t flags_ = 0) const;

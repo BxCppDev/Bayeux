@@ -187,10 +187,10 @@ namespace datatools {
       void reset();
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Check if a dependency is associated to a variant object given its path
       bool has_dependency(const std::string & path_) const;

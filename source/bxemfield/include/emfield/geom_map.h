@@ -74,7 +74,7 @@ namespace emfield {
 
     geom_map();
 
-    virtual ~geom_map();
+    ~geom_map() override;
 
     const association_dict_type & get_associations() const;
 
@@ -102,10 +102,10 @@ namespace emfield {
 
     const electromagnetic_field_manager & get_fields_manager() const;
 
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title = "",
                            const std::string & indent_= "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected :
 

@@ -26,7 +26,7 @@ namespace mygsl {
                       double growth_rate_);
 
     //! Destructor
-    virtual ~gompertz_function();
+    ~gompertz_function() override;
 
     //! Set asymptote
     void set_asymptote(double asymptote_);
@@ -47,25 +47,25 @@ namespace mygsl {
     double get_growth_rate() const;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the function
-    virtual void reset();
+    void reset() override;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected:
 
     //! Evaluation
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
 
     //! Set default attributes values
     void _set_defaults();

@@ -86,13 +86,13 @@ namespace geomtools {
 
     /***  i_locator interface  ***/
 
-    virtual bool validate_id (const geom_id & id_) const;
+    bool validate_id (const geom_id & id_) const override;
 
-    virtual const geom_info & get_geom_info (const geom_id &) const;
+    const geom_info & get_geom_info (const geom_id &) const override;
 
-    virtual const geom_id & get_geom_id (const vector_3d & world_position_,
+    const geom_id & get_geom_id (const vector_3d & world_position_,
                                          int type_,
-                                         double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                         double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     virtual bool has_geom_info (const geom_id &) const;
 

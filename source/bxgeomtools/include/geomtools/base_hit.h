@@ -120,7 +120,7 @@ namespace geomtools {
     base_hit() = default;
 
     /// Destructor
-    virtual ~base_hit() = default;
+    ~base_hit() override = default;
 
     /// Copy constructor
     base_hit(const base_hit &) = default;
@@ -148,7 +148,7 @@ namespace geomtools {
     void reset ();
 
     /// Reset the internals of the hit, making it invalid
-    virtual void clear ();
+    void clear () override;
 
     /*  measurement */
 
@@ -171,10 +171,10 @@ namespace geomtools {
     /* interface i_tree_dumpable */
 
     /// \deprecated Smart print
-    virtual void tree_dump (std::ostream & a_out    = std::clog,
+    void tree_dump (std::ostream & a_out    = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+                            bool a_inherit          = false) const override;
     //!
     //! Supported options:
     //! \code
@@ -208,7 +208,7 @@ namespace geomtools {
       }
 
       /// Functor interface
-      bool operator () (const base_hit & a_hit) const
+      bool operator () (const base_hit & a_hit) const override
       {
         return (a_hit.get_auxiliaries ().has_flag (flag_));
       }
@@ -230,7 +230,7 @@ namespace geomtools {
       }
 
       /// Functor interface
-      bool operator () (const base_hit & a_hit) const
+      bool operator () (const base_hit & a_hit) const override
       {
         return (a_hit.get_auxiliaries ().has_key (key_));
       }
@@ -264,7 +264,7 @@ namespace geomtools {
       }
 
       /// Functor interface
-      bool operator () (const base_hit & a_hit) const
+      bool operator () (const base_hit & a_hit) const override
       {
         if (! a_hit.get_auxiliaries ().has_key (key_)) return false;
         if (! a_hit.get_auxiliaries ().is_string (key_)) return false;
@@ -289,7 +289,7 @@ namespace geomtools {
       }
 
       /// Functor interface
-      bool operator () (const base_hit & a_hit) const
+      bool operator () (const base_hit & a_hit) const override
       {
         return (a_hit.has_hit_id () && a_hit.get_hit_id () == hid_);
       }
@@ -314,7 +314,7 @@ namespace geomtools {
       }
 
       /// Functor interface
-      bool operator () (const base_hit & a_hit) const
+      bool operator () (const base_hit & a_hit) const override
       {
         return (a_hit.has_geom_id () && a_hit.get_geom_id () == gid_);
       }
@@ -339,7 +339,7 @@ namespace geomtools {
       }
 
       /// Functor interface
-      bool operator () (const base_hit & a_hit) const
+      bool operator () (const base_hit & a_hit) const override
       {
         return (! (*pred_)(a_hit));
       }

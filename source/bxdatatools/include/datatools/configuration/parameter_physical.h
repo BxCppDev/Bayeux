@@ -55,13 +55,13 @@ namespace datatools {
     public:
 
       /// Check if a name is valid
-      virtual bool is_name_valid(const std::string & name_) const;
+      bool is_name_valid(const std::string & name_) const override;
 
       /// Default constructeur
       parameter_physical();
 
       /// Destructeur
-      ~parameter_physical();
+      ~parameter_physical() override;
 
       /// Reset
       void reset();
@@ -78,10 +78,10 @@ namespace datatools {
       const pm_handle_type & get_model_handle() const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream& out_ = std::clog,
+      void tree_dump(std::ostream& out_ = std::clog,
                              const std::string& title_  = "",
                              const std::string& indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Check occurrence
       bool has_occurrence() const;

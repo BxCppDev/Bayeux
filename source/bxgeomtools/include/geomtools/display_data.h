@@ -108,9 +108,9 @@ namespace geomtools {
     display_data();
 
     /// Destructor
-    virtual ~display_data();
+    ~display_data() override;
 
-    virtual void clear();
+    void clear() override;
 
     const std::vector<std::string> & get_colors() const;
 
@@ -135,10 +135,10 @@ namespace geomtools {
     datatools::properties & grab_auxiliaries();
 
 
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
+    void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
-                           bool a_inherit          = false) const;
+                           bool a_inherit          = false) const override;
 
     display_item & add_static_item(const std::string & name_,
                                    const std::string & group_ = "",

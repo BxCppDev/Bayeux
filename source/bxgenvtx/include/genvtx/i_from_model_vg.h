@@ -44,7 +44,7 @@ namespace genvtx {
     i_from_model_vg();
 
     /// Destructor
-    virtual ~i_from_model_vg();
+    ~i_from_model_vg() override;
 
     /// Check if origin definition is defined
     bool has_origin_def() const;
@@ -74,10 +74,10 @@ namespace genvtx {
     void set_materials_plugin_name(const std::string & mpn_);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// OCD support
     static void ocd_support(datatools::object_configuration_description &, const std::string & label_ = "");

@@ -58,20 +58,20 @@ namespace mctools {
       multi_signal_shape();
 
       //! Destructor
-      virtual ~multi_signal_shape();
+      ~multi_signal_shape() override;
 
       //! Check the validity
       bool is_valid() const;
 
       //! Check initialization status
-      virtual bool is_initialized() const;
+      bool is_initialized() const override;
 
       //! Initialization
-      virtual void initialize(const datatools::properties & config_,
-                              const mygsl::unary_function_dict_type & functors_);
+      void initialize(const datatools::properties & config_,
+                              const mygsl::unary_function_dict_type & functors_) override;
 
       //! Reset
-      virtual void reset();
+      void reset() override;
 
       //! Remove a component signal by index
       void remove(const std::size_t index_);
@@ -92,22 +92,22 @@ namespace mctools {
       std::size_t get_number_of_components() const;
 
       //! Check if the function has an explicit domain of definition (default: false)
-      virtual bool has_explicit_domain_of_definition() const;
+      bool has_explicit_domain_of_definition() const override;
 
       //! Check if a value is in the explicit domain of definition (default: true)
-      virtual bool is_in_domain_of_definition(double x_) const;
+      bool is_in_domain_of_definition(double x_) const override;
 
       //! The minimum bound of the non-zero domain (default is minus infinity)
-      virtual double get_non_zero_domain_min() const;
+      double get_non_zero_domain_min() const override;
 
       //! The maximum bound of the non-zero domain (default is plus infinity)
-      virtual double get_non_zero_domain_max() const;
+      double get_non_zero_domain_max() const override;
 
       //! Smart printing
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     protected:
 
@@ -115,7 +115,7 @@ namespace mctools {
       void _set_defaults();
 
       //! Evaluation from parameters
-      double _eval(double x_) const;
+      double _eval(double x_) const override;
 
     private:
 

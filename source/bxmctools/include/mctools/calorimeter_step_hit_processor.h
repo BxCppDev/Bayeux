@@ -69,19 +69,19 @@ namespace mctools {
     calorimeter_step_hit_processor();
 
     /// Destructor
-    virtual ~calorimeter_step_hit_processor();
+    ~calorimeter_step_hit_processor() override;
 
     /// Main setup routine
-    virtual void initialize(const ::datatools::properties & config_,
-                            ::datatools::service_manager & service_mgr_);
+    void initialize(const ::datatools::properties & config_,
+                            ::datatools::service_manager & service_mgr_) override;
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
-                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_);
+    void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_) override;
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
-                         ::mctools::simulated_data::hit_collection_type & plain_hits_);
+    void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_collection_type & plain_hits_) override;
 
     /** Check if a step hit in a candidate for clusterization within
      * the proposed scintillation hit
@@ -96,7 +96,7 @@ namespace mctools {
     void tree_dump(std::ostream & out_ = std::clog,
                    const std::string & title_ = "" ,
                    const std::string & indent_ = "",
-                   bool inherit_ = false) const;
+                   bool inherit_ = false) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);

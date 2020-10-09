@@ -57,7 +57,7 @@ namespace mygsl {
                   double error_high_,
                   double CL_);
 
-      virtual ~best_value ();
+      ~best_value () override;
 
     private:
 

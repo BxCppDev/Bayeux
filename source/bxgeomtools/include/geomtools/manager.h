@@ -197,7 +197,7 @@ namespace geomtools {
       plugin_entry();
 
       /// Destructor
-      ~plugin_entry();
+      ~plugin_entry() override;
 
       /// Return a reference to the mutable plugin
       base_plugin & grab();
@@ -206,10 +206,10 @@ namespace geomtools {
       const base_plugin & get() const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream &      out_ = std::clog,
+      void tree_dump(std::ostream &      out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool                inherit_ = false) const;
+                             bool                inherit_ = false) const override;
 
     protected:
 
@@ -370,7 +370,7 @@ namespace geomtools {
     manager();
 
     /// Destructor
-    virtual ~manager();
+    ~manager() override;
 
     /// Initialize the geometry manager from a container of properties
     void init(const datatools::properties & config_);
@@ -382,10 +382,10 @@ namespace geomtools {
     void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream &      out_ = std::clog,
+    void tree_dump(std::ostream &      out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool                inherit_ = false) const;
+                           bool                inherit_ = false) const override;
 
     //! Return a reference to the plugin factory register
     const base_plugin::factory_register_type & get_plugins_factory_register();

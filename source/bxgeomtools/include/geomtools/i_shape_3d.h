@@ -106,7 +106,7 @@ namespace geomtools {
     void reset_stackable_data();
 
     /// Return the dimension (3)
-    int get_dimensional() const;
+    int get_dimensional() const override;
 
     /// Return the effective skin tolerance associated to the 3D shape
     double get_skin(double a_skin) const;
@@ -133,10 +133,10 @@ namespace geomtools {
     i_shape_3d & operator=(const i_shape_3d &);
 
     /// Destructor
-    virtual ~i_shape_3d();
+    ~i_shape_3d() override;
 
     /// Check if the solid is composite
-    virtual bool is_composite() const;
+    bool is_composite() const override;
 
     /// Check if the face identification scheme is based on face bits
     virtual bool using_face_id_bits() const;
@@ -253,10 +253,10 @@ namespace geomtools {
     void build_default_bounding_data();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
+    void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
-                           bool a_inherit               = false) const;
+                           bool a_inherit               = false) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);

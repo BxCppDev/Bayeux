@@ -170,7 +170,7 @@ namespace materials {
     explicit material(const char * name_);
 
     /// Destructor
-    virtual ~material();
+    ~material() override;
 
     /// Check if the material is composed by mean Z and A
     bool is_composed_by_mean_z_a() const;
@@ -275,10 +275,10 @@ namespace materials {
     void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_  = std::clog,
+    void tree_dump(std::ostream & out_  = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected:
 

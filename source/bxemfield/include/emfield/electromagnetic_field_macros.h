@@ -158,7 +158,7 @@
   private:                                                              \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::emfield::base_electromagnetic_field,EMFIELD_CLASS_NAME) \
   public:                                                               \
-  virtual std::string get_class_id() const;                             \
+  std::string get_class_id() const override;                             \
 
 
 #define EMFIELD_REGISTRATION_IMPLEMENT(EMFIELD_CLASS_NAME,EMFIELD_ID)   \

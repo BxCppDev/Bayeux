@@ -96,25 +96,25 @@ namespace emfield {
     multi_zone_field(uint32_t = 0);
 
     /// Destructor
-    virtual ~multi_zone_field();
+    ~multi_zone_field() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties &,
+    void initialize(const ::datatools::properties &,
                             ::datatools::service_manager &,
-                            ::emfield::base_electromagnetic_field::field_dict_type &);
+                            ::emfield::base_electromagnetic_field::field_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Compute electric field
-    virtual int compute_electric_field(const ::geomtools::vector_3d & position_,
+    int compute_electric_field(const ::geomtools::vector_3d & position_,
                                        double time_,
-                                       ::geomtools::vector_3d & electric_field_) const;
+                                       ::geomtools::vector_3d & electric_field_) const override;
 
     /// Compute magnetic field
-    virtual int compute_magnetic_field(const ::geomtools::vector_3d & position_,
+    int compute_magnetic_field(const ::geomtools::vector_3d & position_,
                                        double time_,
-                                       geomtools::vector_3d & magnetic_field_) const;
+                                       geomtools::vector_3d & magnetic_field_) const override;
 
     /// Add a zone field
     void add_zone_field(const std::string & zone_label_,
@@ -148,10 +148,10 @@ namespace emfield {
     void create_shape_factory(const ::datatools::properties & setup_);
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
   protected:
 
