@@ -102,7 +102,6 @@ namespace {
     static const char METACOMMENT_CHAR = '@'; ///< Comment character
     static const char SPACE_CHAR   = ' '; ///< Space character
     static const char CONTINUATION_CHAR = '\\'; ///< Continuation character
-    static const char APPEND_CHAR = '+'; ///< Append character
 
     static const std::string & boolean_label()
     {
@@ -135,7 +134,7 @@ namespace {
 namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(properties,"datatools::properties")
-  
+
   //----------------------------------------------------------------------
   // properties::data class implementation
   //
@@ -1114,7 +1113,7 @@ namespace datatools {
                 std::logic_error,
                 "Empty key prefix argument !");
     size_t n = prefix_.size();
-    for (const auto& p : _props_) { 
+    for (const auto& p : _props_) {
       if (p.first.size() < n) continue;
       if (p.first.substr(0, n) == prefix_) {
         some_keys.push_back(p.first);
@@ -2438,7 +2437,7 @@ namespace datatools {
   {
     std::vector<std::string> vvalues;
     this->fetch(a_key, vvalues);
-    
+
     for (const auto& value : vvalues) {
       DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
                   std::logic_error,
@@ -2520,7 +2519,7 @@ namespace datatools {
     data_ptr->to_string(oss);
     return oss.str();
   }
-  
+
   void properties::print_tree(std::ostream & out_,
                               const boost::property_tree::ptree & options_) const
   {
@@ -2596,11 +2595,11 @@ namespace datatools {
         a_data.tree_dump(outs, "", indent_oss.str());
       }
     }
-    
+
     out_ << outs.str();
     return;
   }
-  
+
   void properties::tree_dump(std::ostream & out_,
                              const std::string & title_,
                              const std::string & indent_,
@@ -3039,7 +3038,7 @@ namespace datatools {
     return;
   }
 
- 
+
   void properties::config::_init_defaults_()
   {
     _logging_ = datatools::logger::PRIO_FATAL;
@@ -3717,11 +3716,11 @@ namespace datatools {
                                     _current_line_number_,
                                     "Enforced break while parsing of a property has started!");
         }
-        
+
         // Manage included files:
         if (paths_to_be_included.size()) {
           DT_LOG_DEBUG(_logging_, "Before inclusion : ");
-          props_.print_tree(std::cerr);                    
+          props_.print_tree(std::cerr);
           // Trigger the inclusion of external file:
           for (const std::string & inc_path : paths_to_be_included) {
             DT_LOG_DEBUG(_logging_, "About to include file with path '" << inc_path << "'");
@@ -3740,11 +3739,11 @@ namespace datatools {
             if (datatools::logger::is_debug(_logging_)) {
               inc_conf.print_tree(std::cerr);
             }
-            props_.merge_with(inc_conf, include_file_allow_override);                    
+            props_.merge_with(inc_conf, include_file_allow_override);
           }
           paths_to_be_included.clear();
         }
-      
+
         // Parse line:
         // if (!skip_line && parsing ) {
         if (!skip_line) {
@@ -3765,7 +3764,7 @@ namespace datatools {
           if (flag_pos > 0) {
             if (line_parsing.substr(flag_pos - 1, 2) == "+=") {
               array_append = true;
-            } 
+            }
           }
           // Parse property desc:
           std::string property_desc_str = line_parsing.substr(0, flag_pos - (array_append ? 1 : 0));
@@ -3894,7 +3893,7 @@ namespace datatools {
                                         "Key override mode is not allowed for property with key '"
                                         << prop_key
                                         << "' at line '"
-                                        << line << "' !");            
+                                        << line << "' !");
               DT_PROP_CFG_READ_THROW_IF(! props_.is_vector(prop_key),
                                         std::logic_error,
                                         _current_filename_,
@@ -3914,7 +3913,7 @@ namespace datatools {
                                         "Invalid array index [" << std::to_string(array_override_index) << "] for key override mode for array property with key '"
                                         << prop_key
                                         << "' at line '"
-                                        << line << "' !");      
+                                        << line << "' !");
             }
             DT_PROP_CFG_READ_THROW_IF(array_append and scalar,
                                       std::logic_error,
@@ -3925,7 +3924,7 @@ namespace datatools {
                                       "Append mode is only supported for array property with key '"
                                       << prop_key
                                       << "' at line '"
-                                      << line << "' !");            
+                                      << line << "' !");
             std::istringstream type_ss(type_str2);
             std::string type_token;
             type_ss >> std::ws >> type_token >> std::ws;
@@ -3963,7 +3962,7 @@ namespace datatools {
                                       "Type mismatch '" << type_token << "' vs '" << props_.get_type_label(prop_key) << "' for array item override mode for key '"
                                       << prop_key
                                       << "' at line '"
-                                      << line << "' !");            
+                                      << line << "' !");
             if (! scalar && ! type_str3.empty()) {
               std::istringstream iss3(type_str3);
               std::string dummy;
@@ -3973,7 +3972,7 @@ namespace datatools {
                 type_ss.str(type_str3);
               }
             }
-            
+
             bool with_explicit_path = false;
             if (type == properties::data::TYPE_STRING_SYMBOL) {
               std::string token;
@@ -4090,7 +4089,7 @@ namespace datatools {
                                             << line << "' !");
                 }
               } // Token not emtpy
-  
+
               if (! enable_real_with_unit) {
                 DT_PROP_CFG_READ_THROW_IF(! requested_unit_label.empty()
                                           || ! requested_unit_symbol.empty(),
@@ -4118,7 +4117,7 @@ namespace datatools {
                                         << "' for key '"
                                         << prop_key << "' at line '" << line << "' !");
             }
-            
+
             DT_LOG_TRACE(logging, "type='"<< type << "'");
             DT_LOG_TRACE(logging, "locked='" << locked << "'");
             DT_LOG_TRACE(logging, "vsize='" << vsize << "'");
@@ -4657,7 +4656,7 @@ namespace datatools {
                                                 _section_start_line_number_,
                                                 _current_line_number_,
                                                 "Original property with key '" << prop_key << "' is not a boolean vector property!");
-                                  
+
                       data::vbool v_booleans_appended;
                       props_.fetch(prop_key, v_booleans_appended);
                       for (auto val : v_booleans) {
@@ -4673,7 +4672,7 @@ namespace datatools {
                                                 _section_start_line_number_,
                                                 _current_line_number_,
                                                 "Original property with key '" << prop_key << "' is not an integer vector property!");
-                                  
+
                       data::vint v_integers_appended;
                       props_.fetch(prop_key, v_integers_appended);
                       for (auto val : v_integers) {
@@ -4720,7 +4719,7 @@ namespace datatools {
                                                 _section_name_,
                                                 _section_start_line_number_,
                                                 _current_line_number_,
-                                                "Original property with key '" << prop_key << "' is not a string vector property!");                                  
+                                                "Original property with key '" << prop_key << "' is not a string vector property!");
                       DT_PROP_CFG_READ_THROW_IF(with_explicit_path != props_.is_explicit_path(prop_key),
                                                 std::logic_error,
                                                 _current_filename_,
@@ -4734,7 +4733,7 @@ namespace datatools {
                         v_strings_appended.push_back(val);
                       }
                       props_.update(prop_key, v_strings_appended);
-                    }                  
+                    }
                   }
                 }
                 prop_description.clear();
@@ -4746,7 +4745,7 @@ namespace datatools {
             }
             variant_only_reverse = false;
           }
-        } // !skip_line 
+        } // !skip_line
       } // if (! line_goon)
     } // while (*_in)
     DT_PROP_CFG_READ_THROW_IF(variant_if_blocks.size() > 0,
@@ -4819,7 +4818,7 @@ namespace datatools {
     }
     return;
   }
-  
+
   // static
   const properties & empty_config()
   {
@@ -4835,7 +4834,7 @@ namespace datatools {
       const data & a_data = p.second;
 
       std::ostringstream valoss;
-      
+
       if (a_data.is_vector()) valoss << '(';
 
       for (int i = 0; i < (int)a_data.get_size(); ++i) {

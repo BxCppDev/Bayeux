@@ -80,7 +80,7 @@ namespace datatools {
                 const std::vector<std::string> & paths_);
 
     /// Destructor
-    virtual ~urn_to_path();
+    ~urn_to_path() override;
 
     /// Check validity
     bool is_valid() const;
@@ -149,10 +149,10 @@ namespace datatools {
     void reset_mime();
 
     /// Main interface method for smart dump
-    virtual void tree_dump (std::ostream & out_ = std::clog,
+    void tree_dump (std::ostream & out_ = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_ = false) const;
+                            bool inherit_ = false) const override;
 
   private:
 

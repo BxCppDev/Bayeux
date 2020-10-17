@@ -34,7 +34,7 @@ namespace mygsl {
       fit_data();
 
       /// Destructor
-      virtual ~fit_data();
+      ~fit_data() override;
 
       /// Check if the fit data are valid
       bool is_valid() const;
@@ -107,7 +107,7 @@ namespace mygsl {
     protected:
 
       /// Evaluate the Y value for a given X
-      virtual double _eval(double x_) const;
+      double _eval(double x_) const override;
 
     private:
 

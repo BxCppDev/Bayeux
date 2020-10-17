@@ -52,18 +52,18 @@ namespace dpp {
     skip_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~skip_module();
+    ~skip_module() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties & /* config_ */,
+    void initialize(const ::datatools::properties & /* config_ */,
                             datatools::service_manager & /* service_mgr_ */,
-                            dpp::module_handle_dict_type & /* modules_map_ */);
+                            dpp::module_handle_dict_type & /* modules_map_ */) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Data record processing
-    virtual process_status process(::datatools::things & /* data_ */);
+    process_status process(::datatools::things & /* data_ */) override;
 
     /// \brief Internal class of the skip_module class
     struct module_entry

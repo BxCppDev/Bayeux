@@ -154,13 +154,13 @@ namespace datatools {
       typedef std::map<int, std::string> ranked_dict_type;
 
       /// Check if a name is valid
-      virtual bool is_name_valid(const std::string & name_) const;
+      bool is_name_valid(const std::string & name_) const override;
 
       /// Default constructor
       variant_repository();
 
       /// Destructor
-      ~variant_repository();
+      ~variant_repository() override;
 
       /// Check the name of the organization
       bool has_organization() const;
@@ -199,10 +199,10 @@ namespace datatools {
       bool is_initialized() const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Return the number of registries
       unsigned int get_number_of_registries() const;

@@ -130,7 +130,7 @@ namespace mctools {
     step_hit_processor_factory (datatools::logger::priority logging_ = datatools::logger::PRIO_WARNING);
 
     /// Destructor
-    virtual ~step_hit_processor_factory ();
+    ~step_hit_processor_factory () override;
 
     // /// Returns the mutable dictionary of instantiated processors
     // processor_dict_type & grab_processors ();
@@ -166,10 +166,10 @@ namespace mctools {
     void dump (std::ostream & out_) const;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
     /// Load a configuration object
     void load(const datatools::multi_properties & mprop_);

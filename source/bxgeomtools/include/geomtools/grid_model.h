@@ -59,7 +59,7 @@ namespace geomtools {
     double get_z () const;
 
     /// Return a reference to the mother box
-    virtual const geomtools::box & get_box () const;
+    const geomtools::box & get_box () const override;
 
     /// Return a reference to the mother box
     const geomtools::box & get_solid () const;
@@ -71,31 +71,31 @@ namespace geomtools {
     grid_model ();
 
     /// Destructor
-    virtual ~grid_model ();
+    ~grid_model () override;
 
     /// Return the model unique class Id
-    virtual std::string get_model_id () const;
+    std::string get_model_id () const override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
   protected:
 
     /// Pre-construction
-    virtual void _pre_construct (datatools::properties & setup_,
-                                 models_col_type * models_);
+    void _pre_construct (datatools::properties & setup_,
+                                 models_col_type * models_) override;
 
     /// Post construction
-    virtual void _post_construct (datatools::properties & setup_,
-                                  models_col_type * models_);
+    void _post_construct (datatools::properties & setup_,
+                                  models_col_type * models_) override;
 
     /// Construction
-    virtual void _at_construct (const std::string & name_,
+    void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) override;
   private:
 
     const i_model *            _model_; /// Replicated model

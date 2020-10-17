@@ -38,20 +38,20 @@ namespace cuts {
                datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~random_cut();
+    ~random_cut() override;
 
     /// Initialization
-    virtual void initialize(const datatools::properties &,
+    void initialize(const datatools::properties &,
                             datatools::service_manager &,
-                            cuts::cut_handle_dict_type &);
+                            cuts::cut_handle_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
   protected :
 
     /// Selection
-    virtual int _accept();
+    int _accept() override;
 
   private:
 

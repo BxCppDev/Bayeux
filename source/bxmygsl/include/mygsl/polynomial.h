@@ -49,7 +49,7 @@ namespace mygsl {
     polynomial(const polynomial& p_);
 
     //! Destructor
-    virtual ~polynomial();
+    ~polynomial() override;
 
     void set_coefficients(const std::vector<double>& c_);
 
@@ -68,14 +68,14 @@ namespace mygsl {
                bool eol_ = false) const;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the polynomial
-    void reset();
+    void reset() override;
 
     /*
      * L(x) = p0 + p1 * x^1
@@ -134,14 +134,14 @@ namespace mygsl {
                        double y1_, double y2_, double y3_);
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected :
 
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   public:
 

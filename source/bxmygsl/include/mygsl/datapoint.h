@@ -31,7 +31,7 @@ namespace mygsl {
               double sigma_y_ = std::numeric_limits<double>::quiet_NaN());
 
     /// Destructor
-    virtual ~datapoint();
+    ~datapoint() override;
 
     /// Return the X coordinate
     const double & x() const;

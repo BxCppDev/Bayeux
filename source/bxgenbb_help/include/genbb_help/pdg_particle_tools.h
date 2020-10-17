@@ -140,7 +140,7 @@ namespace genbb {
                const std::string & latex_repr_);
 
       /// Destructor
-      virtual ~particle();
+      ~particle() override;
 
       /// Check validity
       bool is_valid() const;
@@ -182,10 +182,10 @@ namespace genbb {
       datatools::properties & grab_auxiliaries();
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Build the nuclear code from (Z, A and isomer level).
       /// This is not for single hadrons like p, n,...
@@ -220,7 +220,7 @@ namespace genbb {
       particle_registry(uint32_t flags_ = 0);
 
       /// Destructor
-      ~particle_registry();
+      ~particle_registry() override;
 
       /// Clear the registry
       void clear();
@@ -247,10 +247,10 @@ namespace genbb {
       const particle & get_particle_by_name(const std::string & name_) const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Register standard particles
       void register_standard_particles();

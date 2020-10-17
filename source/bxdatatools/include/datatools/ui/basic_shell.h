@@ -86,7 +86,7 @@ namespace datatools {
       basic_shell(const std::string & name_ = "");
 
       //! Destructor
-      virtual ~basic_shell();
+      ~basic_shell() override;
 
       //! Return the logging priority threshold
       datatools::logger::priority get_logging() const;
@@ -321,8 +321,8 @@ namespace datatools {
       //!   "ihs"      : false
       //! }
       //! \endcode
-      virtual void print_tree(std::ostream & out_ = std::clog,
-                              const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const;
+      void print_tree(std::ostream & out_ = std::clog,
+                              const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const override;
 
     protected:
 

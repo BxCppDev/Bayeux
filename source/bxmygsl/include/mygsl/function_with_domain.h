@@ -62,28 +62,28 @@ namespace mygsl {
     function_with_domain(const i_unary_function & functor_, const interval & domain_);
 
     //! Destructor
-    virtual ~function_with_domain();
+    ~function_with_domain() override;
 
     //! Check the domain of definition
-    virtual bool has_explicit_domain_of_definition() const;
+    bool has_explicit_domain_of_definition() const override;
 
     //! Check is a value is in the domain of definition
-    virtual bool is_in_domain_of_definition(double x_) const;
+    bool is_in_domain_of_definition(double x_) const override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the functor
-    virtual void reset();
+    void reset() override;
 
   protected:
 
     //! Evaluation
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 

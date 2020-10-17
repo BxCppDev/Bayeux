@@ -63,7 +63,7 @@ namespace genbb {
     alpha_decay();
 
     /// Destructor
-    virtual ~alpha_decay();
+    ~alpha_decay() override;
 
     /// Check if Q alpha is set
     bool has_q_alpha() const;
@@ -141,13 +141,13 @@ namespace genbb {
     void set_daughter_generated(bool);
 
     /// Set the transition parameter from the start and stop levels
-    void set_levels(const nuclear_level & lstart_, const nuclear_level & lstop_);
+    void set_levels(const nuclear_level & lstart_, const nuclear_level & lstop_) override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Shoot the kinematics of the decay:
     /// @arg prng_ The pseudo-random number generator
@@ -163,13 +163,13 @@ namespace genbb {
                               double & phir_) const;
 
     /// Initialization
-    virtual void initialize(const datatools::properties & config_);
+    void initialize(const datatools::properties & config_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Shoot the kinematics of the decay and fill a primary event
-    virtual int fill(mygsl::rng & prng_, genbb::primary_event & event_);
+    int fill(mygsl::rng & prng_, genbb::primary_event & event_) override;
 
   protected:
 

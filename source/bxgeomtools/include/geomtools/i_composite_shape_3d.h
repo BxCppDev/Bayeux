@@ -44,7 +44,7 @@ namespace geomtools {
 
       shape_type();
 
-      virtual ~shape_type();
+      ~shape_type() override;
 
       bool is_delete() const;
 
@@ -76,10 +76,10 @@ namespace geomtools {
                               shape_type &);
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
-                              bool inherit_          = false) const;
+                              bool inherit_          = false) const override;
 
       /// Print
       void dump(std::ostream & out_ = std::clog) const;
@@ -124,28 +124,28 @@ namespace geomtools {
     };
 
     /// Check if the face identification scheme is based on face bits
-    bool using_face_id_bits() const;
+    bool using_face_id_bits() const override;
 
     /// Check if the face identification scheme uses part index
-    bool using_face_id_part_index() const;
+    bool using_face_id_part_index() const override;
 
     /// Build a face identifier any mask
-    virtual void make_any_face(face_identifier &) const;
+    void make_any_face(face_identifier &) const override;
 
     /// Check if the shape is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Check if the shape is composite
-    bool is_composite() const;
+    bool is_composite() const override;
 
     /// Check if a forced volume can be set
-    virtual bool volume_can_be_forced() const;
+    bool volume_can_be_forced() const override;
 
     /// Constructor
     i_composite_shape_3d(double skin_ = GEOMTOOLS_DEFAULT_TOLERANCE);
 
     /// Destructor
-    virtual ~i_composite_shape_3d();
+    ~i_composite_shape_3d() override;
 
     /// Set first shape
     void set_shape1(i_shape_3d &, const placement &, const std::string & shref_ = "");
@@ -179,17 +179,17 @@ namespace geomtools {
     void dump(std::ostream & out_ = std::clog) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
     /// Initialize from properties
-    virtual void initialize(const datatools::properties &,
-                            const handle_dict_type *);
+    void initialize(const datatools::properties &,
+                            const handle_dict_type *) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// \brief 3D rendering options
     enum composite_wires_rendering_option_type {

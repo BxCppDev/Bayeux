@@ -104,7 +104,7 @@ namespace datatools {
     service_entry(const std::string & name_, service_manager & mgr_);
 
     /// Destructor
-    ~service_entry();
+    ~service_entry() override;
 
     /// Return the service name
     const std::string & get_service_name() const;
@@ -149,10 +149,10 @@ namespace datatools {
     bool has_master(const std::string& name_) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out_ = std::clog,
+    void tree_dump(std::ostream& out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Return a handle to the non mutable service
     const service_handle_type & get_service_handle() const;

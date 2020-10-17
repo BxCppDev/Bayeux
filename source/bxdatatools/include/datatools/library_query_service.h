@@ -40,23 +40,23 @@ namespace datatools {
     library_query_service();
 
     //! Destructor
-    virtual ~library_query_service();
+    ~library_query_service() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialize the service from a list of properties
-    virtual int initialize(const datatools::properties & config_,
-                           datatools::service_dict_type & services_);
+    int initialize(const datatools::properties & config_,
+                           datatools::service_dict_type & services_) override;
 
     //! Reset
-    virtual int reset();
+    int reset() override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Return a mutable reference to the embedded library info dictionary
     library_info & grab_libinfo();

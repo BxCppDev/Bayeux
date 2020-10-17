@@ -61,23 +61,23 @@ namespace datatools {
     urn_query_service();
 
     /// Destructor
-    virtual ~urn_query_service();
+    ~urn_query_service() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialize the service from a list of properties
-    virtual int initialize(const datatools::properties & config_,
-                           datatools::service_dict_type & services_);
+    int initialize(const datatools::properties & config_,
+                           datatools::service_dict_type & services_) override;
 
     //! Reset
-    virtual int reset();
+    int reset() override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out = std::clog,
+    void tree_dump(std::ostream & out = std::clog,
                            const std::string & title = "",
                            const std::string & indent = "",
-                           bool inherit = false) const;
+                           bool inherit = false) const override;
 
     /// Check if an URN information is defined
     bool check_urn_info(const std::string & urn_,

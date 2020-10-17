@@ -81,7 +81,7 @@ namespace genbb {
     nuclear_transition();
 
     /// Destructor
-    virtual ~nuclear_transition();
+    ~nuclear_transition() override;
 
     /// Check if A is set
     bool has_A() const;
@@ -171,13 +171,13 @@ namespace genbb {
     void set_conversion_pair_generated(bool);
 
     /// Set the transition parameter from the start and stop levels
-    void set_levels(const nuclear_level & lstart_, const nuclear_level & lstop_);
+    void set_levels(const nuclear_level & lstart_, const nuclear_level & lstop_) override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Shoot the kinematics of the gamma emission, internal conversion + X-rays or pair conversion:
     /// @arg prng_ The pseudo-random number generator
@@ -204,13 +204,13 @@ namespace genbb {
                               double & phi2_) const;
 
     /// Initialization
-    virtual void initialize(const datatools::properties & config_);
+    void initialize(const datatools::properties & config_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Shoot the kinematics of the decay and fill a primary event
-    virtual int fill(mygsl::rng & prng_, genbb::primary_event & event_);
+    int fill(mygsl::rng & prng_, genbb::primary_event & event_) override;
 
   protected:
 

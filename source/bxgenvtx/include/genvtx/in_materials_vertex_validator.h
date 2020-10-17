@@ -34,15 +34,15 @@ namespace genvtx {
                                       datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~in_materials_vertex_validator();
+    ~in_materials_vertex_validator() override;
 
     /// Initialization
-    virtual void initialize(const datatools::properties &,
+    void initialize(const datatools::properties &,
                             datatools::service_manager &,
-                            cuts::cut_handle_dict_type &);
+                            cuts::cut_handle_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check reversed flag
     bool is_reversed() const;
@@ -66,15 +66,15 @@ namespace genvtx {
     int get_max_depth() const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
   protected :
 
     /// Selection
-    virtual int _accept();
+    int _accept() override;
 
   private:
 

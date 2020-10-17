@@ -60,7 +60,7 @@ namespace materials {
     refractive_index();
 
     /// Destructor
-    virtual ~refractive_index();
+    ~refractive_index() override;
 
     /// Check the refractive index evaluation mode
     bool is_eval_n() const;
@@ -127,24 +127,24 @@ namespace materials {
     double compute_abbe_number_e() const;
 
     /// Check if a domain of definition is set
-    virtual bool has_explicit_domain_of_definition() const;
+    bool has_explicit_domain_of_definition() const override;
 
     /// Check if a value is in the domain of definition
-    virtual bool is_in_domain_of_definition(const double x_) const;
+    bool is_in_domain_of_definition(const double x_) const override;
 
     /// Check initialization status
-    bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Initialize from properties
     void initialize(const datatools::properties & config_,
-                    const mygsl::unary_function_dict_type & /* functors_ */);
+                    const mygsl::unary_function_dict_type & /* functors_ */) override;
 
     /// Reset
-    void reset();
+    void reset() override;
 
   protected:
 
-    virtual double _eval(double) const;
+    double _eval(double) const override;
 
     double _eval_n(double) const;
 

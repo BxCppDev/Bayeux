@@ -29,21 +29,21 @@ namespace mctools {
 
       particles_physics_constructor ();
 
-      virtual ~particles_physics_constructor ();
+      ~particles_physics_constructor () override;
 
-      virtual void initialize (const datatools::properties & config_,
-                               physics_constructor_dict_type & dict_);
+      void initialize (const datatools::properties & config_,
+                               physics_constructor_dict_type & dict_) override;
 
-      virtual void reset ();
+      void reset () override;
 
-      virtual void tree_dump (std::ostream      & out_    = std::clog,
+      void tree_dump (std::ostream      & out_    = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
-                              bool inherit_               = false) const;
+                              bool inherit_               = false) const override;
 
 
       /// Particles construction Geant4 interface :
-      virtual void ConstructParticle ();
+      void ConstructParticle () override;
 
     protected:
 

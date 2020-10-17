@@ -43,7 +43,7 @@ namespace geomtools {
     face_info();
 
     //! Destructor
-    ~face_info();
+    ~face_info() override;
 
     //! Check the validity
     bool is_valid() const;
@@ -150,10 +150,10 @@ namespace geomtools {
     void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
   private:
 

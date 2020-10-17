@@ -69,7 +69,7 @@ namespace mygsl {
     i_unary_function(double epsilon_ = 0.0);
 
     //! Destructor
-    virtual ~i_unary_function();
+    ~i_unary_function() override;
 
     //! Check if the function has an explicit domain of definition (default: false)
     virtual bool has_explicit_domain_of_definition() const;
@@ -171,10 +171,10 @@ namespace mygsl {
     virtual bool is_initialized() const;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected:
 

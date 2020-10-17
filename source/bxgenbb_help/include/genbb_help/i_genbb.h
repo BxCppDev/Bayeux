@@ -76,7 +76,7 @@ namespace genbb {
     i_genbb();
 
     /// Destructor
-    virtual ~i_genbb();
+    ~i_genbb() override;
 
     /// Load a new 'primary_event' object
     virtual void load_next(primary_event & event_,
@@ -144,10 +144,10 @@ namespace genbb {
     bool is_assign_generation_ids() const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& out = std::clog,
+    void tree_dump(std::ostream& out = std::clog,
                            const std::string& title  = "",
                            const std::string& indent = "",
-                           bool inherit = false) const;
+                           bool inherit = false) const override;
 
     /// OCD interface
     static void base_initialize_ocd(datatools::object_configuration_description &);

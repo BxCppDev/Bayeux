@@ -56,17 +56,17 @@ namespace datatools {
                               const datatools::version_id & vid_ = datatools::version_id::invalid());
 
       //! Destructor
-      virtual ~shell_command_interface();
+      ~shell_command_interface() override;
 
       //! Check initialization status
-      virtual bool is_initialized() const;
+      bool is_initialized() const override;
 
       //! Initialization
-      virtual void initialize(const datatools::properties & config_,
-                              const datatools::service_manager & services_);
+      void initialize(const datatools::properties & config_,
+                              const datatools::service_manager & services_) override;
 
       //! Reset
-      virtual void reset();
+      void reset() override;
 
       //! Check if the load command is inhibited
       bool is_inhibit_load() const;

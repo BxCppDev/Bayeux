@@ -51,13 +51,13 @@ namespace datatools {
     public:
 
       /// Check if a name is valid
-      virtual bool is_name_valid(const std::string & name_) const;
+      bool is_name_valid(const std::string & name_) const override;
 
       /// Default constructeur
       variant_physical();
 
       /// Destructeur
-      ~variant_physical();
+      ~variant_physical() override;
 
       /// Set the physical
       void set(const std::string & name_,
@@ -71,10 +71,10 @@ namespace datatools {
       const vm_handle_type & get_model_handle() const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream& out_ = std::clog,
+      void tree_dump(std::ostream& out_ = std::clog,
                              const std::string& title_  = "",
                              const std::string& indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     private:
 

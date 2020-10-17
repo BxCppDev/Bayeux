@@ -45,18 +45,18 @@ namespace geomtools {
     materials_plugin ();
 
     /// Destructor
-    virtual ~materials_plugin ();
+    ~materials_plugin () override;
 
     /// Main initialization method
-    virtual int initialize(const datatools::properties & config_,
+    int initialize(const datatools::properties & config_,
                            const geomtools::manager::plugins_dict_type & plugins_,
-                           const datatools::service_dict_type & services_);
+                           const datatools::service_dict_type & services_) override;
 
     /// Main reset method
-    virtual int reset();
+    int reset() override;
 
     /// Check if plugin is initialized
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Return a non-mutable reference on a manager of isotopes, elements and materials
     const materials::manager & get_manager () const;

@@ -102,7 +102,7 @@ namespace mctools {
       electromagnetic_field();
 
       /// Destructor
-      virtual ~electromagnetic_field();
+      ~electromagnetic_field() override;
 
       /// Initialization
       void initialize(const datatools::properties & config_);
@@ -119,10 +119,10 @@ namespace mctools {
       // G4 interface:
 
       /// Return the field value at given position/time
-      void GetFieldValue(const double position_[4], double * em_field_) const;
+      void GetFieldValue(const double position_[4], double * em_field_) const override;
 
       /// Check if the field changes the energy
-      virtual G4bool DoesFieldChangeEnergy() const;
+      G4bool DoesFieldChangeEnergy() const override;
 
     protected:
 

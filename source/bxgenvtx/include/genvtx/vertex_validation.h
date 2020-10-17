@@ -143,7 +143,7 @@ namespace genvtx {
     vertex_validation();
 
     /// Destructor
-    virtual ~vertex_validation();
+    ~vertex_validation() override;
 
     /// Set logging priority
     void set_logging_priority(datatools::logger::priority);
@@ -194,7 +194,7 @@ namespace genvtx {
     void tree_dump(std::ostream & out = std::clog,
                    const std::string & title_ = "",
                    const std::string & indent_ = "",
-                   bool inherit_ = false) const;
+                   bool inherit_ = false) const override;
 
     /// Validation
     validate_status_type validate();

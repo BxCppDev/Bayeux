@@ -42,7 +42,7 @@ namespace mctools {
       sensitive_hit() = default;
 
       /// Destructor
-      virtual ~sensitive_hit() = default;
+      ~sensitive_hit() override = default;
 
       /// Copy Constructor
       sensitive_hit(const sensitive_hit &) = default;

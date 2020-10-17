@@ -44,18 +44,18 @@ namespace emfield {
     emfield_geom_plugin ();
 
     /// Destructor
-    virtual ~emfield_geom_plugin ();
+    ~emfield_geom_plugin () override;
 
     /// Main initialization method
-    virtual int initialize(const datatools::properties & config_,
+    int initialize(const datatools::properties & config_,
                            const geomtools::manager::plugins_dict_type & plugins_,
-                           const datatools::service_dict_type & services_);
+                           const datatools::service_dict_type & services_) override;
 
     /// Main reset method
-    virtual int reset();
+    int reset() override;
 
     /// Check if plugin is initialized
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Return a non-mutable reference on a manager of isotopes, elements and emfield
     const electromagnetic_field_manager & get_manager () const;

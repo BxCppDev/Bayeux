@@ -72,7 +72,7 @@ namespace datatools {
                   logger::priority lp_ = logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~enriched_base();
+    ~enriched_base() override;
 
     /// Check if the name is not empty
     bool has_name() const;

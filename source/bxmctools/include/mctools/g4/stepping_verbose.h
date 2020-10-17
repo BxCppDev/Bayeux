@@ -28,13 +28,13 @@ namespace mctools {
       stepping_verbose ();
 
       /// Destructor
-      virtual ~stepping_verbose ();
+      ~stepping_verbose () override;
 
       /// Geant4 interface
-      void StepInfo ();
+      void StepInfo () override;
 
       /// Geant4 interface
-      void TrackingStarted ();
+      void TrackingStarted () override;
 
     };
 

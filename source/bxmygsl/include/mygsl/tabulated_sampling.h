@@ -39,19 +39,19 @@ namespace mygsl {
     tabulated_sampling();
 
     /// Destructor
-    virtual ~tabulated_sampling();
+    ~tabulated_sampling() override;
 
     /// Return the minimum sample
-    virtual double get_min() const;
+    double get_min() const override;
 
     /// Return the maximum sample
-    virtual double get_max() const;
+    double get_max() const override;
 
     /// Return the number of steps
-    std::size_t get_nsteps() const;
+    std::size_t get_nsteps() const override;
 
     /// Return the number of nsamples
-    std::size_t get_nsamples() const;
+    std::size_t get_nsamples() const override;
 
     /// Return the absolute guard distance around sampling alues
     double get_guard() const;
@@ -63,23 +63,23 @@ namespace mygsl {
     double get_max_step() const;
 
     /// Check the initialization status of the sampling
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Reset/invalidate the sampling
-    virtual void initialize(const datatools::properties &);
+    void initialize(const datatools::properties &) override;
 
     /// Reset/invalidate the sampling
-    virtual void reset();
+    void reset() override;
 
     /// Return the index and a classification associated to a value
-    virtual bool value_to_index(const double x_,
+    bool value_to_index(const double x_,
                                 std::size_t & index_,
-                                sampling::index_classification_type & classification_flags_) const;
+                                sampling::index_classification_type & classification_flags_) const override;
 
     /// Return the value associated to a given index
-    virtual sampling::index_classification_type
+    sampling::index_classification_type
     index_to_value(const std::size_t index_,
-                   double & value_) const;
+                   double & value_) const override;
 
     /// Set the absolute guard distance around sampling alues
     void set_guard(const double guard_);

@@ -93,16 +93,16 @@ namespace geomtools {
     cylindric_extrusion_boxed_model ();
 
     /// Destructor
-    virtual ~cylindric_extrusion_boxed_model ();
+    ~cylindric_extrusion_boxed_model () override;
 
     /// Return the string Id of the model
-    virtual std::string get_model_id () const;
+    std::string get_model_id () const override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
 
     /// \brief Special wires 3D rendering
@@ -121,20 +121,20 @@ namespace geomtools {
       wires_drawer(const cylindric_extrusion_boxed_model & model_);
 
       //! Destructor
-      virtual ~wires_drawer();
+      ~wires_drawer() override;
 
       //! Generate a list of polylines representing the contour of the shape (for display clients)
-      virtual void generate_wires_self(wires_type & wires_,
-                                       uint32_t options_ = 0) const;
+      void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const override;
 
     };
 
   protected:
 
     /// Executed at construct
-    virtual void _at_construct (const std::string & name_,
+    void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) override;
 
   private:
 

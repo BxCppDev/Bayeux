@@ -63,25 +63,25 @@ namespace cuts {
                  = datatools::logger::PRIO_FATAL);
 
       // CUT_DESTRUCTOR_DECLARE (range_cut)
-      virtual ~range_cut ();
+      ~range_cut() override;
 
       // CUT_INITIALIZE_DECLARE()
-      virtual void initialize (const datatools::properties &,
-                               datatools::service_manager &,
-                               cuts::cut_handle_dict_type &);
+      void initialize (const datatools::properties &,
+                       datatools::service_manager &,
+                       cuts::cut_handle_dict_type &) override;
 
       /// Export to a container of properties
-      virtual void export_to_config(datatools::properties & config_,
-                                    uint32_t flags_ = i_cut::EXPORT_CONFIG_DEFAULT,
-                                    const std::string & prefix_ = "") const;
+      void export_to_config(datatools::properties & config_,
+                            uint32_t flags_ = i_cut::EXPORT_CONFIG_DEFAULT,
+                            const std::string & prefix_ = "") const override;
 
       // CUT_RESET_DECLARE();
-      virtual void reset ();
+      void reset() override;
 
     protected :
 
       // CUT_ACCEPT_DECLARE();
-      virtual int _accept ();
+      int _accept() override;
 
     private:
 

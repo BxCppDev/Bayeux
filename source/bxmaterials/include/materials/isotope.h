@@ -120,10 +120,10 @@ namespace materials {
       bool operator==(const id &) const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_          = false) const;
+                             bool inherit_          = false) const override;
 
     private:
 
@@ -159,10 +159,10 @@ namespace materials {
       //! Default constructor
       record_type();
       //! Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
     public:
 
@@ -357,7 +357,7 @@ namespace materials {
                      unsigned int build_flags_ = 0);
 
     //! Destructor
-    virtual ~isotope();
+    ~isotope() override;
 
     //! Return true if isotope is valid, false either
     bool is_valid() const;
@@ -528,10 +528,10 @@ namespace materials {
     void reset();
 
     //! Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
 
     //! Compute the atomic electron binding energy for ion with given Z
     static double compute_electron_binding_energy(int z_);

@@ -72,25 +72,25 @@ namespace geomtools {
                                      placement & face_placement_) const;
 
     /// Compute informations about the faces of this solid shape
-    virtual unsigned int compute_faces(face_info_collection_type & faces) const;
+    unsigned int compute_faces(face_info_collection_type & faces) const override;
 
     /// Return the min X coordinates (bounding box)
-    double get_xmin () const;
+    double get_xmin () const override;
 
     /// Return the max X coordinates (bounding box)
-    double get_xmax () const;
+    double get_xmax () const override;
 
     /// Return the min Y coordinates (bounding box)
-    double get_ymin () const;
+    double get_ymin () const override;
 
     /// Return the max Y coordinates (bounding box)
-    double get_ymax () const;
+    double get_ymax () const override;
 
     /// Return the min Z coordinates (bounding box)
-    double get_zmin () const;
+    double get_zmin () const override;
 
     /// Return the max Z coordinates (bounding box)
-    double get_zmax () const;
+    double get_zmax () const override;
 
     /// Return the radius of the solid torus
     double get_sweep_radius() const;
@@ -153,52 +153,52 @@ namespace geomtools {
     torus(double sweep_radius_, double outside_radius_, double inside_radius_, double start_phi_, double delta_phi_);
 
     /// Destructor
-    virtual ~torus();
+    ~torus() override;
 
     /// Return the name of the shape
-    virtual std::string get_shape_name () const;
+    std::string get_shape_name () const override;
 
     /// Return a parameter by name
     virtual double get_parameter (const std::string &) const;
 
     /// Check the validity
-    bool is_valid () const;
+    bool is_valid () const override;
 
     /// Initialize from properties
-    virtual void initialize(const datatools::properties &,
-                            const handle_dict_type *);
+    void initialize(const datatools::properties &,
+                            const handle_dict_type *) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Compute the surface of the cylinder
-    virtual double get_surface (uint32_t mask_ = FACE_ALL) const;
+    double get_surface (uint32_t mask_ = FACE_ALL) const override;
 
     /// Compute the volume of the cylinder
-    virtual double get_volume (uint32_t flags_ = 0) const;
+    double get_volume (uint32_t flags_ = 0) const override;
 
     /// Check if a point is inside the cylinder
-    virtual bool is_inside (const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_inside (const vector_3d &,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the cylinder
-    virtual bool is_outside (const vector_3d &,
-                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_outside (const vector_3d &,
+                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
-    virtual face_identifier on_surface(const vector_3d &,
+    face_identifier on_surface(const vector_3d &,
                                        const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the vector normal to the surface at some position
-    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
-                                            const face_identifier & a_surface_bit) const;
+    vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const override;
 
     /// Find the intercept point of a segment with the surface
-    virtual bool find_intercept (const vector_3d & from_,
+    bool find_intercept (const vector_3d & from_,
                                  const vector_3d & direction_,
                                  face_intercept_info & intercept_,
-                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     friend std::ostream &
     operator<< (std::ostream &, const torus &);
@@ -207,10 +207,10 @@ namespace geomtools {
     operator>> (std::istream &, torus &);
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
     /// \brief 3D rendering options
     enum torus_wires_rendering_option_type {
@@ -226,8 +226,8 @@ namespace geomtools {
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
@@ -238,7 +238,7 @@ namespace geomtools {
     void _set_defaults();
 
     /// Build bounding data
-    virtual void _build_bounding_data();
+    void _build_bounding_data() override;
 
   private:
 

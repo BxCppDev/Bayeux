@@ -86,13 +86,13 @@ namespace geomtools {
     i_model(const std::string & dummy_ = "");
 
     /// Destructor
-    virtual ~i_model();
+    ~i_model() override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
 
     /// Get a non mutable reference to the embedded logical volume
     const geomtools::logical_volume & get_logical() const;

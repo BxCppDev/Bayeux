@@ -160,7 +160,7 @@ namespace mctools {
       primary_event_bias();
 
       /// Destructor
-      virtual ~primary_event_bias();
+      ~primary_event_bias() override;
 
       /// Set the geometry manager
       void set_geometry_manager(const geomtools::manager &);
@@ -249,10 +249,10 @@ namespace mctools {
                    biasing_info & info_);
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       /// Draw
       void draw(const geomtools::vector_3d & vertex_,

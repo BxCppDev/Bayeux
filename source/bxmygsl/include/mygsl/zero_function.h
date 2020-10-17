@@ -18,21 +18,17 @@ namespace mygsl {
     zero_function();
 
     //! Destructor
-    virtual ~zero_function();
+    ~zero_function() override;
 
   protected:
 
     //! Evaluation method
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(zero_function)
-
-    //! Cloneable interface
-    DATATOOLS_CLONEABLE_DECLARATION(zero_function)
-
   };
 
 } // namespace mygsl

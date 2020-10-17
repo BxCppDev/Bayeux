@@ -58,26 +58,26 @@ namespace genvtx {
                  const geomtools::placement &);
 
     /// Destructor
-    virtual ~placement_vg();
+    ~placement_vg() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties &,
+    void initialize(const ::datatools::properties &,
                              ::datatools::service_manager &,
-                             ::genvtx::vg_dict_type &);
+                             ::genvtx::vg_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Check if at least one more vertex is available
-    virtual bool has_next_vertex() const;
+    bool has_next_vertex() const override;
 
   protected :
 
     /// Randomize vertex
-    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+    void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_) override;
 
     void _clear_vg_ ();
 

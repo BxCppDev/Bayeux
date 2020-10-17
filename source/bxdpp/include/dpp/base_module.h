@@ -95,7 +95,7 @@ namespace dpp {
     base_module(datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     /// Destructor :
-    virtual ~base_module();
+    ~base_module() override;
 
     /// Check the module name
     bool has_name() const;
@@ -170,10 +170,10 @@ namespace dpp {
     virtual void reset() = 0;
 
     /// Smart print
-    virtual void tree_dump(std::ostream &      out_ = std::clog,
+    void tree_dump(std::ostream &      out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool                inherit_ = false) const;
+                           bool                inherit_ = false) const override;
 
     /// Default print
     void print(std::ostream & out_ = std::clog) const;

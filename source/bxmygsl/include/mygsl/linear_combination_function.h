@@ -48,17 +48,17 @@ namespace mygsl {
                                 const const_unary_function_handle_type & f2_);
 
     //! Destructor
-    virtual ~linear_combination_function();
+    ~linear_combination_function() override;
 
     //! Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     //! Initialization from a container of parameters and a dictionary of functors
-    virtual void initialize(const datatools::properties & config_,
-                            const unary_function_dict_type & functors_);
+    void initialize(const datatools::properties & config_,
+                            const unary_function_dict_type & functors_) override;
 
     //! Reset the composite function
-    void reset();
+    void reset() override;
 
     //! Add a weighted term
     std::size_t add(double weight_, const i_unary_function &);
@@ -70,27 +70,27 @@ namespace mygsl {
     void change_weight(int term_index_, double weight_);
 
     //! Check if the function has an explicit domain of definition (default: false)
-    virtual bool has_explicit_domain_of_definition() const;
+    bool has_explicit_domain_of_definition() const override;
 
     //! Check if a value is in the explicit domain of definition (default: true)
-    virtual bool is_in_domain_of_definition(double x_) const;
+    bool is_in_domain_of_definition(double x_) const override;
 
     //! The minimum bound of the non-zero domain (default is minus infinity)
-    virtual double get_non_zero_domain_min() const;
+    double get_non_zero_domain_min() const override;
 
     //! The maximum bound of the non-zero domain (default is plus infinity)
-    virtual double get_non_zero_domain_max() const;
+    double get_non_zero_domain_max() const override;
 
     //! Smart printing
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
   protected :
 
     //! Evaluation
-    double _eval(double x_) const;
+    double _eval(double x_) const override;
 
     //! Set default attributes values
     void _set_defaults();

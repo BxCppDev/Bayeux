@@ -67,26 +67,26 @@ namespace cuts {
     void set_cut_manager (const cut_manager & a_cut_manager);
 
     /// Check the initialization status
-    virtual bool is_initialized () const;
+    bool is_initialized () const override;
 
     /// Initialize the service through a collection of setup properties
-    virtual int initialize (const datatools::properties & a_config,
-                            datatools::service_dict_type & a_service_dict);
+    int initialize (const datatools::properties & a_config,
+                            datatools::service_dict_type & a_service_dict) override;
 
     /// Reset
-    virtual int reset ();
+    int reset () override;
 
     /// Constructor
     cut_service ();
 
     /// Destructor
-    virtual ~cut_service ();
+    ~cut_service () override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
+    void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
-                            bool a_inherit               = false) const;
+                            bool a_inherit               = false) const override;
 
   private:
 

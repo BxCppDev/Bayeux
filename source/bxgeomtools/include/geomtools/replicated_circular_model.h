@@ -46,7 +46,7 @@ namespace geomtools {
     const geomtools::tube & get_solid() const;
 
     /// Return the model Id
-    virtual std::string get_model_id() const;
+    std::string get_model_id() const override;
 
     /// Return a reference to the embedded the regular circular placement object
     const regular_circular_placement & get_replica_placement() const;
@@ -58,28 +58,28 @@ namespace geomtools {
     replicated_circular_model();
 
     /// Destructor
-    virtual ~replicated_circular_model();
+    ~replicated_circular_model() override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
   protected:
 
     /// Pre-construction
-    virtual void _pre_construct(datatools::properties & setup_,
-                                models_col_type * models_ = 0);
+    void _pre_construct(datatools::properties & setup_,
+                                models_col_type * models_ = 0) override;
 
     /// Construction
-    virtual void _at_construct(const std::string & name_,
+    void _at_construct(const std::string & name_,
                                const datatools::properties & config_,
-                               models_col_type * models_ = 0);
+                               models_col_type * models_ = 0) override;
 
     /// Post-construction
-    virtual void _post_construct (datatools::properties & setup_,
-                                  models_col_type * models_ = 0);
+    void _post_construct (datatools::properties & setup_,
+                                  models_col_type * models_ = 0) override;
 
   private:
 

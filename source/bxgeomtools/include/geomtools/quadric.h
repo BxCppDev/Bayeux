@@ -36,16 +36,16 @@ namespace geomtools {
     static const std::string & quadric_label();
 
     //! Return the shape name
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     //! Check if the plane is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Initialize from properties and a dictionary of 3D-objects
-    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     //! Reset
-    void reset();
+    void reset() override;
 
     //! Default constructor
     quadric();
@@ -108,18 +108,18 @@ namespace geomtools {
                                     double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     //! Check if the point
-    virtual bool is_on_surface(const geomtools::vector_3d & position_,
-                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_on_surface(const geomtools::vector_3d & position_,
+                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
-    virtual geomtools::vector_3d
+    geomtools::vector_3d
     get_normal_on_surface(const geomtools::vector_3d & position_,
                           bool check_ = true,
-                          double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                          double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
-    virtual bool find_intercept(const geomtools::vector_3d & from_,
+    bool find_intercept(const geomtools::vector_3d & from_,
                                 const geomtools::vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     //! Make a general plane
     //! f(x,y,z) = ax + by + cz + d = 0
@@ -206,13 +206,13 @@ namespace geomtools {
     static void make_parabolic_cylinder_along_z(quadric & q_, double a_);
 
     //!
-    void generate_wires_self(wires_type &, uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type &, uint32_t options_ = 0) const override;
 
     //! Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_= false) const;
+                           bool inherit_= false) const override;
 
   protected:
 

@@ -49,19 +49,19 @@ namespace mctools {
       stacking_action ();
 
       /// Destructor
-      virtual ~stacking_action ();
+      ~stacking_action () override;
 
       /// Initialize
       void initialize (const datatools::properties & config_);
 
       // Geant4 interface :
-      virtual G4ClassificationOfNewTrack ClassifyNewTrack (const G4Track * track_);
+      G4ClassificationOfNewTrack ClassifyNewTrack (const G4Track * track_) override;
 
       // Geant4 interface :
-      virtual void NewStage ();
+      void NewStage () override;
 
       // Geant4 interface :
-      virtual void PrepareNewEvent ();
+      void PrepareNewEvent () override;
 
     private:
 

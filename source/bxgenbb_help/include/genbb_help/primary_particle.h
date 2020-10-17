@@ -358,7 +358,7 @@ namespace genbb {
                      const geomtools::vector_3d &);
 
     /// Destructor
-    virtual ~primary_particle();
+    ~primary_particle() override;
 
     /// Smart print
     void print_tree(std::ostream & out_ = std::clog,

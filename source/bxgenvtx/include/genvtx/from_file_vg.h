@@ -51,29 +51,29 @@ namespace genvtx {
     from_file_vg();
 
     /// Destructor
-    virtual ~from_file_vg();
+    ~from_file_vg() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties &,
+    void initialize(const ::datatools::properties &,
                              ::datatools::service_manager &,
-                             ::genvtx::vg_dict_type &);
+                             ::genvtx::vg_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Check if at least one more vertex is available
-    virtual bool has_next_vertex() const;
+    bool has_next_vertex() const override;
 
   protected :
 
     /// Load vertex from the source
-    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+    void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_) override;
 
     /// Load vertex/time from the source
-    virtual void _shoot_vertex_and_time(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_, double & time_);
+    void _shoot_vertex_and_time(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_, double & time_) override;
 
     /// Open the source file
     void _open_source();

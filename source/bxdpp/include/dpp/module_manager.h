@@ -90,7 +90,7 @@ namespace dpp {
 
     module_manager(uint32_t flags_ = BLANK);
 
-    virtual ~module_manager();
+    ~module_manager() override;
 
     bool has_service_manager() const;
 
@@ -102,10 +102,10 @@ namespace dpp {
 
     void install_service_manager(const datatools::properties & service_manager_configuration_);
 
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     void load_module(const std::string & module_name_,
                      const std::string & module_id_,

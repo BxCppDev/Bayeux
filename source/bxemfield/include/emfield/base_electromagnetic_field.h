@@ -115,7 +115,7 @@ namespace emfield {
     base_electromagnetic_field(uint32_t flags_ = 0);
 
     /// Destructor
-    virtual ~base_electromagnetic_field();
+    ~base_electromagnetic_field() override;
 
     /// Compute the coordinates of the electric and magnetic fields at given position and time
     virtual int compute_electromagnetic_field(const geomtools::vector_3d & position_,
@@ -169,10 +169,10 @@ namespace emfield {
                                        geomtools::vector_3d & magnetic_field_) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
   protected:
 

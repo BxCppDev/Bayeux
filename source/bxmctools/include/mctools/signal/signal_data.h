@@ -66,7 +66,7 @@ namespace mctools {
       signal_data();
 
       /// Destructor
-      virtual ~signal_data();
+      ~signal_data() override;
 
       /// Get a reference to the non mutable collection of auxiliary properties
       const datatools::properties & get_auxiliaries() const;
@@ -119,10 +119,10 @@ namespace mctools {
       void reset();
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
     private:
 

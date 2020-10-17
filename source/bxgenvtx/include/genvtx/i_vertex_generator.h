@@ -172,7 +172,7 @@ namespace genvtx {
     i_vertex_generator();
 
     /// Destructor
-    virtual ~i_vertex_generator();
+    ~i_vertex_generator() override;
 
     /// Check initialization status
     virtual bool is_initialized() const = 0;
@@ -186,10 +186,10 @@ namespace genvtx {
     virtual void reset() = 0;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;

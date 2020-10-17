@@ -75,7 +75,7 @@ namespace mctools {
       em_field_g4_stuff();
 
       /// Destructor
-      virtual ~em_field_g4_stuff();
+      ~em_field_g4_stuff() override;
 
       /// Initialization
       void initialize();
@@ -160,10 +160,10 @@ namespace mctools {
       G4FieldManager * grab_field_manager();
 
       /// Smart print
-      virtual void tree_dump(std::ostream      & out_    = std::clog,
+      void tree_dump(std::ostream      & out_    = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
     protected:
 

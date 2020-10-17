@@ -59,15 +59,15 @@ namespace mygsl {
       /// Constructor
       histogram_entry_type();
       /// Destructor
-      virtual ~histogram_entry_type();
+      ~histogram_entry_type() override;
       /// Smart print
-      virtual void tree_dump(std::ostream      & out_    = std::clog,
+      void tree_dump(std::ostream      & out_    = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
 
-      DATATOOLS_SERIALIZATION_DECLARATION()
+      DATATOOLS_SERIALIZATION_DECLARATION_NOINHERIT()
     };
 
     /// Alias to histogram dictionnary
@@ -92,7 +92,7 @@ namespace mygsl {
     histogram_pool(const std::string & desc_);
 
     /// Destructor
-    virtual ~histogram_pool();
+    ~histogram_pool() override;
 
     /// Static method to initialize 1D histogram
     static void init_histo_1d(histogram_1d & h1_,
@@ -184,10 +184,10 @@ namespace mygsl {
                           const std::string & group_ = "");
 
     /// Smart print
-    virtual void tree_dump(std::ostream      & out    = std::clog,
+    void tree_dump(std::ostream      & out    = std::clog,
                            const std::string & title  = "",
                            const std::string & indent = "",
-                           bool inherit               = false) const;
+                           bool inherit               = false) const override;
 
     /// Set logging priority
     void set_logging_priority(datatools::logger::priority);

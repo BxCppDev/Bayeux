@@ -82,17 +82,17 @@ namespace cuts {
                     );
         return *_address;
       }
-      virtual const std::type_info * get_typeinfo() const {
+      const std::type_info * get_typeinfo() const override {
         return _ti;
       }
-      virtual bool match(const std::type_info * tit_) const {
+      bool match(const std::type_info * tit_) const override {
         return tit_ == _ti;
       }
       void set(const T & obj) {
         _address = &obj;
         _ti = &typeid(T);
       }
-      virtual operator bool() const {
+      operator bool() const override {
         return _address != 0 && _ti != 0;
       }
       void reset() {
@@ -106,7 +106,7 @@ namespace cuts {
       referenced_data(const T & obj) {
         set(obj);
       }
-      virtual ~referenced_data() {
+      ~referenced_data() override {
         _address = 0;
         _ti = 0;
       }
@@ -293,13 +293,13 @@ namespace cuts {
     explicit i_cut(datatools::logger::priority p = datatools::logger::PRIO_FATAL);
 
     //! Destructor
-    virtual ~i_cut();
+    ~i_cut() override;
 
     //! Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
+    void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
-                           bool a_inherit          = false) const;
+                           bool a_inherit          = false) const override;
 
     //! Print shortcut @see tree_dump()
     void print(std::ostream & a_out = std::clog) const;
@@ -410,7 +410,7 @@ namespace cuts {
 /** Interface macro for automated registration of a cut class in the global register */
 #define CUT_REGISTRATION_INTERFACE(T)           \
   public:                                       \
-  virtual std::string get_type_id() const; \
+  std::string get_type_id() const override; \
   private:                                                                \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut, T) \
   /**/

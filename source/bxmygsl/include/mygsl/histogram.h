@@ -77,7 +77,7 @@ namespace mygsl {
 
     histogram (const std::vector<double> & ranges_);
 
-    virtual ~histogram ();
+    ~histogram () override;
 
     histogram (const histogram &);
 
@@ -230,10 +230,10 @@ namespace mygsl {
                                 double);
 
     /// Main interface method for smart dump
-    virtual void tree_dump (std::ostream& out = std::clog,
+    void tree_dump (std::ostream& out = std::clog,
                             const std::string& title  = "",
                             const std::string& indent = "",
-                            bool inherit = false) const;
+                            bool inherit = false) const override;
 
   private:
 

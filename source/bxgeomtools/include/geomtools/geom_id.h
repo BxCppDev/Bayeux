@@ -144,7 +144,7 @@ namespace geomtools {
              uint32_t si9_ = INVALID_ADDRESS);
 
     /// Destructor
-    virtual ~geom_id () = default;
+    ~geom_id () override = default;
 
     /// Copy constructor
     geom_id(const geom_id&) = default;

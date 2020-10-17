@@ -214,23 +214,23 @@ namespace geomtools {
     // geomtools::i_placement interface:
 
     /// Return the dimension of the(multi-)placement object
-    virtual size_t get_dimension() const;
+    size_t get_dimension() const override;
 
     /// Return the number of placement entries associated to this placement object
-    virtual size_t get_number_of_items() const;
+    size_t get_number_of_items() const override;
 
     /// Compute the placement at given index
-    virtual void get_placement(int item_, placement & p_) const;
+    void get_placement(int item_, placement & p_) const override;
 
     /// Check if placement is a replica
-    virtual bool is_replica() const;
+    bool is_replica() const override;
 
     /// Check if the (multi-)placement has only one rotation for all its placement objects
-    virtual bool has_only_one_rotation() const;
+    bool has_only_one_rotation() const override;
 
     /// Compute the list of multi-dimension multiplet for placement at given index
-    virtual size_t compute_index_map(std::vector<uint32_t> & map_,
-                                     int item_) const;
+    size_t compute_index_map(std::vector<uint32_t> & map_,
+                                     int item_) const override;
 
     /// Check if the placement is identity
     bool is_identity() const;
@@ -342,7 +342,7 @@ namespace geomtools {
               const rotation_3d & rotation_);
 
     /// Destructor
-    virtual ~placement();
+    ~placement() override;
 
     /// Reset
     virtual void reset();
@@ -385,10 +385,10 @@ namespace geomtools {
     void initialize(const datatools::properties & config_, uint32_t flags_ = 0);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_  = std::clog,
+    void tree_dump(std::ostream & out_  = std::clog,
                            const std::string & title_ = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Basic print
     void dump(std::ostream      & out_    = std::clog,

@@ -93,7 +93,7 @@ namespace mctools {
       primary_generator();
 
       /// Destructor
-      virtual ~primary_generator();
+      ~primary_generator() override;
 
       /// Initialization
       void initialize(const datatools::properties & config_);
@@ -105,7 +105,7 @@ namespace mctools {
       std::string get_g4_particle_name_from_genbb_particle(const ::genbb::primary_particle & p_) const;
 
       ///  Geant4 interface for primary event generation
-      void GeneratePrimaries(G4Event *);
+      void GeneratePrimaries(G4Event *) override;
 
     protected:
 

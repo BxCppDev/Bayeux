@@ -167,7 +167,7 @@ void test_urn_info_0()
   if (debug) std::cerr << std::endl;
   urns[uiSnSimu.get_urn()] = uiSnSimu;
 
-  for (const auto ui : urns) {
+  for (const auto& ui : urns) {
     ui.second.tree_dump(std::clog, "URN info: " + ui.second.get_urn(), "[info] ");
     std::clog << std::endl;
   }
@@ -182,7 +182,7 @@ void test_urn_info_0()
     datatools::data_reader r("urn_info_dict.xml");
     r.load("std::map<std::string,datatools::urn_info>", urns);
   }
-  for (const auto ui : urns) {
+  for (const auto& ui : urns) {
     ui.second.tree_dump(std::clog, "Loaded URN info: " + ui.second.get_urn(), "[info] ");
     std::clog << std::endl;
   }

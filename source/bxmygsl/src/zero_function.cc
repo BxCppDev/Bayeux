@@ -8,8 +8,6 @@ namespace mygsl {
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(zero_function,
                                              "mygsl::zero_function")
 
-  DATATOOLS_CLONEABLE_IMPLEMENTATION(zero_function)
-
   zero_function::zero_function()
   {
     return;

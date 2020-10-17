@@ -119,7 +119,7 @@ namespace mctools {
       physics_list();
 
       /// Destructor
-      virtual ~physics_list();
+      ~physics_list() override;
 
       /// Intialization from a set of configuration parameters
       void initialize(const datatools::properties & config_);
@@ -128,21 +128,21 @@ namespace mctools {
       void reset();
 
       /// Smart print
-      virtual void tree_dump(std::ostream      & out_    = std::clog,
+      void tree_dump(std::ostream      & out_    = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       // G4 mandatory interface: construct particle and physics
 
       /// Construct Geant4 particles
-      virtual void ConstructParticle();
+      void ConstructParticle() override;
 
       /// Construct Geant4 processes
-      virtual void ConstructProcess();
+      void ConstructProcess() override;
 
       /// Set the cuts associated to particles
-      virtual void SetCuts();
+      void SetCuts() override;
 
     protected:
 

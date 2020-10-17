@@ -46,26 +46,26 @@ namespace geomtools {
 
     const std::string & get_material_name () const;
 
-    virtual const geomtools::box & get_box () const;
+    const geomtools::box & get_box () const override;
 
     const geomtools::box & get_solid () const;
 
     simple_boxed_model ();
 
-    virtual ~simple_boxed_model ();
+    ~simple_boxed_model () override;
 
-    virtual std::string get_model_id () const;
+    std::string get_model_id () const override;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
   protected:
 
-    virtual void _at_construct (const std::string & name_,
+    void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) override;
   private:
 
     std::string    _material_name_;

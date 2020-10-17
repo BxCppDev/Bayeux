@@ -118,7 +118,7 @@ namespace genbb {
     beta_decay();
 
     /// Destructor
-    virtual ~beta_decay();
+    ~beta_decay() override;
 
     /// Set the type of the beta decay
     void set_type(decay_type);
@@ -268,10 +268,10 @@ namespace genbb {
                                   double & ke_max_);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Display PDF
     void display_pdf(const std::string & title_ = "") const;
@@ -290,17 +290,17 @@ namespace genbb {
                               double & cenu_) const;
 
     /// Set the transition parameter from the start and stop levels
-    virtual void set_levels(const nuclear_level & level_start_,
-                            const nuclear_level & level_stop_);
+    void set_levels(const nuclear_level & level_start_,
+                            const nuclear_level & level_stop_) override;
 
     /// Initialization
-    virtual void initialize(const datatools::properties & config_);
+    void initialize(const datatools::properties & config_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Shoot the kinematics of the decay and fill a primary event
-    virtual int fill(mygsl::rng & prng_, genbb::primary_event & event_);
+    int fill(mygsl::rng & prng_, genbb::primary_event & event_) override;
 
   protected:
 

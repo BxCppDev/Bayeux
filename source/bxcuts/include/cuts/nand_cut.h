@@ -29,12 +29,12 @@ namespace cuts {
              datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~nand_cut();
+    ~nand_cut() override;
 
   protected :
 
     /// Selection
-    virtual int _accept();
+    int _accept() override;
 
   private:
 

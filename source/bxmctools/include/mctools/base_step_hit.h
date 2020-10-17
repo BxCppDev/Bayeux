@@ -332,17 +332,17 @@ namespace mctools {
      * - start time is set
      * - start position is set
      */
-    virtual bool is_valid() const;
+    bool is_valid() const override;
 
     /// Reset/invalidate the internal structure of the hit
-    virtual void invalidate();
+    void invalidate() override;
 
 
     /// Default constructor
     base_step_hit() = default;
 
     // Destructor
-    virtual ~base_step_hit() = default;
+    ~base_step_hit() override = default;
 
     // Copy constructor
     base_step_hit(const base_step_hit &) = default;
@@ -360,13 +360,13 @@ namespace mctools {
     void reset();
 
     /// Reset/invalidate the internal structure of the hit
-    virtual void clear();
+    void clear() override;
 
     /// \deprecated Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
     
     //!
     //! Supported options:

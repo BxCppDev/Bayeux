@@ -349,7 +349,7 @@ namespace datatools {
   class graph_property_writer
   {
   public:
-    graph_property_writer(const dependency_graph::graph_t & g_) : _g_(g_) {}
+    graph_property_writer(const dependency_graph::graph_t & /*g_*/) /*: _g_(g_)*/ {}
     void operator()(std::ostream & out_) const
     {
       out_ << "graph [bgcolor=\"white\" color=\"black\"]" << std::endl;
@@ -357,7 +357,7 @@ namespace datatools {
       out_ << "edge [style=\"dashed\" color=\"black\"]" << std::endl;
     }
   private:
-    const dependency_graph::graph_t & _g_;
+    // const dependency_graph::graph_t & _g_;
   };
 
   void dependency_graph::export_graphviz(std::ostream & out_, const uint32_t flags_) const

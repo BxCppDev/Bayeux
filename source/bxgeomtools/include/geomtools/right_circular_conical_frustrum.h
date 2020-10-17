@@ -62,28 +62,28 @@ namespace geomtools {
     static const std::string & rccf_label();
 
     /// Return the identifier/name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Check if the frustrum is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Return the minimum X
-    double get_xmin () const;
+    double get_xmin () const override;
 
     /// Return the maximum X
-    double get_xmax () const;
+    double get_xmax () const override;
 
     /// Return the minimum Y
-    double get_ymin () const;
+    double get_ymin () const override;
 
     /// Return the maximum Y
-    double get_ymax () const;
+    double get_ymax () const override;
 
     /// Return the minimum Z
-    double get_zmin () const;
+    double get_zmin () const override;
 
     /// Return the maximum Z
-    double get_zmax () const;
+    double get_zmax () const override;
 
     /// Set the Z dimension
     void set_z(double);
@@ -174,13 +174,13 @@ namespace geomtools {
                                     double delta_angle_);
 
     /// Destructor
-    virtual ~right_circular_conical_frustrum();
+    ~right_circular_conical_frustrum() override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
     /// Compute the inner face
     void compute_inner_face(right_circular_conical_nappe & in_) const;
@@ -231,42 +231,42 @@ namespace geomtools {
     void compute_stop_angle_face(quadrangle & qface_, triangle & tface_, placement &) const;
 
     /// Compute informations about the faces of this solid shape
-    virtual unsigned int compute_faces(face_info_collection_type &) const;
+    unsigned int compute_faces(face_info_collection_type &) const override;
 
     /// Compute the surface
-    virtual double get_surface(uint32_t mask_ = FACE_ALL) const;
+    double get_surface(uint32_t mask_ = FACE_ALL) const override;
 
     /// Compute the volume
-    virtual double get_volume(uint32_t flags_ = VOLUME_BULK) const;
+    double get_volume(uint32_t flags_ = VOLUME_BULK) const override;
 
     /// Check if a point is inside the frustrum
-    virtual bool is_inside (const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_inside (const vector_3d &,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the frustrum
-    virtual bool is_outside (const vector_3d &,
-                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_outside (const vector_3d &,
+                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
-    virtual face_identifier on_surface(const vector_3d &,
+    face_identifier on_surface(const vector_3d &,
                                        const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Compute the normal to the surface of the furstrum
-    virtual vector_3d get_normal_on_surface (const vector_3d & position_,
-                                             const face_identifier & ) const;
+    vector_3d get_normal_on_surface (const vector_3d & position_,
+                                             const face_identifier & ) const override;
 
     /// Find the intercept point with a face of the frustrum
-    virtual bool find_intercept(const vector_3d & from_,
+    bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Initialize the frustrum from properties
-    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset the frustrum
-    virtual void reset();
+    void reset() override;
 
     /// \brief 3D rendering options
     enum rccf_wires_rendering_option_type {
@@ -286,8 +286,8 @@ namespace geomtools {
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
   protected:
 
@@ -295,7 +295,7 @@ namespace geomtools {
     void _set_defaults();
 
     /// Build bounding data
-    virtual void _build_bounding_data();
+    void _build_bounding_data() override;
 
   private:
 

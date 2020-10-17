@@ -18,20 +18,17 @@ namespace mygsl {
     identity_function();
 
     //! Destructor
-    virtual ~identity_function();
+    ~identity_function() override;
 
   protected:
 
     //! Evaluation method
-    virtual double _eval(double x_) const;
+    double _eval(double x_) const override;
 
   private:
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(identity_function)
-
-    //! Cloneable interface
-    DATATOOLS_CLONEABLE_DECLARATION(identity_function)
 
   };
 

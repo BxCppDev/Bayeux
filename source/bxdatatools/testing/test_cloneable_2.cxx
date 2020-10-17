@@ -36,7 +36,7 @@ public:
   int    id_;
 public:
   static const string  SERIAL_TAG;
-  const string & get_serial_tag () const
+  const string & get_serial_tag () const override
   {
     return SERIAL_TAG;
   }

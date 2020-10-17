@@ -51,7 +51,7 @@ namespace datatools {
       method();
 
       //! Destructor
-      virtual ~method();
+      ~method() override;
 
       //! Check if constness is set
       bool has_constness() const;
@@ -144,10 +144,10 @@ namespace datatools {
                             const std::string & prefix_ = "") const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       //! Make a setter method with one unique input scalar argument
       void make_scalar_setter(const std::string & arg_name_,

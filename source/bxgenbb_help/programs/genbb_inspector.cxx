@@ -197,6 +197,8 @@ namespace genbb {
   {
   public:
     inspector_data();
+    // Required by use of CAMP RTTI
+    virtual ~inspector_data() = default;
     void reset();
     void sort();
 

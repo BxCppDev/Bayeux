@@ -93,25 +93,25 @@ namespace geomtools {
     bool has_inner_face() const;
 
     /// Return a collection of face info objects
-    virtual unsigned int compute_faces(face_info_collection_type & faces_) const;
+    unsigned int compute_faces(face_info_collection_type & faces_) const override;
 
     /// Return the minimum X
-    double get_xmin() const;
+    double get_xmin() const override;
 
     /// Return the maximum X
-    double get_xmax() const;
+    double get_xmax() const override;
 
     /// Return the minimum Y
-    double get_ymin() const;
+    double get_ymin() const override;
 
     /// Return the maximum Y
-    double get_ymax() const;
+    double get_ymax() const override;
 
     /// Return the minimum Z
-    double get_zmin() const;
+    double get_zmin() const override;
 
     /// Return the maximum Z
-    double get_zmax() const;
+    double get_zmax() const override;
 
     /// Return the Z dimension
     double get_z() const;
@@ -200,10 +200,10 @@ namespace geomtools {
     tube(double inner_radius_, double outer_radius_, double z_, double start_phi_, double delta_phi_);
 
     /// Destructor
-    virtual ~tube();
+    ~tube() override;
 
     /// Return the identifier/name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     /// Return a parameter given its name
     virtual double get_parameter(const std::string &) const;
@@ -212,42 +212,42 @@ namespace geomtools {
     bool is_extruded() const;
 
     /// Check if the tube is valid
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Initialize the tube from properties
-    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset the tube
-    virtual void reset();
+    void reset() override;
 
     /// Compute the surface
-    virtual double get_surface(uint32_t mask_ = FACE_ALL) const;
+    double get_surface(uint32_t mask_ = FACE_ALL) const override;
 
     /// Compute the volume
-    virtual double get_volume(uint32_t flags_ = VOLUME_BULK) const;
+    double get_volume(uint32_t flags_ = VOLUME_BULK) const override;
 
     /// Check if a point is inside the tube
-    virtual bool is_inside(const vector_3d &,
-                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_inside(const vector_3d &,
+                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the tube
-    virtual bool is_outside(const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_outside(const vector_3d &,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
-    virtual face_identifier on_surface(const vector_3d &,
+    face_identifier on_surface(const vector_3d &,
                                        const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the vector normal to the surface at some position
-    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
-                                            const face_identifier & a_surface_bit) const;
+    vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const override;
 
     /// Find the intercept point with a face of the tube
-    virtual bool find_intercept(const vector_3d & from_,
+    bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Output operator
     friend std::ostream &
@@ -258,10 +258,10 @@ namespace geomtools {
     operator>>(std::istream &, tube &);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
 
     /// \brief 3D rendering options
     enum tube_wires_rendering_option_type {
@@ -281,8 +281,8 @@ namespace geomtools {
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
@@ -293,7 +293,7 @@ namespace geomtools {
     void _set_defaults();
 
     /// Build bounding data
-    virtual void _build_bounding_data();
+    void _build_bounding_data() override;
 
   private:
 

@@ -49,7 +49,7 @@ namespace geomtools {
     i_placement();
 
     //! Destructor
-    virtual ~i_placement();
+    ~i_placement() override;
 
     //! Check if the placement handles multiple positions
     bool is_multiple() const;
@@ -87,10 +87,10 @@ namespace geomtools {
     void compute_placement(int item_, placement & p_) const;
 
     //! Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
     //! Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION()

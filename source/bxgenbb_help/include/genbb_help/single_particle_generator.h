@@ -122,7 +122,7 @@ namespace genbb {
     double get_particle_mass() const;
     void set_particle_mass(double);
 
-    virtual bool can_external_random() const;
+    bool can_external_random() const override;
     const mygsl::rng & get_random() const;
     mygsl::rng & grab_random();
 
@@ -154,21 +154,21 @@ namespace genbb {
     single_particle_generator();
 
     /// Destructor
-    virtual ~single_particle_generator();
+    ~single_particle_generator() override;
 
     /// Main initialization interface method
-    virtual void initialize(const datatools::properties & setup_,
+    void initialize(const datatools::properties & setup_,
                              datatools::service_manager & service_manager_,
-                             detail::pg_dict_type & dictionary_);
+                             detail::pg_dict_type & dictionary_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check if a next primary event is available
-    virtual bool has_next();
+    bool has_next() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     static double get_particle_mass_from_label(const std::string & particle_name_);
 
@@ -177,8 +177,8 @@ namespace genbb {
   protected:
 
     /// Shoot the primary event
-    virtual void _load_next(primary_event & event_,
-                            bool compute_classification_ = true);
+    void _load_next(primary_event & event_,
+                            bool compute_classification_ = true) override;
 
     /// Insitialize the energy spectrum
     void _init_energy_spectrum();

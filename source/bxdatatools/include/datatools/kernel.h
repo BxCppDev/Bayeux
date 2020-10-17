@@ -153,7 +153,7 @@ namespace datatools {
     kernel(int argc_, char * argv_[], uint32_t flags = 0);
 
     /// Destruction with on-the-fly shutdown if needed
-    virtual ~kernel();
+    ~kernel() override;
 
     /// Initialization from command line arguments
     void initialize(int argc_, char * argv_[], uint32_t flags_ = 0);
@@ -311,7 +311,7 @@ namespace datatools {
     void tree_dump(std::ostream & out_ = std::clog,
                    const std::string & title_ = "",
                    const std::string & indent_ = "",
-                   bool inherit_ = false) const;
+                   bool inherit_ = false) const override;
 
     /// Registration of resource paths
     void register_resource_paths();

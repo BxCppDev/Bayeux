@@ -69,24 +69,24 @@ namespace dpp {
     dump_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~dump_module();
+    ~dump_module() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties & /* config_ */,
+    void initialize(const ::datatools::properties & /* config_ */,
                             datatools::service_manager & /* service_mgr_ */,
-                            dpp::module_handle_dict_type & /* modules_map_ */);
+                            dpp::module_handle_dict_type & /* modules_map_ */) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Data record processing
-    virtual process_status process(::datatools::things & /* data_ */);
+    process_status process(::datatools::things & /* data_ */) override;
 
     /// Smart print :
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
   protected:
 

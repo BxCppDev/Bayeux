@@ -113,18 +113,18 @@ namespace geomtools {
 
     placement get_placement (int col_, int row_) const;
 
-    virtual bool has_only_one_rotation () const;
+    bool has_only_one_rotation () const override;
 
-    virtual size_t get_dimension () const;
+    size_t get_dimension () const override;
 
-    virtual bool is_replica () const;
+    bool is_replica () const override;
 
-    virtual size_t get_number_of_items () const;
+    size_t get_number_of_items () const override;
 
-    virtual void get_placement (int item_, placement & p_) const;
+    void get_placement (int item_, placement & p_) const override;
 
-    virtual size_t compute_index_map (std::vector<uint32_t> & map_,
-                                      int item_) const;
+    size_t compute_index_map (std::vector<uint32_t> & map_,
+                                      int item_) const override;
 
     regular_grid_placement ();
 
@@ -136,7 +136,7 @@ namespace geomtools {
                             int mode_,
                             bool centered_ = true);
 
-    virtual ~regular_grid_placement ();
+    ~regular_grid_placement () override;
 
     void init (const placement & basic_placement_,
                double column_step_,
@@ -148,10 +148,10 @@ namespace geomtools {
 
     virtual void reset ();
 
-    virtual void tree_dump (std::ostream & out_  = std::clog,
+    void tree_dump (std::ostream & out_  = std::clog,
                             const std::string & title_ = "geomutils::regular_grid_placement",
                             const std::string & indent_ = "",
-                            bool inherit_ = false) const;
+                            bool inherit_ = false) const override;
 
   private:
 

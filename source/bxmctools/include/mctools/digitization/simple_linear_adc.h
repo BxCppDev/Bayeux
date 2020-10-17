@@ -57,7 +57,7 @@ namespace mctools {
       simple_linear_adc();
 
       //! Destructor
-      virtual ~simple_linear_adc();
+      ~simple_linear_adc() override;
 
       //! Set the low voltage reference value
       void set_v_ref_low(const double);
@@ -123,7 +123,7 @@ namespace mctools {
       double compute_sampled_voltage(int32_t channel_, bool ignore_out_ = false) const;
 
       //! Quantize
-      virtual int32_t quantize(const double vinput_) const;
+      int32_t quantize(const double vinput_) const override;
 
       //! Return the minimum channel
       int32_t get_min_channel() const;
@@ -138,10 +138,10 @@ namespace mctools {
       double get_voltage_resolution() const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       //! Reflection interface
       DR_CLASS_RTTI()

@@ -68,13 +68,13 @@ namespace mctools {
       base_signal(const base_signal &);
 
       //! Destructor
-      virtual ~base_signal();
+      ~base_signal() override;
 
       //! Assignment operator
       base_signal & operator=(const base_signal &);
 
       //! Check signal hit validity
-      virtual bool is_valid() const;
+      bool is_valid() const override;
 
       //! Allow no shape builder
       void set_allow_no_shape_builder(bool a_);
@@ -249,10 +249,10 @@ namespace mctools {
       const datatools::multi_properties & get_private_shapes_config() const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       //! Compute shape
       double compute_shape(double time_) const;

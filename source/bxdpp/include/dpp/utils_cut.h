@@ -75,24 +75,24 @@ namespace dpp {
 
     utils_cut(datatools::logger::priority a_logging_priority =
               datatools::logger::PRIO_FATAL);
-    virtual ~utils_cut();
+    ~utils_cut() override;
 
     /// Initialization
-    virtual void initialize(const datatools::properties &,
+    void initialize(const datatools::properties &,
                             datatools::service_manager &,
-                            cuts::cut_handle_dict_type &);
+                            cuts::cut_handle_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
   protected:
-    virtual int _accept();
+    int _accept() override;
 
   private:
 

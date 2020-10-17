@@ -102,8 +102,8 @@ namespace snemo {
       }
 
       //! Initialization
-      virtual void initialize(const datatools::properties & config_,
-                              const mygsl::unary_function_dict_type & functors_)
+      void initialize(const datatools::properties & config_,
+                      const mygsl::unary_function_dict_type & functors_) override
       {
         this->mygsl::i_unary_function::_base_initialize(config_, functors_);
 
@@ -196,7 +196,7 @@ namespace snemo {
       }
 
       //! Reset
-      virtual void reset()
+      void reset() override
       {
         _bottom_cathode_shape_.reset();
         _top_cathode_shape_.reset();
@@ -206,7 +206,7 @@ namespace snemo {
       }
 
       //! Check initialization status
-      virtual bool is_initialized() const
+      bool is_initialized() const override
       {
         if (!this->i_unary_function::is_initialized()) return false;
         if (!datatools::is_valid(_t0_)) return false;
@@ -238,7 +238,7 @@ namespace snemo {
       }
 
       //! Evaluation from parameters
-      double _eval(double time_) const
+      double _eval(double time_) const override
       {
         double sig = _bottom_cathode_shape_(time_) + _top_cathode_shape_(time_);
         return sig;

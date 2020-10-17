@@ -50,11 +50,11 @@ namespace mygsl {
 
     struct default_step_action : public at_step_action
     {
-      virtual void action (int status_,
+      void action (int status_,
                            size_t iter_,
                            double a_,
                            double b_,
-                           double c_);
+                           double c_) override;
     };
 
   public:

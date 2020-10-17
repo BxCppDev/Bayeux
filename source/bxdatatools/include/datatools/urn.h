@@ -70,7 +70,7 @@ namespace datatools {
     urn(const std::vector<std::string> & segments_);
 
     /// Destructor
-    virtual ~urn();
+    ~urn() override;
 
     /// Check validity
     bool is_valid() const;

@@ -50,19 +50,19 @@ namespace geomtools {
     const geomtools::subtraction_3d & get_solid() const;
 
     //! Return the model unique identifier
-    virtual std::string get_model_id() const;
+    std::string get_model_id() const override;
 
     //! Constructor
     spherical_extrusion_cylinder_model();
 
     //! Destructor
-    virtual ~spherical_extrusion_cylinder_model();
+    ~spherical_extrusion_cylinder_model() override;
 
     //! Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// \brief Special wires 3D rendering
     struct wires_drawer : public i_wires_drawer<spherical_extrusion_cylinder_model>
@@ -80,19 +80,19 @@ namespace geomtools {
       wires_drawer(const spherical_extrusion_cylinder_model & model_);
 
       //! Destructor
-      virtual ~wires_drawer();
+      ~wires_drawer() override;
 
       //! Generate a list of polylines representing the contour of the shape (for display clients)
-      virtual void generate_wires_self(wires_type & wires_,
-                                       uint32_t options_ = 0) const;
+      void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const override;
 
     };
 
   protected:
 
-    virtual void _at_construct(const std::string & name_,
+    void _at_construct(const std::string & name_,
                                const datatools::properties & setup_,
-                               geomtools::models_col_type * models_ = 0);
+                               geomtools::models_col_type * models_ = 0) override;
   private:
 
     std::string               _material_; //!< Material name

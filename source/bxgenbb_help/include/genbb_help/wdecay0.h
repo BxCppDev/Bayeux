@@ -69,9 +69,9 @@ namespace genbb {
 
     wdecay0();
 
-    virtual ~wdecay0();
+    ~wdecay0() override;
 
-    virtual bool can_external_random() const;
+    bool can_external_random() const override;
 
     const mygsl::rng & get_random() const;
 
@@ -81,27 +81,27 @@ namespace genbb {
 
     double get_to_all_events() const;
 
-    virtual void tree_dump(std::ostream & out = std::clog,
+    void tree_dump(std::ostream & out = std::clog,
                            const std::string & title  = "",
                            const std::string & indent = "",
-                           bool inherit = false) const;
+                           bool inherit = false) const override;
 
     void dump(std::ostream & = std::clog) const;
 
-    virtual void initialize(const datatools::properties & setup_,
+    void initialize(const datatools::properties & setup_,
                             datatools::service_manager & service_manager_,
-                            detail::pg_dict_type & dictionary_);
+                            detail::pg_dict_type & dictionary_) override;
 
-    virtual void reset();
+    void reset() override;
 
-    virtual bool has_next();
+    bool has_next() override;
 
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
   protected:
 
-    virtual void _load_next(primary_event & event_,
-                            bool compute_classification_ = true);
+    void _load_next(primary_event & event_,
+                            bool compute_classification_ = true) override;
 
   private:
 

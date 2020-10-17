@@ -79,30 +79,30 @@ namespace genvtx {
     void tree_dump(std::ostream & out_ = std::clog,
                    const std::string & title_ = "",
                    const std::string & indent_ = "",
-                   bool inherit_ = false) const;
+                   bool inherit_ = false) const override;
 
 
     /// Constructor
     polycone_vg();
 
     /// Destructor
-    virtual ~polycone_vg();
+    ~polycone_vg() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties &,
+    void initialize(const ::datatools::properties &,
                              ::datatools::service_manager &,
-                             ::genvtx::vg_dict_type &);
+                             ::genvtx::vg_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
   protected :
 
     /// Randomize vertex
-    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+    void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_) override;
 
   private:
 

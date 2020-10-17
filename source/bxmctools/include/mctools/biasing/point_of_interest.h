@@ -139,10 +139,10 @@ namespace mctools {
       void initialize(const datatools::properties & config_, const geomtools::manager * geomgr_ = 0);
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       /// Check if a linear trajectory coming from a given source with a given direction traverse the sphere
       bool hit(const geomtools::vector_3d & source_, const geomtools::vector_3d & direction_) const;

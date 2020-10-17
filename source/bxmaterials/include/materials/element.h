@@ -156,7 +156,7 @@ namespace materials {
     explicit element(const char * name_, const  char * symbol_ = "", unsigned int build_flags_ = 0);
 
     /// Destructor
-    virtual ~element();
+    ~element() override;
 
     /// Return true if the element is built by isotopic composition
     bool is_built_by_isotopic_composition () const;
@@ -239,10 +239,10 @@ namespace materials {
     void reset();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_  = std::clog,
+    void tree_dump(std::ostream & out_  = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_ = false) const;
+                            bool inherit_ = false) const override;
 
   protected:
 

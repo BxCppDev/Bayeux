@@ -46,23 +46,23 @@ namespace genvtx {
     spot_vertex_generator (const geomtools::vector_3d & spot_);
 
     /// Destructor
-    virtual ~spot_vertex_generator();
+    ~spot_vertex_generator() override;
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties &,
+    void initialize(const ::datatools::properties &,
                              ::datatools::service_manager &,
-                             ::genvtx::vg_dict_type &);
+                             ::genvtx::vg_dict_type &) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
   protected :
 
     /// Randomize vertex
-    virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
+    void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_) override;
 
   private:
 

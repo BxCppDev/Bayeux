@@ -43,25 +43,25 @@ namespace geomtools {
     double get_x () const;
     double get_y () const;
     double get_z () const;
-    virtual const geomtools::box & get_box () const;
+    const geomtools::box & get_box () const override;
     const geomtools::box & get_solid () const;
 
     replicated_boxed_model ();
 
-    virtual ~replicated_boxed_model ();
+    ~replicated_boxed_model () override;
 
-    virtual std::string get_model_id () const;
+    std::string get_model_id () const override;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
   protected:
 
-    virtual void _at_construct (const std::string & name_,
+    void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) override;
   private:
 
     const i_model *            _boxed_model_;

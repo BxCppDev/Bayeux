@@ -105,7 +105,7 @@ namespace datatools {
     library_info();
 
     /// Destructor
-    virtual ~library_info();
+    ~library_info() override;
 
     /// Return the logging priority of the library info register
     logger::priority get_logging() const;
@@ -233,7 +233,7 @@ namespace datatools {
     void tree_dump(std::ostream & out_ = std::clog,
                    const std::string & title_ = "",
                    const std::string & indent_ = "",
-                   bool inherit_ = false) const;
+                   bool inherit_ = false) const override;
 
   private:
 

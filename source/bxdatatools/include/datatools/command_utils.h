@@ -74,6 +74,9 @@ namespace datatools {
       CEC_PARAMETER_INVALID_UNIT       = 37  //!< Invalid parameter unit (for real numbers)
     };
 
+    // CAMP classes with RTTI imply inheritance
+    virtual ~command() = default;
+
     /// \brief Command returned information
     class returned_info
     {
@@ -88,8 +91,8 @@ namespace datatools {
       /// Constructor of a failed command returned info
       returned_info(error_code_type code_, const std::string & message_ = "");
 
-      /// Destructor
-      ~returned_info();
+      /// Destructor (must be virtual for use with CAMP RTTI)
+      virtual ~returned_info();
 
       /// Set continue code
       void set_continue();

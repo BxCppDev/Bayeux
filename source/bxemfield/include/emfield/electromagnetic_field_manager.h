@@ -100,7 +100,7 @@ namespace emfield {
     electromagnetic_field_manager(uint32_t flags_ = 0);
 
     /// Destructor
-    virtual ~electromagnetic_field_manager();
+    ~electromagnetic_field_manager() override;
 
     /// Initialize the manager
     void initialize(const datatools::properties & setup_);
@@ -112,10 +112,10 @@ namespace emfield {
     void load(const std::string & field_definitions_filename_);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
     /// Return the dictionary of created fields
     const base_electromagnetic_field::field_dict_type & get_fields() const;

@@ -33,19 +33,19 @@ public:
 
 public:
   TArrayCMod();
-  virtual ~TArrayCMod();
+  ~TArrayCMod() override;
   void Reserve(Int_t n);
   void Clear();
-  void Set(Int_t n);
+  void Set(Int_t n) override;
 
   // Mandatory by TArray inheritance:
-  Double_t GetAt(Int_t /*i*/) const {return 0.0;}
-  void SetAt(Double_t /*x*/, Int_t /*i*/) {return;}
+  Double_t GetAt(Int_t /*i*/) const override {return 0.0;}
+  void SetAt(Double_t /*x*/, Int_t /*i*/) override {return;}
 
   // Workaround
 private:
   void _Streamer_(TBuffer &b);
-  ClassDef(TArrayCMod,1)  //Array of chars
+  ClassDefOverride(TArrayCMod,1)  //Array of chars
 };
 
 #endif // BRIO_DETAIL_TARRAYCMOD_H

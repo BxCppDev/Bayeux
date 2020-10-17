@@ -55,12 +55,12 @@ public:
   brio_record();
 
   //! Destructor
-  virtual ~brio_record();
+  ~brio_record() override;
 
   //! Reset the internal data
   void reset();
 
-  ClassDef(brio_record,1) // Basic BRIO record
+  ClassDefOverride(brio_record,1) // Basic BRIO record
 
 };
 

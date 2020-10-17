@@ -74,7 +74,7 @@ namespace mygsl {
                 double eps_ = AUTO_EPS);
 
       /// Destructor
-      virtual ~interval ();
+      ~interval () override;
 
       void remove_min ();
 

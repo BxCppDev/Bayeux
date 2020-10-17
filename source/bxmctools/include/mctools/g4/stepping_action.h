@@ -49,7 +49,7 @@ namespace mctools {
       stepping_action();
 
       /// Destructor
-      virtual ~stepping_action();
+      ~stepping_action() override;
 
       /// Initialize
       void initialize(const datatools::properties & config_);
@@ -64,7 +64,7 @@ namespace mctools {
       bool is_dumped() const;
 
       /// Main stepping action for the Geant4 interface
-      void UserSteppingAction(const G4Step *);
+      void UserSteppingAction(const G4Step *) override;
 
       /// Convert a Geant4 track status to a printable string
       static std::string g4_track_status_to_label(G4TrackStatus);

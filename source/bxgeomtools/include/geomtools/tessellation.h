@@ -308,7 +308,7 @@ namespace geomtools {
     typedef std::map<unsigned int, facet_segment> facet_segments_col_type;
 
     /// Return the identifier/name of the shape
-    virtual std::string get_shape_name() const;
+    std::string get_shape_name() const override;
 
     static bool validate_index(int);
 
@@ -316,16 +316,16 @@ namespace geomtools {
     bool is_consistent() const;
 
     /// Check if the face identification scheme is based on face bits
-    bool using_face_id_bits() const;
+    bool using_face_id_bits() const override;
 
     /// Check if the face identification scheme is based on face index
-    bool using_face_id_index() const;
+    bool using_face_id_index() const override;
 
     /// Default constructor
     tessellated_solid();
 
     /// Destructor
-    virtual ~tessellated_solid();
+    ~tessellated_solid() override;
 
     /// Return the collection of vertexes
     const vertices_col_type & vertices() const;
@@ -371,22 +371,22 @@ namespace geomtools {
     const mygsl::min_max & get_bounding_box_z() const;
 
     /// Return the min X coordinates (bounding box)
-    double get_xmin() const;
+    double get_xmin() const override;
 
     /// Return the max X coordinates (bounding box)
-    double get_xmax() const;
+    double get_xmax() const override;
 
     /// Return the min Y coordinates (bounding box)
-    double get_ymin() const;
+    double get_ymin() const override;
 
     /// Return the max Y coordinates (bounding box)
-    double get_ymax() const;
+    double get_ymax() const override;
 
     /// Return the min Z coordinates (bounding box)
-    double get_zmin() const;
+    double get_zmin() const override;
 
     /// Return the max Z coordinates (bounding box)
-    double get_zmax() const;
+    double get_zmax() const override;
 
     /// Print
     void print_xyz(std::ostream & out_) const;
@@ -395,30 +395,30 @@ namespace geomtools {
     void dump(std::ostream & out_ = std::clog) const;
 
     /// Check if a point is inside the frustrum
-    virtual bool is_inside (const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_inside (const vector_3d &,
+                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the frustrum
-    virtual bool is_outside (const vector_3d &,
-                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    bool is_outside (const vector_3d &,
+                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
-    virtual face_identifier on_surface(const vector_3d &,
+    face_identifier on_surface(const vector_3d &,
                                        const face_identifier & a_surface_mask = face_identifier::FACE_INDEX_ANY,
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Compute the normal to the surface of the furstrum
-    virtual vector_3d get_normal_on_surface (const vector_3d & position_,
-                                             const face_identifier & ) const;
+    vector_3d get_normal_on_surface (const vector_3d & position_,
+                                             const face_identifier & ) const override;
 
     /// Find the intercept point with a face of the frustrum
-    virtual bool find_intercept(const vector_3d & from_,
+    bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
                                 face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Compute informations about the faces of this solid shape
-    virtual unsigned int compute_faces(face_info_collection_type &) const;
+    unsigned int compute_faces(face_info_collection_type &) const override;
 
     /// \brief 3D rendering options
     enum tessella_wires_rendering_option_type {
@@ -429,39 +429,39 @@ namespace geomtools {
     };
 
     /// Generate a list of polylines representing the contour of the shape (for display clients)
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
+    void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const override;
 
 
     /// Initialize from properties
-    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Initialize from STL file
     void initialize_from_stl(const std::string & filename_,
                              double length_unit_);
 
     /// Check the validity
-    bool is_valid() const;
+    bool is_valid() const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
+    void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
-                           bool a_inherit          = false) const;
+                           bool a_inherit          = false) const override;
 
   protected:
 
     /// Executed at lock stage
-    virtual void _at_lock();
+    void _at_lock() override;
 
     /// Executed at unlock stage
-    virtual void _at_unlock();
+    void _at_unlock() override;
 
     /// Build the bounding data
-    virtual void _build_bounding_data();
+    void _build_bounding_data() override;
 
     /// Compute the collection of facet segments
     void _compute_facet_segments();

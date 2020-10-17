@@ -64,7 +64,7 @@ namespace datatools {
       base_dependency_logic(variant_dependency &);
 
       /// Destructor
-      virtual ~base_dependency_logic();
+      ~base_dependency_logic() override;
 
       /// Return the global unique class identifier
       virtual const char * guid() const = 0;
@@ -100,10 +100,10 @@ namespace datatools {
       const variant_repository & get_repository() const;
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
       /// Return the const reference to the owner dependency
       const variant_dependency & get_owner_dependency() const;
@@ -144,31 +144,31 @@ namespace datatools {
       slot_logic(variant_dependency &);
 
       /// Destructor
-      virtual ~slot_logic();
+      ~slot_logic() override;
 
       /// Return the global unique class identifier
-      virtual const char * guid() const;
+      const char * guid() const override;
 
       /// Return the minimum number of input ports
-      virtual std::size_t min_ports() const;
+      std::size_t min_ports() const override;
 
       /// Return the maximum number of input ports
-      virtual std::size_t max_ports() const;
+      std::size_t max_ports() const override;
 
       /// Check validity
-      virtual bool is_valid() const;
+      bool is_valid() const override;
 
       /// Check the logic
-      virtual bool operator()() const;
+      bool operator()() const override;
 
       /// Set the slot identifier of the dependee
       void set_dependee_slot(const unsigned int dependee_slot_);
 
       /// Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
     private:
 
       unsigned int _dependee_slot_
@@ -185,16 +185,16 @@ namespace datatools {
       not_logic(variant_dependency &);
 
       /// Destructor
-      virtual ~not_logic();
+      ~not_logic() override;
 
       /// Return the global unique class identifier
-      virtual const char * guid() const;
+      const char * guid() const override;
 
       /// Return the maximum number of input ports
-      virtual std::size_t max_ports() const;
+      std::size_t max_ports() const override;
 
       /// Check the logic
-      virtual bool operator()() const;
+      bool operator()() const override;
 
     };
 
@@ -207,13 +207,13 @@ namespace datatools {
       and_logic(variant_dependency &);
 
       /// Destructor
-      virtual ~and_logic();
+      ~and_logic() override;
 
       /// Return the global unique class identifier
-      virtual const char * guid() const;
+      const char * guid() const override;
 
       /// Check the logic
-      virtual bool operator()() const;
+      bool operator()() const override;
 
     };
 
@@ -226,13 +226,13 @@ namespace datatools {
       or_logic(variant_dependency &);
 
       /// Destructor
-      virtual ~or_logic();
+      ~or_logic() override;
 
       /// Return the global unique class identifier
-      virtual const char * guid() const;
+      const char * guid() const override;
 
       /// Check the logic
-      virtual bool operator()() const;
+      bool operator()() const override;
 
     };
 
@@ -245,13 +245,13 @@ namespace datatools {
       xor_logic(variant_dependency &);
 
       /// Destructor
-      virtual ~xor_logic();
+      ~xor_logic() override;
 
       /// Return the global unique class identifier
-      virtual const char * guid() const;
+      const char * guid() const override;
 
       /// Check the logic
-      virtual bool operator()() const;
+      bool operator()() const override;
 
     };
 

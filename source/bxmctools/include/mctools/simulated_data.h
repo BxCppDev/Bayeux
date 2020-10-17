@@ -272,16 +272,16 @@ namespace mctools {
     explicit simulated_data(int collection_type_);
 
     /// Destructor
-    virtual ~simulated_data();
+    ~simulated_data() override;
 
     /// Reset the internal data
-    virtual void clear();
+    void clear() override;
 
     /// \deprecated Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
     
     //! Smart print
     //! 

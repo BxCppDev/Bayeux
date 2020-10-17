@@ -71,7 +71,7 @@ namespace mctools {
       signal_shape_builder();
 
       //! Destructor
-      ~signal_shape_builder();
+      ~signal_shape_builder() override;
 
       //! Return the logging priority
       datatools::logger::priority get_logging_priority() const;
@@ -169,10 +169,10 @@ namespace mctools {
       void build_list_of_functors(std::set<std::string> &) const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_         = std::clog,
+      void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
     private:
 

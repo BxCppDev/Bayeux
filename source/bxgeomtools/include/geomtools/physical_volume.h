@@ -109,16 +109,16 @@ namespace geomtools {
                     const i_placement    * placement_,
                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    virtual ~physical_volume();
+    ~physical_volume() override;
 
     void set_logging_priority(datatools::logger::priority);
 
     datatools::logger::priority get_logging_priority() const;
 
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
   private:
 
     void _init_defaults_();

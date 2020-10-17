@@ -32,31 +32,31 @@ namespace cuts {
             datatools::logger::PRIO_FATAL);
 
     /// Destructor
-    virtual ~not_cut();
+    ~not_cut() override;
 
     /// Initialization
-    virtual void initialize(const datatools::properties &,
+    void initialize(const datatools::properties &,
                             datatools::service_manager &,
-                            cuts::cut_handle_dict_type &);
+                            cuts::cut_handle_dict_type &) override;
 
     /// Export to a container of properties
-    virtual void export_to_config(datatools::properties & config_,
+    void export_to_config(datatools::properties & config_,
                                   uint32_t flags_ = i_cut::EXPORT_CONFIG_DEFAULT,
-                                  const std::string & prefix_ = "") const;
+                                  const std::string & prefix_ = "") const override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
   protected :
 
     /// Selection
-    virtual int _accept();
+    int _accept() override;
 
   protected:
 
-    virtual void _at_set_user_data();
+    void _at_set_user_data() override;
 
-    virtual void _at_reset_user_data();
+    void _at_reset_user_data() override;
 
   protected:
 

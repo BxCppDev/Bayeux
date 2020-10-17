@@ -59,10 +59,10 @@ namespace geomtools {
 
     /// Given a position and the type of some geometry volume, returns if
     /// position is inside and the associated geom_id
-    virtual bool find_geom_id (const vector_3d & position_,
+    bool find_geom_id (const vector_3d & position_,
                                int type_,
                                geom_id & gid_,
-                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
   };
 
@@ -104,10 +104,10 @@ namespace geomtools {
 
     /// Given a position and the type of some geometry volume, returns if
     /// position is inside and the associated geom_id
-    virtual bool find_geom_id (const vector_3d & position_,
+    bool find_geom_id (const vector_3d & position_,
                                int type_,
                                geom_id & gid_,
-                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
+                               double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override = 0;
 
   protected:
 

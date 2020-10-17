@@ -106,7 +106,7 @@ namespace geomtools {
     const std::string & get_envelope_shape() const;
 
     //
-    virtual const geomtools::box & get_box () const;
+    const geomtools::box & get_box () const override;
 
     const geomtools::box & get_solid () const;
 
@@ -130,26 +130,26 @@ namespace geomtools {
 
     const stacked_dict_type & get_models () const;
 
-    virtual std::string get_model_id () const;
+    std::string get_model_id () const override;
 
     /// Default constructor
     stacked_model ();
 
     /// Destructor
-    virtual ~stacked_model ();
+    ~stacked_model () override;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_          = false) const override;
 
   protected:
 
     /// Construction
-    virtual void _at_construct (const std::string & name_,
+    void _at_construct (const std::string & name_,
                                 const datatools::properties & config_,
-                                models_col_type * models_ = 0);
+                                models_col_type * models_ = 0) override;
 
   private:
 

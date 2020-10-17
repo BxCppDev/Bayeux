@@ -26,7 +26,7 @@ namespace datatools {
     computing_time();
 
     /// Destructor
-    virtual ~computing_time();
+    ~computing_time() override;
 
     bool is_stopped() const;
 
@@ -60,10 +60,10 @@ namespace datatools {
 
     void reset();
 
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
          const std::string & title_ = "",
          const std::string & indent_ = "",
-         bool inherit_ = false) const;
+         bool inherit_ = false) const override;
 
     static bool g_timeval_subtract(const timeval & stop_,
            const timeval & start_,

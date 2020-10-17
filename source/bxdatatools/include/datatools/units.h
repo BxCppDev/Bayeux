@@ -396,7 +396,7 @@ namespace datatools {
            bool SI_main_ = false);
 
       //! Destructor
-      virtual ~unit();
+      ~unit() override;
 
       //! Check validity
       bool is_valid() const;
@@ -480,10 +480,10 @@ namespace datatools {
       // std::ostream & operator()(std::ostream & out_, double x_) const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     protected:
 
@@ -544,7 +544,7 @@ namespace datatools {
                      const std::string & default_unit_symbol_);
 
       //! Destructor
-      virtual ~unit_dimension();
+      ~unit_dimension() override;
 
       //! Check validity
       bool is_valid() const;
@@ -602,10 +602,10 @@ namespace datatools {
       bool match_dimensional_powers(const unit_dimension & ud_) const;
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     protected:
 
@@ -645,7 +645,7 @@ namespace datatools {
       registry(uint32_t flags_ = 0);
 
       //! Destructor
-      ~registry();
+      ~registry() override;
 
       //! Registration of an unit
       void registration(const unit & unit_, bool default_in_dimension_ = false);
@@ -697,10 +697,10 @@ namespace datatools {
       void register_standard_units();
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const;
+                             bool inherit_ = false) const override;
 
     protected:
 

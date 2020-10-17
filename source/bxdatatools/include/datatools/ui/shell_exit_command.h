@@ -35,9 +35,9 @@ namespace datatools {
       : public target_command<basic_shell>
     {
       shell_exit_command(basic_shell &);
-      virtual ~shell_exit_command();
+      ~shell_exit_command() override;
     protected:
-      virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);
+      void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0) override;
     };
 
   } // namespace ui

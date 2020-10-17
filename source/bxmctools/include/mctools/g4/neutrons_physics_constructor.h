@@ -33,26 +33,26 @@ namespace mctools {
       neutrons_physics_constructor();
 
       /// Destructor
-      virtual ~neutrons_physics_constructor();
+      ~neutrons_physics_constructor() override;
 
       /// Initialization
-      virtual void initialize(const datatools::properties & config_,
-                              physics_constructor_dict_type & dict_);
+      void initialize(const datatools::properties & config_,
+                              physics_constructor_dict_type & dict_) override;
 
       /// Reset
-      virtual void reset();
+      void reset() override;
 
       /// Smart print
-      virtual void tree_dump(std::ostream      & out_    = std::clog,
+      void tree_dump(std::ostream      & out_    = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_               = false) const;
+                             bool inherit_               = false) const override;
 
       /// Particles construction (Geant4 interface)
-      virtual void ConstructParticle();
+      void ConstructParticle() override;
 
       /// Processes construction (Geant4 interface)
-      virtual void ConstructProcess();
+      void ConstructProcess() override;
 
       /// OCD support
       static void init_ocd(datatools::object_configuration_description &);

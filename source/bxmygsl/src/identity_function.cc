@@ -8,8 +8,6 @@ namespace mygsl {
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(identity_function,
                                              "mygsl::identity_function")
 
-  DATATOOLS_CLONEABLE_IMPLEMENTATION(identity_function)
-
   identity_function::identity_function()
   {
     return;

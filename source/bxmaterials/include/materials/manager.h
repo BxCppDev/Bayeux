@@ -59,7 +59,7 @@ namespace materials {
     manager();
 
     /// Destructor
-    virtual ~manager();
+    ~manager() override;
 
     /// Check initialization flag
     bool is_initialized() const;
@@ -137,10 +137,10 @@ namespace materials {
     void unlock();
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_    = std::clog,
+    void tree_dump(std::ostream & out_    = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
 
     /// Set logging priority
     void set_logging_priority(datatools::logger::priority);

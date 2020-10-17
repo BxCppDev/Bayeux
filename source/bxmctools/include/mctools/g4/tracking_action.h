@@ -43,16 +43,16 @@ namespace mctools {
       tracking_action();
 
       /// Destructor
-      virtual ~tracking_action();
+      ~tracking_action() override;
 
       /// Initialize from properties
       void initialize(const datatools::properties & config_);
 
       /// Pre-tracking action for the Geant4 interface
-      virtual void PreUserTrackingAction(const G4Track*);
+      void PreUserTrackingAction(const G4Track*) override;
 
       /// Post-tracking action for the Geant4 interface
-      virtual void PostUserTrackingAction(const G4Track*);
+      void PostUserTrackingAction(const G4Track*) override;
 
     };
 

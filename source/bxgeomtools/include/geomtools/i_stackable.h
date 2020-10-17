@@ -168,7 +168,7 @@ namespace geomtools {
     stackable_data();
 
     /// Destructor
-    virtual ~stackable_data();
+    ~stackable_data() override;
 
     bool check(const stackable::stackability_mode flags_ = stackable::STACKABILITY_STRONG) const;
 
@@ -197,28 +197,28 @@ namespace geomtools {
     void invalidate();
 
     /// Return the minimum X
-    virtual double get_xmin() const;
+    double get_xmin() const override;
 
     /// Return the maximum X
-    virtual double get_xmax() const;
+    double get_xmax() const override;
 
     /// Return the minimum Y
-    virtual double get_ymin() const;
+    double get_ymin() const override;
 
     /// Return the maximum Y
-    virtual double get_ymax() const;
+    double get_ymax() const override;
 
     /// Return the minimum Z
-    virtual double get_zmin() const;
+    double get_zmin() const override;
 
     /// Return the maximum Z
-    virtual double get_zmax() const;
+    double get_zmax() const override;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_          = false) const override;
 
     /// Print
     void dump(std::ostream & out_ = std::clog) const;

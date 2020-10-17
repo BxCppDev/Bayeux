@@ -114,7 +114,7 @@ namespace cuts {
     cut_manager(uint32_t the_flags = BLANK);
 
     /// Destructor
-    virtual ~cut_manager();
+    ~cut_manager() override;
 
     /// Check availability of the service manager
     bool has_service_manager() const;
@@ -132,10 +132,10 @@ namespace cuts {
     void install_service_manager(const datatools::properties & a_service_manager_configuration);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & a_out         = std::clog,
+    void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
-                           bool a_inherit          = false) const;
+                           bool a_inherit          = false) const override;
 
     /// Print report
     void print_report(std::ostream & a_out = std::clog) const;

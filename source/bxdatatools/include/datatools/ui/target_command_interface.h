@@ -70,7 +70,7 @@ namespace datatools {
       }
 
       //! Destructor
-      virtual ~target_command_interface()
+      ~target_command_interface() override
       {
         return;
       }
@@ -103,10 +103,10 @@ namespace datatools {
       }
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const
+                             bool inherit_ = false) const override
       {
         this->base_command_interface::tree_dump(out_, title_, indent_, true);
 
@@ -179,7 +179,7 @@ namespace datatools {
       }
 
       //! Destructor
-      virtual ~const_target_command_interface()
+      ~const_target_command_interface() override
       {
         return;
       }
@@ -206,10 +206,10 @@ namespace datatools {
       }
 
       //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
+      void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
-                             bool inherit_ = false) const
+                             bool inherit_ = false) const override
       {
         this->base_command_interface::tree_dump(out_, title_, indent_, true);
 

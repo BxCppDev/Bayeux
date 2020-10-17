@@ -86,7 +86,7 @@ namespace mctools {
     base_step_hit_processor();
 
     /// Destructor
-    virtual ~base_step_hit_processor();
+    ~base_step_hit_processor() override;
 
     const std::string & get_hit_category() const;
 
@@ -138,10 +138,10 @@ namespace mctools {
                          simulated_data::hit_collection_type & plain_hits_);
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     /// Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
@@ -207,19 +207,19 @@ namespace mctools {
     push_all_step_hit_processor();
 
     /// Destructor
-    virtual ~push_all_step_hit_processor();
+    ~push_all_step_hit_processor() override;
 
     /// Main setup routine
-    virtual void initialize(const ::datatools::properties & config_,
-                            ::datatools::service_manager & service_mgr_);
+    void initialize(const ::datatools::properties & config_,
+                            ::datatools::service_manager & service_mgr_) override;
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
-                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_);
+    void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_) override;
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
-                         ::mctools::simulated_data::hit_collection_type & plain_hits_);
+    void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_collection_type & plain_hits_) override;
 
     void set_visu_highlighted_hits(bool);
 
@@ -254,19 +254,19 @@ namespace mctools {
     kill_all_step_hit_processor();
 
     /// Destructor
-    virtual ~kill_all_step_hit_processor();
+    ~kill_all_step_hit_processor() override;
 
     /// Main setup routine
-    virtual void initialize(const ::datatools::properties & config_,
-                            ::datatools::service_manager & service_mgr_);
+    void initialize(const ::datatools::properties & config_,
+                            ::datatools::service_manager & service_mgr_) override;
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
-                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_);
+    void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_handle_collection_type & handle_hits_) override;
 
     /// Main processing routine :
-    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
-                         ::mctools::simulated_data::hit_collection_type & plain_hits_);
+    void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & base_step_hits_,
+                         ::mctools::simulated_data::hit_collection_type & plain_hits_) override;
 
     // Registration macro :
     MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(kill_all_step_hit_processor)

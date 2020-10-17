@@ -106,7 +106,7 @@ namespace dpp {
     module_entry_type();
 
     /// Destructor
-    virtual ~module_entry_type();
+    ~module_entry_type() override;
 
     /// Check is the module is referenced in the embedded handle
     bool has_module() const;
@@ -121,10 +121,10 @@ namespace dpp {
 
     module_handle_type & grab_initialized_module_handle();
 
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+                            bool inherit_               = false) const override;
 
   private:
 

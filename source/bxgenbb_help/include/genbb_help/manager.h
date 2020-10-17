@@ -88,7 +88,7 @@ namespace genbb {
     manager(datatools::logger::priority p_ = datatools::logger::PRIO_WARNING, int flags_ = 0);
 
     /// Destructor
-    ~manager();
+    ~manager() override;
 
     /// Check the debug flag
     bool is_debug() const;
@@ -208,10 +208,10 @@ namespace genbb {
                                    const std::string & mode_ = "") const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream & out_         = std::clog,
+    void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_               = false) const;
+                           bool inherit_               = false) const override;
 
     const datatools::factory_register<i_genbb> & get_factory_register() const;
 

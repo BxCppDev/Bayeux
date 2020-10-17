@@ -841,7 +841,7 @@ namespace datatools {
     explicit properties(const std::string & desc_);
 
     /// Destructor
-    virtual ~properties() = default;
+    ~properties() override = default;
 
     /// Copy constructor
     properties(const properties &) = default;
@@ -1083,7 +1083,7 @@ namespace datatools {
     void clean(const std::string & prop_key_);
 
     //! Reset method (from the datatools::i_clear interface).
-    virtual void clear();
+    void clear() override;
 
     //! Reset method
     void reset();
@@ -1429,10 +1429,10 @@ namespace datatools {
     void dump(std::ostream & out_ = std::clog) const;
 
     //! \deprecated Smart print
-    virtual void tree_dump(std::ostream & out_ = std::clog,
+    void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_ = false) const;
+                           bool inherit_ = false) const override;
 
     /// Smart print
     void print_tree(std::ostream & out_ = std::clog,

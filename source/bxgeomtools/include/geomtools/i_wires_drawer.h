@@ -94,7 +94,7 @@ namespace geomtools {
     }
 
     //! Destructor
-    virtual ~i_wires_drawer()
+    ~i_wires_drawer() override
     {
       return;
     }

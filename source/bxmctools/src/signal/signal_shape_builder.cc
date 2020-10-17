@@ -224,14 +224,14 @@ namespace mctools {
     void signal_shape_builder::_update_all_functors_()
     {
       _all_functors_.clear();
-      for (const auto rfpair : _reference_functors_) {
+      for (const auto& rfpair : _reference_functors_) {
         std::string key;
         std::ostringstream key_oss;
         key_oss << reference_functor_prefix() << rfpair.first;
         key = key_oss.str();
         _all_functors_[key] = rfpair.second;
       }
-      for (const auto fpair : _functors_) {
+      for (const auto& fpair : _functors_) {
         _all_functors_[fpair.first] = fpair.second;
       }
       return;

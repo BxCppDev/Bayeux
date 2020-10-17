@@ -59,28 +59,28 @@ namespace dpp {
   {
   public:
 
-    virtual bool is_random() const;
+    bool is_random() const override;
 
-    virtual void open();
+    void open() override;
 
-    virtual bool has_next_record();
+    bool has_next_record() override;
 
-    virtual bool load_next_record(datatools::things & event_record_);
+    bool load_next_record(datatools::things & event_record_) override;
 
-    virtual int64_t get_number_of_metadata() const;
+    int64_t get_number_of_metadata() const override;
 
-    virtual bool load_metadata(datatools::properties & metadata_, int64_t entry_);
+    bool load_metadata(datatools::properties & metadata_, int64_t entry_) override;
 
-    virtual void close();
+    void close() override;
 
-    virtual void reset();
+    void reset() override;
 
     simple_brio_data_source(datatools::logger::priority priority = datatools::logger::PRIO_NOTICE);
 
     simple_brio_data_source(const std::string & source_label_,
                             datatools::logger::priority priority_ = datatools::logger::PRIO_NOTICE);
 
-    virtual ~simple_brio_data_source();
+    ~simple_brio_data_source() override;
 
   protected:
 
@@ -88,11 +88,11 @@ namespace dpp {
 
     virtual void _close_file_source();
 
-    virtual void _check_next_record();
+    void _check_next_record() override;
 
-    virtual int64_t _get_number_of_entries() const;
+    int64_t _get_number_of_entries() const override;
 
-    virtual bool _load_record(datatools::things & event_record_, int64_t entry_);
+    bool _load_record(datatools::things & event_record_, int64_t entry_) override;
 
   private:
 

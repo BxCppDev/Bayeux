@@ -58,27 +58,27 @@ namespace genbb {
     nuclear_decay_generator();
 
     /// Destructor
-    virtual ~nuclear_decay_generator();
+    ~nuclear_decay_generator() override;
 
     /// Main initialization interface method
-    virtual void initialize(const datatools::properties & setup_,
+    void initialize(const datatools::properties & setup_,
                             datatools::service_manager & service_manager_,
-                            detail::pg_dict_type & dictionary_);
+                            detail::pg_dict_type & dictionary_) override;
 
     /// Reset
-    virtual void reset();
+    void reset() override;
 
     /// Check if the generator has a next event
-    virtual bool has_next();
+    bool has_next() override;
 
     /// Check initialization status
-    virtual bool is_initialized() const;
+    bool is_initialized() const override;
 
     /// Return the Local PRNG's seed
     unsigned long get_seed() const;
 
     /// Accept external PRNG
-    virtual bool can_external_random() const;
+    bool can_external_random() const override;
 
     /// Return the active PRNG
     const mygsl::rng & get_random() const;
@@ -89,7 +89,7 @@ namespace genbb {
   protected:
 
     /// Generate the next event:
-    virtual void _load_next(primary_event & event_, bool compute_classification_);
+    void _load_next(primary_event & event_, bool compute_classification_) override;
 
   private:
 
