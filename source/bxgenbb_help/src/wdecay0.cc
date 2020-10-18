@@ -75,6 +75,8 @@ namespace genbb {
       return;
     }
 
+    ~gsl_random() override = default;
+
     /// Main operator
     double operator()() override
     {
@@ -206,7 +208,6 @@ namespace genbb {
     _reset_();
     return;
   }
-
 
   void wdecay0::initialize(const datatools::properties & config_,
                            datatools::service_manager & /*service_manager_*/,
