@@ -120,6 +120,7 @@ namespace mctools {
 
     // *** em_physics_constructor::region_deexcitation_type *** //
 
+    
     em_physics_constructor::region_deexcitation_type::region_deexcitation_type()
     {
       fluorescence = false;

@@ -164,12 +164,9 @@ namespace mctools {
     }
 
     manager::~manager() {
-      // std::cerr << "DEVEL: mctools::g4::manager::DTOR: Entering..." << std::endl;
       if (_initialized_) {
-        // std::cerr << "DEVEL: mctools::g4::manager::DTOR: Reset..." << std::endl;
         reset();
       }
-      // std::cerr << "DEVEL: mctools::g4::manager::DTOR: Exiting." << std::endl;
     }
 
     void manager::initialize(const datatools::multi_properties & multi_config_) {
@@ -180,12 +177,10 @@ namespace mctools {
     }
 
     void manager::reset() {
-      // std::cerr << "DEVEL: mctools::g4::manager::reset: Entering..." << std::endl;
       DT_THROW_IF(!_initialized_, std::logic_error, "Manager is not initialized !");
       _initialized_ = false;
       this->reset_impl();
       _init_defaults();
-      // std::cerr << "DEVEL: mctools::g4::manager::reset: Exiting." << std::endl;
     }
 
     void manager::run_simulation() {
@@ -450,7 +445,6 @@ namespace mctools {
       return _dont_save_no_sensitive_hit_events_;
     }
 
-
     //----------------------------------------------------------------------
     // Multithreaded Control
     //----------------------------------------------------------------------
@@ -551,9 +545,6 @@ namespace mctools {
       if (is_debug()) _prng_state_manager_.dump(std::clog);
       _prng_state_manager_.store();
     }
-
-
-
 
     void manager::set_prng_state_save_modulo(int a_modulo) {
       if (a_modulo < 1) {
@@ -808,7 +799,6 @@ namespace mctools {
       return _activated_output_profile_ids_;
     }
 
-
     //----------------------------------------------------------------------
     // Dump-To-Stream
     //----------------------------------------------------------------------
@@ -887,8 +877,6 @@ namespace mctools {
       }
       os << indent << "`-- end" << std::endl;
     }
-
-
 
     //----------------------------------------------------------------------
     // Private implementation details
@@ -1126,7 +1114,6 @@ namespace mctools {
         this->record_current_prng_states();
       }
     } // end of manager::_at_run_simulation()
-
 
     void manager::_init_defaults() {
       // Pointers:

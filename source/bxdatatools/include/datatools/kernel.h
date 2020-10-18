@@ -124,28 +124,28 @@ namespace datatools {
     /// \brief Bit mask for the kernel initialization flags
     static const uint32_t init_mask = datatools::bit_mask::nbits15;
 
-    /// \brief Kernel initialization flags (15 bits)
-    enum init_flags
-      {
-       // Import value from datatools_init_flags:
-       init_no_help             = ::datatools::init_no_help,
-       init_no_splash           = ::datatools::init_no_splash,
-       init_no_locale_category  = ::datatools::init_no_locale_category,
-       init_no_logging          = ::datatools::init_no_logging,
-       init_no_inhibit_libquery = ::datatools::init_no_inhibit_libquery,
-       init_no_libquery_logging = ::datatools::init_no_libquery_logging,
-       init_no_inhibit_libinfo  = ::datatools::init_no_inhibit_libinfo, //!< Deprecated
-       init_no_libinfo_logging  = ::datatools::init_no_libinfo_logging, //!< Deprecated
-       init_no_resource_path    = ::datatools::init_no_resource_path,
-       init_no_inhibit_variant  = ::datatools::init_no_inhibit_variant,
-       init_no_variant          = ::datatools::init_no_variant,
-       init_no_inhibit_qt_gui   = ::datatools::init_no_inhibit_qt_gui,
-       init_no_inhibit_urnquery = ::datatools::init_no_inhibit_urnquery,
-       init_reserved_11         = ::datatools::init_reserved_11,
-       init_reserved_12         = ::datatools::init_reserved_12,
-       init_reserved_13         = ::datatools::init_reserved_13,
-       init_reserved_14         = ::datatools::init_reserved_14,
-      };
+    // /// \brief Kernel initialization flags (15 bits)
+    // enum init_flags
+    //   {
+    //    // Import value from datatools_init_flags:
+    //    init_no_help             = ::datatools::init_no_help,
+    //    init_no_splash           = ::datatools::init_no_splash,
+    //    init_no_locale_category  = ::datatools::init_no_locale_category,
+    //    init_no_logging          = ::datatools::init_no_logging,
+    //    init_no_inhibit_libquery = ::datatools::init_no_inhibit_libquery,
+    //    init_no_libquery_logging = ::datatools::init_no_libquery_logging,
+    //    init_no_inhibit_libinfo  = ::datatools::init_no_inhibit_libinfo, //!< Deprecated
+    //    init_no_libinfo_logging  = ::datatools::init_no_libinfo_logging, //!< Deprecated
+    //    init_no_resource_path    = ::datatools::init_no_resource_path,
+    //    init_no_inhibit_variant  = ::datatools::init_no_inhibit_variant,
+    //    init_no_variant          = ::datatools::init_no_variant,
+    //    init_no_inhibit_qt_gui   = ::datatools::init_no_inhibit_qt_gui,
+    //    init_no_inhibit_urnquery = ::datatools::init_no_inhibit_urnquery,
+    //    init_reserved_11         = ::datatools::init_reserved_11,
+    //    init_reserved_12         = ::datatools::init_reserved_12,
+    //    init_reserved_13         = ::datatools::init_reserved_13,
+    //    init_reserved_14         = ::datatools::init_reserved_14,
+    //   };
     
     /// Default constructor
     kernel();

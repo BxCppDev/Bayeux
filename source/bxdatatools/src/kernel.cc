@@ -223,18 +223,18 @@ namespace datatools {
 #endif
 
     // Inhibition of the parsing for specific options:
-    if (flags_ & init_no_help)             parse_help             = false;
-    if (flags_ & init_no_splash)           parse_splash           = false;
-    if (flags_ & init_no_logging)          parse_logging          = false;
-    if (flags_ & init_no_locale_category)  parse_locale_category  = false;
-    if (flags_ & init_no_inhibit_libquery) parse_inhibit_libquery = false;
-    if (flags_ & init_no_libquery_logging) parse_libquery_logging = false;
-    if (flags_ & init_no_resource_path)    parse_resource_path    = false;
-    if (flags_ & init_no_inhibit_variant)  parse_inhibit_variant  = false;
-    if (flags_ & init_no_variant)          parse_variant          = false;
-    if (flags_ & init_no_inhibit_urnquery) parse_inhibit_urnquery = false;
+    if (flags_ & ::datatools::init_no_help)             parse_help             = false;
+    if (flags_ & ::datatools::init_no_splash)           parse_splash           = false;
+    if (flags_ & ::datatools::init_no_logging)          parse_logging          = false;
+    if (flags_ & ::datatools::init_no_locale_category)  parse_locale_category  = false;
+    if (flags_ & ::datatools::init_no_inhibit_libquery) parse_inhibit_libquery = false;
+    if (flags_ & ::datatools::init_no_libquery_logging) parse_libquery_logging = false;
+    if (flags_ & ::datatools::init_no_resource_path)    parse_resource_path    = false;
+    if (flags_ & ::datatools::init_no_inhibit_variant)  parse_inhibit_variant  = false;
+    if (flags_ & ::datatools::init_no_variant)          parse_variant          = false;
+    if (flags_ & ::datatools::init_no_inhibit_urnquery) parse_inhibit_urnquery = false;
 #if DATATOOLS_WITH_QT_GUI == 1
-    if (flags_ & init_no_inhibit_qt_gui) parse_inhibit_qt_gui = false;
+    if (flags_ & ::datatools::init_no_inhibit_qt_gui) parse_inhibit_qt_gui = false;
 #endif
 
     // Logging:
