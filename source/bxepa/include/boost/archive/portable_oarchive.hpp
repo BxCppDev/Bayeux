@@ -284,7 +284,15 @@ namespace boost { namespace archive {
                                 // examine the number of bytes
                                 // needed to represent the number
                                 signed char size = 0;
+// Attempt to mute some Clang warnings 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshift-count-overflow"
+#endif
                                 do { temp >>= CHAR_BIT; ++size; } while (temp != 0 && temp != (T)-1);
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
                                 // encode the sign bit into the size
                                 save_signed_char(t > 0 ? size : -size);
