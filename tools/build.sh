@@ -2,6 +2,9 @@
 
 # A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04) or CentOS (7.5/7.7/7.8).
 
+# bayeux_build_env
+# 
+
 opwd=$(pwd)
 
 function my_exit()
@@ -54,10 +57,16 @@ Options:
    --bayeux-suffix name    : Set a special suffix for the build directory (default: branch name)
    --gcc-version version   : Set GCC version
 
+Example:
+
+    $ ./tools/build.sh \
+       --build-base-dir /scratch/BxWork/Bayeux \
+       --install-base-dir /scratch/BxInstall/Bayeux \
+       --dry-run  
+
 EOF
     return
 }
-
 
 nprocs=4
 dry_run=False
