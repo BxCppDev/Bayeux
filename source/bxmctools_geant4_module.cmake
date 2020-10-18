@@ -7,8 +7,6 @@
 # they #include other headers, so these also need to be present...
 #
 if(Bayeux_WITH_GEANT4_MODULE)
-   include(${Geant4_USE_FILE})
-  
   set(${module_name}_GEANT4_HEADERS
     ${module_include_dir}/${module_name}/g4/manager_parameters.h
     ${module_include_dir}/${module_name}/g4/manager.h
@@ -124,20 +122,29 @@ if(Bayeux_WITH_GEANT4_MODULE)
      $<BUILD_INTERFACE:${module_include_dir}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
-     ${Geant4_INCLUDE_DIRS}
      $<TARGET_PROPERTY:Bayeux,INTERFACE_INCLUDE_DIRECTORIES>
      )
+  target_include_directories(Bayeux_mctools_geant4
+    SYSTEM PUBLIC ${Geant4_INCLUDE_DIRS}
+    )
+  # Apply compile defs and options
   # Hack - strip "-D" flag as we should only supply the def names
+  #      - Turn space separated flags into list
   set(Bayeux_Geant4_DEFINITIONS)
   foreach(_def ${Geant4_DEFINITIONS})
     string(REGEX REPLACE "^-D" "" _bxdef ${_def})
     list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxdef})
   endforeach()
-  # message (STATUS  "Bayeux_Geant4_DEFINITIONS='${Bayeux_Geant4_DEFINITIONS}'")
 
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
+
+  string(REPLACE " " ";" Geant4_CXX_FLAGS "${Geant4_CXX_FLAGS}")
+  target_compile_options(Bayeux_mctools_geant4
+    PRIVATE ${Geant4_CXX_FLAGS}
+    )
+
   message(STATUS "Geant4_LIBRARIES='${Geant4_LIBRARIES}'")
   message(STATUS "Geant4_LIBRARY_DIR='${Geant4_LIBRARY_DIR}'")
   target_link_libraries(Bayeux_mctools_geant4
