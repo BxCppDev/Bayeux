@@ -1,4 +1,4 @@
-/// \file geomtools/logical_volume_selector_.h
+/// \file geomtools/logical_volume_selector.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2020-07-18
  * Last modified: 2020-07-18
