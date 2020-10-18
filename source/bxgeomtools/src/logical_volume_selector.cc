@@ -196,7 +196,6 @@ namespace geomtools {
       if (!add_lv) {
         const geomtools::logical_volume & log = *(ilogical->second);
         bool checked_material = false;
-        std::string mat_name;
         for (const std::string & mat_name : _lv_materials_) {
           if (log.get_material_ref() == mat_name) {
             checked_material = true;
@@ -242,7 +241,6 @@ namespace geomtools {
       if (add_lv) {
         const geomtools::logical_volume & log = *(ilogical->second);
         bool checked_material = false;
-        std::string mat_name;
         for (const std::string & mat_name : _lv_materials_excluded_) {
           if (log.get_material_ref() == mat_name) {
             checked_material = true;
