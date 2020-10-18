@@ -352,7 +352,7 @@ Core Libraries Required
 
   * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5)
 
-* BxDecay0 1.0.2 (optional, see below) : https://github.com/BxCppDev/bxdecay0
+* BxDecay0 1.0.6 (optional, see below) : https://github.com/BxCppDev/bxdecay0
 
   You must install BxDecay0 by yourself. 
 
