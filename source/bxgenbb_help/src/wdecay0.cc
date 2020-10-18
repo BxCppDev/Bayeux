@@ -75,7 +75,7 @@ namespace genbb {
       return;
     }
 
-    ~gsl_random() override = default;
+    ~gsl_random() override {};
 
     /// Main operator
     double operator()() override
