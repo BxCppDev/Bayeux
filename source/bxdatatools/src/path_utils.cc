@@ -88,8 +88,6 @@ namespace {
 
     void set_use_kernel_urn_query(bool);
 
-    bool use_kernel_urn_query() const;
-
   private:
     void process_impl(std::string &);
     bool _trace_; //!< Activation of trace logging message
@@ -153,11 +151,6 @@ namespace {
   {
     _use_kernel_urn_query_ = u_;
     return;
-  }
-
-  bool fetch_path_processor::use_kernel_urn_query() const
-  {
-    return _use_kernel_urn_query_;
   }
 
   bool fetch_path_processor::process(std::string & path) {
