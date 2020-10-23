@@ -86,8 +86,6 @@ namespace {
 
     bool use_kernel_libinfo() const;
 
-    void set_use_kernel_urn_query(bool);
-
   private:
     void process_impl(std::string &);
     bool _trace_; //!< Activation of trace logging message
@@ -145,12 +143,6 @@ namespace {
   bool fetch_path_processor::use_kernel_libinfo() const
   {
     return _use_kernel_libinfo_;
-  }
-
-  void fetch_path_processor::set_use_kernel_urn_query(bool u_)
-  {
-    _use_kernel_urn_query_ = u_;
-    return;
   }
 
   bool fetch_path_processor::process(std::string & path) {
