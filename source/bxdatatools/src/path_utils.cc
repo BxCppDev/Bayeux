@@ -82,10 +82,6 @@ namespace {
 
     bool use_global_path() const;
 
-    void set_use_kernel_libinfo(bool);
-
-    bool use_kernel_libinfo() const;
-
   private:
     void process_impl(std::string &);
     bool _trace_; //!< Activation of trace logging message
@@ -132,17 +128,6 @@ namespace {
   bool fetch_path_processor::use_global_path() const
   {
     return _use_global_path_;
-  }
-
-  void fetch_path_processor::set_use_kernel_libinfo(bool ukl_)
-  {
-    _use_kernel_libinfo_ = ukl_;
-    return;
-  }
-
-  bool fetch_path_processor::use_kernel_libinfo() const
-  {
-    return _use_kernel_libinfo_;
   }
 
   bool fetch_path_processor::process(std::string & path) {
