@@ -22,6 +22,9 @@
 // Ourselves
 #include <datatools/configuration/ascii_io.h>
 
+// Standard Library:
+#include <deque>
+
 // Third party
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
