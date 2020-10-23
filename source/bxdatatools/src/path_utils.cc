@@ -71,9 +71,6 @@ namespace {
                          bool use_kernel_libinfo_ = true,
                          bool use_kernel_urn_query_ = true);
 
-    explicit fetch_path_processor(uint32_t use_mode,
-                                  const std::string & parent_path_ = "");
-
     bool process(std::string&);
 
     bool process(std::string& path_, std::string & error_msg_);
@@ -91,19 +88,6 @@ namespace {
     bool _use_kernel_urn_query_; //!< Accept URN path resolution
     std::string _parent_path_;
   };
-
-  fetch_path_processor::fetch_path_processor(uint32_t use_mode_,
-                                             const std::string & parent_path_)
-      // Use () initialization to allow implicit int -> bool
-      : _trace_(use_mode_ & USE_TRACE),
-        _use_global_path_(use_mode_ & USE_GLOBAL_PATH),
-        _use_env_(use_mode_ & USE_ENVIRON),
-        _use_kernel_libinfo_(use_mode_ & USE_KERNEL_LIBINFO),
-        _use_kernel_urn_query_(use_mode_ & USE_KERNEL_URN_QUERY),
-        _parent_path_{parent_path_}
-  {
-    return;
-  }
 
   fetch_path_processor::fetch_path_processor(const std::string & parent_path_,
                                              bool use_global_path_,
