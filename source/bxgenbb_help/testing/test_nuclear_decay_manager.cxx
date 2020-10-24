@@ -69,7 +69,7 @@ void test1(bool draw_)
   std::string filename = "${GENBB_HELP_TESTING_DIR}/config/test_nuclear_decay_manager_0.conf";
   datatools::fetch_path_with_env(filename);
   datatools::properties NDMconfig;
-  datatools::properties::read_config(filename, NDMconfig);
+  datatools::read_config(filename, NDMconfig);
   NDMconfig.tree_dump(std::clog, "Nuclear decay manager configuration: ");
 
   genbb::nuclear_decay_manager NDM;

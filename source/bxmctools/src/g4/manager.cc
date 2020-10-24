@@ -1373,7 +1373,7 @@ namespace mctools {
         std::string geom_mgr_prop_filename = geometry_config.fetch_string("manager.config");
         datatools::fetch_path_with_env(geom_mgr_prop_filename);
         datatools::properties geom_mgr_config;
-        datatools::properties::read_config(geom_mgr_prop_filename, geom_mgr_config);
+        datatools::read_config(geom_mgr_prop_filename, geom_mgr_config);
         _geom_manager_.set_mapping_requested(true);
         if (_use_time_stat_) {
           _CTs_["GB"].start();
@@ -1403,7 +1403,7 @@ namespace mctools {
             = vertex_generator_config.fetch_string("manager.config");
           datatools::fetch_path_with_env(vtx_gtor_prop_filename);
           datatools::properties vtx_gtor_config;
-          datatools::properties::read_config(vtx_gtor_prop_filename,
+          datatools::read_config(vtx_gtor_prop_filename,
                                              vtx_gtor_config);
           _vg_manager_.initialize(vtx_gtor_config);
         } else {
@@ -1452,7 +1452,7 @@ namespace mctools {
           = primary_generator_config.fetch_string("manager.config");
         datatools::fetch_path_with_env(event_gtor_prop_filename);
         datatools::properties event_gtor_config;
-        datatools::properties::read_config(event_gtor_prop_filename,
+        datatools::read_config(event_gtor_prop_filename,
                                            event_gtor_config);
         _eg_manager_.initialize(event_gtor_config);
       } else {

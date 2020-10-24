@@ -267,7 +267,7 @@ int ocd_driver::_run_validate(const std::string & class_id_,
       error_code = EXIT_FAILURE;
     } else {
       datatools::properties setup;
-      datatools::properties::read_config(setup_path, setup);
+      datatools::read_config(setup_path, setup);
       const datatools::object_configuration_description & OCD
         = datatools::detail::ocd::ocd_registration::get_system_registration().get(class_id_);
       if (! OCD.has_validation_support()) {

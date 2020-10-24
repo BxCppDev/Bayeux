@@ -238,7 +238,7 @@ namespace geomtools {
   void model_factory::load(const std::string & mprop_file_)
   {
     DT_THROW_IF(_locked_, std::logic_error, "Model factory is locked !");
-    datatools::multi_properties::read_config(mprop_file_, _mp_);
+    datatools::read_config(mprop_file_, _mp_);
     if (is_trace()) {
       DT_LOG_TRACE(_logging_priority_, "Model factory multi-configuration: ");
       _mp_.tree_dump(std::clog, "", "[trace]: ");

@@ -619,7 +619,7 @@ int main (int argc_, char ** argv_)
 
       // load properties from the configuration file:
       datatools::properties gmanager_config;
-      datatools::properties::read_config (gmanager_config_file,
+      datatools::read_config (gmanager_config_file,
                                                  gmanager_config);
 
       //SuperNEMO geometry manager:

@@ -55,6 +55,8 @@
 #include <datatools/bit_mask.h>
 #include <datatools/exception.h>
 
+#include <datatools/make_configuration.h>
+
 namespace datatools {
 
   //! \brief A dictionary of arbitrary properties.
@@ -1028,22 +1030,9 @@ namespace datatools {
     void export_to_string_based_dictionary(std::map<std::string, std::string> & dict_,
                                            bool quoted_strings_ = true) const;
 
-    //! Store the properties' container object in an ASCII text file
-    static void write_config(const std::string & filename_,
-                             const properties & props_,
-                             uint32_t options_ = 0);
-
-    //! Load the properties' container object from an ASCII text file
-    //!
-    //! \see The datatools::properties::config::read method for file format
-    static void read_config(const std::string & filename_,
-                            properties & props_,
-                            uint32_t options_ = 0);
-
     //! Build a new property key from a prefix and a key
     static std::string build_property_key(const std::string & prefix_,
                                           const std::string & subkey_);
-
 
   private:
     /// Return reference to element at key, throwing if not present

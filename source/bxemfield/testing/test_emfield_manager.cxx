@@ -95,7 +95,7 @@ int main (int argc_, char ** argv_)
       if (debug) clog << datatools::io::debug << "Setup file = "
                       << SRVCmgrConfigFile << endl;
       datatools::fetch_path_with_env(SRVCmgrConfigFile);
-      datatools::properties::read_config(SRVCmgrConfigFile, SRVCmgrConfig);
+      datatools::read_config(SRVCmgrConfigFile, SRVCmgrConfig);
       SRVCmgrConfig.tree_dump(std::cerr, "The service manager configuration : ");
       if (debug) clog << datatools::io::debug << "Initializing the service manager..." << endl;
       SRVCmgr.initialize(SRVCmgrConfig); // Initialize
@@ -108,7 +108,7 @@ int main (int argc_, char ** argv_)
       std::string EMFmgrConfigFile = "${EMFIELD_TESTING_DIR}/config/test_manager.conf";
       datatools::properties EMFmgrConfig;
       datatools::fetch_path_with_env(EMFmgrConfigFile);
-      datatools::properties::read_config(EMFmgrConfigFile, EMFmgrConfig);
+      datatools::read_config(EMFmgrConfigFile, EMFmgrConfig);
       EMFmgr.initialize (EMFmgrConfig); // Initialize
       EMFmgr.tree_dump (std::clog, "EM field manager: ");
 

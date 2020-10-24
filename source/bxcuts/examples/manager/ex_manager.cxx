@@ -83,7 +83,7 @@ int main(int argc_, char ** argv_)
     }
     datatools::fetch_path_with_env(config_filename);
     // Load configuration parameters from a file :
-    datatools::properties::read_config(config_filename,
+    datatools::read_config(config_filename,
                                        cut_manager_config);
 
     // Declare a cut manager :

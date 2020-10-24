@@ -150,7 +150,7 @@ namespace mygsl {
     datatools::multi_properties histo_setups;
     std::string hsf = histo_setups_filename_;
     datatools::fetch_path_with_env(hsf);
-    datatools::multi_properties::read_config(hsf, histo_setups);
+    datatools::read_config(hsf, histo_setups);
     load(histo_setups);
     return;
   }

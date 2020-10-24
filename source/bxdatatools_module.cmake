@@ -118,6 +118,7 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/library_query_service.h
   ${module_include_dir}/${module_name}/library_loader.h
   ${module_include_dir}/${module_name}/logger.h
+  ${module_include_dir}/${module_name}/make_configuration.h
   ${module_include_dir}/${module_name}/memory_streambuf.h
   ${module_include_dir}/${module_name}/multi_properties.h
   ${module_include_dir}/${module_name}/multi_properties.ipp
@@ -289,6 +290,7 @@ ${module_source_dir}/library_query_service.cc
 ${module_source_dir}/library_loader.cc
 ${module_source_dir}/file_include.cc
 ${module_source_dir}/logger.cc
+${module_source_dir}/make_configuration.cc
 ${module_source_dir}/memory_streambuf.cc
 ${module_source_dir}/multi_properties.cc
 ${module_source_dir}/multi_properties_config.cc

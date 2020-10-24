@@ -56,7 +56,7 @@ int main(int argc_, char ** argv_)
     geomtools::manager GeoMgr;
     datatools::fetch_path_with_env (GeoMgrConfigFile);
     datatools::properties GeoMgrConfig;
-    datatools::properties::read_config (GeoMgrConfigFile, GeoMgrConfig);
+    datatools::read_config (GeoMgrConfigFile, GeoMgrConfig);
     GeoMgr.initialize (GeoMgrConfig);
 
     // Vertex generator manager :
@@ -68,7 +68,7 @@ int main(int argc_, char ** argv_)
     VGMgr.set_random_seed(prng_seed);
     datatools::fetch_path_with_env (VGMgrConfigFile);
     datatools::properties VGMgrConfig;
-    datatools::properties::read_config (VGMgrConfigFile, VGMgrConfig);
+    datatools::read_config (VGMgrConfigFile, VGMgrConfig);
     VGMgr.initialize (VGMgrConfig);
     DT_LOG_DEBUG(logging, "The vertex generator manager: ");
     if (logging >= datatools::logger::PRIO_DEBUG) {

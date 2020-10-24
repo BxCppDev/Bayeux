@@ -60,7 +60,7 @@ int main (int argc_, char ** argv_)
          i++) {
       datatools::multi_properties config ("name", "type");
       datatools::fetch_path_with_env (*i);
-      datatools::multi_properties::read_config(*i, config);
+      datatools::read_config(*i, config);
       if (debug) {
         clog << "Config file '" << *i << "' : " << endl;
         config.tree_dump (clog, "", "DEBUG: ");

@@ -229,7 +229,7 @@ namespace datatools {
   void urn_to_path_resolver_service::load_map(const std::string & map_filename_)
   {
     datatools::multi_properties mp("urn", "category");
-    datatools::multi_properties::read_config(map_filename_, mp);
+    datatools::read_config(map_filename_, mp);
     std::vector<std::string> urns;
     mp.ordered_keys(urns);
     for (const std::string & urn : urns) {

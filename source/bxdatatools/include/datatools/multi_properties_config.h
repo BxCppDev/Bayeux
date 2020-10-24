@@ -69,11 +69,129 @@ namespace datatools {
     /// Reset the reader/writer
     void reset();
 
-    /// Read from an input file
-    void read(const std::string & filename, multi_properties & target_);
-
-    /// Read from an input stream
+    /// Read a multi_properties container from an input stream
+    ///
+    /// This method is the base of configuration file parsing.
+    ///
+    /// Example of input file to be parsed:
+    /// \code
+    ///
+    /// # Format:
+    /// # - Comment lines start with a '#'.
+    /// # This is a  comment line...
+    /// # ...and this is another one.
+    ///
+    /// # - Blank lines are ignored.
+    /// # - Lines starting with '#@' are considered as optional metacomments
+    /// #   with special embedded parsing options and/or actions.
+    ///
+    /// #@description The main configuration file for the application
+    /// #  This optional metacomment provides the general description of the multi_properties container.
+    /// #  This directive must be given before any *section* (see below).
+    ///
+    /// #@key_label "name"
+    /// #  This metacomment provides the key use to identify the name of a *section*.
+    /// #  (see below).
+    /// #  Syntax is ``[name="foo" ... ]``.
+    /// #  This directive must be given before any *section* (see below).
+    ///
+    /// #@meta_label "type"
+    /// #  This metacomment provides the key use to identify the meta information of a *section*
+    /// #  (see below).
+    /// #  Syntax is ``[name="foo" type="my_model_1" ]``.
+    /// #  This directive must be given before any *section* (see below).
+    ///
+    /// #@variant_devel
+    /// #  This metacomment activates development logging from the variant mechanism
+    ///
+    /// #@variant_section_only "variant-expression"
+    /// #  This metacomment corresponds to a directive which accept a given section only if
+    ///
+    /// #@forbid_include
+    /// #  This metacomment inhibits the file inclusion inclusion mechanism
+    ///
+    /// #@include_debug
+    /// #  This metacomment activates debug logging from the file inclusion mechanism
+    ///
+    /// #@include_dir "path"
+    /// #  This metacomment specifies a directory from which files to be included are searched for.
+    ///
+    /// #@include_path_env "name"
+    /// #  This metacomment specifies the name of an environment variable which contains
+    /// #  an ordered list of priority directories from which files to be included are searched for.
+    ///
+    /// #@include_sections "path"
+    /// #  This metacomment specifies the path of a file to be included
+    ///
+    /// #@include_sections_try "path"
+    /// #  This metacomment specifies the path of a file to be included if possible
+    ///
+    // # NOT SUPPORTED"
+    // #@include_path_env_strategy "label"
+    // #  This metacomment specifies the strategy for resolving the include directories from the
+    // #  environment variable set by the "@include_path_env" directive. Supported strategies are:
+    // #  - prepend (default) : directories from the environment variable have priority on explicit
+    // #    directories set through "@include_dir" directive.
+    // #  - append : directories from the environment variable do not have priority on explicit
+    // #    directories set through "@include_dir" directive.
+    // #  - clear : directories from the environment variable are the only ones used.
+    //
+    ///
+    /// # Sections:
+    /// # Each section in a "multi_properties" container implements a single "properties" container
+    /// # associated to a unique key/identifier (in the scope of the "multi_properties" container)
+    /// # and eventually a meta information, usually documenting the type/category of object
+    /// # or component the section refers to.
+    ///
+    /// [name="core"  type="algo::calibration"]
+    /// #  The directive above starts a new section with a given *name* and *type* (meta information)
+    ///
+    /// ...
+    ///
+    /// [name="display"  type="algo::calibration::gui"]
+    /// #  The directive above starts a new section with a given *name* and *type* (meta information)
+    ///
+    /// ...
+    ///
+    /// # Each section contains a set of properties as illustrated in the ``properties`` class.
+    ///
+    /// [name="debug"  type="algo::calibration::debugger"]
+    /// #  This directive above starts the section named 'debug' for a component
+    /// #  of which the type is ``algo::calibration::debugger``.
+    ///
+    /// #@description Verbosity level of the debugger
+    /// verbosity : integer = 4
+    ///
+    /// #@description List of components with active debugging support
+    /// active : string[2] = "core" "display"
+    ///
+    /// [name="log"  type="algo::calibration::logger"]
+    /// #  The directive above starts a new section with a given *name* and *type* (meta information)
+    ///
+    /// # This directive include the definitions of some properties of the current section
+    /// #@include "~/.config/logger/main.conf"
+    ///
+    /// [name="foo"  type="algo::foo"]
+    /// #@variant_section_only "variant-expression"
+    /// #  The directive above corresponds to a directive which accepts a given section only if
+    /// #  a the variant-expression is true. It must be placed at the very beginning of a section.
+    ///
+    /// # The following directives include some multi-properties files and merge their contents
+    /// # in the current one. Existing sections are merged and their properties are overriden
+    /// # if they appear both in the current and includes files.
+    /// #@include_sections "more_sections.conf"
+    /// #@include_sections "overriden_sections.conf"
+    ///
+    /// # Same as the former directive but failure to resolve the file to be include
+    /// # does not fail the parsing.
+    /// #@include_sections_try "optional_sections.conf"
+    ///
+    /// \endcode
+    ///
     void read(std::istream & in_, multi_properties & target_);
+
+    /// Read from an input file
+    void read(const std::string & filename_, multi_properties & source_);
 
     /// Write to an output stream
     void write(std::ostream & out_, const multi_properties & source_);

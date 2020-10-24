@@ -59,7 +59,7 @@ int main(int argc_, char ** argv_)
     }
     datatools::fetch_path_with_env (gmgr_config_file);
     datatools::properties gmgr_config;
-    datatools::properties::read_config (gmgr_config_file,
+    datatools::read_config (gmgr_config_file,
                                         gmgr_config);
 
     geomtools::manager gmgr;
@@ -78,7 +78,7 @@ int main(int argc_, char ** argv_)
     datatools::fetch_path_with_env (mconfig_filename);
 
     datatools::multi_properties mconfig ("name", "type");
-    datatools::multi_properties::read_config(mconfig_filename, mconfig);
+    datatools::read_config(mconfig_filename, mconfig);
     if (debug) {
       std::clog << "DEBUG: Configuration file is loaded." << std::endl;
     }

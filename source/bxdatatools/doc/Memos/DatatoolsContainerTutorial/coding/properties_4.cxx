@@ -18,13 +18,13 @@ int main (void) {
     std::cout << std::endl;
 
     // save in an ASCII configuration file :
-    datatools::properties::write_config ("properties_4.conf",
+    datatools::write_config ("properties_4.conf",
                                          config);
   }
   {
     datatools::properties restored_config;
     // read (restore) from an ASCII configuration file :
-    datatools::properties::read_config ("properties_4.conf",
+    datatools::read_config ("properties_4.conf",
                                         restored_config);
     restored_config.tree_dump (std::cout,
                                "The properties container restored from the file :");

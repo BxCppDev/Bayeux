@@ -363,7 +363,7 @@ namespace mctools {
       std::string filename = filename_;
       datatools::fetch_path_with_env(filename);
       datatools::multi_properties mprops;
-      datatools::multi_properties::read_config(filename, mprops);
+      datatools::read_config(filename, mprops);
       const datatools::multi_properties::entries_ordered_col_type & ordered = mprops.ordered_entries();
       for (const auto he : ordered) {
         const datatools::multi_properties::entry & mpe = *he;

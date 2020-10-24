@@ -92,7 +92,7 @@ namespace emfield {
                 << fields_definitions_filename_ << "' ! EM field manager is locked !");
     std::string filename = fields_definitions_filename_;
     datatools::fetch_path_with_env(filename);
-    datatools::multi_properties::read_config(filename, _field_definitions_);
+    datatools::read_config(filename, _field_definitions_);
     return;
   }
 
@@ -282,7 +282,7 @@ namespace emfield {
       if (setup_.has_key("geom_map_config")) {
         std::string geomap_config_file = setup_.fetch_string("geom_map_config");
         datatools::fetch_path_with_env(geomap_config_file);
-        datatools::properties::read_config(geomap_config_file, geomap_config);
+        datatools::read_config(geomap_config_file, geomap_config);
       } else {
         setup_.export_and_rename_starting_with(geomap_config, "geom_map.", "");
       }

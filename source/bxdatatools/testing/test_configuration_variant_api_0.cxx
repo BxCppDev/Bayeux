@@ -92,7 +92,7 @@ void test0(bool debug_)
   std::string mgr_config_filename =
     "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_registry_manager.conf";
   datatools::fetch_path_with_env(mgr_config_filename);
-  datatools::properties::read_config(mgr_config_filename, mgr_config);
+  datatools::read_config(mgr_config_filename, mgr_config);
   mgr.initialize(mgr_config);
   if (debug_) mgr.tree_dump(std::clog, "Variant manager:");
 
@@ -522,12 +522,12 @@ void test1(bool debug_, bool
         datatools::configuration::variant_repository::exporter x(xp, xflags);
         x(vrep);
         xp.tree_dump(std::clog, "Exported variant repository: ");
-        datatools::properties::write_config("varprofile.conf", xp);
+        datatools::write_config("varprofile.conf", xp);
       }
 
       {
         datatools::properties xp;
-        datatools::properties::read_config("varprofile.conf", xp);
+        datatools::read_config("varprofile.conf", xp);
         xp.tree_dump(std::clog, "Imported variant repository: ");
         uint32_t iflags = datatools::configuration::variant_repository::importer::IMPORT_DEBUG;
         datatools::configuration::variant_repository::importer i(xp, iflags);
@@ -621,7 +621,7 @@ void test1(bool debug_, bool
         datatools::properties config;
         std::string config_filename = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample-variant0.conf";
         datatools::fetch_path_with_env(config_filename);
-        datatools::properties::read_config(config_filename, config);
+        datatools::read_config(config_filename, config);
         config.tree_dump(std::clog, "Configuration properties: ");
       }
 
@@ -703,7 +703,7 @@ void test1(bool debug_, bool
         datatools::properties config;
         std::string config_filename = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample-variant1.conf";
         datatools::fetch_path_with_env(config_filename);
-        datatools::properties::read_config(config_filename, config);
+        datatools::read_config(config_filename, config);
         config.tree_dump(std::clog, "Configuration properties: ");
       } catch (std::exception & error) {
         DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "As expected: " << error.what());
@@ -714,7 +714,7 @@ void test1(bool debug_, bool
         datatools::properties config;
         std::string config_filename = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample-variant2.conf";
         datatools::fetch_path_with_env(config_filename);
-        datatools::properties::read_config(config_filename, config);
+        datatools::read_config(config_filename, config);
         config.tree_dump(std::clog, "Configuration properties 2: ");
       } catch (std::exception & error) {
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());

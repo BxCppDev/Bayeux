@@ -36,7 +36,7 @@ int main (int argc_, char ** argv_)
     }
     datatools::fetch_path_with_env (config_file);
     datatools::properties config;
-    datatools::properties::read_config (config_file, config);
+    datatools::read_config (config_file, config);
 
     genbb::genbb_mgr mgr;
     // initialize the manager:

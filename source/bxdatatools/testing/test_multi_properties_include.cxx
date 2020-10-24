@@ -77,7 +77,7 @@ void mpi()
   std::string confPath = "${DATATOOLS_TESTING_DIR}/config/test_mpi.conf";
   uint32_t read_opts = datatools::multi_properties_config::RESOLVE_PATH
     | datatools::multi_properties_config::LOG_DEBUG;
-  datatools::multi_properties::read_config(confPath, conf, read_opts);
+  datatools::read_config(confPath, conf, read_opts);
   clog << endl << "read conf :" << endl;
   conf.print_tree(clog);
 

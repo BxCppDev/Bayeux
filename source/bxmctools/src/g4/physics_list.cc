@@ -261,7 +261,7 @@ namespace mctools {
           physics_constructor_entry & pce = _physics_constructors_[pc_name];
           std::string pc_config_filename = pc_config;
           datatools::fetch_path_with_env(pc_config_filename);
-          datatools::properties::read_config(pc_config_filename, pce.config);
+          datatools::read_config(pc_config_filename, pce.config);
           pce.status = 0;
 
           // if (boost::starts_with(pce.id, "geant4::")) {

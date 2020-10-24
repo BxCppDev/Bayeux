@@ -128,7 +128,7 @@ namespace dpp {
     if(config_.has_key("pool_config")) {
       std::string pool_config_path = config_.fetch_string("pool_config");
       datatools::fetch_path_with_env(pool_config_path);
-      datatools::properties::read_config(pool_config_path, pool_config);
+      datatools::read_config(pool_config_path, pool_config);
     } else {
       config_.export_and_rename_starting_with(pool_config, "pool.", "");
     }

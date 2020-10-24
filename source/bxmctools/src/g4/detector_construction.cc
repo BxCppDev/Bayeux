@@ -291,7 +291,7 @@ namespace mctools {
         for (int i = 0; i < (int) sd_defs.size(); i++) {
           std::string sd_def = sd_defs[i];
           datatools::fetch_path_with_env(sd_def);
-          datatools::multi_properties::read_config(sd_def, _SD_params_);
+          datatools::read_config(sd_def, _SD_params_);
         }
       }
 
@@ -991,7 +991,7 @@ namespace mctools {
         datatools::fetch_path_with_env(config_file);
         datatools::multi_properties mconfig("name", "type");
         DT_LOG_NOTICE(_logprio(), "SHPF: Parsing the SHPF configuration file '" << config_file << "'...");
-        datatools::multi_properties::read_config(config_file, mconfig);
+        datatools::read_config(config_file, mconfig);
         DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF configuration file '" << config_file << "' has been parsed.");
         DT_LOG_NOTICE(_logprio(), "SHPF: Loading the hit processors in the SHPF...");
         _SHPF_.load(mconfig);

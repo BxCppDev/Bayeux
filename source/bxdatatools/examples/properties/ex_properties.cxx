@@ -156,7 +156,7 @@ int main (int argc_, char ** argv_)
 
     // Save the setup in ASCII format :
     DT_LOG_DEBUG(logging, "Save the setup in ASCII format...");
-    datatools::properties::write_config("foo.conf", foo_config);
+    datatools::write_config("foo.conf", foo_config);
 
     DT_LOG_DEBUG(logging, "Modify its contents...");
     // Change some existing values:
@@ -195,7 +195,7 @@ int main (int argc_, char ** argv_)
     DT_LOG_DEBUG(logging, "Load a container of properties from an ASCII formatted file...");
     std::string foo_config_file = "foo.conf";
     datatools::fetch_path_with_env(foo_config_file);
-    datatools::properties::read_config(foo_config_file, foo_config);
+    datatools::read_config(foo_config_file, foo_config);
 
     // Smart print :
     std::clog << std::endl;

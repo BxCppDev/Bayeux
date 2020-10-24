@@ -505,25 +505,6 @@ namespace datatools {
     return;
   }
 
-  void multi_properties::write_config(const std::string & filename_,
-                                      const multi_properties & props_,
-                                      uint32_t options_)
-  {
-    multi_properties_config w(options_);
-    w.write(filename_, props_);
-    return;
-  }
-
-  void multi_properties::read_config(const std::string & filename_,
-                              multi_properties & props_,
-                              uint32_t options_)
-  {
-    multi_properties_config r(options_);
-    r.read(filename_, props_);
-    return;
-  }
-
-
   void multi_properties::merge_with(const multi_properties & other_,
                                     bool allow_override_sections_,
                                     bool allow_override_props_)

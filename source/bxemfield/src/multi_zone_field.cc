@@ -346,7 +346,7 @@ namespace emfield {
       // Specify the configuration file for the embedded shape factory:
       std::string shape_factory_config_filename = setup_.fetch_string("shape_factory_config");
       datatools::fetch_path_with_env(shape_factory_config_filename);
-      datatools::properties::read_config(shape_factory_config_filename, shape_factory_config);
+      datatools::read_config(shape_factory_config_filename, shape_factory_config);
     } else {
       // Or extract shape factory parameters :
       setup_.export_and_rename_starting_with(shape_factory_config, "shape_factory.", "");

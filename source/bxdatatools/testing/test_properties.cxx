@@ -255,14 +255,14 @@ int main(int argc_, char ** argv_)
 
     string filename_cfg = "test_properties.conf";
 
-    datatools::properties::write_config(filename_cfg, my_dict);
+    datatools::write_config(filename_cfg, my_dict);
     my_dict.clear();
     my_dict.tree_dump(clog, "Cleared dict:");
     std::clog << std::endl;
 
     std::clog << "========================================" << std::endl;
 
-    datatools::properties::read_config(filename_cfg, my_dict);
+    datatools::read_config(filename_cfg, my_dict);
 
     my_dict.tree_dump(clog, "Loaded dict:");
     std::clog << std::endl;
@@ -341,7 +341,7 @@ void test_more()
   std::string setup_file = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample.conf";
   datatools::fetch_path_with_env(setup_file);
   uint32_t read_options = datatools::properties_config::LOG_WARNING;
-  datatools::properties::read_config(setup_file, setup, read_options);
+  datatools::read_config(setup_file, setup, read_options);
   {
     boost::property_tree::ptree options;
     options.put("indent", "[debug] ");

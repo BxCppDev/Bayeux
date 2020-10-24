@@ -242,7 +242,7 @@ namespace datatools {
       std::string file_name = items_config_file_;
       uint32_t reader_opts = 0;
       reader_opts |= multi_properties_config::FORBID_VARIANTS;
-      datatools::multi_properties::read_config(file_name, _mp_, reader_opts);
+      datatools::read_config(file_name, _mp_, reader_opts);
       // DT_LOG_TRACE(get_logging_priority(), "Variant manager multi-configuration: ");
       // _mp_.tree_dump(std::cerr,"", "TRACE: ");
       return;

@@ -37,7 +37,7 @@ int main(int argc_, char ** argv_)
     // Parse its config file :
     datatools::properties EGM_config;
     std::string EGM_config_file = "config/manager.conf";
-    datatools::properties::read_config(EGM_config_file, EGM_config);
+    datatools::read_config(EGM_config_file, EGM_config);
 
     // Initialize the geometry manager from the configuration parameters :
     EGM.set_external_prng(PRNG); // Attach the external PRNG to the manager

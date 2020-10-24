@@ -2125,25 +2125,6 @@ namespace datatools {
     return;
   }
 
-  // static
-  void properties::write_config(const std::string & filename_,
-                                const properties & props_,
-                                uint32_t options_)
-  {
-    properties_config writer(options_);
-    writer.write(filename_, props_);
-    return;
-  }
-
-  // static
-  void properties::read_config(const std::string & filename_,
-                               properties & props_,
-                               uint32_t options_)
-  {
-    properties_config r(options_);
-    r.read(filename_, props_);
-    return;
-  }
 
 
   // static

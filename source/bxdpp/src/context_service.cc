@@ -114,14 +114,14 @@ namespace dpp {
                       "Service '" << get_name()
                       << "' is loading from file '"
                       << _load_filename_ << "' !");
-        datatools::multi_properties::read_config(dummy, *_store_);
+        datatools::read_config(dummy, *_store_);
         if (! _backup_filename_.empty()) {
           std::string dummy2 = _backup_filename_;
           datatools::fetch_path_with_env(dummy2);
           DT_LOG_NOTICE(get_logging_priority(),
                         "Service '" << get_name() << "' is backuping in file '"
                         << dummy2 << "' !");
-          datatools::multi_properties::write_config(dummy2, *_store_);
+          datatools::write_config(dummy2, *_store_);
         }
       } else {
         DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
@@ -149,7 +149,7 @@ namespace dpp {
                       << _store_filename_ << "' !");
         std::string dummy = _store_filename_;
         datatools::fetch_path_with_env(dummy);
-        datatools::multi_properties::write_config(dummy, *_store_);
+        datatools::write_config(dummy, *_store_);
       }
       delete _store_;
       _store_ = 0;

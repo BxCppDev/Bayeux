@@ -339,7 +339,7 @@ namespace materials {
       std::string filename = conf_files[i];
       datatools::fetch_path_with_env(filename);
       datatools::multi_properties mconfig;
-      datatools::multi_properties::read_config(filename, mconfig);
+      datatools::read_config(filename, mconfig);
       load(mconfig);
     }
 

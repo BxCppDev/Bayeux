@@ -75,7 +75,7 @@ int main (int argc_, char ** argv_)
     datatools::properties msp2_config;
     std::string msp2_config_file = "${GEOMTOOLS_TESTING_DIR}/config/test_simple_polygon.conf";
     datatools::fetch_path_with_env(msp2_config_file);
-    datatools::properties::read_config(msp2_config_file, msp2_config);
+    datatools::read_config(msp2_config_file, msp2_config);
     my_simple_polygon2.initialize(msp2_config);
     my_simple_polygon2.tree_dump(std::clog, "my_simple_polygon2");
 

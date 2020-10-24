@@ -359,7 +359,7 @@ namespace datatools {
            ++i) {
         datatools::fetch_path_with_env(*i);
         datatools::multi_properties mconfig;
-        datatools::multi_properties::read_config(*i, mconfig);
+        datatools::read_config(*i, mconfig);
         this->load(mconfig);
       }
     }

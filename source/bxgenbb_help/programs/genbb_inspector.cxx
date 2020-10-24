@@ -1747,7 +1747,7 @@ namespace genbb {
 
     std::string config_filename = _params_.configuration;
     datatools::fetch_path_with_env(config_filename);
-    datatools::properties::read_config(config_filename, config);
+    datatools::read_config(config_filename, config);
     _manager_.initialize(config);
 
     if (_params_.action == "list") {

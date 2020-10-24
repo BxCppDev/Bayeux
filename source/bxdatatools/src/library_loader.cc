@@ -144,7 +144,7 @@ namespace datatools {
     if(!config_file_.empty()) {
       std::string resolvedPathToConfig(config_file_);
       datatools::fetch_path_with_env(resolvedPathToConfig);
-      datatools::multi_properties::read_config(resolvedPathToConfig, _config_);
+      datatools::read_config(resolvedPathToConfig, _config_);
     }
     this->_init();
     return;

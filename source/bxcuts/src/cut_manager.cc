@@ -207,7 +207,7 @@ namespace cuts {
                       << service_manager_configuration_file << "' !");
         datatools::fetch_path_with_env(service_manager_configuration_file);
         datatools::properties service_manager_configuration;
-        datatools::properties::read_config(service_manager_configuration_file,
+        datatools::read_config(service_manager_configuration_file,
                                            service_manager_configuration);
         install_service_manager(service_manager_configuration);
       } else {
@@ -244,7 +244,7 @@ namespace cuts {
       datatools::multi_properties configs;
       DT_LOG_NOTICE(_logging_, "Loading cuts from file '"
                     << filename << "'...");
-      datatools::multi_properties::read_config(filename, configs);
+      datatools::read_config(filename, configs);
       _load_cuts(configs);
     }
 

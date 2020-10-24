@@ -207,7 +207,7 @@ namespace dpp {
                        << service_manager_configuration_file << "' !" << std::endl);
         datatools::fetch_path_with_env (service_manager_configuration_file);
         datatools::properties service_manager_configuration;
-        datatools::properties::read_config (service_manager_configuration_file,
+        datatools::read_config (service_manager_configuration_file,
                                             service_manager_configuration);
         install_service_manager (service_manager_configuration);
       } else {
@@ -246,7 +246,7 @@ namespace dpp {
       DT_LOG_NOTICE (get_logging_priority(),
                      "Loading modules from file '"
                      << filename << "'...");
-      datatools::multi_properties::read_config(filename, configs);
+      datatools::read_config(filename, configs);
       _load_modules (configs);
     }
 
@@ -405,7 +405,7 @@ namespace dpp {
     datatools::multi_properties modules_defs;
     std::string modules_defs_path = modules_defs_;
     datatools::fetch_path_with_env(modules_defs_path);
-    datatools::multi_properties::read_config(modules_defs_path, modules_defs);
+    datatools::read_config(modules_defs_path, modules_defs);
     this->load_modules(modules_defs);
     return;
   }

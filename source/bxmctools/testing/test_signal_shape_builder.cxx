@@ -222,7 +222,7 @@ void test_ssb_2(bool draw_)
   std::string calo_ssb_config_file = "${MCTOOLS_TESTING_DIR}/config/signal/calo_ssb.conf";
   datatools::fetch_path_with_env(calo_ssb_config_file);
   datatools::properties calo_ssb_config;
-  datatools::properties::read_config(calo_ssb_config_file, calo_ssb_config);
+  datatools::read_config(calo_ssb_config_file, calo_ssb_config);
   // calo_ssb.add_registered_shape_type_id("mctools::signal::triangle_signal_shape");
   calo_ssb.initialize(calo_ssb_config);
 

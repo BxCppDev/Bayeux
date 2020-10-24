@@ -92,7 +92,7 @@ void mpm()
 
   {
     clog << endl << "Saving in ASCII file..." << endl;
-    datatools::multi_properties::write_config("test_merged.conf", baseConf);
+    datatools::write_config("test_merged.conf", baseConf);
   }
 
   {
@@ -108,7 +108,7 @@ void mpm()
     clog << endl << "Read test:" << endl;
     clog << "Reading from ASCII file..." << endl;
     datatools::multi_properties effectiveConf("name", "type");
-    datatools::multi_properties::read_config("test_merged.conf", effectiveConf);
+    datatools::read_config("test_merged.conf", effectiveConf);
     clog << endl << "effectiveConf after merging :" << endl;
     effectiveConf.print_tree(clog);
   }

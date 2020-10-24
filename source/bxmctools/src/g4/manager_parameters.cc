@@ -259,7 +259,7 @@ namespace mctools {
       datatools::multi_properties the_configuration("name",
                                                     "",
                                                     "Configuration for the Geant4 simulation manager");
-      datatools::multi_properties::read_config(manager_config_filename, the_configuration);
+      datatools::read_config(manager_config_filename, the_configuration);
 
       /*** Initialization ***/
 

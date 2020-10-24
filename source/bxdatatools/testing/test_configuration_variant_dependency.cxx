@@ -85,7 +85,7 @@ void test0()
   std::string mgr_config_filename =
     "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_registry_manager.conf";
   datatools::fetch_path_with_env(mgr_config_filename);
-  datatools::properties::read_config(mgr_config_filename, mgr_config);
+  datatools::read_config(mgr_config_filename, mgr_config);
   mgr.initialize(mgr_config);
   mgr.tree_dump(std::clog, "Variant manager:");
   std::clog << std::endl;
@@ -204,7 +204,7 @@ void test0()
     std::string vdepmod_config_filename =
       "${DATATOOLS_TESTING_DIR}/config/vdepmod.conf";
     datatools::fetch_path_with_env(vdepmod_config_filename);
-    datatools::properties::read_config(vdepmod_config_filename, vdepmod_config);
+    datatools::read_config(vdepmod_config_filename, vdepmod_config);
     vdepmod.initialize(vdepmod_config);
     vdepmod.tree_dump(std::clog, "Variant dependency model: ");
     std::clog << std::endl;
@@ -219,7 +219,7 @@ void test0()
     std::string vdepmod_config_filename =
       "${DATATOOLS_TESTING_DIR}/config/vdepmod2.conf";
     datatools::fetch_path_with_env(vdepmod_config_filename);
-    datatools::properties::read_config(vdepmod_config_filename, vdepmod_config);
+    datatools::read_config(vdepmod_config_filename, vdepmod_config);
     vdepmod.initialize(vdepmod_config);
     vdepmod.tree_dump(std::clog, "Variant dependency model: ");
     std::clog << std::endl;

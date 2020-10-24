@@ -73,7 +73,7 @@ int main(int argc_, char ** argv_)
     std::string EMFmgrConfigFile = "${CONFIG_DIR}/fields/manager.conf";
     datatools::properties EMFmgrConfig;
     datatools::fetch_path_with_env(EMFmgrConfigFile);
-    datatools::properties::read_config(EMFmgrConfigFile, EMFmgrConfig);
+    datatools::read_config(EMFmgrConfigFile, EMFmgrConfig);
     EMFmgr.initialize(EMFmgrConfig); // Initialize
     EMFmgr.tree_dump(std::clog, "EM field manager: ");
 

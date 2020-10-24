@@ -96,7 +96,7 @@ int main (int argc_, char ** argv_)
         std::string foo_config_file = "config/ex_OCD.foo.candidate.conf";
         datatools::fetch_path_with_env(foo_config_file);
         datatools::properties foo_config;
-        datatools::properties::read_config(foo_config_file, foo_config);
+        datatools::read_config(foo_config_file, foo_config);
 
         // Validate the configuration parameters :
         if (OCD.has_validation_support()) {

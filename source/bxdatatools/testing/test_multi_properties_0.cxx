@@ -54,7 +54,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
     my_bag_of_bags.grab_section ("shape").store ("author", "Pablo Picasso");
 
     // Save in ASCII file:
-    datatools::multi_properties::write_config("my_bag_of_bags.conf", my_bag_of_bags,
+    datatools::write_config("my_bag_of_bags.conf", my_bag_of_bags,
                                               datatools::multi_properties_config::HEADER_FOOTER);
   }
 
@@ -62,7 +62,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
   {
     // Load from ASCII file:
     datatools::multi_properties my_bag_of_bags ("name", "type");
-    datatools::multi_properties::read_config("my_bag_of_bags.conf", my_bag_of_bags,
+    datatools::read_config("my_bag_of_bags.conf", my_bag_of_bags,
                                              datatools::multi_properties_config::SKIP_PRIVATE_SECTIONS);
 
     // Print:
