@@ -45,6 +45,7 @@
 #include <datatools/configuration/io.h>
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
+#include <datatools/properties_config.h>
 #include <datatools/multi_properties.h>
 #include <datatools/library_loader.h>
 
@@ -368,12 +369,12 @@ void app_test_config(std::ostream & out_, const std::string & config_file_)
   datatools::properties cfg;
   {
     uint32_t reader_options = 0;
-    datatools::properties::config reader(reader_options);
+    datatools::properties_config reader(reader_options);
     reader.read(config_file_, cfg);
   }
   {
     uint32_t writer_options = 0;
-    datatools::properties::config writer(writer_options);
+    datatools::properties_config writer(writer_options);
     writer.write(out_, cfg);
   }
   return;

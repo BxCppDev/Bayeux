@@ -39,6 +39,7 @@
 #include <datatools/configuration/parameter_model.h>
 #include <datatools/configuration/variant_model.h>
 #include <datatools/configuration/io.h>
+#include <datatools/properties_config.h>
 
 namespace datatools {
 
@@ -1255,7 +1256,7 @@ namespace datatools {
       datatools::fetch_path_with_env(mgr_config_filename);
       uint32_t options = 0;
       // options = datatools::properties::config::RESOLVE_PATH;
-      options = datatools::properties::config::FORBID_VARIANTS;
+      options = datatools::properties_config::FORBID_VARIANTS;
       datatools::properties::read_config(mgr_config_filename, mgr_config, options);
       if (!top_variant_name_.empty()) {
         // Force its top variant name if missing:

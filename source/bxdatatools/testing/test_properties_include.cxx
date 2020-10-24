@@ -1,5 +1,6 @@
 // Ourselves:
 #include <datatools/properties.h>
+#include <datatools/properties_config.h>
 
 // Standard library:
 #include <cstdlib>
@@ -55,13 +56,13 @@ void tpi1()
     std::ofstream myconf(my_conf_path2.c_str());
     myconf << "d : real as length = 4200000.0 km\n\n";
   }
-  
-  
+
+
   datatools::properties conf("Base configuration");
   std::string confPath = "${DATATOOLS_TESTING_DIR}/config/test_pi.conf";
-  uint32_t reader_opts = datatools::properties::config::RESOLVE_PATH
-    | datatools::properties::config::LOG_TRACE;
-  datatools::properties::config reader(reader_opts);
+  uint32_t reader_opts = datatools::properties_config::RESOLVE_PATH
+    | datatools::properties_config::LOG_TRACE;
+  datatools::properties_config reader(reader_opts);
   reader.read(confPath, conf);
   clog << endl << "read conf :" << endl;
   conf.print_tree(clog);
@@ -106,16 +107,16 @@ void tpi2()
   include_solver.set_include_path_env_name("DATATOOLS_INCLUDE_PATH");
   include_solver.set_include_path_env_strategy(datatools::file_include::EV_PREPEND);
 
-  uint32_t reader_opts = datatools::properties::config::RESOLVE_PATH
-    | datatools::properties::config::LOG_TRACE;
-  datatools::properties::config reader(reader_opts);
+  uint32_t reader_opts = datatools::properties_config::RESOLVE_PATH
+    | datatools::properties_config::LOG_TRACE;
+  datatools::properties_config reader(reader_opts);
   reader.set_fi(include_solver);
-  
+
   std::string confPath = "${DATATOOLS_TESTING_DIR}/config/test_pi_naked.conf";
   datatools::properties conf("Base configuration");
   reader.read(confPath, conf);
   clog << endl << "read conf :" << endl;
   conf.print_tree(clog);
-  
+
   return;
 }

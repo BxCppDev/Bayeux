@@ -15,6 +15,7 @@
 
 // This project:
 #include <datatools/properties.h>
+#include <datatools/properties_config.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
@@ -1763,8 +1764,8 @@ namespace datatools {
     PROP.set_description (std::string("Sample configuration for class ") + get_class_name());
 
     // Not fully implemented yet !!
-    properties::config PC(properties::config::SMART_MODULO
-                          | properties::config::HEADER_FOOTER);
+    properties_config PC(properties_config::SMART_MODULO
+                          | properties_config::HEADER_FOOTER);
 
     // PC.write_header(out_, topic_);
     const std::string prop_comment_prefix = "### ";

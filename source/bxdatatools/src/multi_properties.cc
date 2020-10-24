@@ -20,6 +20,7 @@
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/variant_repository.h>
 #include <datatools/configuration/io.h>
+#include <datatools/properties_config.h>
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_properties,
@@ -750,10 +751,10 @@ namespace datatools {
   void multi_properties::config::_write(std::ostream & out_, const multi_properties & target_)
   {
     uint32_t pcfg_options = 0;
-    pcfg_options |= properties::config::SMART_MODULO;
-    pcfg_options |= properties::config::RESOLVE_PATH;
+    pcfg_options |= properties_config::SMART_MODULO;
+    pcfg_options |= properties_config::RESOLVE_PATH;
     if (_skip_private_properties_) {
-      pcfg_options |= properties::config::SKIP_PRIVATE;
+      pcfg_options |= properties_config::SKIP_PRIVATE;
     }
 
     if (!_without_decoration_) {
@@ -761,7 +762,7 @@ namespace datatools {
       out_ << std::endl;
     }
 
-    properties::config pcfg(pcfg_options);
+    properties_config pcfg(pcfg_options);
     if (_header_footer_) {
       out_ << _format::COMMENT_CHAR << _format::SPACE_CHAR
             << "List of sections of configuration properties (datatools::multi_properties)"
@@ -1451,11 +1452,11 @@ namespace datatools {
             target_.add(current_key, current_meta);
             multi_properties::entry & e = target_.grab(current_key);
             uint32_t pcr_options = 0;
-            pcr_options |= properties::config::RESOLVE_PATH;
+            pcr_options |= properties_config::RESOLVE_PATH;
             if (_skip_private_properties_) {
-              pcr_options |= properties::config::SKIP_PRIVATE;
+              pcr_options |= properties_config::SKIP_PRIVATE;
             }
-            properties::config pcr(pcr_options);
+            properties_config pcr(pcr_options);
             pcr.set_reader_input(_current_filename_);
             pcr.set_section_info(current_key, closed_section_first_line_number);
             if (include_file_propagate) {

@@ -126,6 +126,7 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/ocd_driver.h
   ${module_include_dir}/${module_name}/properties.h
   ${module_include_dir}/${module_name}/properties.ipp
+  ${module_include_dir}/${module_name}/properties_config.h
   ${module_include_dir}/${module_name}/range_tools.h
   ${module_include_dir}/${module_name}/real_range.h
   ${module_include_dir}/${module_name}/reflection_interface.h
@@ -293,6 +294,7 @@ ${module_source_dir}/object_configuration_description.cc
 ${module_source_dir}/ocd_driver.cc
 ${module_source_dir}/ocd_utils.cc
 ${module_source_dir}/properties.cc
+${module_source_dir}/properties_config.cc
 ${module_source_dir}/range_tools.cc
 ${module_source_dir}/real_range.cc
 ${module_source_dir}/resource.cc

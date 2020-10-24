@@ -2,6 +2,7 @@
 
 // Ourselves:
 #include <datatools/properties.h>
+#include <datatools/properties_config.h>
 
 // Standard library:
 #include <cstdlib>
@@ -314,7 +315,7 @@ int main(int argc_, char ** argv_)
 
     datatools::properties cfg("Configuration set;author=John Doe;date=2016-11-15;group=admin");
     cfg.tree_dump(std::clog, "Cfg");
-    
+
     std::clog << "\n";
     test_more();
 
@@ -339,7 +340,7 @@ void test_more()
 
   std::string setup_file = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample.conf";
   datatools::fetch_path_with_env(setup_file);
-  uint32_t read_options = datatools::properties::config::LOG_WARNING;
+  uint32_t read_options = datatools::properties_config::LOG_WARNING;
   datatools::properties::read_config(setup_file, setup, read_options);
   {
     boost::property_tree::ptree options;
