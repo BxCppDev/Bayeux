@@ -20,6 +20,7 @@
 #include <boost/regex.hpp>
 // - Bayeux/datatools:
 #include <datatools/exception.h>
+#include <datatools/multi_properties_config.h>
 #include <datatools/utils.h>
 
 namespace geomtools {
@@ -685,8 +686,8 @@ namespace geomtools {
   {
     datatools::multi_properties mp(category_key_label(), type_meta_label());
     uint32_t reader_opts = 0;
-    reader_opts |= datatools::multi_properties::config::RESOLVE_PATH;
-    datatools::multi_properties::config reader(reader_opts);
+    reader_opts |= datatools::multi_properties_config::RESOLVE_PATH;
+    datatools::multi_properties_config reader(reader_opts);
     reader.read(filename_, mp);
     init_from(mp);
     return;

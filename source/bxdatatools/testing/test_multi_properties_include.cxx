@@ -2,6 +2,7 @@
 
 // Ourselves:
 #include <datatools/multi_properties.h>
+#include <datatools/multi_properties_config.h>
 
 // Standard library:
 #include <cstdlib>
@@ -26,7 +27,7 @@ int main (int argc_ , char ** argv_)
       // if (arg == "-d" || arg == "--debug") debug = true;
       iarg++;
     }
-    
+
     mpi();
 
   } catch (exception & x) {
@@ -69,13 +70,13 @@ void mpi()
     myconf << "[name=\"config\" type=\"section\"]\n";
     myconf << "pi : const real = 3.14159\n\n";
   }
-  
+
   setenv("DATATOOLS_INCLUDE_PATH", env_include_path_out.str().c_str(), 1);
-  
+
   datatools::multi_properties conf("name", "type", "Base configuration");
   std::string confPath = "${DATATOOLS_TESTING_DIR}/config/test_mpi.conf";
-  uint32_t read_opts = datatools::multi_properties::config::RESOLVE_PATH
-    | datatools::multi_properties::config::LOG_DEBUG;
+  uint32_t read_opts = datatools::multi_properties_config::RESOLVE_PATH
+    | datatools::multi_properties_config::LOG_DEBUG;
   conf.read(confPath, read_opts);
   clog << endl << "read conf :" << endl;
   conf.print_tree(clog);

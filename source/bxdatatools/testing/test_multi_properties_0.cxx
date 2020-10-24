@@ -3,6 +3,7 @@
 
 // This Project:
 #include <datatools/multi_properties.h>
+#include <datatools/multi_properties_config.h>
 
 int main (int /* argc_ */, char ** /* argv_ */)
 {
@@ -54,7 +55,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
 
     // Save in ASCII file:
     my_bag_of_bags.write ("my_bag_of_bags.conf",
-                          datatools::multi_properties::config::HEADER_FOOTER);
+                          datatools::multi_properties_config::HEADER_FOOTER);
   }
 
   datatools::multi_properties copy_bag;
@@ -62,7 +63,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
     // Load from ASCII file:
     datatools::multi_properties my_bag_of_bags ("name", "type");
     my_bag_of_bags.read ("my_bag_of_bags.conf",
-                         datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
+                         datatools::multi_properties_config::SKIP_PRIVATE_SECTIONS);
 
     // Print:
 

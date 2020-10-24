@@ -104,106 +104,6 @@ namespace datatools {
     , public datatools::i_cloneable
   {
   public:
-     /// \brief Reader/writer class for multi_properties objects
-    class config
-    {
-    public:
-
-      /// \brief Flags to modify the behaviour and formatting of a config object
-      enum options_flag {
-        SKIP_PRIVATE_SECTIONS = bit_mask::bit00, ///< Skip private sections bit
-        FORBID_VARIANTS       = bit_mask::bit01, ///< Forbid variant block directives bit
-        LOG_MUTE              = bit_mask::bit02, ///< Mute mode activation bit
-        LOG_DEBUG             = bit_mask::bit03, ///< Debug mode activation bit
-        LOG_TRACE             = bit_mask::bit04, ///< Trace mode activation bit
-        SKIP_PRIVATE_PROPS    = bit_mask::bit05, ///< Skip private properties in sections bit
-        HEADER_FOOTER         = bit_mask::bit06, ///< Use header/footer (write)
-        DONT_CLEAR            = bit_mask::bit07, ///< Don't clear before parsing bit (read)
-        REQUESTED_TOPIC       = bit_mask::bit08, ///< Requested topic (read/write)
-        RESOLVE_PATH          = bit_mask::bit09, ///< Resolve path for input filename (read/write)
-        START_WITHOUT_LABELS  = bit_mask::bit10, ///< Start without key/meta labels and let the reader set them
-        WITHOUT_DECORATION    = bit_mask::bit11, ///< Do not use decoration
-        FORBID_INCLUDE        = bit_mask::bit12  ///< Do not allow file inclusion
-      };
-
-      /// Default constructor
-      config(uint32_t options_ = 0, const std::string & topic_ = "");
-
-      /// Return the logging priority threshold
-      datatools::logger::priority get_logging() const;
-
-      /// Set the logging priority threshold
-      void set_logging(datatools::logger::priority);
-
-      /// Reset the reader/writer
-      void reset();
-
-      /// Read from an input file
-      void read(const std::string & filename, multi_properties & target_);
-
-      /// Read from an input stream
-      void read(std::istream & in_, multi_properties & target_);
-
-      /// Write to an output stream
-      void write(std::ostream & out_, const multi_properties & source_);
-
-      /// Write to an output file
-      void write(const std::string & filename_, const multi_properties & source_);
-
-      /// Check if topic is set
-      bool has_topic() const;
-
-      /// Set the topic that should be matched
-      void set_topic(const std::string & topic_);
-
-      /// Return the topic
-      const std::string & get_topic() const;
-
-      /// Return the embedded file inclusion solver
-      const file_include & get_fi() const;
-
-      /// Return the mutable embedded file inclusion solver
-      file_include & grab_fi();
-
-      /// Set the embedded file inclusion solver
-      void set_fi(const file_include &);
-
-    protected:
-
-      /// Default initialization
-      void _init_defaults();
-
-      /// Read from an input stream
-      void _read(std::istream & in_, multi_properties & target_);
-
-      /// Write to an output stream
-      void _write(std::ostream & out_, const multi_properties & target_);
-
-      /// Store the current filename
-      void _set_current_filename(const std::string & filename_);
-
-    private:
-
-      // Configuration:
-      datatools::logger::priority _logging_; ///< Logging priority threshold (read/write)
-      bool _skip_private_sections_;   ///< Flag to skip private sections (read/write)
-      bool _skip_private_properties_; ///< Flag to skip private properties in sections (read/write)
-      bool _forbid_variants_;         ///< Flag to forbid variant directives (read)
-      bool _header_footer_;           ///< Flag to print header/footer (write)
-      bool _requested_topic_;         ///< Flag to activate topic matching (read/write)
-      std::string _topic_;            ///< Topic to be validated
-      bool _resolve_path_;            ///< Explicitely resolve path for input/output filenames (read/write)
-      bool _start_without_labels_;    ///< Start without labels (read)
-      bool _without_decoration_;      ///< Flag to disable decoration (write)
-      bool _forbid_include_ = false;  ///< Flag to forbid file inclusion (read)
-
-      // Working parsing data:
-      std::string _current_filename_;    ///< Current filename
-      int         _current_line_number_; ///< Current line number
-      file_include _fi_;                 ///< File inclusion solver
-
-    }; //----- end of class config
-
     /// \brief Default key/meta values
     struct defaults {
       /// Default label for primary keys
@@ -414,7 +314,7 @@ namespace datatools {
 
     /// Write to a configuration file
     void write(const std::string & filename_,
-               uint32_t options_ = config::HEADER_FOOTER | config::SKIP_PRIVATE_SECTIONS) const;
+               uint32_t options_ = 0) const;
 
     /// Read a multi_properties container from an input stream
     ///

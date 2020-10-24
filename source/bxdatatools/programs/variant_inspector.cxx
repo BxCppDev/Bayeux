@@ -47,6 +47,7 @@
 #include <datatools/properties.h>
 #include <datatools/properties_config.h>
 #include <datatools/multi_properties.h>
+#include <datatools/multi_properties_config.h>
 #include <datatools/library_loader.h>
 
 namespace bpo = boost::program_options;
@@ -385,12 +386,12 @@ void app_test_multi_config(std::ostream & out_, const std::string & mconfig_file
   datatools::multi_properties mcfg;
   {
     uint32_t reader_options = 0;
-    datatools::multi_properties::config reader(reader_options);
+    datatools::multi_properties_config reader(reader_options);
     reader.read(mconfig_file_, mcfg);
   }
   {
     uint32_t writer_options = 0;
-    datatools::multi_properties::config writer(writer_options);
+    datatools::multi_properties_config writer(writer_options);
     writer.write(out_, mcfg);
   }
   return;

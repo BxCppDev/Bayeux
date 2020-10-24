@@ -9,6 +9,7 @@
 
 // Ourselves:
 #include <datatools/multi_properties.h>
+#include <datatools/multi_properties_config.h>
 
 // This project:
 #include <datatools/io_factory.h>
@@ -76,7 +77,7 @@ int main (int argc_ , char ** argv_)
 
       clog << endl << "Saving in ASCII file keeping private entries..." << endl;
       mp.write ("test_multi_properties.conf",
-                datatools::multi_properties::config::HEADER_FOOTER);
+                datatools::multi_properties_config::HEADER_FOOTER);
 
       {
         clog << endl << "Serializing in XML archive file..." << endl;
@@ -94,12 +95,12 @@ int main (int argc_ , char ** argv_)
       datatools::multi_properties mp ("name", "type");
       clog << "Reading from ASCII file skipping private entries..." << endl;
       mp.read ("test_multi_properties.conf",
-               datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
+               datatools::multi_properties_config::SKIP_PRIVATE_SECTIONS);
       clog << "mp :" << endl;
       mp.print_tree(clog);
       mp.write ("test_multi_properties_2.conf",
-                datatools::multi_properties::config::HEADER_FOOTER
-                | datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
+                datatools::multi_properties_config::HEADER_FOOTER
+                | datatools::multi_properties_config::SKIP_PRIVATE_SECTIONS);
 
       {
         clog << endl << "Deserializing from XML archive file..." << endl;
