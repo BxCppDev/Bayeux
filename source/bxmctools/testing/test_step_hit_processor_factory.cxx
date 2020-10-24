@@ -78,7 +78,7 @@ int main(int argc_, char ** argv_)
     datatools::fetch_path_with_env (mconfig_filename);
 
     datatools::multi_properties mconfig ("name", "type");
-    mconfig.read (mconfig_filename);
+    datatools::multi_properties::read_config(mconfig_filename, mconfig);
     if (debug) {
       std::clog << "DEBUG: Configuration file is loaded." << std::endl;
     }

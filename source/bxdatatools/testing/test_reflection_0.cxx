@@ -171,7 +171,7 @@ void test_multi_properties (bool /*debug_*/)
     }
 
     {
-      camp::Value propsVal = mpropsObj.call ("write", camp::Args("datatools_test_reflection_0a.txt", false, false));
+      //camp::Value propsVal = mpropsObj.call ("write", camp::Args("datatools_test_reflection_0a.txt", false, false));
     }
 
     {
@@ -196,7 +196,7 @@ void test_multi_properties (bool /*debug_*/)
     }
 
     mpropsObj.call("tree_print", camp::Args(1, "Multi-properties: "));
-    mpropsObj.call ("write", camp::Args("datatools_test_reflection_0b.txt", true, false));
+    //mpropsObj.call ("write", camp::Args("datatools_test_reflection_0b.txt", true, false));
 
   }
 }

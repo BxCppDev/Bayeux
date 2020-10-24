@@ -312,10 +312,6 @@ namespace datatools {
     /// Remove a section
     void remove(const std::string & key_);
 
-    /// Write to a configuration file
-    void write(const std::string & filename_,
-               uint32_t options_ = 0) const;
-
     /// Read a multi_properties container from an input stream
     ///
     /// This method is the base of configuration file parsing.
@@ -435,7 +431,11 @@ namespace datatools {
     ///
     /// \endcode
     ///
-    void read(const std::string & filename_, uint32_t options_ = 0);
+    static void read_config(const std::string & filename_,
+                            multi_properties& props_, uint32_t options_ = 0);
+
+    static void write_config(const std::string & filename_,
+                             const multi_properties& props_, uint32_t options_ = 0);
 
     /// Merge with another multi_properties with overriding possibilities
     ///

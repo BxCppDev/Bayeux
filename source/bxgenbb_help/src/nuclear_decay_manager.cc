@@ -120,7 +120,7 @@ namespace genbb {
     std::string filename = filename_;
     datatools::fetch_path_with_env(filename);
     datatools::multi_properties mconfig("name", "type");
-    mconfig.read(filename);
+    datatools::multi_properties::read_config(filename, mconfig);
     load(mconfig);
     return;
   }

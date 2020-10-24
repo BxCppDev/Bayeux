@@ -59,7 +59,7 @@ int main(/* int argc_, char ** argv_ */) {
       datatools::properties rFQ_config;
       std::string rFQ_config_file = "${MATERIALS_RESOURCE_DIR}/data/optical/1.0/Glass/FusedQuartz/FusedQuartz.conf";
       datatools::fetch_path_with_env(rFQ_config_file);
-      rFQ_config.read_configuration(rFQ_config_file);
+      datatools::properties::read_config(rFQ_config_file, rFQ_config);
       rFQ.initialize_standalone(rFQ_config);
       rFQ.write_ascii_file_with_units("test_refractive_index_FQ_n.data", l1, l2, 100, "um", "");
     }

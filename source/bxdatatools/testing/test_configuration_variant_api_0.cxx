@@ -522,12 +522,12 @@ void test1(bool debug_, bool
         datatools::configuration::variant_repository::exporter x(xp, xflags);
         x(vrep);
         xp.tree_dump(std::clog, "Exported variant repository: ");
-        xp.write_configuration("varprofile.conf");
+        datatools::properties::write_config("varprofile.conf", xp);
       }
 
       {
         datatools::properties xp;
-        xp.read_configuration("varprofile.conf");
+        datatools::properties::read_config("varprofile.conf", xp);
         xp.tree_dump(std::clog, "Imported variant repository: ");
         uint32_t iflags = datatools::configuration::variant_repository::importer::IMPORT_DEBUG;
         datatools::configuration::variant_repository::importer i(xp, iflags);

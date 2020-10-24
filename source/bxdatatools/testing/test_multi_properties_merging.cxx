@@ -25,7 +25,7 @@ int main (int argc_ , char ** argv_)
       // if (arg == "-d" || arg == "--debug") debug = true;
       iarg++;
     }
-    
+
     mpm();
 
   } catch (exception & x) {
@@ -41,7 +41,7 @@ int main (int argc_ , char ** argv_)
 void mpm()
 {
   using namespace std;
-  
+
   datatools::multi_properties baseConf("name", "type", "Base configuration");
 
   baseConf.add("object_1", "type_1");
@@ -70,7 +70,7 @@ void mpm()
 
   // merging functionalities:
   bool label_error = false;
-  
+
   std::string meta_label = "type";
   if (label_error) {
     meta_label = "kind";
@@ -92,9 +92,9 @@ void mpm()
 
   {
     clog << endl << "Saving in ASCII file..." << endl;
-    baseConf.write("test_merged.conf");
+    datatools::multi_properties::write_config("test_merged.conf", baseConf);
   }
-  
+
   {
     clog << endl << "Serializing in XML archive file..." << endl;
     string filename = "test_merged.xml";
@@ -106,13 +106,13 @@ void mpm()
 
   {
     clog << endl << "Read test:" << endl;
-    datatools::multi_properties effectiveConf("name", "type");
     clog << "Reading from ASCII file..." << endl;
-    effectiveConf.read("test_merged.conf");
+    datatools::multi_properties effectiveConf("name", "type");
+    datatools::multi_properties::read_config("test_merged.conf", effectiveConf);
     clog << endl << "effectiveConf after merging :" << endl;
     effectiveConf.print_tree(clog);
   }
-  
+
   {
     clog << endl << "Deserializing from XML archive file..." << endl;
     string filename = "test_merged.xml";
@@ -123,6 +123,6 @@ void mpm()
     clog << endl << "effectiveConf after deserialization :" << endl;
     effectiveConf.print_tree(clog);
   }
-  
+
   return;
 }

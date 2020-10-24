@@ -301,7 +301,7 @@ namespace mctools {
       std::string filename = proc_configs[i];
       datatools::fetch_path_with_env(filename);
       datatools::multi_properties mp;
-      mp.read(filename);
+      datatools::multi_properties::read_config(filename, mp);
       load(mp);
     }
 

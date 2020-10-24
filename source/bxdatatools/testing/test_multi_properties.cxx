@@ -76,7 +76,7 @@ int main (int argc_ , char ** argv_)
       mp.print_tree(clog);
 
       clog << endl << "Saving in ASCII file keeping private entries..." << endl;
-      mp.write ("test_multi_properties.conf",
+      datatools::multi_properties::write_config("test_multi_properties.conf", mp,
                 datatools::multi_properties_config::HEADER_FOOTER);
 
       {
@@ -94,11 +94,11 @@ int main (int argc_ , char ** argv_)
       clog << endl << "Read test:" << endl;
       datatools::multi_properties mp ("name", "type");
       clog << "Reading from ASCII file skipping private entries..." << endl;
-      mp.read ("test_multi_properties.conf",
+      datatools::multi_properties::read_config("test_multi_properties.conf", mp,
                datatools::multi_properties_config::SKIP_PRIVATE_SECTIONS);
       clog << "mp :" << endl;
       mp.print_tree(clog);
-      mp.write ("test_multi_properties_2.conf",
+      datatools::multi_properties::write_config("test_multi_properties_2.conf", mp,
                 datatools::multi_properties_config::HEADER_FOOTER
                 | datatools::multi_properties_config::SKIP_PRIVATE_SECTIONS);
 

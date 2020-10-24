@@ -246,7 +246,7 @@ namespace dpp {
       DT_LOG_NOTICE (get_logging_priority(),
                      "Loading modules from file '"
                      << filename << "'...");
-      configs.read (filename);
+      datatools::multi_properties::read_config(filename, configs);
       _load_modules (configs);
     }
 
@@ -405,7 +405,7 @@ namespace dpp {
     datatools::multi_properties modules_defs;
     std::string modules_defs_path = modules_defs_;
     datatools::fetch_path_with_env(modules_defs_path);
-    modules_defs.read(modules_defs_path);
+    datatools::multi_properties::read_config(modules_defs_path, modules_defs);
     this->load_modules(modules_defs);
     return;
   }

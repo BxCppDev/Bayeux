@@ -291,7 +291,7 @@ namespace mctools {
         for (int i = 0; i < (int) sd_defs.size(); i++) {
           std::string sd_def = sd_defs[i];
           datatools::fetch_path_with_env(sd_def);
-          _SD_params_.read(sd_def);
+          datatools::multi_properties::read_config(sd_def, _SD_params_);
         }
       }
 
@@ -991,7 +991,7 @@ namespace mctools {
         datatools::fetch_path_with_env(config_file);
         datatools::multi_properties mconfig("name", "type");
         DT_LOG_NOTICE(_logprio(), "SHPF: Parsing the SHPF configuration file '" << config_file << "'...");
-        mconfig.read(config_file);
+        datatools::multi_properties::read_config(config_file, mconfig);
         DT_LOG_NOTICE(_logprio(), "SHPF: The SHPF configuration file '" << config_file << "' has been parsed.");
         DT_LOG_NOTICE(_logprio(), "SHPF: Loading the hit processors in the SHPF...");
         _SHPF_.load(mconfig);
@@ -1018,7 +1018,7 @@ namespace mctools {
           DT_LOG_NOTICE(_logprio(), "SHPF: Step hit processor '" << proc_name << "' is not instantiable.");
         }
       }
-      
+
       /* Look for "non-offical" sensitive categories from the SHPF factory itself.
        * Possibly extends the list of "offical" sensitive detectors
        * from the list of step hit processors found in the SHPF factory
@@ -1333,7 +1333,7 @@ namespace mctools {
              ilogical != _geom_manager_->get_factory().get_logicals().end();
              ++ilogical) {
           bool add_it = false;
-          const std::string & log_name = ilogical->first;     
+          const std::string & log_name = ilogical->first;
           for (const std::string & log_name_regex : log_volumes_regexp) {
             boost::regex e1(log_name_regex, boost::regex::extended);
             if (boost::regex_match(log_name, e1)) {
@@ -1346,7 +1346,7 @@ namespace mctools {
         }
       }
       */
-      
+
       std::set<std::string> regions;
       if (_limits_config_.has_key("limits.list_of_regions")) {
         _limits_config_.fetch("limits.list_of_regions", regions);

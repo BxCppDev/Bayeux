@@ -92,7 +92,7 @@ namespace emfield {
                 << fields_definitions_filename_ << "' ! EM field manager is locked !");
     std::string filename = fields_definitions_filename_;
     datatools::fetch_path_with_env(filename);
-    _field_definitions_.read(filename);
+    datatools::multi_properties::read_config(filename, _field_definitions_);
     return;
   }
 

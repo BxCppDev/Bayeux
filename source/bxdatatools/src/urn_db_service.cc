@@ -617,7 +617,7 @@ namespace datatools {
     datatools::multi_properties mp("urn", "category");
     DT_LOG_DEBUG(get_logging_priority(),
                  "Loading file '" << filename_ << "' with items' URN infos...");
-    mp.read(filename_);
+    datatools::multi_properties::read_config(filename_, mp);
     std::vector<std::string> urns;
     mp.ordered_keys(urns);
     for (const std::string & urn : urns) {

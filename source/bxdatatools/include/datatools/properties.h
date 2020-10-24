@@ -1029,16 +1029,6 @@ namespace datatools {
                                            bool quoted_strings_ = true) const;
 
     //! Store the properties' container object in an ASCII text file
-    void write_configuration(const std::string & filename_,
-                             uint32_t options_ = 0) const;
-
-    //! Load the properties' container object from an ASCII text file
-    //!
-    //! \see The datatools::properties::config::read method for file format
-    void read_configuration(const std::string & filename_,
-                            uint32_t options_ = 0);
-
-    //! Store the properties' container object in an ASCII text file
     static void write_config(const std::string & filename_,
                              const properties & props_,
                              uint32_t options_ = 0);

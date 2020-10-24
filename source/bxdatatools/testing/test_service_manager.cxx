@@ -281,7 +281,7 @@ int main(int argc_, char ** argv_)
       datatools::multi_properties SM_services_config_2("name", "type");
       std::string services_conf = "${DATATOOLS_TESTING_DIR}/config/test_service_manager.conf";
       datatools::fetch_path_with_env(services_conf);
-      SM_services_config_2.read(services_conf);
+      datatools::multi_properties::read_config(services_conf, SM_services_config_2);
       SM.load(SM_services_config_2);
       SM.tree_dump(std::clog, "Service manager (with loaded services 2) : ");
       if (debug) std::clog << datatools::io::debug << "Initializing the service manager..." << std::endl;

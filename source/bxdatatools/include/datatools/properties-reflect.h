@@ -319,15 +319,6 @@ namespace datatools {
                                   ::datatools::properties,
                                   ::datatools::properties::fetch_string_vector,
                                   std::string,std::string,int)
-          .DR_CLASS_VOID_METHOD2_CONST("write_configuration",
-                                       ::datatools::properties,
-                                       ::datatools::properties::write_configuration,
-                                       std::string, uint32_t)
-          .DR_CLASS_VOID_METHOD2("read_configuration",
-                                 ::datatools::properties,
-                                 ::datatools::properties::read_configuration,
-                                 std::string, uint32_t)
-
           ;
         return;
       }

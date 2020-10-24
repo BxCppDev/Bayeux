@@ -116,15 +116,7 @@ namespace datatools {
                                  ::datatools::multi_properties,
                                  ::datatools::multi_properties::remove,
                                  const std::string &)
-          .DR_CLASS_VOID_METHOD2_CONST("write",
-                                       ::datatools::multi_properties,
-                                       ::datatools::multi_properties::write,
-                                       const std::string &, uint32_t)
-          .DR_CLASS_VOID_METHOD2("read",
-                                 ::datatools::multi_properties,
-                                 ::datatools::multi_properties::read,
-                                 const std::string &, uint32_t)
-          ;
+         ;
         return;
       }
 

@@ -71,7 +71,7 @@ namespace genbb {
       if (setup_.has_key("manager.configuration")) {
         std::string mc = setup_.fetch_string("manager.configuration");
         datatools::fetch_path_with_env(mc);
-        ndm_config.read_configuration(mc);
+        datatools::properties::read_config(mc, ndm_config);
       } else {
         setup_.export_and_rename_starting_with(ndm_config, "manager.", "");
       }

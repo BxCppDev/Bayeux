@@ -2125,39 +2125,6 @@ namespace datatools {
     return;
   }
 
-  void properties::write_configuration(const std::string & filename_,
-                                       uint32_t options_) const
-  {
-    properties_config writer(options_);
-    writer.write(filename_, *this);
-    return;
-  }
-
-  /*
-    void properties::write_configuration(const std::string & filename,
-    bool a_use_smart_modulo,
-    bool a_write_public_only) const
-    {
-    DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Deprecated method!");
-    uint32_t writer_opts = 0;
-    if (a_use_smart_modulo) {
-    writer_opts |= config::SMART_MODULO;
-    }
-    if (a_write_public_only)  {
-    writer_opts |= config::SKIP_PRIVATE;
-    }
-    config writer(writer_opts);
-    writer.write(filename, *this);
-    return;
-    }
-  */
-
-  void properties::read_configuration(const std::string & filename_, uint32_t options_)
-  {
-    read_config(filename_, *this, options_);
-    return;
-  }
-
   // static
   void properties::write_config(const std::string & filename_,
                                 const properties & props_,

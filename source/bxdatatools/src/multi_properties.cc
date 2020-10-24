@@ -505,19 +505,21 @@ namespace datatools {
     return;
   }
 
-  void multi_properties::write(const std::string & filename_,
-                               uint32_t options_) const
+  void multi_properties::write_config(const std::string & filename_,
+                                      const multi_properties & props_,
+                                      uint32_t options_)
   {
     multi_properties_config w(options_);
-    w.write(filename_, *this);
+    w.write(filename_, props_);
     return;
   }
 
-  void multi_properties::read(const std::string & filename_,
+  void multi_properties::read_config(const std::string & filename_,
+                              multi_properties & props_,
                               uint32_t options_)
   {
     multi_properties_config r(options_);
-    r.read(filename_, *this);
+    r.read(filename_, props_);
     return;
   }
 

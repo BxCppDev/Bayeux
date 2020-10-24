@@ -793,7 +793,7 @@ namespace datatools {
       std::string config_filename = _repository_config_;
       datatools::fetch_path_with_env(config_filename);
       datatools::properties rep_config;
-      rep_config.read_configuration(config_filename);
+      datatools::properties::read_config(config_filename, rep_config);
       DT_LOG_DEBUG(_logging_, "Initializing application variant repository from '" << config_filename << "'...");
       _repository_.set_logging_priority(_logging_);
       _repository_.initialize(rep_config);

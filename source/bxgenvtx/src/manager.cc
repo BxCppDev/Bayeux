@@ -322,7 +322,7 @@ namespace genvtx {
       DT_LOG_NOTICE(get_logging_priority(),
                     "Loading vertex generators from file '"
                     << filename << "'...");
-      configs.read(filename);
+      datatools::multi_properties::read_config(filename, configs);
       _load_vgs(configs);
     }
 

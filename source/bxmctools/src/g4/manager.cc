@@ -41,6 +41,7 @@
 // - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/multi_properties.h>
+#include <datatools/properties_config.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
 // - Bayeux/mygsl:

@@ -587,7 +587,7 @@ namespace geomtools {
          ++i) {
       datatools::fetch_path_with_env(*i);
       datatools::multi_properties mconfig;
-      mconfig.read(*i);
+      datatools::multi_properties::read_config(*i, mconfig);
       this->load_plugins(mconfig);
     }
     return;
@@ -726,7 +726,7 @@ namespace geomtools {
         for (size_t i = 0; i < mapping_rules_files.size(); i++) {
           std::string mrfile = mapping_rules_files[i];
           datatools::fetch_path_with_env(mrfile);
-          _external_mapping_rules_.read(mrfile);
+          datatools::multi_properties::read_config(mrfile, _external_mapping_rules_);
         }
         // _external_mapping_rules_.tree_dump(std::cerr, "Mapping rules: ", "DEVEL: ");
       }

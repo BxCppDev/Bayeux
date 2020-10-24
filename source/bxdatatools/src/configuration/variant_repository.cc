@@ -1051,7 +1051,7 @@ namespace datatools {
           // Load global dependency model from a file:
           std::string dependencies_def_file = config_.fetch_string("load_global_dependency_model");
           datatools::fetch_path_with_env(dependencies_def_file);
-          gdm_config.read_configuration(dependencies_def_file);
+          datatools::properties::read_config(dependencies_def_file, gdm_config);
         } else {
           config_.export_and_rename_starting_with(gdm_config, "gdm.", "");
         }
@@ -1308,7 +1308,7 @@ namespace datatools {
           // Load local dependency model from a file:
           std::string dependencies_def_file = mgr_config.fetch_string("load_local_dependency_model");
           datatools::fetch_path_with_env(dependencies_def_file);
-          ldm_config.read_configuration(dependencies_def_file);
+          datatools::properties::read_config(dependencies_def_file, ldm_config);
         } else {
           mgr_config.export_and_rename_starting_with(ldm_config, "ldm.", "");
         }

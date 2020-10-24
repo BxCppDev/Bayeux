@@ -239,7 +239,7 @@ namespace geomtools {
     mp.set_meta_label("type");
     std::string ifile = shapes_def_file_;
     datatools::fetch_path_with_env(ifile);
-    mp.read(ifile);
+    datatools::multi_properties::read_config(ifile, mp);
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
            = mp.ordered_entries().begin();
          i != mp.ordered_entries().end();

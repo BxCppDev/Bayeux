@@ -244,7 +244,7 @@ namespace cuts {
       datatools::multi_properties configs;
       DT_LOG_NOTICE(_logging_, "Loading cuts from file '"
                     << filename << "'...");
-      configs.read(filename);
+      datatools::multi_properties::read_config(filename, configs);
       _load_cuts(configs);
     }
 
