@@ -316,6 +316,20 @@ namespace dpp {
     return _max_record_per_file_;
   }
 
+  void io_common::set_first_record(int a_first_record)
+  {
+    DT_THROW_IF(a_first_record < 0,
+                std::domain_error,
+                "Invalid 'first_record' for I/O module '" << get_module_name() << "' !");
+    _first_record_ = a_first_record;
+    return;
+  }
+
+  int io_common::get_first_record() const
+  {
+    return _first_record_;
+  }
+
   void io_common::init_filenames(const datatools::properties & a_setup)
   {
     if (_filenames_.is_valid()) {

@@ -125,6 +125,10 @@ namespace dpp {
 
     void clear_context_metadata();
 
+    void set_first_record (int first_record_);
+
+    int get_first_record() const;
+
     void set_max_files (int max_files_);
 
     int get_max_files() const;
@@ -198,6 +202,7 @@ namespace dpp {
     int _max_record_per_file_;               //!< Maximum number of event records per file
     int _max_record_total_;                  //!< Maximum number of event records to be processed
     int _max_files_;                         //!< Maximum number of data files to be processed
+    int _first_record_;                      //!< First record to be processed
     datatools::smart_filename _filenames_;   //!< Smart list of data filenames
 
     // Running/dynamic attributes:
