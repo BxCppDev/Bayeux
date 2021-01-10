@@ -16,7 +16,6 @@
 #  Bayeux_DOXYGEN_TAGFILE  - path to Doxygen tagfile for Bayeux's docs
 #                            Empty if docs were not built
 #  Bayeux_INCLUDE_DIRS     - Bayeux include dirs
-#  Bayeux_bxdecay0_FOUND   - BxDecay0 usage flag
 
 #----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -62,7 +61,6 @@ set(Bayeux_WITH_DPP       @Bayeux_WITH_DPP@)
 set(Bayeux_WITH_GEOMTOOLS @Bayeux_WITH_GEOMTOOLS@)
 set(Bayeux_WITH_EMFIELD   @Bayeux_WITH_EMFIELD@)
 set(Bayeux_WITH_GENBB     @Bayeux_WITH_GENBB@)
-set(Bayeux_WITH_BXDECAY0  @Bayeux_WITH_BXDECAY0@)
 set(Bayeux_WITH_GENVTX    @Bayeux_WITH_GENVTX@)
 set(Bayeux_WITH_MCTOOLS   @Bayeux_WITH_MCTOOLS@)
 set(Bayeux_WITH_GEANT4_MODULE @Bayeux_WITH_GEANT4_MODULE@)
@@ -102,12 +100,10 @@ if (Boost_VERSION VERSION_GREATER 106800)
 endif()
 
 if (Bayeux_WITH_GENBB)
-  if (Bayeux_WITH_BXDECAY0)
-    # BxDecay0
-    set(BAYEUX_BXDECAY0_VERSION @BxDecay0_VERSION@)
-    set(BxDecay0_DIR @BxDecay0_DIR@)
-    find_package(BxDecay0 ${BAYEUX_BXDECAY0_VERSION} EXACT REQUIRED) 
-  endif()
+  # BxDecay0
+  set(BAYEUX_BXDECAY0_VERSION @BxDecay0_VERSION@)
+  set(BxDecay0_DIR @BxDecay0_DIR@)
+  find_package(BxDecay0 ${BAYEUX_BXDECAY0_VERSION} EXACT REQUIRED) 
 endif()
 
 # - CAMP
