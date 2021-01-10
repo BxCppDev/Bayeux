@@ -12,9 +12,6 @@
 /***  genbb_help embedded CAMP-based reflection ***/
 #cmakedefine01 GENBB_HELP_WITH_REFLECTION
 
-/***  genbb_help with Fortran ***/
-#cmakedefine01 GENBB_HELP_WITH_FORTRAN
-
 /***  genbb_help with Gnuplot display ***/
 #cmakedefine01 GENBB_HELP_WITH_GNUPLOT_DISPLAY
 

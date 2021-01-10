@@ -23,9 +23,7 @@
  *
  * Description:
  *
- *   C++ Decay0-base generator.
- *
- * History:
+ *   C++ Decay0-based generator.
  *
  */
 
