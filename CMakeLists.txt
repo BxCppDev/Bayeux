@@ -65,9 +65,7 @@ message(STATUS "[info] Project version = '${PROJECT_VERSION}'")
 include(LPCCMakeSettings)
 include(CMakeDependentOption)
 
-# - SVN revision number for dev builds
-include(LPCSVNUtilities)
-set(Bayeux_VERSION_REVISION 0)
+### set(Bayeux_VERSION_REVISION 0)
 
 # Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
 # if(Bayeux_DIRECTORY_IS_WC)
