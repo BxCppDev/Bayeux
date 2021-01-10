@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2020-07-23
+:Date:    2021-01-10
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -63,7 +63,7 @@ emfield
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
-  Now depends on the external BxDecay0_ library (optional but recommended).
+  Now depends on the external BxDecay0_ library.
 
 genvtx
   Vertex  random  generator tools providing input to  simulation
@@ -168,9 +168,9 @@ Spack_ package manager to satisfy Bayeux's software dependencies.
 Releases
 --------
 
-* Latest release: `Bayeux-3.4.1`_
+* Latest release: `Bayeux-3.4.3`_
 
-.. _`Bayeux-3.4.1`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.4.1
+.. _`Bayeux-3.4.3`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.4.3
 
 .. raw:: pdf
 
@@ -186,14 +186,13 @@ contact  the Bayeux  team  at bayeux@lpccaen.in2p3.fr  (in English  or
 French).
 
 
-
 Getting Bayeux
 ===============
 
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.4.1, you may use, assuming a
+For example, to download Bayeux version 3.4.3, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -201,16 +200,16 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/3.4.1.tar.gz
-   $ mkdir Bayeux-3.4.1 && tar xvzf 3.4.1.tar.gz -C Bayeux-3.4.1 --strip-components 1
-   $ cd Bayeux-3.4.1/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/3.4.3.tar.gz
+   $ mkdir Bayeux-3.4.3 && tar xvzf 3.4.3.tar.gz -C Bayeux-3.4.3 --strip-components 1
+   $ cd Bayeux-3.4.3/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.4.1/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.4.3/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.4.1
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.4.3
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -277,8 +276,9 @@ Core Software Required
   
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
-institutional computing clusters) may  not provide CMake  3.3. If this  is the case,  then you
-should download the latest Linux *binary .sh* file (example: ``cmake-3.17.2-Linux-x86_64.sh``) from:
+institutional computing clusters)  may not provide CMake  3.3. If this
+is the  case, then you should  download the latest Linux  *binary .sh*
+file (example: ``cmake-3.17.2-Linux-x86_64.sh``) from:
 
   http://www.cmake.org/cmake/resources/software.html
 
@@ -297,11 +297,22 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 Core Libraries Required
 .......................
 
-* Boost  1.63.0, 1.69.0, 1.71.0:  http://www.boost.org  with the  following
+
+It is  possible to use system  installation of the below  libraries if
+your OS distribution provides  adequate support. Some software package
+managers  (Linuwbrew,  Spack) may  help  too  and should  be  probably
+recommended.
+
+We list below the third party softwares required by Bayeux. If some of
+them are not available from the  system package manager, you will have
+to install them manually.
+
+
+* Boost  1.69.0, 1.71.0 (tough 1.70 et 1.72+ should work):  http://www.boost.org  with the  following
   libraries:    filesystem,    system,    serialization,    iostreams,
   program_options, regex and thread.
 
-  * Ubuntu 18.04 provides broken (for Bayeux) version 1.65.0 
+  * Ubuntu 18.04 provides broken (for Bayeux) version 1.65.0 so you'll need to install Boost >= 1.69 by yourself
   * Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
 
   **Beware**: Boost versions 1.65 (default on Ubuntu 18.04) to 1.68 are
@@ -309,88 +320,86 @@ Core Libraries Required
   bug concerning the Boost/Serialization singleton class. Boost 1.69 should
   fix this issue.
   
-* Camp >=0.8.2 (or 0.8.0, see below) : https://github.com/IRCAD-IHU/camp
+* Camp >=0.8.0 (or 0.8.4 recommended) : https://github.com/IRCAD-IHU/camp
   
   * Ubuntu 18.04 does not provide Camp
   * Ubuntu 20.04 provides version 0.8.4 (libcamp-dev)
 
-* GSL 2.1 or higher: http://www.gnu.org/s/gsl
+* GSL 2.4 or higher: http://www.gnu.org/s/gsl
 
   * Ubuntu 18.04 provides version 2.4 (libgsl-dev)
   * Ubuntu 20.04 provides version 2.5 (libgsl-dev)
   
-* CLHEP 2.1.3.1, 2.1.4.2, 2.4.1.0: http://proj-clhep.web.cern.ch
+* CLHEP 2.1.3.1, 2.1.4.2 (recommended), 2.4.1.0: http://proj-clhep.web.cern.ch
   
   * Ubuntu 18.04 does not provide CLHEP
   * Ubuntu 20.04   provides   version   2.1.4.1   (libclhep-dev)   but
     unfortunately  this  version has  no  CMake  support so  you  should
-    install this library by yourself.
+    install this library by yourself. We thus recommend version 2.1.4.2.
  
 * Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
 
   **Warning:** Geant4 version 10.5 support is not ready (issue #43).
 
-  You must install Geant4 and its associated datasets by yourself.
-  Please do not use internal CLHEP build but the CLHEP system or manual
-  install above.
+  You must  install Geant4  and its  associated datasets  by yourself.
+  Please do not build Geant4 with  internal CLHEP but the CLHEP system
+  or manual install recommended above because Bayeux itself uses CLHEP
+  even if the Geant4 extension library is not used.
 
 * Xerces-C (optional, needed for GDML support and Geant4 bridge)
  
   * Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
 
-* ROOT 6.12.04 or 6.16.00: http://root.cern.ch
+* ROOT 6.08.00, 6.12.04 or 6.16.00 (recommended): http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
 
   * minimal X11,
   * GDML,
   * OpenGL.
 
-  You must install ROOT by yourself. 
+  You must install ROOT by yourself.
+
+  On Ubuntu 18.04  or 20.04, we have identified the  following list of
+  packages to be installed to satisfy ROOT dependencies (this list may
+  be  incomplete): g++,  gcc,  binutils, libfreetype6-dev,  libgsl-dev
+  gsl-bin,  libbz2-dev  ,  zlib1g-dev,  libreadline-dev,  libxml2-dev,
+  libsqlite3-dev,  libssl-dev\  libx11-dev,  libxext-dev,  libxft-dev,
+  libxpm-dev, libpng-dev,  libjpeg-dev, libgif-dev, libafterimage-dev,
+  libtiff5-dev,      liblzma-dev,       liblz4-dev,      libfftw3-dev,
+  libgraphviz-dev, libftgl-dev, libglew-dev, libpcre3-dev.
+ 
 
 * Qt5 (optional)
 
-  * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5)
+  * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5,
+    qt5-default, qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev)
 
-* BxDecay0 1.0.6 (optional, see below) : https://github.com/BxCppDev/bxdecay0
+* BxDecay0 (>=1.0.9) : https://github.com/BxCppDev/bxdecay0
 
-  You must install BxDecay0 by yourself. 
+  You must install BxDecay0 by yourself. BxDecay0 depends on GSL so you should synchronize
+  this dependency from Bayeux's dependency on GSL.
 
-  **Remark** : This  C++ port of the legacy Fortran  decay0 program is
-  now  an  independant  project  which has  been  extracted  from  the
-  ``Bayeux/genbb_help module``.  BxDecay0 will become in a near future
-  the only Decay0 C++ port supported  by Bayeux. Bayeux will use it as
-  an external dependency.
-  
+  **Remark**  : The  BxDecay0 C++  port of  the legacy  Fortran decay0
+  program is now an independant  project which has been extracted from
+  the ``Bayeux/genbb_help``  legacy module.  BxDecay0 is  now the only
+  implementation of the Decay0 C++ port supported by Bayeux.
+
 
 Install dependencies with LinuxBrew
 ...................................
 
-
-**Deprecated**
-~~~~~~~~~~~~~~
-
-For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
-Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
-clients of Bayeux.  It is advised to use this bundle if you don't know
-how to  install and  setup the dependee  libraries mentioned  above on
-your system.  It will provide, for Linux and macOS systems, an uniform
-software  environment  with  a   selected  set  of  blessed  software,
-including the C++ compiler if needed.
+We have  experienced that the use  of Linuxbrew is not  the definitive
+robust solution  to solve the software  dependency problem.  Linuxbrew
+regularly fails to provide a proper and stable environment to host and
+use  Bayeux,  due   to  rapidly  changing  brew   formulas  and  their
+dependencies from the homebrew core tap.  We have tried to provide the
+proper formulas for Ubuntu Linux. However  we have decided to stop the
+support of this tap (`bxcppdev/bxtap`_).
 
 Note however that it is  perfectly possible to use system installation
 of  the above  libraries  if your  OS  distribution provides  adequate
 support.
-
-**Beware:** We have  experienced that the use of Linuxbrew  is not the
-definitive robust  solution to solve the  software dependency problem.
-Linuxbrew regularly fails  to provide a proper  and stable environment
-to host  and use  Bayeux, due  to rapidly  changing brew  formulas and
-their dependencies from the homebrew core  tap.  We try to provide the
-proper formulas for Ubuntu Linux. However you could be forced to adapt
-some formulas to your own system.
-
-  
 
 Install dependencies with Spack
 ...................................
@@ -412,8 +421,6 @@ Additional Software Required
 	    libqt5svg5-dev libqt5widgets5  \
 	    qt5-default
   ..
-
-  .. **Note:** bxcppdev/bxtap provides a ``qt5-base`` formula.
   
 * Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
 
@@ -475,13 +482,13 @@ Known Issues on Tested Platforms
 --------------------------------
 
 
-- Boost/Serialization library  from version  1.65 to 1.68  introduced a
-  bug  in the  implementation of  the singleton  template class.  As a
-  consequence, only Boost version 1.63 and 1.69 and above should be supported so far.
+- Boost/Serialization library  from version 1.65 to  1.68 introduced a
+  bug in  the implementation  of the singleton  template class.   As a
+  consequence, only Boost 1.69 and above should be supported so far.
 - Despite our efforts, Geant4 10.5 (no  MT build) is not supported yet
-  since  the implementation  of  hit collections  has  changed in  some
-  undocumented  way (as usual with Geant4!) and  now  causes  segfault  in the  Bayeux/mctools
-  Geant4 extension module.
+  since  the implementation  of hit  collections has  changed in  some
+  undocumented way (as usual with  Geant4!) and now causes segfault in
+  the Bayeux/mctools Geant4 extension module.
   
 .. raw:: pdf
 
@@ -603,9 +610,6 @@ These options control the core configuration of Bayeux.
   Build and install additional tools for developers and *normal* users.
   Default is ON.
 
-``BAYEUX_WITH_BXDECAY0``
-  Build the Bayeux/genbb_help with linkage to the external BxDecay0 library. Default is OFF.
-
 ``BAYEUX_WITH_GEANT4_MODULE``
   Build the Bayeux/mctools Geant4 library extension module. Default is ON.
 
@@ -689,18 +693,18 @@ Dependency Options
 
  
 ``BxDecay0_DIR`` :
-   Set the directory where BxDecay0's Cmake support is available.
+   Set the directory where BxDecay0's CMake support is available.
 
   Example:
 
   .. code:: sh
 
-     $ cmake ... -DBAYEUX_WITH_BXDECAY0=ON  -DBxDecay0_DIR="$(bxdecay0-config --cmakedir)" ...
+     $ cmake ...  -DBxDecay0_DIR="$(bxdecay0-config --cmakedir)" ...
   ..  
  
  
 ``Qt5Core_DIR``, ``Qt5Gui_DIR``, ``Qt5Widgets_DIR``, ``Qt5Svg_DIR``:
-   Set the directories where Qt5 libraries' Cmake support is available.
+   Set the directories where Qt5 libraries' CMake support is available.
 
   Example:
 
@@ -821,15 +825,15 @@ bayeux  activation  shell  function  from  your  Bash  startup  script
    alias bayeux_setup='do_bayeux_setup'
 ..
 
-When you need to use the Bayeux software from a bare Bash shell,
-just type:
+When you need to use the Bayeux  software from a bare Bash shell, just
+type:
 
 .. code:: sh
 
    $ bayeux_setup
 ..
 
-The ``bxquery`` utility should help you to locate the resources
+The  ``bxquery``  utility should  help  you  to locate  the  resources
 provided by Bayeux:
 
 .. code:: sh
@@ -837,9 +841,9 @@ provided by Bayeux:
    $ bxquery --help
 ..
 
-Fell free to provide a ``do_bayeux_unsetup`` shell function to come back to
-the initial state of the shell or simply terminate the shell when you are done
-with Bayeux.
+Fell free  to provide a  ``do_bayeux_unsetup`` shell function  to come
+back to the  initial state of the shell or  simply terminate the shell
+when you are done with Bayeux.
 
 
 Documentation
@@ -850,7 +854,8 @@ Bayeux is built with *some* documentation, although incomplete:
 * From the  installation directory, provided  the ``BAYEUX_WITH_DOCS``
   and ``BAYEUX_WITH_DOCS_OCD`` options have been enabled, one can find
   a set of  Doxygen generated HTML pages. The main  page is located in
-  ``share/Bayeux-{Bayeux's version}/Documentation/API/html/index.html``   from   the   Bayeux's
+  ``share/Bayeux-{Bayeux's
+  version}/Documentation/API/html/index.html``   from   the   Bayeux's
   installation directory.
 * The Bayeux  source code  provides some test  programs that  *may* be
   used as sample code. However, it is not their original purpose.
@@ -910,25 +915,25 @@ Bayeux development group
 
 Current development staff:
 
-* Xavier  Garrido   (LAL  Orsay,  Université  Paris   Sud,  Université
-  Paris-Saclay): all modules, validation.
-* Jean    Hommet   (LPC    Caen):   initial    development   of    the
-  Boost/Serialization features.
-* Yves Lemière  (LPC Caen, Université de  Caen, Normandie Université):
-  validation.
 * François Mauger (LPC Caen, Université de Caen, Normandie Université,
   project leader): all modules.
 
 Other contributors:
 
+* Ben Morgan (University of  Warwick): CMake support, logging features
+  in datatools, other management  and integration tools, Doxygen based
+  documentation support, Trac/SVN to GitHub migration.
+* Jean    Hommet   (LPC    Caen):   initial    development   of    the
+  Boost/Serialization features.
+* Yves Lemière  (LPC Caen, Université de  Caen, Normandie Université):
+  validation.
+* Xavier  Garrido   (LAL  Orsay,  Université  Paris   Sud,  Université
+  Paris-Saclay): all modules, validation.
 * Guillaume  Oliviéro   (LPC  Caen,  Université  de   Caen,  Normandie
   Université): validation
 * Arnaud Chapon (LPC Caen, Cerap): geometry, validation.
 * Benoit Guillon (LPC Caen,  ENSICAEN): original implementation of the
   ``Bayeux/materials`` module.
-* Ben Morgan (University of  Warwick): CMake support, logging features
-  in datatools, other management  and integration tools, Doxygen based
-  documentation support, Trac/SVN to GitHub migration.
 
 
 Acknowledgements
