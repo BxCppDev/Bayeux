@@ -1,7 +1,7 @@
 # --------------------------------------------------
 message( STATUS "[info] Define Bayeux dependencies")
 
-if(Bayeux_WITH_BXDECAY0)
+if(Bayeux_WITH_GENBB)
   set(BAYEUX_BXDECAY0_MIN_VERSION "1.0.9")
   find_package(BxDecay0 ${BAYEUX_BXDECAY0_MIN_VERSION} REQUIRED CONFIG)
   message(STATUS "Found BxDecay0 ${BxDecay0_VERSION}")
