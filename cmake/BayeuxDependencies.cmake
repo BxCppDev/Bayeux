@@ -2,7 +2,7 @@
 message( STATUS "[info] Define Bayeux dependencies")
 
 if(Bayeux_WITH_BXDECAY0)
-  set(BAYEUX_BXDECAY0_MIN_VERSION "1.0.6")
+  set(BAYEUX_BXDECAY0_MIN_VERSION "1.0.9")
   find_package(BxDecay0 ${BAYEUX_BXDECAY0_MIN_VERSION} REQUIRED CONFIG)
   message(STATUS "Found BxDecay0 ${BxDecay0_VERSION}")
   message(STATUS " - BxDecay0 include dirs : '${BxDecay0_INCLUDE_DIRS}'")
@@ -38,7 +38,7 @@ message(STATUS "Boost version ${Boost_VERSION} has been detected.")
 
 # Boost 1.64 has not been explicitely tested, so I remove it for safety
 set(Bayeux_UNSUPPORTED_BOOST_VERSIONS 106400 106500 106600 106700 106800)
-set(Bayeux_SUPPORTED_BOOST_VERSIONS 106900 107100)
+set(Bayeux_SUPPORTED_BOOST_VERSIONS 106900 107100 107200 107300 107400 107500)
 message(STATUS "Unsupported Boost versions : ${Bayeux_UNSUPPORTED_BOOST_VERSIONS}.")
 message(STATUS "Supported Boost versions   : ${Bayeux_SUPPORTED_BOOST_VERSIONS}.")
 set(_bx_boost_ver_index -1)
