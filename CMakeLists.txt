@@ -1,5 +1,4 @@
 # - Top level CMake script for Bayeux
-#
 
 #-----------------------------------------------------------------------
 # Copyright 2012,2013 Ben Morgan <bmorgan.warwick@gmail.com>
@@ -207,8 +206,6 @@ install(DIRECTORY ${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_TAG}
 
 #-----------------------------------------------------------------------
 # Install CMake scripts if needed
-# ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake
-# ${CMAKE_SOURCE_DIR}/cmake/FindReadline.cmake
 if(EXISTS ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake)
   install(FILES
     ${CMAKE_SOURCE_DIR}/cmake/FindBoost.cmake
