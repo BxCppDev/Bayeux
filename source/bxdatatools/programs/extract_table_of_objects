@@ -125,14 +125,13 @@ done
 
 if [ "x${output_format}" == "xcsv" -o "x${output_format}" == "xCSV" ]; then
     output_format="csv"
-    test ${debug} -ne 0 && echo >&2 "DEBUG: Output format = '${output_format}'"
 elif [ "x${output_format}" == "xrst" -o "x${output_format}" == "xRST" ]; then
     output_format="rst"
-    test ${debug} -ne 0 && echo >&2 "DEBUG: Output format = '${output_format}'"
 else
     echo >&2 "ERROR: Unsupported output format '${output_format}'!"
     exit 1
 fi
+    test ${debug} -ne 0 && echo >&2 "DEBUG: Output format = '${output_format}'"
 
 if [ ${nb_lines_vicinity} -eq 0 ]; then
     nb_lines_vicinity=${default_nb_lines_vicinity}
@@ -192,7 +191,7 @@ fi
 _tag_object=0
 for object_name in ${object_names}; do
     test ${debug} -ne 0 && echo >&2 "DEBUG: Name = '${object_name}'"
-    object_config=$(grep -e "^\[${key_label}=\"${object_name}\"" -A ${nb_lines_vicinity} ${object_def_file} | grep ^#@config | cut -d' ' -f2-)
+    object_config=$(grep -e "^\[${key_label}=\"${object_name}\"" -A ${nb_lines_vicinity} ${object_def_file} | grep ^[[:space:]]*#@config | cut -d' ' -f2-)
     test ${debug} -ne 0 && echo >&2 "DEBUG: Config = '${object_config}'"
     if [  "x${object_config}" != "x" ]; then
 	object_documentation=$(echo "${object_config};" | cut -d';' -f1)
@@ -212,15 +211,15 @@ for object_name in ${object_names}; do
 	    xv=$(echo "${object_config};" | sed -e "s|;|\n|g" | grep ^variant=)
 	    test ${debug} -ne 0 && echo >&2 "DEBUG: xv = '${xv}'"
 	    for vrec in ${xv}; do
-	    if [ "x${vrec}" != "x" ]; then
-		object_variant=$(echo ${vrec} | sed -e "s|^variant=||g")
-		test ${debug} -ne 0 && echo >&2 "DEBUG: Object variant = '${object_variant}'"
-		if [ "x${object_variants}" == "x" ]; then
-		    object_variants="${object_variant}"
-		else
-		    object_variants="${object_variants}${format_csv_subsep}${object_variant}"
+		if [ "x${vrec}" != "x" ]; then
+		    object_variant=$(echo ${vrec} | sed -e "s|^variant=||g")
+		    test ${debug} -ne 0 && echo >&2 "DEBUG: Object variant = '${object_variant}'"
+		    if [ "x${object_variants}" == "x" ]; then
+			object_variants="${object_variant}"
+		    else
+			object_variants="${object_variants}${format_csv_subsep}${object_variant}"
+		    fi
 		fi
-	    fi
 	    done
 	    test ${debug} -ne 0 && echo >&2 "DEBUG: File variant = '${object_variants}'"
 	fi
@@ -280,10 +279,17 @@ for object_name in ${object_names}; do
 	echo >&2 "ERROR: Unsupported output format '${output_format}'!"
 	exit 1
     fi
+    unset object_config
+    unset object_documentation
+    unset object_group
+    unset object_variant
+    unset object_variants
+    unset object_name
 done
 
 if [ "x${output_format}" == "xrst" ]; then
-    echo ""
+    echo >&2 "ERROR: '${output_format}' is not supported yet!"
+    exit 1
 fi
 
 exit 0
