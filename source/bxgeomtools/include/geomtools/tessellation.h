@@ -1,13 +1,11 @@
 /// \file geomtools/tessellation.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-06-04
- * Last modified: 2015-03-19
+ * Last modified: 2021-04-13
  *
  * License:
  *
- * Description:
- *
- * History:
+ * Description: Tessellated solid
  *
  */
 
@@ -19,6 +17,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <fstream>
 
 // Third party:
 // - Boost:
@@ -86,7 +85,7 @@ namespace geomtools {
                                            //!< facet and storing the rank of the
                                            //!< vertex in the facet (using
                                            //!< counterclockwise order)
-
+ 
   };
 
   /// \brief A triangle or convex quadrangle facet of a tessellated solid
@@ -396,16 +395,16 @@ namespace geomtools {
 
     /// Check if a point is inside the frustrum
     bool is_inside (const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                    double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the frustrum
     bool is_outside (const vector_3d &,
-                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                     double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
     face_identifier on_surface(const vector_3d &,
-                                       const face_identifier & a_surface_mask = face_identifier::FACE_INDEX_ANY,
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                               const face_identifier & a_surface_mask = face_identifier::FACE_INDEX_ANY,
+                               double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Compute the normal to the surface of the furstrum
     vector_3d get_normal_on_surface (const vector_3d & position_,
@@ -413,9 +412,9 @@ namespace geomtools {
 
     /// Find the intercept point with a face of the frustrum
     bool find_intercept(const vector_3d & from_,
-                                const vector_3d & direction_,
-                                face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                        const vector_3d & direction_,
+                        face_intercept_info & intercept_,
+                        double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Compute informations about the faces of this solid shape
     unsigned int compute_faces(face_info_collection_type &) const override;
@@ -424,13 +423,12 @@ namespace geomtools {
     enum tessella_wires_rendering_option_type {
       WR_TESSELLA_ALL_SEGMENTS   = (WR_BASE_LAST << 1),        //!< Render all segments
       WR_TESSELLA_LAST           = (WR_TESSELLA_ALL_SEGMENTS), //!< Last defined bit
-      WR_TESSELLA_MASK           = (WR_TESSELLA_ALL_SEGMENTS
-                                    )
+      WR_TESSELLA_MASK           = (WR_TESSELLA_ALL_SEGMENTS)
     };
 
     /// Generate a list of polylines representing the contour of the shape (for display clients)
     void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const override;
+                             uint32_t options_ = 0) const override;
 
 
     /// Initialize from properties
@@ -448,9 +446,9 @@ namespace geomtools {
 
     /// Smart print
     void tree_dump(std::ostream & a_out         = std::clog,
-                           const std::string & a_title  = "",
-                           const std::string & a_indent = "",
-                           bool a_inherit          = false) const override;
+                   const std::string & a_title  = "",
+                   const std::string & a_indent = "",
+                   bool a_inherit          = false) const override;
 
   protected:
 
@@ -482,6 +480,20 @@ namespace geomtools {
                                           std::vector<face_intercept_info> & intercepts_,
                                           double skin_,
                                           const std::set<unsigned int> & excluded_facet_indexes_) const;
+
+  public:
+    
+    /// Store in a stream 
+    void store(std::ostream & out_, double length_unit_ = -1.0) const;
+
+    /// Load form a file
+    void load(std::istream & in_);
+    
+    /// Store in a file stream 
+    void store(const std::string & filename_, double length_unit_ = -1.0) const;
+    
+    /// Load from a file stream 
+    void load(const std::string & filename_);
 
   private:
 

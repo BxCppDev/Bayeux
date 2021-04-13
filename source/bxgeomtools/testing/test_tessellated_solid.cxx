@@ -81,6 +81,7 @@ int main (int argc_, char **argv_)
 
 void test0()
 {
+  std::clog << "\n=== test0 ===" << std::endl;
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1, 0, 0);
   geomtools::vector_3d v2 (1.0, 1.0, 0);
@@ -96,6 +97,7 @@ void test0()
 
 void test1()
 {
+  std::clog << "\n=== test1 ===" << std::endl;
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1, 0, 0);
   geomtools::vector_3d v2 (0.5, 0.5, 0);
@@ -111,6 +113,7 @@ void test1()
 
 void test2()
 {
+  std::clog << "\n=== test2 ===" << std::endl;
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1,0, 0);
   geomtools::vector_3d v2 (0.25, 0.25, 0);
@@ -126,6 +129,7 @@ void test2()
 
 void test3()
 {
+  std::clog << "\n=== test3 ===" << std::endl;
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1,0, 0);
   geomtools::vector_3d v2 (0.25, 0.25, 0);
@@ -140,6 +144,7 @@ void test3()
 
 void test4()
 {
+  std::clog << "\n=== test4 ===" << std::endl;
   geomtools::vector_3d v0 (0, 0, 0);
   geomtools::vector_3d v1 (1, 0, 0);
   geomtools::vector_3d v2 (2, 0, 0);
@@ -154,6 +159,7 @@ void test4()
 
 void test5(bool draw_)
 {
+  std::clog << "\n=== test5 ===" << std::endl;
   geomtools::tessellated_solid TS1;
 
   int ivtx = 0;
@@ -170,8 +176,10 @@ void test5(bool draw_)
   TS1.add_facet3 (ifct++, R, S, T);
   TS1.add_facet3 (ifct++, S, P, T);
   TS1.lock ();
-  TS1.tree_dump (std::clog);
+  TS1.tree_dump (std::clog, "TC1: ");
 
+  ivtx = 0;
+  ifct = 0;
   geomtools::tessellated_solid TS2;
   double z0 = 2;
   int A1 = TS2.add_vertex (ivtx++, 0, 0, z0);
@@ -191,7 +199,21 @@ void test5(bool draw_)
   TS2.add_facet4 (ifct++, D1, A1, A2, D2);
 
   TS2.lock ();
-  TS2.tree_dump (std::clog);
+  TS2.tree_dump (std::clog, "TS2: ");
+   
+  std::clog << "[info] Store:" << '\n';
+  datatools::temp_file store_tmp_file;
+  store_tmp_file.set_remove_at_destroy(false);
+  store_tmp_file.create("/tmp", "test_store_tessellated_solid");
+  TS2.store(store_tmp_file.out());
+  store_tmp_file.close();
+
+  {
+    geomtools::tessellated_solid TS2bis;
+    std::ifstream fLoad(store_tmp_file.get_filename());
+    TS2bis.load(fLoad);
+    TS2bis.tree_dump (std::clog, "TS2 (reload): ");
+  }
 
   datatools::temp_file tmp_file;
   tmp_file.set_remove_at_destroy(true);
@@ -359,6 +381,7 @@ void test5(bool draw_)
 
 void test6(bool draw_)
 {
+  std::clog << "\n=== test6 ===" << std::endl;
   geomtools::tessellated_solid TS;
 
   datatools::properties TS_config;

@@ -2090,4 +2090,125 @@ namespace geomtools {
     return;
   }
 
+  void tessellated_solid::store(const std::string & filename_, double length_unit_) const
+  {
+    std::string filename = filename_;
+    datatools::fetch_path_with_env(filename);
+    std::ofstream fout(filename);
+    DT_THROW_IF(!fout, std::runtime_error, "Cannot open file '" << filename << "'");
+    fout << "#!bayeux::geomtools::tessellated_solid" << '\n';
+    store(fout, length_unit_);
+    fout.close();
+  }
+
+  void tessellated_solid::load(const std::string & filename_)
+  {
+    std::string filename = filename_;
+    datatools::fetch_path_with_env(filename);
+    std::ifstream fin(filename);
+    DT_THROW_IF(!fin, std::runtime_error, "Cannot open file '" << filename << "'");
+    std::string header;
+    std::getline(fin, header);
+    if (header != "#!bayeux::geomtools::tessellated_solid") {
+      DT_THROW(std::logic_error, "Invalid header");
+    }
+    load(fin);
+    fin.close();
+  }
+
+  void tessellated_solid::store(std::ostream & out_,
+                                double length_unit_) const
+  {
+    double length_unit = length_unit_;
+    if (length_unit < 0.0) {
+      length_unit = 1.0 * CLHEP::mm;
+    }
+    out_.precision(15);
+    out_ << length_unit / CLHEP::mm << '\n';
+    out_ << _vertices_.size() << '\n';
+    for (vertices_col_type::const_iterator i = _vertices_.begin();
+         i != _vertices_.end();
+         i++) {
+      out_ << i->first << ' ';
+      const facet_vertex & vtx = i->second;
+      double x = vtx.position.x() / length_unit;
+      double y = vtx.position.y() / length_unit;
+      double z = vtx.position.z() / length_unit;
+      out_ << x << ' ' << y << ' ' << z << '\n';
+    }
+    out_ << _facets_.size() << '\n';
+    for (facets_col_type::const_iterator i = _facets_.begin();
+         i != _facets_.end();
+         i++) {
+       out_ << i->first << ' ';
+       const facet34 & f34 = i->second;
+       out_ << f34.get_number_of_vertices() << ' ';
+       for (unsigned int j = 0; j < f34.get_number_of_vertices(); j++) {
+         out_ << f34.get_vertex_key(j) << ' ';
+       }
+       out_ << '\n';
+    }
+    return;
+  }
+
+  void tessellated_solid::load(std::istream & in_)
+  {
+    reset();
+    double length_unit = 1.0 * CLHEP::mm;
+    in_ >> length_unit >> std::ws;
+    if (!in_) {
+      DT_THROW(std::logic_error, "Cannot read length unit");
+    }
+    length_unit *= CLHEP::mm;
+    uint32_t nb_vertexes;
+    in_ >> nb_vertexes >> std::ws;
+    if (!in_) {
+      DT_THROW(std::logic_error, "Cannot read number of vertexes");
+    }
+    for (uint32_t i = 0; i < nb_vertexes; i++) {
+      uint32_t vtxKey;
+      double x, y, z;
+      in_ >> vtxKey >> x >> y >> z >> std::ws;
+      if (!in_) {
+        DT_THROW(std::logic_error, "Cannot read vertex");
+      }
+      x *= length_unit;
+      y *= length_unit;
+      z *= length_unit;
+      add_vertex(vtxKey, x, y, z);
+    }
+    uint32_t nb_facets;
+    in_ >> nb_facets >> std::ws;
+    for (uint32_t i = 0; i < nb_facets; i++) {
+      uint32_t facetKey;
+      in_ >> facetKey >> std::ws;
+      if (!in_) {
+        DT_THROW(std::logic_error, "Cannot read facet key");
+      }
+      uint32_t nbVtx;
+      in_ >> nbVtx >> std::ws;
+      if (!in_) {
+        DT_THROW(std::logic_error, "Cannot read number of vertexes");
+      }
+      uint32_t vtx0key, vtx1key, vtx2key;
+      in_ >> vtx0key >> vtx1key >> vtx2key >> std::ws;
+      if (!in_) {
+        DT_THROW(std::logic_error, "Cannot read vertex keys");
+      }
+      if (nbVtx == 3) {
+        add_facet3(facetKey, vtx0key, vtx1key, vtx2key);
+      }
+      if (nbVtx == 4) {
+        uint32_t vtx3key;
+        in_ >> vtx3key >> std::ws;
+        if (!in_) {
+          DT_THROW(std::logic_error, "Cannot read fourth vertex key");
+        }
+        add_facet4(facetKey, vtx0key, vtx1key, vtx2key, vtx3key);
+      }
+    }
+    lock();
+    return ;
+  }
+
 } // end of namespace geomtools
