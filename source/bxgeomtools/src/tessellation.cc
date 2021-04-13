@@ -1972,12 +1972,10 @@ namespace geomtools {
     if (! is_valid()) {
 
       double default_length_unit = 1.0 * CLHEP::mm;
-      // std::cerr << "DEVEL: default_length_unit [0] = " << default_length_unit << std::endl;
       if (config_.has_key ("length_unit")) {
         const std::string length_unit_str = config_.fetch_string("length_unit");
         default_length_unit = datatools::units::get_length_unit_from(length_unit_str);
       }
-      // std::cerr << "DEVEL: default_length_unit [1] = " << default_length_unit << std::endl;
 
       if (config_.has_key ("length_unit_value")) {
         double length_unit_value = config_.fetch_real("length_unit_value");
@@ -1986,16 +1984,19 @@ namespace geomtools {
         }
         default_length_unit = length_unit_value;
       }
-      // std::cerr << "DEVEL: default_length_unit [2] = " << default_length_unit << std::endl;
 
       if (config_.has_key("stl_file")) {
         std::string stl_filename = config_.fetch_string("stl_file");
         datatools::fetch_path_with_env(stl_filename);
         initialize_from_stl(stl_filename, default_length_unit);
+      } else if (config_.has_key("load_file")) {
+        std::string filename = config_.fetch_string("load_file");
+        datatools::fetch_path_with_env(filename);
+        load(filename);
       }
     }
 
-    lock();
+    if (not is_locked()) lock();
     return;
   }
 
