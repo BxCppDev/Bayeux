@@ -330,9 +330,6 @@ namespace geomtools {
   {
 
     // Plug internal meshes:
-    // std::cerr << "DEVEL: i_model::_mandatory_post_construct: "
-    //           << "Plug internal meshes..."
-    //           << std::endl;
     datatools::properties internal_mesh_setup;
     setup_.export_and_rename_starting_with(internal_mesh_setup, model_with_internal_mesh_data::INTERNAL_MESH_PREFIX, "");
     if (internal_mesh_setup.size()) {
@@ -346,6 +343,7 @@ namespace geomtools {
   void i_model::_at_destroy(const std::string & /* name_ */,
                             models_col_type * /* models_ */)
   {
+    // Nothing done here. TO be overriden by inherited models to free special internal resourcessetup at construction.
   }
   
 

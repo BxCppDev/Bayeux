@@ -21,7 +21,9 @@ Bayeux  3.4.3 requires  Linux (recommended  Ubuntu >=18.04  (preferred
 Additions
 =========
 
-* Add class ``geomtools::logical_volume_selector`` and use it in ``mctools::g4::detector_construction`` for SD association. Add a related test program.
+* Add  class  ``geomtools::logical_volume_selector``  and  use  it  in
+  ``mctools::g4::detector_construction``  for  SD association.  Add  a
+  related test program.
 
   
 Removals

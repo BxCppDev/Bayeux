@@ -22,7 +22,17 @@ Additions
 =========
 
 * Add ``geomtools::plain_model`` class.
-  
+* Add                ``geomtools::i_model::destroy``               and
+  ``geomtools::i_model::_at_destroy``  methods  for possible  cleaning
+  from within a specific model.
+* Add  load/store  methods in  ``geomtools::tessellated_solid``  class
+  (using  a  simple  ASCII  format,  alternative  to  the  STL  import
+  features).
+* Add ``geomtools::model_with_internal_items_tools::init_internal_items`` method
+  to enable automatic setup of internal physical volumes without using initialization
+  through a ``datatools::properties`` object (like in ``geomtools::model_with_internal_items_tools::plug_internal_models``).
+
+
   
 Removals
 =========
@@ -31,11 +41,7 @@ Removals
 Changes
 =======
 
-* Add ``geomtools::i_model::destroy`` and ``geomtools::i_model::_at_destroy`` methods
-  for possible cleaning from within a specific model.
 * Better support for model cleaning in ``geomtools::model_factory``.
-* Add load/store methods in ``geomtools::tessellated_solid`` class (using a simple ASCII format, alternative to the STL import features).
-
 
 Fixes
 =====
