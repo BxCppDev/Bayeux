@@ -1,8 +1,8 @@
 =============================
-Bayeux 3.4.4 Release Notes
+Bayeux 3.4.5 Release Notes
 =============================
 
-Bayeux 3.4.4 adds some new features as well as fixes for reported issues.
+Bayeux 3.4.5 adds some new features as well as fixes for reported issues.
 
 For information on changes made in previous versions, please see
 the `release notes archive`_.
@@ -14,14 +14,14 @@ the `release notes archive`_.
 Requirements
 ============
 
-Bayeux  3.4.4 requires  Linux (recommended  Ubuntu >=18.04  (preferred
+Bayeux  3.4.5 requires  Linux (recommended  Ubuntu >=18.04  (preferred
 20.04), CentOS >=7.5), or macOS 10.
 
 
 Additions
 =========
 
-* Remove embedded decay0 C++ port and now depends on the external BxDecay0 library.
+* Add ``geomtools::plain_model`` class.
   
   
 Removals
@@ -31,7 +31,11 @@ Removals
 Changes
 =======
 
-* Bump to BxDecay0 version 1.0.9
+* Add ``geomtools::i_model::destroy`` and ``geomtools::i_model::_at_destroy`` methods
+  for possible cleaning from within a specific model.
+* Better support for model cleaning in ``geomtools::model_factory``.
+* Add load/store methods in ``geomtools::tessellated_solid`` class (using a simple ASCII format, alternative to the STL import features).
+
 
 Fixes
 =====
