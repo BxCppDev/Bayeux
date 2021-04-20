@@ -1057,6 +1057,8 @@ namespace geomtools {
   {
     this->i_shape_3d::_at_lock();
     _compute_facet_segments();
+    bool checked = _check_();
+    DT_THROW_IF(not checked, std::logic_error, "This tessellated solid is not consistent!");
     return;
   }
 

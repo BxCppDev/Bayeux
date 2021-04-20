@@ -288,12 +288,22 @@ namespace geomtools {
          i++) {
       const std::string & model_name = i->first;
       i_model * model_ptr = i->second;
-      if (model_ptr != 0) {
-        DT_LOG_DEBUG(_logging_priority_,"Deleting registered model '" << model_name << "'.");
-        delete model_ptr;
+      if (model_ptr != nullptr) {
+        if (model_ptr->is_constructed()) {
+          // This is the place from which individual models can perform
+          // special cleaning operations (see the overriden _at_destroy method)
+          model_ptr->destroy(model_name, &_models_);
+        }
+        if (is_owned_model(model_name)) {
+          DT_LOG_DEBUG(_logging_priority_,"Deleting registered model '" << model_name << "'.");
+          delete model_ptr;
+        } else {
+          model_ptr = nullptr;
+        }
       }
     }
     _models_.clear();
+    _owned_models_.clear();
     _mp_.reset();
     _property_prefixes_.clear();
     _shape_factory_ = 0;
@@ -313,6 +323,11 @@ namespace geomtools {
                 "Property prefix to be preserved '" << prefix_<< "' already exists !");
     _property_prefixes_.push_back(prefix_);
     return;
+  }
+
+  bool model_factory::is_owned_model(const std::string & model_name_) const
+  {
+    return _owned_models_.count(model_name_) > 0;
   }
 
   void model_factory::_construct_()
@@ -350,6 +365,7 @@ namespace geomtools {
       }
       model->construct(model_name, e.get_properties(), _property_prefixes_, &_models_);
       _models_[model_name] = model;
+      _owned_models_.insert(model_name);
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
       std::string log_name = model->get_logical().get_name();
       if (_logicals_.find(log_name) == _logicals_.end()) {

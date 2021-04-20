@@ -85,16 +85,16 @@ namespace geomtools {
 
   bool logical_volume::has_shape () const
   {
-    return _shape_ != 0;
+    return _shape_ != nullptr;
   }
 
   void logical_volume::_clear_shape_ ()
   {
-    if (_shape_ != 0) {
+    if (_shape_ != nullptr) {
       if (_own_shape_) {
         delete _shape_;
       }
-      _shape_ = 0;
+      _shape_ = nullptr;
       _own_shape_ = false;
     }
     return;
@@ -119,7 +119,7 @@ namespace geomtools {
                 "Shape '" << shape_->get_shape_name() << "' in logical volume '"
                 << _name_ << "' is not locked!");
     _clear_shape_ ();
-    if (shape_ != 0) {
+    if (shape_ != nullptr) {
       _own_shape_ = true;
       _shape_ = shape_;
     }
@@ -134,7 +134,7 @@ namespace geomtools {
 
   bool logical_volume::has_effective_shape() const
   {
-    return _effective_shape_ != 0;
+    return _effective_shape_ != nullptr;
   }
 
   void logical_volume::set_effective_shape (const i_shape_3d & shape_)
@@ -144,13 +144,13 @@ namespace geomtools {
 
   const i_shape_3d & logical_volume::get_effective_shape () const
   {
-    DT_THROW_IF (! _effective_shape_, std::logic_error, "Missing effective shape for logical volume '" << get_name () << "' !");
+    DT_THROW_IF (_effective_shape_ == nullptr, std::logic_error, "Missing effective shape for logical volume '" << get_name () << "' !");
     return *_effective_shape_;
   }
 
   bool logical_volume::has_effective_relative_placement() const
   {
-    return _effective_relative_placement_ != 0;
+    return _effective_relative_placement_ != nullptr;
   }
 
   void logical_volume::set_effective_relative_placement (const placement & placement_)
@@ -166,7 +166,7 @@ namespace geomtools {
 
   bool logical_volume::has_geometry_model() const
   {
-    return _geo_model_ != 0;
+    return _geo_model_ != nullptr;
   }
 
   void logical_volume::set_geometry_model (const i_model & model_)
@@ -239,10 +239,10 @@ namespace geomtools {
     _locked_ = false;
     _parameters_.clear();
     _own_shape_ = false;
-    _shape_ = 0;
-    _geo_model_ = 0;
-    _effective_shape_ = 0;
-    _effective_relative_placement_ = 0;
+    _shape_ = nullptr;
+    _geo_model_ = nullptr;
+    _effective_shape_ = nullptr;
+    _effective_relative_placement_ = nullptr;
     _effective_material_ref_.clear();
     _abstract_ = false;
     return;

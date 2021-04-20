@@ -48,6 +48,7 @@ namespace geomtools {
   public:
 
     // Constants parameters used by geometry models:
+    static const std::string & model_suffix();
     static const std::string & solid_suffix();
     static const std::string & logical_suffix();
     static const std::string & physical_suffix();
@@ -89,10 +90,10 @@ namespace geomtools {
     ~i_model() override;
 
     /// Smart print
-    void tree_dump(std::ostream & out_         = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_          = false) const override;
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_ = "",
+                   const std::string & indent_ = "",
+                   bool inherit_ = false) const override;
 
     /// Get a non mutable reference to the embedded logical volume
     const geomtools::logical_volume & get_logical() const;
@@ -103,13 +104,17 @@ namespace geomtools {
     /// Method that constructs the geometry model
     virtual void construct(const std::string & name_,
                            const datatools::properties & setup_,
-                           models_col_type * models_ = 0);
+                           models_col_type * models_ = nullptr);
 
     /// Main method that constructs the geometry model
     virtual void construct(const std::string & name_,
                            const datatools::properties & setup_,
                            const std::vector<std::string> & properties_prefixes_,
                            models_col_type * models_);
+
+    /// Method that destroys the geometry model
+    virtual void destroy(const std::string & name_,
+                         models_col_type * models_ = nullptr);
 
     /// Get the model ID
     virtual std::string get_model_id() const = 0;
@@ -163,6 +168,10 @@ namespace geomtools {
     /// Mandatory post construction
     void _mandatory_post_construct(datatools::properties & setup_, models_col_type * models_);
 
+    /// The main destruction hook
+    virtual void _at_destroy(const std::string & name_,
+                             models_col_type * models_ = nullptr);
+
   protected:
 
     datatools::logger::priority _logging_priority; //!< Logging priority threshold
@@ -177,7 +186,7 @@ namespace geomtools {
     model_with_internal_mesh_data _meshes_; //!< Internal meshes within the mother logical
 
     // Work:
-    shape_factory *       _shape_factory_; //!< Handle to an external shape factory
+    shape_factory *       _shape_factory_ = nullptr; //!< Handle to an external shape factory
 
 
   public:
@@ -202,6 +211,8 @@ namespace geomtools {
                                                  int nrows_);
 
     static std::string extract_label_from_physical_volume_name(const std::string & physical_volume_name_);
+
+    static std::string extract_basename_from_model_name(const std::string & model_name_);
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_model)

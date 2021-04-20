@@ -94,6 +94,9 @@ namespace geomtools {
                                logical_volume & log_,
                                models_col_type * models_);
 
+    void init_internal_items (logical_volume & log_,
+                              models_col_type * models_);
+
 
     static void init_ocd(datatools::object_configuration_description & ocd_,
                          const std::string & prefix_ = "");

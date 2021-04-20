@@ -23,6 +23,12 @@ namespace geomtools {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_model, "geomtools::i_model/__system__")
 
   // static
+  const std::string & i_model::model_suffix()
+  {
+    static std::string token = ".model";
+    return token;
+  }
+
   const std::string & i_model::solid_suffix()
   {
     static std::string token = ".solid";
@@ -126,6 +132,13 @@ namespace geomtools {
                 "Do not recognize a physical volume name from '"
                 << physical_volume_name_ << "' !");
     return physical_volume_name_.substr (0, pos);
+  }
+
+  std::string i_model::extract_basename_from_model_name (const std::string & model_name_)
+  {
+    const size_t pos = model_name_.rfind (i_model::model_suffix());
+    if (pos != model_name_.npos) return model_name_.substr(0, pos);
+    return model_name_;
   }
 
   model_with_internal_mesh_data & i_model::grab_meshes()
@@ -326,6 +339,20 @@ namespace geomtools {
       _meshes_.plug_internal_meshes(internal_mesh_setup, _logical, models_);
     }
 
+    return;
+  }
+
+
+  void i_model::_at_destroy(const std::string & /* name_ */,
+                            models_col_type * /* models_ */)
+  {
+  }
+  
+
+  void i_model::destroy(const std::string & name_,
+                        models_col_type * models_)
+  {
+    _at_destroy(name_, models_);
     return;
   }
 

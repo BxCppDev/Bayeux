@@ -154,6 +154,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/rotated_boxed_model.h
   ${module_include_dir}/${module_name}/sensitive.h
   ${module_include_dir}/${module_name}/shape_factory.h
+  ${module_include_dir}/${module_name}/plain_model.h
   ${module_include_dir}/${module_name}/simple_boxed_model.h
   ${module_include_dir}/${module_name}/simple_shaped_model.h
   ${module_include_dir}/${module_name}/simple_world_model.h
@@ -266,6 +267,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/replicated_model.cc
   ${module_source_dir}/grid_model.cc
   ${module_source_dir}/rotated_boxed_model.cc
+  ${module_source_dir}/plain_model.cc
   ${module_source_dir}/simple_boxed_model.cc
   ${module_source_dir}/simple_shaped_model.cc
   ${module_source_dir}/simple_world_model.cc

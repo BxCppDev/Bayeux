@@ -319,14 +319,34 @@ namespace geomtools {
                    << log_.get_name() << "'!");
 
       add_item(item_label, *item_model, item_placement);
+      // physical_volume & item_phys = grab_item(item_label).grab_physical_volume();
+      // const placement & item_plcmt = get_item(item_label).get_placement();
+      // item_phys.set_name(i_model::make_physical_volume_name(item_label));
+      // item_phys.set_placement(item_plcmt);
+      // item_phys.set_logical(item_model->get_logical());
+      // item_phys.set_mother(log_);
+    }
+    // Post init of internal items:    
+    init_internal_items(log_, models_);
+    return;
+  }
+  
+  void model_with_internal_items_tools::init_internal_items(logical_volume & log_,
+                                                            models_col_type * /* models_ */)
+  {
+    for (const auto & p : _items_) {
+      const std::string & item_label = p.first;
+      const i_model & item_model = get_item(item_label).get_model();
       physical_volume & item_phys = grab_item(item_label).grab_physical_volume();
       const placement & item_plcmt = get_item(item_label).get_placement();
-      item_phys.set_name(i_model::make_physical_volume_name(item_label));
-      item_phys.set_placement(item_plcmt);
-      item_phys.set_logical(item_model->get_logical());
-      item_phys.set_mother(log_);
+      if (item_phys.get_name().empty()) {
+        // This physical has not been installed yet:
+        item_phys.set_name(i_model::make_physical_volume_name(item_label));
+        item_phys.set_placement(item_plcmt);
+        item_phys.set_logical(item_model.get_logical());
+        item_phys.set_mother(log_);
+      }
     }
-
     return;
   }
 

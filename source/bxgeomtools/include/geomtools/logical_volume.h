@@ -115,8 +115,10 @@ namespace geomtools {
 
     bool has_shape () const;
 
+    // Set external shape
     void set_shape (const i_shape_3d &);
 
+    // Set owned shape
     void set_shape (const i_shape_3d *);
 
     const i_shape_3d & get_shape () const;
@@ -217,14 +219,14 @@ namespace geomtools {
     bool                  _locked_;       //!< The lock flag
     datatools::properties _parameters_;   //!< The collection of auxiliary parameters
     bool                  _own_shape_;    //!< Shape owner flag
-    const i_shape_3d *    _shape_;        //!< Shape handle
+    const i_shape_3d *    _shape_ = nullptr;   //!< Shape handle
     physicals_col_type    _physicals_;    //!< Dictionary of daughter volumes
-    bool                  _abstract_;     //!< Abstract flag
+    bool                  _abstract_ = false;     //!< Abstract flag
 
     // Experimental:
-    const i_model    *    _geo_model_;       //!< The geometry model
-    const i_shape_3d *    _effective_shape_; //!< The effective shape to be taken into account for shape inspection
-    const placement *     _effective_relative_placement_; //!< The effective relative placement to be taken into account for volume inspection
+    const i_model    *    _geo_model_ = nullptr;       //!< The geometry model
+    const i_shape_3d *    _effective_shape_ = nullptr; //!< The effective shape to be taken into account for shape inspection
+    const placement *     _effective_relative_placement_ = nullptr; //!< The effective relative placement to be taken into account for volume inspection
     std::string           _effective_material_ref_; //!< The name of the effective material to be taken into account for material inspection
 
     physicals_col_type    _real_physicals_; //!< Unused
