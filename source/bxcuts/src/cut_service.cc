@@ -96,7 +96,7 @@ namespace cuts {
       datatools::properties cut_manager_config;
       datatools::fetch_path_with_env(config_filename);
 
-      datatools::properties::read_config(config_filename,
+      datatools::read_config(config_filename,
                                          cut_manager_config);
       _cut_manager_ = new cut_manager;
       _owns_manager_ = true;

@@ -40,7 +40,7 @@ int main(int argc_, char ** argv_)
     datatools::properties GM_config;
     std::string GM_config_file = "${CONFIG_DIR}/manager.conf";
     datatools::fetch_path_with_env(GM_config_file);
-    datatools::properties::read_config(GM_config_file, GM_config);
+    datatools::read_config(GM_config_file, GM_config);
 
     // Initialize the geometry manager from the configuration parameters :
     GM.initialize(GM_config);

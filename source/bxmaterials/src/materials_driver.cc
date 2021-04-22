@@ -111,7 +111,7 @@ namespace materials {
     _mgr_.reset(new materials::manager);
     datatools::fetch_path_with_env(_params_.MaterialsMgrConfigFile);
     datatools::properties MaterialsMgrConfig;
-    datatools::properties::read_config (_params_.MaterialsMgrConfigFile,
+    datatools::read_config (_params_.MaterialsMgrConfigFile,
                                         MaterialsMgrConfig);
     _mgr_.get()->initialize(MaterialsMgrConfig);
     if (_params_.logging >= datatools::logger::PRIO_DEBUG) {

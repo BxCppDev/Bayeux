@@ -129,7 +129,7 @@ int main(int argc_, char ** argv_)
       datatools::properties config;
       std::string config_filename = "${GENBB_HELP_TESTING_DIR}/config/multi_rays_133Ba.conf";
       datatools::fetch_path_with_env(config_filename);
-      datatools::properties::read_config(config_filename, config);
+      datatools::read_config(config_filename, config);
 
       SPG.initialize_standalone(config);
       // Shoot events:

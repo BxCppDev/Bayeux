@@ -72,7 +72,7 @@ int main (int argc_, char ** argv_)
     }
 #endif // GENBB_HELP_WITH_FORTRAN == 1
     datatools::fetch_path_with_env(config_filename);
-    datatools::properties::read_config(config_filename, config);
+    datatools::read_config(config_filename, config);
 
     // Particle generator manager :
     genbb::manager PGMgr;

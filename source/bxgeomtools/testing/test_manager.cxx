@@ -298,7 +298,7 @@ int main (int argc_, char ** argv_)
 
       // load properties from the configuration file:
       datatools::properties manager_config;
-      datatools::properties::read_config(manager_config_file,
+      datatools::read_config(manager_config_file,
                                          manager_config);
 
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(geomtools::manager::base_plugin).tree_dump (std::clog, "Geometry plugin system register: ", "INFO: ");

@@ -85,7 +85,7 @@ void test_1(bool debug_)
   datatools::properties gm_setup;
   std::string gm_filename = "${MCTOOLS_TESTING_DIR}/config/g4/test-2.0/geometry/manager.conf";
   datatools::fetch_path_with_env(gm_filename);
-  datatools::properties::read_config(gm_filename, gm_setup);
+  datatools::read_config(gm_filename, gm_setup);
   geo_manager.initialize (gm_setup);
 
   // Additional plugins :

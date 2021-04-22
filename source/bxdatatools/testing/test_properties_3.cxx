@@ -16,12 +16,12 @@ int main(void)
       my_bag.store("pi", 3.14159, "The PI constant"); // add a double precision floatting value
       my_bag.lock("pi");                              // make it non-mutable
       my_bag.store("James_Bond", "007", "A famous spy !");
-      datatools::properties::write_config("my_bag.conf", my_bag);
+      datatools::write_config("my_bag.conf", my_bag);
     }
 
     {
       datatools::properties my_bag;
-      datatools::properties::read_config("my_bag.conf", my_bag);
+      datatools::read_config("my_bag.conf", my_bag);
       my_bag.dump(std::clog);
     }
     

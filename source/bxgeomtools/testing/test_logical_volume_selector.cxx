@@ -67,7 +67,7 @@ int main (int argc_, char ** argv_)
     std::string manager_config_file = "${GEOMTOOLS_TESTING_DIR}/config/test-1.0/test_manager.conf";
     datatools::fetch_path_with_env (manager_config_file);
     datatools::properties manager_config;
-    datatools::properties::read_config(manager_config_file, manager_config);
+    datatools::read_config(manager_config_file, manager_config);
     geomtools::manager geo_mgr;
     geo_mgr.initialize (manager_config);
     if (debug) {

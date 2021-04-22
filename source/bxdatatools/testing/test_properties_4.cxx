@@ -17,7 +17,7 @@ int main(void)
       
       std::string setup_file = "${DATATOOLS_TESTING_DIR}/config/test_properties_sample.conf";
       datatools::fetch_path_with_env(setup_file);
-      datatools::properties::read_config(setup_file, setup);
+      datatools::read_config(setup_file, setup);
       setup.tree_dump(std::cout, "Setup: ");
 
       if (setup.has_key("Mass")){

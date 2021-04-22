@@ -193,7 +193,7 @@ int main(int argc_, char **argv_)
     geomtools::manager geo_mgr;
     datatools::fetch_path_with_env(geometry_config_filename);
     datatools::properties geo_mgr_config;
-    datatools::properties::read_config(geometry_config_filename, geo_mgr_config);
+    datatools::read_config(geometry_config_filename, geo_mgr_config);
     geo_mgr.initialize(geo_mgr_config);
 
     // The simulated data inspector :

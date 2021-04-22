@@ -52,7 +52,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
 
     materials::manager MatMgr;
     datatools::properties MatMgrSetup;
-    datatools::properties::read_config(MatMgrSetupFile, MatMgrSetup);
+    datatools::read_config(MatMgrSetupFile, MatMgrSetup);
     MatMgr.initialize (MatMgrSetup);
     MatMgr.tree_dump (std::clog, "Material manager: ");
 

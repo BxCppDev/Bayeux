@@ -171,7 +171,7 @@ void test_multi_properties (bool /*debug_*/)
     }
 
     {
-      camp::Value propsVal = mpropsObj.call ("write", camp::Args("datatools_test_reflection_0a.txt", false, false));
+      //camp::Value propsVal = mpropsObj.call ("write", camp::Args("datatools_test_reflection_0a.txt", false, false));
     }
 
     {
@@ -196,7 +196,7 @@ void test_multi_properties (bool /*debug_*/)
     }
 
     mpropsObj.call("tree_print", camp::Args(1, "Multi-properties: "));
-    mpropsObj.call ("write", camp::Args("datatools_test_reflection_0b.txt", true, false));
+    //mpropsObj.call ("write", camp::Args("datatools_test_reflection_0b.txt", true, false));
 
   }
 }
@@ -234,11 +234,11 @@ void test_properties (bool /*debug_*/)
       {
         std::clog << "Cannot change Pi value because it is locked !" << std::endl;
         std::clog << "Unlock it first !" << std::endl;
-        propsObj.call ("key_unlock", camp::Args("pi"));
+        propsObj.call ("unlock", camp::Args("pi"));
         std::clog << "Changing Pi value..." << std::endl;
         propsObj.call ("change_real", camp::Args("pi", "3.14159"));
         std::clog << "Finally re-lock it !" << std::endl;
-        propsObj.call ("key_lock", camp::Args("pi"));
+        propsObj.call ("lock", camp::Args("pi"));
       }
     propsObj.call("tree_print", camp::Args(1, "Properties: "));
   }

@@ -103,7 +103,7 @@ int main (int argc_, char ** argv_)
     geomtools::manager GeoMgr;
     datatools::fetch_path_with_env (GeoMgrConfigFile);
     datatools::properties GeoMgrConfig;
-    datatools::properties::read_config (GeoMgrConfigFile, GeoMgrConfig);
+    datatools::read_config (GeoMgrConfigFile, GeoMgrConfig);
     GeoMgr.initialize (GeoMgrConfig);
 
     if (dump_gids) {
@@ -117,7 +117,7 @@ int main (int argc_, char ** argv_)
     VGMgr.set_random_seed(314159);
     datatools::fetch_path_with_env (VGMgrConfigFile);
     datatools::properties VGMgrConfig;
-    datatools::properties::read_config (VGMgrConfigFile, VGMgrConfig);
+    datatools::read_config (VGMgrConfigFile, VGMgrConfig);
     VGMgr.initialize (VGMgrConfig);
     VGMgr.tree_dump(std::clog, "The vertex generator manager: ");
 

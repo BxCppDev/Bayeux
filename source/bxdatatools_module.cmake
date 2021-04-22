@@ -118,14 +118,17 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/library_query_service.h
   ${module_include_dir}/${module_name}/library_loader.h
   ${module_include_dir}/${module_name}/logger.h
+  ${module_include_dir}/${module_name}/make_configuration.h
   ${module_include_dir}/${module_name}/memory_streambuf.h
   ${module_include_dir}/${module_name}/multi_properties.h
   ${module_include_dir}/${module_name}/multi_properties.ipp
+  ${module_include_dir}/${module_name}/multi_properties_config.h
   ${module_include_dir}/${module_name}/object_configuration_description.h
   ${module_include_dir}/${module_name}/ocd_macros.h
   ${module_include_dir}/${module_name}/ocd_driver.h
   ${module_include_dir}/${module_name}/properties.h
   ${module_include_dir}/${module_name}/properties.ipp
+  ${module_include_dir}/${module_name}/properties_config.h
   ${module_include_dir}/${module_name}/range_tools.h
   ${module_include_dir}/${module_name}/real_range.h
   ${module_include_dir}/${module_name}/reflection_interface.h
@@ -287,12 +290,15 @@ ${module_source_dir}/library_query_service.cc
 ${module_source_dir}/library_loader.cc
 ${module_source_dir}/file_include.cc
 ${module_source_dir}/logger.cc
+${module_source_dir}/make_configuration.cc
 ${module_source_dir}/memory_streambuf.cc
 ${module_source_dir}/multi_properties.cc
+${module_source_dir}/multi_properties_config.cc
 ${module_source_dir}/object_configuration_description.cc
 ${module_source_dir}/ocd_driver.cc
 ${module_source_dir}/ocd_utils.cc
 ${module_source_dir}/properties.cc
+${module_source_dir}/properties_config.cc
 ${module_source_dir}/range_tools.cc
 ${module_source_dir}/real_range.cc
 ${module_source_dir}/resource.cc

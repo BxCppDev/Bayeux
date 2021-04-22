@@ -98,7 +98,7 @@ int main (int argc_, char ** argv_)
         if (debug) clog << datatools::io::debug << "Setup file = "
                         << SM_setup_file << endl;
         datatools::fetch_path_with_env (SM_setup_file);
-        datatools::properties::read_config(SM_setup_file, SM_setup);
+        datatools::read_config(SM_setup_file, SM_setup);
         SM_setup.tree_dump(std::cerr, "The service manager setup : ");
         if (debug) clog << datatools::io::debug << "Initializing the service manager..." << endl;
         SM.initialize (SM_setup);

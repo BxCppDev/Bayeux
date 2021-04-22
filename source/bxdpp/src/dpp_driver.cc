@@ -231,7 +231,7 @@ namespace dpp {
       DT_LOG_NOTICE(_logging_, "Manager config. file : '" << MM_config_file << "'");
 
       datatools::properties MM_config;
-      datatools::properties::read_config(MM_config_file, MM_config);
+      datatools::read_config(MM_config_file, MM_config);
       _module_mgr_->set_logging_priority(_logging_);
       _module_mgr_->initialize(MM_config);
       DT_LOG_NOTICE(_logging_, "Module manager (initialized) : ");

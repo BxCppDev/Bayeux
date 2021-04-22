@@ -54,7 +54,8 @@
 #include <datatools/i_cloneable.h>
 #include <datatools/bit_mask.h>
 #include <datatools/exception.h>
-#include <datatools/file_include.h>
+
+#include <datatools/make_configuration.h>
 
 namespace datatools {
 
@@ -69,7 +70,7 @@ namespace datatools {
    * - explicit support for units with real parameters
    * - string parameters possibly marked as filesystem path
    * - support for variant configuration parameter parsing
-   * 
+   *
    * The properties class is provided with different I/O mechnisms:
    *
    * - Boost/Serialization I/O (text, binary, XML archives)
@@ -118,9 +119,9 @@ namespace datatools {
    *
    * // Fetch properties:
    * bool test2 = my_parameters2.fetch_boolean("test");
-   * 
+   *
    * \endcode
-   * 
+   *
    */
   class properties
     : public datatools::i_serializable
@@ -129,18 +130,20 @@ namespace datatools {
     , public datatools::i_cloneable
   {
   public:
-    
+
     //----------------------------------------------------------------------
     //
     //! \brief Internal data stored within the dictionary of the properties class.
     class data {
-      
+
     public:
       static const int ERROR_SUCCESS = 0;
       static const int ERROR_FAILURE = 1;
       static const int ERROR_BADTYPE = 2;
       static const int ERROR_RANGE   = 3;
       static const int ERROR_LOCK    = 4;
+      /// Returns an error message from an integer error code
+      static std::string get_error_message(int error_code_);
 
       static const uint8_t MASK_TYPE          = 0x7;  // = 00000111
       static const uint8_t MASK_UNIT_SYMBOL   = 0x8;  // = 00001000 for real parameters
@@ -161,9 +164,11 @@ namespace datatools {
       static const char TYPE_STRING_SYMBOL  = 'S';
 
       static const char STRING_FORBIDDEN_CHAR = '"';
+      /// Check if a string contains a forbidden character
+      static bool has_forbidden_char(const std::string & checked_);
 
-      static const int SCALAR_DEF  = -1;
-      static const int SCALAR_SIZE =  1;
+      static const size_t SCALAR_DEF  = std::numeric_limits<size_t>::max();
+      static const size_t SCALAR_SIZE = 1;
 
       /// \brief Provides static method for default values for each supported type
       struct defaults {
@@ -171,35 +176,45 @@ namespace datatools {
         static int integer_value();  // return 0
         static double real_value();  // return 0.0
         static std::string string_value(); // return empty string
+
+        template <typename T>
+        static T default_value();
+      };
+
+      /// \brief Provides static method for type labels for each supported type
+      struct format {
+        static const std::string & boolean_label();
+        static const std::string & integer_label();
+        static const std::string & real_label();
+        static const std::string & string_label();
       };
 
     public:
-      
-      typedef std::vector<bool>        vbool;   ///< Container for boolean data
-      typedef std::vector<int32_t>     vint;    ///< Container for integer data
-      typedef std::vector<double>      vdouble; ///< Container for real data
-      typedef std::vector<std::string> vstring; ///< Container for character string data
+      using vbool = std::vector<bool>;          ///< Container for boolean data
+      using vint =  std::vector<int32_t>;       ///< Container for integer data
+      using vdouble =  std::vector<double>;     ///< Container for real data
+      using vstring = std::vector<std::string>; ///< Container for character string data
 
     public:
+      /// Default constructor
+      /// Requires retention as some classes still expect this
+      //non-(construction-is-initialization) interface...
+      data(char type_ = TYPE_INTEGER_SYMBOL, size_t size_ = SCALAR_DEF);
 
-      /// Constructor
-      data(char type_ = TYPE_INTEGER_SYMBOL,
-           int size_ = SCALAR_DEF);
+      /// Constructor for boolean value
+      data(bool value_, size_t size_ = SCALAR_DEF);
 
-      /// Constructor
-      data(bool value_, int size_ = SCALAR_DEF);
+      /// Constructor for int value
+      data(int value_, size_t size_ = SCALAR_DEF);
 
-      /// Constructor
-      data(int value_, int size_ = SCALAR_DEF);
+      /// Constructor for double value
+      data(double value_, size_t size_ = SCALAR_DEF);
 
-      /// Constructor
-      data(double value_, int size_ = SCALAR_DEF);
+      /// Constructor for string value
+      data(const std::string & value_, size_t size_ = SCALAR_DEF);
 
-      /// Constructor
-      data(const std::string & value_, int size_ = SCALAR_DEF);
-
-      /// Constructor
-      data(const char* value_, int size_ = SCALAR_DEF);
+      /// Constructor for string value
+      data(const char* value_, size_t size_ = SCALAR_DEF);
 
       /// Destructor
       virtual ~data() = default;
@@ -216,28 +231,14 @@ namespace datatools {
       // Move assignment
       data & operator=(data &&) = default;
 
-      /// Check is description is set
-      bool has_description() const;
-
-      /// Set the description string associated to the stored data
-      void set_description(const std::string & description_);
-
-      /// Get the description string associated to the stored data
-      const std::string & get_description() const;
-
-      /// Set the preferred unit symbol associated to the stored real data
-      ///
-      /// This method implies to set the *explicit unit* flag.
-      int set_unit_symbol(const std::string & symbol_);
-
-      /// Get the unit symbol associated to the stored real data
-      const std::string & get_unit_symbol() const;
-
-      /// Check if the data type is valid
-      bool has_type() const;
-
       /// Return type
       int get_type() const;
+
+      /// Get a string label associated to the type of the stored data
+      std::string get_type_label() const;
+
+      /// Get a string label associated to the scalar/vector trait of the stored data
+      std::string get_vector_label() const;
 
       /// Check if the data is a boolean value
       bool is_boolean() const;
@@ -260,8 +261,18 @@ namespace datatools {
       /// Check if the data is vector (>=0 stored values in an array)
       bool is_vector() const;
 
-      /// Check if the data is locked (cannot be modified)
-      bool is_locked() const;
+      /// Generic type check
+      template <typename T>
+      bool is_type() const;
+
+      /// Check is description is set
+      bool has_description() const;
+
+      /// Set the description string associated to the stored data
+      void set_description(const std::string & description_);
+
+      /// Get the description string associated to the stored data
+      const std::string & get_description() const;
 
       /// Check if the data has an unit symbol
       bool has_unit_symbol() const;
@@ -269,23 +280,35 @@ namespace datatools {
       /// Check if the (real only) data has been initialized with explicit unit
       bool has_explicit_unit() const;
 
+      /// Set the preferred unit symbol associated to the stored real data
+      ///
+      /// This method implies to set the *explicit unit* flag.
+      int set_unit_symbol(const std::string & symbol_);
+
+      /// Get the unit symbol associated to the stored real data
+      const std::string & get_unit_symbol() const;
+
       /// Check if the (string only) data has been initialized with explicit path
       bool is_explicit_path() const;
 
-      /// Check if the data is not locked (can be modified)
-      bool is_unlocked() const;
-
       /// Assign N boolean values
-      int boolean(int size_ = SCALAR_DEF);
+      int boolean(size_t size_ = SCALAR_DEF);
 
       /// Assign N integer values
-      int integer(int size_ = SCALAR_DEF);
+      int integer(size_t size_ = SCALAR_DEF);
 
       /// Assign N real values
-      int real(int size_ = SCALAR_DEF);
+      int real(size_t size_ = SCALAR_DEF);
 
       /// Assign N string values
-      int string(int size_ = SCALAR_DEF);
+      int string(size_t size_ = SCALAR_DEF);
+
+      /// Generic assignment and specializations
+      template <typename T>
+      int assign(size_t size_ = SCALAR_DEF);
+
+      /// Check if the data is locked (cannot be modified)
+      bool is_locked() const;
 
       /// Lock the value (make it unmutable)
       int lock();
@@ -294,82 +317,70 @@ namespace datatools {
       int unlock();
 
       /// Returns the size of the array of stored values (1 if scalar, >=0 if vector)
-      int32_t get_size() const;
+      size_t get_size() const;
 
       /// Returns the size of the array of stored values (1 if scalar, >=0 if vector)
-      int32_t size() const;
+      size_t size() const;
 
       /// Check if the value array is empty
       bool empty() const;
 
       /// Check if array index is valid
-      bool index_is_valid(int index_) const;
+      bool index_is_valid(size_t index_) const;
 
       /// Get the boolean value stored at a given rank
-      bool get_boolean_value(int index_ = 0) const;
+      bool get_boolean_value(size_t index_ = 0) const;
 
       /// Get the integer value stored at a given rank
-      int get_integer_value(int index_ = 0) const;
+      int get_integer_value(size_t index_ = 0) const;
 
       /// Get the real value stored at a given rank
-      double get_real_value(int index_ = 0) const;
+      double get_real_value(size_t index_ = 0) const;
 
       /// Get the string value stored at a given rank
-      std::string get_string_value(int index_ = 0) const;
+      std::string get_string_value(size_t index_ = 0) const;
 
       /// Set the boolean value at a given rank
-      int set_value(bool value_, int index_ = 0);
+      int set_value(bool value_, size_t index_ = 0);
 
       /// Set the integer value at a given rank
-      int set_value(int value_, int index_ = 0);
+      int set_value(int value_, size_t index_ = 0);
 
       /// Set the real value at a given rank
-      int set_value(double value_, int index_ = 0, bool explicit_unit_ = false);
+      int set_value(double value_, size_t index_ = 0, bool explicit_unit_ = false);
 
       /// Set the real value at a given rank
-      int set_value_with_unit(double value_, int index_ = 0, const std::string & unit_symbol_ = "");
+      int set_value_with_unit(double value_, size_t index_ = 0, const std::string & unit_symbol_ = "");
 
       /// Set the explicit unit flag
       int set_explicit_unit(bool explicit_unit_flag_);
 
+         /// Set the string value at a given rank
+      int set_value(const std::string & value_, size_t index_ = 0, bool explicit_path_flag_ = false);
+
+      /// Set the string value at a given rank
+      int set_value(const char * value_, size_t index_ = 0, bool explicit_path_flag_ = false);
+
       /// Set the explicit path flag
       int set_explicit_path(bool explicit_path_flag_);
 
-      /// Set the string value at a given rank
-      int set_value(const std::string & value_, int index_ = 0, bool explicit_path_flag_ = false);
-
-      /// Set the string value at a given rank
-      int set_value(const char * value_, int index_ = 0, bool explicit_path_flag_ = false);
-
       /// Get the boolean value by reference stored at a given rank
-      int get_value(bool & value_, int index_ = 0) const;
+      int get_value(bool & value_, size_t index_ = 0) const;
 
       /// Get the integer value by reference stored at a given rank
-      int get_value(int & value_, int index_ = 0) const;
+      int get_value(int & value_, size_t index_ = 0) const;
 
       /// Get the real value by reference stored at a given rank
-      int get_value(double & value_, int index_ = 0) const;
+      int get_value(double & value_, size_t index_ = 0) const;
 
       /// Get the string value by reference stored at a given rank
-      int get_value(std::string & value_, int index_ = 0) const;
-
-      /// Get a string label associated to the type of the stored data
-      std::string get_type_label() const;
-
-      /// Get a string label associated to the scalar/vector trait of the stored data
-      std::string get_vector_label() const;
-
-      /// Check if a string contains a forbidden character
-      static bool has_forbidden_char(const std::string & checked_);
+      int get_value(std::string & value_, size_t index_ = 0) const;
 
       /// Basic print
       void dump(std::ostream & out_) const;
 
       /// Convert to string and print in an output stream
       void to_string(std::ostream & out_) const;
-
-      /// Returns an error message from an integer error code
-      static std::string get_error_message(int error_code_);
 
       //! Method for smart printing (from the datatools::i_tree_dump interface).
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -378,18 +389,18 @@ namespace datatools {
                              bool inherit_ = false) const;
 
     private:
-      
+
       void clear_values_();
 
       void clear_unit_symbol_();
 
       int init_values_(char type_ = TYPE_INTEGER_SYMBOL,
-                       int size_ = SCALAR_DEF);
+                       size_t size_ = SCALAR_DEF);
 
       BOOST_SERIALIZATION_BASIC_DECLARATION()
 
     private:
-      
+
       std::string _description_; //!< Description of the property
       /** 8-bits description flags :
        * Format is : VLUPSTTT
@@ -409,410 +420,6 @@ namespace datatools {
 
     }; //----- end of data inner class
 
-
-    //----------------------------------------------------------------------
-    // Config inner class
-    //
-    friend class config;
-    //! \brief Class for ASCII file I/O operations with properties objects.
-    class config {
-    public:
-
-      static const std::string & lock_decorator();
-      static const std::string & as_directive();
-      static const std::string & in_directive();
-      static const std::string & path_decorator();
-      static const std::string & metacomment_prefix();
-
-      /// \brief Decoration mode
-      /// @deprecated is replaced by
-      /// the dedicated options_flag (HEADER_FOOTER) in constructor.
-      enum decoration_mode_type {
-        MODE_BARE          = 0,         ///< No decoration
-        MODE_HEADER_FOOTER = 1,         ///< Header/footer decoration
-        MODE_DEFAULT       = MODE_BARE, ///< Default decoration mode
-        mode_bare          = MODE_BARE,
-        mode_header_footer = MODE_HEADER_FOOTER
-      };
-
-      /// \brief Option flags used at construction
-      enum options_flag {
-        SKIP_PRIVATE       = bit_mask::bit00, ///< Skip private properties bit
-        FORBID_VARIANTS    = bit_mask::bit01, ///< Forbid variant directives bit
-        LOG_MUTE           = bit_mask::bit02, ///< Mute mode activation bit
-        LOG_DEBUG          = bit_mask::bit03, ///< Debug mode activation bit
-        LOG_TRACE          = bit_mask::bit04, ///< Trace mode activation bit
-        SMART_MODULO       = bit_mask::bit05, ///< Use smart modulo (write)
-        HEADER_FOOTER      = bit_mask::bit06, ///< Use header/footer (write)
-        REQUESTED_TOPIC    = bit_mask::bit07, ///< Requested topic (read/write)
-        FORBID_INCLUDE     = bit_mask::bit08, ///< Forbid include directives bit (read)
-        DONT_CLEAR         = bit_mask::bit09, ///< Don't clear before parsing bit (read)
-        RESOLVE_PATH       = bit_mask::bit10, ///< Resolve path for input filename (read/write)
-        ALLOW_KEY_OVERRIDE = bit_mask::bit11, ///< Allow key override (read)
-        LOG_WARNING        = bit_mask::bit12  ///< Warning mode activation bit
-      };
-
-      /// Constructor
-      config(uint32_t options_ = 0,
-             const std::string & topic_ = "",
-             const std::string & section_name_ = "",
-             int section_start_line_number_ = -1);
-
-      /// Destructor
-      virtual ~config();
-
-      /// Return the logging priority threshold
-      datatools::logger::priority get_logging() const;
-
-      /// Set the logging priority threshold
-      void set_logging(datatools::logger::priority);
-
-      /// \brief Read a properties container from an input stream
-      ///
-      /// This method is the main parsing tool for datatools::properties-based configuration files.
-      ///
-      /// Example of usage which loads a configuration file to store the configuration parameters
-      /// of an algorithm in a datatools::properties object:
-      /// \code
-      /// // A properties container:
-      /// datatools::properties algo_parameters; 
-      ///
-      /// // A parser for configuration parameters:
-      /// uint32_t parser_options = 0;                                   // No print option
-      /// parser_options |= datatools::properties::config::LOG_DEBUG;    // Add debug option
-      /// parser_options |= datatools::properties::config::RESOLVE_PATH; // Add path resolving option
-      /// datatools::properties::config parser(parser_options);
-      ///
-      /// // Parse a file and fill the properties object:
-      /// parser.read("${MYSETUP}/config/algo.conf", algo_parameters);
-      /// {
-      ///   // Smart print:
-      ///   boost::property_tree::ptree smart_print_options;
-      ///   smart_print_options.put("indent", "[debug] ");
-      ///   smart_print_options.put("title", "Configuration parameters for my algorithm: ");
-      ///   algo_parameters.print_tree(std::clog, smart_print_options);
-      /// }
-      /// \endcode
-      ///
-      /// Example of input file to be parsed:
-      /// \code
-      ///
-      /// # Supported format:
-      /// # - Comment lines start with a '#' and any segment of a line
-      /// #   starting with '#' is also ignored;
-      /// # - Blank lines are ignored;
-      /// # - Lines starting with '#@' are considered as optional meta-comments
-      /// #   with special embedded parsing options and/or actions.
-      /// 
-      /// ### Header ###
-      /// #
-      /// # The directives in this section can only be placed at the beginning of the 
-      /// # file, always before the definitions of properties.
-      ///
-      /// #@topic "rootfinding"
-      /// #  This optional meta-comment provides a conventional keyword that
-      /// #  identifies the functionnality of the properties container
-      /// #  accessed by an external tool / user.
-      /// #  This directive must be given before any property directive.
-      ///
-      /// #@config[uration] Configuration parameters for a root finding algorithm
-      /// #  This meta-comment provides the general description of the set of properties.
-      /// #  This directive must be given before any property directive.
-      /// 
-      /// #@include_dir "${DATATOOLS_TESTING_DIR}/config/user"
-      /// #@include_dir "${DATATOOLS_TESTING_DIR}/config/defaults"
-      /// #@include_dir "/var/${USER}/config"
-      /// #@include_dir "/etc/config"
-      /// #  These meta-comments set the ordered list of absolute paths from which
-      /// #  other properties files to be included are resolved. The first directive
-      /// #  has the highest priority.
-      /// #  This directive must be given before any property directive.
-      /// 
-      /// #@include_path_env "DATATOOLS_INCLUDE_PATH"
-      /// #  This meta-comment specifies the name of an environment variable which
-      /// #  sets a list of absolute paths from which other properties files to
-      /// #  be included are resolved. This list is preprended to the specified list
-      /// #  above, if any.
-      /// #  This directive must be given before any property directive.
-      /// 
-      /// #@include_no_propagate
-      /// #  This meta-comment specifies that the file inclusion rules are not
-      /// #  propagated to included files which use their own rules.
-      /// #  This directive must be given before any property directive.
-      /// 
-      /// #@include "path"
-      /// #  This meta-comment specifies the path of a file to be included.
-      /// #  This directive must be given before any property directive.
-      /// 
-      /// #@include_try "path"
-      /// #  This meta-comment specifies the path of a file to try to include.
-      /// #  This directive must be given before any property directive.
-      /// 
-      /// ### Definitions of properties ###
-      ///
-      /// # The '#@description text' optional meta-comments is used to document the next property to
-      /// # be parsed (alternative: '#@parameter text')
-      /// #@description The name of the method
-      /// #  This meta-comment provides the specific description of next 'root_finder_type' property record.
-      /// root_finder_type : string = "Newton-Raphson"
-      /// 
-      /// #@description The path of the log file
-      /// #  The 'as path' directive below indicates that the string value must
-      /// #  be considered as a filesystem path.
-      /// log_file : string as path = "/tmp/root_finding.log"
-      ///
-      /// #@description Relative tolerance (dimensionless)
-      /// #  The property record below shows a pure dimensionless floating-point based quantity.
-      /// relative_epsilon : real = 5e-6
-      ///
-      /// #@description Absolute tolerance (with explicit dimension and associated unit)
-      /// #  The 'as length' directive below indicates that the real value has an explicit
-      /// #  dimension. The explicit 'um' unit symbol after the numerical value must
-      /// #  match the required dimension. 
-      /// absolute_epsilon : real as length = 1.5 um  # Symbol for micrometer
-      ///
-      /// #@description A constant value
-      /// #  The 'const' directive will prevent any further modification of the property
-      /// #  value after parsing.
-      /// time_duration : const real as time = 0.05 ms
-      ///
-      /// #@verbose_parsing
-      /// #  Special directive which activates, from this point, verbose parsing for debugging purpose.
-      ///
-      /// #@description Maximum number of iterations
-      /// max_iterations : integer = 100
-      /// 
-      /// #@description Array of guess values to start with (unit is explicitely given)
-      /// #  The 'in mm' directive indicates that all real values in the array
-      /// #  are explicitly expressed in 'mm' unit (of 'length' dimension).
-      /// #  Also a 'long' property directive can be splitted on several lines
-      /// #  using a final '\' (after which no character, is allowed).
-      /// guess_values : real[4] in mm = \  # no space is allowed after '\'
-      ///   1.0 \   # no space is allowed after '\'
-      ///   1.2 \   # no space is allowed after '\'
-      ///   2.4 \   # no space is allowed after '\'
-      ///   4.8     # last value
-      ///
-      /// #@description Here two more elements are appended to the original four items
-      /// in the 'guess_values' array so that it contains finally six elements.
-      /// In case of real values, the unit ('in UNITNAME') should be the same that
-      /// the one used for the previous definition in order to avoid confusion or inconsistency.
-      /// guess_values : real[2] in mm += 3.2 1.32
-      ///    
-      /// #@description Algorithm verbosity
-      /// logging : string = "mute"  # no print at all
-      ///
-      /// #@allow_key_override 
-      /// #  From this point, overriding already defined/duplicated properties is allowed.
-      /// #  By default, overriding properties is forbidden.
-      ///
-      /// #@description Overriden algorithm verbosity (discard the first value above)
-      /// logging : string = "debug" # print debug messages
-      ///
-      /// #@forbid_key_override # Special directive
-      /// #  From this point, overriding already defined properties is forbidden again.
-      ///
-      /// #@enable_variants
-      /// #  Enable the parsing of variant preprocessor directives.
-      ///
-      /// #@variant_only math:numerical_library/with_gsl|true
-      /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:numerical_library/with_gsl" variant condition is set (boolean)
-      /// #  where 'math' is the name of the target variant registry and
-      /// # 'numerical_library/with_gsl' is the path of a variant condition within
-      /// # this registry. The '|true' tag indicates that the condition should be
-      /// # considered as true if no variant system is activated.
-      /// #@description GSL error handling flag is set only if the GSL library is used
-      /// gsl_error_support : boolean = true
-      ///
-      /// #@description Default tolerance on double precision floats
-      /// #@variant_only math:tolerance/is_native|true
-      /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:epsilon/is_native" variant condition is set (boolean).
-      /// #  If the variant system is not activated, the 'true' value after
-      /// #  the '|' character in the "@variant_only" directive is used to
-      /// #  consider the condition set by default.
-      /// default_epsilon : real = 1e-16
-      ///
-      /// #@variant_only math:tolerance/is_user|false
-      /// #  This variant directive only applies to the next property directive
-      /// #  if the "math:tolerance/is_user" variant condition is set.
-      /// #  The parsed value is extracted by the variant preprocessor
-      /// #  from a special variant variable (math:epsilon/is_user/epsilon) available
-      /// #  only when the "math:tolerance/is_user" condition is set.
-      /// #  If the variant system is not activated, the 'false' value after
-      /// #  the '|' character in the "@variant_only" directive is used to consider
-      /// #  the condition unset by default.
-      /// #  If the variant system is not activated, the value '1.e-7' after
-      /// #  the '|' character is used as a fallback value for this property.
-      /// # 
-      /// default_epsilon : real = @variant(math:tolerance/is_user/epsilon|1.e-7)
-      ///
-      /// #@variant_if math:numerical_library/with_std|true
-      /// #  This variant directive starts a conditional block of property directives.
-      /// #  The block is activated if and only if the "math:numerical_library/with_std"
-      /// #  variant condition is set. This directive implies the use of a matching
-      /// # '#@variant_endif' closing directive (see below).
-      /// 
-      /// #@description The identifier of the base pseudo-random number generator (PRNG)
-      /// random_prng : string = "mersenne_twister"
-      ///
-      /// # The next property directive is commented out.
-      /// # #@description The PRNG seed 
-      /// # random_seed : integer = 314159
-      /// 
-      /// #@description The path of the input file where to load initial PRNG state 
-      /// random_input_state_path : string as path = "${MYSETUP}/run_42/config/prng_state_in.state"
-      /// 
-      /// #@description The path of the output file where to save the final initial PRNG state 
-      /// random_output_state_path : string as path = "${MYSETUP}/run_42/product/prng_state_out.data"
-      ///
-      /// #@variant_endif # End of the variant conditional block of property directives
-      /// # Optionaly the '#@variant_endif' can specify the variant condition is refers to :
-      /// # #@variant_endif math:numerical_library/with_std
-      /// # Variant conditional blocks can be nested.
-      ///
-      /// #@description The Pi constant in explicit angular unit
-      /// #  The variant system provides three different options associated to the
-      /// #  'math:accuracy' variant parameter, each of them triggers
-      /// #  the use of a specific value for the Pi constant in this file.
-      /// #@variant_only math:accuracy/if_accurate|true
-      /// Pi : const real as angle = 3.14159265358979 radian
-      ///
-      /// #@variant_only math:accuracy/if_approximated|false
-      /// Pi : const real as angle = 3.14 radian
-      ///
-      /// #@variant_only math:accuracy/if_inaccurate|false
-      /// Pi : const real as angle = 3 radian
-      ///
-      /// #@disable_variants
-      /// #  Disable variant preprocessor directives support from this point.
-      ///
-      /// #@description GUI activation
-      /// gui : boolean = false
-      ///
-      /// #@description GUI mode
-      /// gui.mode : string = "light"
-      ///
-      /// #@description GUI colors (background, foreground then alarm foreground)
-      /// gui.colors : string[3] = "grey" "black" "red"
-      ///
-      /// # Load properties from another ``properties`` container which is merged in
-      /// # in the current container. Key overriding is allowed by default and inhibited
-      /// # only if "#@forbid_key_override" is explicitely set
-      /// #@include : string as path = "~/myconfig/defaults.conf"
-      ///
-      /// #@end
-      /// #  Special directives which forces the end of parsing so that
-      /// #  next lines will be ignored.
-      /// not_parsed : string = "unused"  # This property directive will not be parsed.
-      ///
-      ///
-      /// \endcode
-      /// 
-      void read(std::istream & in_, properties & prop_);
-
-      /// Read a properties container from an input file
-      void read(const std::string & in_, properties & prop_);
-
-      /// Write a properties container to an output stream
-      void write(std::ostream & out_, const properties & prop_);
-
-      /// Write a properties container to an output file
-      void write(const std::string & filename_, const properties & prop_);
-
-      /// Return the current value of the line counter
-      int get_current_line_number() const;
-
-      /// Set the filename and the line counter before parsing
-      void set_reader_input(const std::string & filename_, int line_count_ = -1);
-
-      /// Check if topic is set
-      bool has_topic() const;
-
-      /// Set the topic that should be matched
-      void set_topic(const std::string & topic_);
-
-      /// Return the topic
-      const std::string & get_topic() const;
-
-      /// Check if section info is set
-      bool has_section_info() const;
-
-      /// Set the section info
-      void set_section_info(const std::string & section_name_,
-                            int section_start_line_number_);
-
-      /// Reset the section info
-      void reset_section_info();
-
-      /// Return the section
-      const std::string & get_section_name() const;
-
-      /// Return the section start line
-      int get_section_start_line_number() const;
-
-      /// Return the embedded file inclusion solver 
-      const file_include & get_fi() const;
-
-      /// Return the mutable embedded file inclusion solver 
-      file_include & grab_fi();
-
-      /// Override the embedded file inclusion solver 
-      void set_fi(const file_include &);
-
-      /// Reset
-      void reset();
-
-      /// Write meta-comment
-      void write_metacomment(std::ostream & out_,
-                             const std::string & tag_,
-                             const std::string & value_ = "",
-                             const std::string & comment_ = "");
-
-      /// Write a property data
-      void write_data(std::ostream & out_,
-                      const std::string & data_key_,
-                      const properties::data& prop_data_,
-                      const std::string & unit_symbol_ = "",
-                      const std::string & unit_label_ = "",
-                      const std::string & comment_ = "");
-
-    private:
-
-      /// Set default values at construction
-      void _init_defaults_();
-
-      /// Parsing implementation
-      void _read_(std::istream & in_, properties & prop_);
-
-      /// Saving implementation
-      void _write_(std::ostream & out_, const properties & prop_);
-
-    private:
-
-      // Configuration:
-      logger::priority _logging_; ///< Logging priority threshold (read/write)
-      int    _mode_;              ///< Decoration mode (header/footer)
-      bool   _dont_clear_;        ///< Do not clear the container at the beginning of parsing (read)
-      bool   _use_smart_modulo_;  ///< Use multiline formatting for vector data (write)
-      bool   _write_public_only_; ///< Only output public properties
-      bool   _forbid_variants_;   ///< Flag to forbid variant directives (read)
-      bool   _forbid_include_ = false; ///< Flag to forbid include directives (read)
-      bool   _requested_topic_;   ///< Flag to activate topic matching (read)
-      bool   _resolve_path_;      ///< Explicitely resolve path for input/output filenames (read/write)
-      bool   _allow_key_override_ = false; ///< Allow key override when duplicated keys are parsed (read)
-      std::string _topic_;             ///< Topic to be validated
-      std::string _section_name_;      ///< Current section name (from hosting multi_properties, read)
-      int _section_start_line_number_; ///< Current section start line number (from hosting multi_properties, read)
-
-      // Working parsing data:
-      size_t      _current_line_number_; ///< Current input line number
-      std::string _current_filename_;    ///< Current filename
-      file_include _fi_;                 ///< File inclusion solver
-
-    }; //----- end of class config
-
     //----------------------------------------------------------------------
     // properties class declarations
     //
@@ -825,7 +432,7 @@ namespace datatools {
     static const std::string & private_property_prefix();
 
     // Typedefs declarations:
-    
+
   protected:
 
     typedef std::map<std::string, data> pmap;
@@ -833,7 +440,7 @@ namespace datatools {
   public:
 
     typedef std::vector<std::string> keys_col_type;
-    
+
     /// Default constructor
     properties() = default;
 
@@ -856,7 +463,7 @@ namespace datatools {
     properties & operator=(properties &&) = default;
 
     /// Returns the number of stored properties
-    int32_t size() const;
+    size_t size() const;
 
     /// Check if the properties container is empty
     bool empty() const;
@@ -914,13 +521,10 @@ namespace datatools {
     std::set<std::string> get_keys() const;
 
     //! Returns the ith key
-    const std::string & key(int) const;
+    const std::string & key(size_t) const;
 
     //! Set the list of keys.
     void keys(std::vector<std::string> &) const;
-
-    //! Compute the set of keys.
-    void compute_keys(std::set<std::string> &) const;
 
     //! Access to a non-mutable reference to a property data object
     const data & get(const std::string & prop_key_) const;
@@ -952,10 +556,10 @@ namespace datatools {
     //! returns the list of keys stored in the map that end with suffix.
     std::vector<std::string> keys_ending_with(const std::string & suffix_) const;
 
-    //! Lock the properties dictionary.
+    //! Lock the property stored at the given key.
     void lock(const std::string & prop_key_);
 
-    //! Unlock the properties dictionary.
+    //! Unlock the property stored at the given key.
     void unlock(const std::string & prop_key_);
 
     //! Check if the instance is locked.
@@ -978,10 +582,10 @@ namespace datatools {
 
     //! Return the type of the data
     int get_type(const std::string & prop_key_) const;
-    
+
     /// Get a string label associated to the type of the data
     std::string get_type_label(const std::string & prop_key_) const;
-    
+
     //! Check if data with name 'prop_key_' is boolean
     bool is_boolean(const std::string & prop_key_) const;
 
@@ -1001,29 +605,19 @@ namespace datatools {
     bool is_vector(const std::string & prop_key_) const;
 
     // 2012-11-14 FM : Should be deprecated
-    int32_t size(const std::string & prop_key_) const;
+    size_t size(const std::string & prop_key_) const;
 
     //! Returns the size of the data stored with a given key/name
-    int32_t key_size(const std::string & prop_key_) const;
+    size_t key_size(const std::string & prop_key_) const;
 
     //! Check if a property with given key/name exists
     bool has_key(const std::string & prop_key_) const;
-
-    //! Lock a property with given key/name
-    void key_lock (const std::string & prop_key_);
-
-    //! Unlock a property with given key/name
-    void key_unlock (const std::string & prop_key_);
 
     //! Get the description string associated to a property with given key/name
     const std::string & get_key_description (const std::string & prop_key_) const;
 
     //! Set the description string associated to a property with given key/name
     void set_key_description (const std::string & prop_key_, const std::string &desc_);
-
-    // 2011-11-27 FM: could be useful
-    //! Rename a property with a new name.
-    //void rename (const std::string & prop_key_, const std::string & a_new_key);
 
     //! Erase property with a given key/name
     void erase(const std::string & key_);
@@ -1088,14 +682,6 @@ namespace datatools {
     //! Reset method
     void reset();
 
-    //! Set a boolean 'true' flag with a given key/name, a description string and a lock request
-    void store_flag(const std::string & prop_key_, const std::string & desc_ = "",
-                    bool lock_ = false);
-
-    //! Set a boolean 'true' flag with a given key/name
-    /** @param prop_key_ The key of the boolean property
-     */
-    void set_flag(const std::string & prop_key_);
 
     //! Remove a boolean flag with a given key/name
     /** @param prop_key_ The key of the boolean property
@@ -1109,6 +695,15 @@ namespace datatools {
     //! Store a boolean property with a given key/name and value
     void store_boolean(const std::string & prop_key_, bool value_,
                        const std::string & desc_ = "", bool lock_ = false);
+
+    //! Store a boolean 'true' property with a given key/name, a description string and a lock request
+    void store_flag(const std::string & prop_key_, const std::string & desc_ = "",
+                    bool lock_ = false);
+
+    //! Store a boolean 'true' property with a given key/name
+    /** @param prop_key_ The key of the boolean property
+     */
+    void set_flag(const std::string & prop_key_);
 
     //! Store an integer property with a given key/name and value
     void store(const std::string & prop_key_, int value_,
@@ -1127,7 +722,7 @@ namespace datatools {
     void store_real(const std::string & prop_key_, double value_,
                     const std::string & desc_ = "", bool lock_ = false);
 
-    //! Store a real property with a given key/name and value with the explicit unit flag
+   //! Store a real property with a given key/name and value with the explicit unit flag
     /**
      *   \code
      *   datatools::properties config;
@@ -1145,29 +740,13 @@ namespace datatools {
     void store_with_explicit_unit(const std::string & prop_key_, double value_,
                                   const std::string & desc = "", bool lock_ = false);
 
-    //! Set flag for explicit unit for a real property with a given key/name
-    void set_explicit_unit(const std::string & prop_key_, bool a_explicit_unit = true);
-
-    //! Check flag for explicit unit for a real property with a given key/name
-    bool has_explicit_unit(const std::string & prop_key_) const;
-
-    //! Set the unit symbol for a real property with a given key/name
-    void set_unit_symbol(const std::string & prop_key_, const std::string & unit_symbol = "");
-
-    //! Check flag for unit symbol for a real property with a given key/name
-    bool has_unit_symbol(const std::string & prop_key_) const;
-
-    //! Return the unit symbol for a real property with a given key/name
-    const std::string & get_unit_symbol(const std::string & prop_key_) const;
-
-    //! Set flag for explicit path for a string property with a given key/name
-    void set_explicit_path(const std::string & prop_key_, bool a_explicit_path = true);
-
-    //! Check flag for explicit path for a string property with a given key/name
-    bool is_explicit_path(const std::string & prop_key_) const;
 
     //! Store a string property with a given key/name and value
     void store(const std::string & prop_key_, const std::string & value_,
+               const std::string & desc_ = "", bool lock_ = false);
+
+    //! Store a string property with a given key/name and value (C style)
+    void store(const std::string & prop_key_, const char* value_,
                const std::string & desc_ = "", bool lock_ = false);
 
     //! Store a string property with a given key/name and value
@@ -1178,9 +757,6 @@ namespace datatools {
     void store_path(const std::string & prop_key_, const std::string & path_value_,
                     const std::string & desc_ = "", bool lock_ = false);
 
-    //! Store a string property with a given key/name and value (C style)
-    void store(const std::string & prop_key_, const char* value_,
-               const std::string & desc_ = "", bool lock_ = false);
 
     //! Store a boolean vector property with a given key/name and value
     void store(const std::string & prop_key_, const data::vbool & value_,
@@ -1202,59 +778,81 @@ namespace datatools {
     void store_paths(const std::string & prop_key_, const data::vstring & path_value_,
                      const std::string & desc_ = "", bool lock_ = false);
 
-    //! Change the value of an existing boolean property with a given key/name and index
-    void change(const std::string & key_, bool value_, int index_ = 0);
+
+     //! Set flag for explicit unit for a real property with a given key/name
+    void set_explicit_unit(const std::string & prop_key_, bool a_explicit_unit = true);
+
+    //! Check flag for explicit unit for a real property with a given key/name
+    bool has_explicit_unit(const std::string & prop_key_) const;
+
+    //! Set the unit symbol for a real property with a given key/name
+    void set_unit_symbol(const std::string & prop_key_, const std::string & unit_symbol = "");
+
+    //! Check flag for unit symbol for a real property with a given key/name
+    bool has_unit_symbol(const std::string & prop_key_) const;
+
+    //! Return the unit symbol for a real property with a given key/name
+    const std::string & get_unit_symbol(const std::string & prop_key_) const;
+
+    //! Set flag for explicit path for a string property with a given key/name
+    void set_explicit_path(const std::string & prop_key_, bool a_explicit_path = true);
+
+    //! Check flag for explicit path for a string property with a given key/name
+    bool is_explicit_path(const std::string & prop_key_) const;
+
 
     //! Change the value of an existing boolean property with a given key/name and index
-    void change_boolean(const std::string & key_, bool value_, int index_ = 0);
+    void change(const std::string & key_, bool value_, size_t index_ = 0);
+
+    //! Change the value of an existing boolean property with a given key/name and index
+    void change_boolean(const std::string & key_, bool value_, size_t index_ = 0);
 
     //! Change the value of an existing scalar boolean property with a given key/name
     void change_boolean_scalar(const std::string & key_, bool value_);
 
     //! Change the value of an existing vector boolean property with a given key/name and index
-    void change_boolean_vector(const std::string & key_, bool value_, int index_);
+    void change_boolean_vector(const std::string & key_, bool value_, size_t index_);
 
     //! Change the value of an existing integer property with a given key/name and index
-    void change(const std::string & key_, int value_, int index_ = 0);
+    void change(const std::string & key_, int value_, size_t index_ = 0);
 
     //! Change the value of an existing integer property with a given key/name and index
-    void change_integer(const std::string & key_, int value_, int index_ = 0);
+    void change_integer(const std::string & key_, int value_, size_t index_ = 0);
 
     //! Change the value of an existing integer scalar property with a given key/name
     void change_integer_scalar(const std::string & key_, int value_);
 
     //! Change the value of an existing integer vector property with a given key/name and index
-    void change_integer_vector(const std::string & key_, int value_, int index_);
+    void change_integer_vector(const std::string & key_, int value_, size_t index_);
 
     //! Change the value of an existing real property with a given key/name and index
-    void change(const std::string & key_, double value_, int index_ = 0);
+    void change(const std::string & key_, double value_, size_t index_ = 0);
 
     //! Change the value of an existing real property with a given key/name and index
-    void change_real(const std::string & key_, double value_, int index_ = 0);
+    void change_real(const std::string & key_, double value_, size_t index_ = 0);
 
     //! Change the value of an existing real scalar property with a given key/name
     void change_real_scalar(const std::string & key_, double value_);
 
     //! Change the value of an existing real vector property with a given key/name and index
-    void change_real_vector(const std::string & key_, double value_, int index_);
+    void change_real_vector(const std::string & key_, double value_, size_t index_);
 
     //! Change the value of an existing string property with a given key/name and index
-    void change(const std::string & key_, const std::string & value_,
-                int index_ = 0);
+    void change(const std::string & key_, const std::string & value_, size_t index_ = 0);
+
+    //! Change the value of an existing string property (C style) with a given key/name and index
+    void change(const std::string & key_, const char * value_, size_t index_ = 0);
 
     //! Change the value of an existing string property with a given key/name and index
     void change_string(const std::string & key_, const std::string & value_,
-                       int index_ = 0);
+                       size_t index_ = 0);
 
     //! Change the value of an existing string scalar property with a given key/name
     void change_string_scalar(const std::string & key_, const std::string & value_);
 
     //! Change the value of an existing string vector property with a given key/name and index
     void change_string_vector(const std::string & key_, const std::string & value_,
-                              int index_);
-
-    //! Change the value of an existing string property (C style) with a given key/name and index
-    void change(const std::string & key_, const char * value_, int index_ = 0);
+                              size_t index_);
 
     //! Change the full contents of an existing boolean vector property with a given key/name
     void change(const std::string & key_, const data::vbool & values_);
@@ -1268,23 +866,17 @@ namespace datatools {
     //! Change the full contents of an existing string vector property with a given key/name
     void change(const std::string & key_, const data::vstring & values_);
 
-    //! Update a boolean flag to true with a given key/name
-    void update_flag(const std::string & key_);
-
-    //! Update a boolean flag with a given key/name and value
-    void update(const std::string & key_, bool value_);
+    template <typename T>
+    void update(const std::string& a_key, const T& value);
 
     //! Update a boolean flag with a given key/name and value
     void update_boolean(const std::string & key_, bool value_);
 
-    //! Update an integer flag with a given key/name and value
-    void update(const std::string & key_, int value_);
+    //! Update a boolean flag to true with a given key/name
+    void update_flag(const std::string & key_);
 
     //! Update an integer flag with a given key/name and value
     void update_integer(const std::string & key_, int value_);
-
-    //! Update a real flag with a given key/name and value
-    void update(const std::string & key_, double value_);
 
     //! Update a real flag with a given key/name and value
     void update_real(const std::string & key_, double value_);
@@ -1295,48 +887,104 @@ namespace datatools {
     //! Update a real flag with a given key/name and value
     void update_with_explicit_unit(const std::string & key_, double value_);
 
-    //! Update a string flag with a given key/name and value
-    void update(const std::string & key_, const std::string & value_);
-
     //! Update a C-string flag with a given key/name and value
     void update(const std::string & key_, const char* value_);
 
     //! Update a string flag with a given key/name and value
     void update_string(const std::string & key_, const std::string & value);
 
-    //! Update the full contents of a boolean vector with a given key/name
-    void update(const std::string & key_, const data::vbool & values_);
+    //! Fetch the boolean value stored with a given key/name and index
+    void fetch(const std::string & key_, bool & value_, size_t index_ = 0) const;
 
-    //! Update the full contents of an integer vector with a given key/name
-    void update(const std::string & key_, const data::vint & values_);
+   //! Fetch the boolean value stored with a given key/name and index
+    bool fetch_boolean(const std::string &, size_t index_ = 0) const;
 
-    //! Update the full contents of a real vector with a given key/name
-    void update(const std::string & key_, const data::vdouble & values_);
+    //! Fetch the boolean scalar value stored with a given key/name
+    bool fetch_boolean_scalar(const std::string & name_) const;
 
-    //! Update the full contents of a string vector with a given key/name
-    void update(const std::string & key_, const data::vstring & values_);
+    //! Fetch the boolean vector value stored with a given key/name and index
+    bool fetch_boolean_vector(const std::string & name_, size_t index_) const;
 
     //! Check if a boolean value with a given key/name exists with value 'true'
     bool has_flag(const std::string & key_) const;
 
-    //! Fetch the boolean value stored with a given key/name and index
-    void fetch(const std::string & key_, bool & value_, int index_ = 0) const;
-
     //! Fetch the integer value stored with a given key/name and index
-    void fetch(const std::string & key_, int & value_, int index_ = 0) const;
+    void fetch(const std::string & key_, int & value_, size_t index_ = 0) const;
+
+     //! Fetch the integer value stored with a given key/name and index
+    int fetch_integer(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch the integer scalar value stored with a given key/name
+    int fetch_integer_scalar(const std::string & name_) const;
+
+    //! Fetch the integer vector value stored with a given key/name and index
+    int fetch_integer_vector(const std::string & name_ , size_t index_) const;
+
+    //! Fetch the positive integer value stored with a given key/name and index
+    unsigned int fetch_positive_integer(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch the strict positive integer value stored with a given key/name and index
+    unsigned int fetch_strict_positive_integer(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch the ranged integer value stored with a given key/name and index
+    int fetch_range_integer(const std::string & name_, int min_, int max_, size_t index_ = 0) const;
+
 
     //! Fetch the real value stored with a given key/name and index
-    void fetch(const std::string & key_, double & value_, int index_ = 0) const;
+    void fetch(const std::string & key_, double & value_, size_t index_ = 0) const;
+
+    //! Fetch the real value stored with a given key/name and index
+    double fetch_real(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch the real scalar value stored with a given key/name
+    double fetch_real_scalar(const std::string & name_) const;
+
+    //! Fetch the real vector value stored with a given key/name and index
+    double fetch_real_vector(const std::string & name_, size_t index_) const;
+
+    //! Fetch the dimensionless real value stored with a given key/name and index
+    double fetch_dimensionless_real(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch the physical quantity (with its explicit unit) value stored with a given key/name and index
+    double fetch_real_with_explicit_unit(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch the physical quantity (with its explicit dimension) value stored with a given key/name and index
+    double fetch_real_with_explicit_dimension(const std::string & name_, const std::string & dimension_, size_t index_ = 0) const;
+
 
     //! Fetch the string value stored with a given key/name and index
     void fetch(const std::string & key_, std::string & value_,
-               int index = 0) const;
+               size_t index = 0) const;
+
+    //! Fetch the string value stored with a given key/name and index
+    std::string fetch_string(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch the string scalar value stored with a given key/name
+    std::string fetch_string_scalar(const std::string & name_) const;
+
+    //! Fetch the string vector value stored with a given key/name and index
+    std::string fetch_string_vector(const std::string & name_, size_t index_) const;
+
+    //! Fetch a file path from a string value stored with a given key/name and index
+    std::string fetch_path(const std::string & name_, size_t index_ = 0) const;
+
+    //! Fetch a file path from a string scalar value stored with a given key/name
+    std::string fetch_path_scalar(const std::string & name_) const;
+
+    //! Fetch a file path from a string vector value stored with a given key/name and index
+    std::string fetch_path_vector(const std::string & name_, size_t index_) const;
 
     //! Fetch the boolean vector value stored with a given key/name
     void fetch(const std::string & key_, data::vbool & values_) const;
 
     //! Fetch the integer vector value stored with a given key/name
     void fetch(const std::string & key_, data::vint & values_) const;
+
+    //! Fetch a set of integer values from the vector value stored with a given key/name
+    void fetch(const std::string & key_, std::set<int> & values, bool allow_duplication_ = false) const;
+
+    //! Fetch a set of unsigned integer values from the vector value stored with a given key/name
+    void fetch_positive(const std::string & key_, std::set<unsigned int> & values_, bool allow_duplication_ = false) const;
 
     //! Fetch the real vector value stored with a given key/name
     void fetch(const std::string & key_, data::vdouble & values_) const;
@@ -1353,77 +1001,8 @@ namespace datatools {
     //! Fetch a list of unique string values from the vector value stored with a given key/name
     void fetch_unique_ordered(const std::string & key_, std::vector<std::string> & values_) const;
 
-    //! Fetch a set of integer values from the vector value stored with a given key/name
-    void fetch(const std::string & key_, std::set<int> & values, bool allow_duplication_ = false) const;
-
-    //! Fetch a set of unsigned integer values from the vector value stored with a given key/name
-    void fetch_positive(const std::string & key_, std::set<unsigned int> & values_, bool allow_duplication_ = false) const;
-
-    //! Fetch the boolean value stored with a given key/name and index
-    bool fetch_boolean(const std::string &, int index_ = 0) const;
-
-    //! Fetch the boolean scalar value stored with a given key/name
-    bool fetch_boolean_scalar(const std::string & name_) const;
-
-    //! Fetch the boolean vector value stored with a given key/name and index
-    bool fetch_boolean_vector(const std::string & name_, int index_) const;
-
-    //! Fetch the integer value stored with a given key/name and index
-    int fetch_integer(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch the positive integer value stored with a given key/name and index
-    unsigned int fetch_positive_integer(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch the strict positive integer value stored with a given key/name and index
-    unsigned int fetch_strict_positive_integer(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch the ranged integer value stored with a given key/name and index
-    int fetch_range_integer(const std::string & name_, int min_, int max_, int index_ = 0) const;
-
-    //! Fetch the integer scalar value stored with a given key/name
-    int fetch_integer_scalar(const std::string & name_) const;
-
-    //! Fetch the integer vector value stored with a given key/name and index
-    int fetch_integer_vector(const std::string & name_ , int index_) const;
-
-    //! Fetch the real value stored with a given key/name and index
-    double fetch_real(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch the dimensionless real value stored with a given key/name and index
-    double fetch_dimensionless_real(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch the physical quantity (with its explicit unit) value stored with a given key/name and index
-    double fetch_real_with_explicit_unit(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch the physical quantity (with its explicit dimension) value stored with a given key/name and index
-    double fetch_real_with_explicit_dimension(const std::string & name_, const std::string & dimension_, int index_ = 0) const;
-
-    //! Fetch the real scalar value stored with a given key/name
-    double fetch_real_scalar(const std::string & name_) const;
-
-    //! Fetch the real vector value stored with a given key/name and index
-    double fetch_real_vector(const std::string & name_, int index_) const;
-
-    //! Fetch the string value stored with a given key/name and index
-    std::string fetch_string(const std::string & name_, int index_ = 0) const;
-
     //! Fetch a single character value stored with a given key/name and index
-    char fetch_one_character(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch the string scalar value stored with a given key/name
-    std::string fetch_string_scalar(const std::string & name_) const;
-
-    //! Fetch the string vector value stored with a given key/name and index
-    std::string fetch_string_vector(const std::string & name_, int index_) const;
-
-    //! Fetch a file path from a string value stored with a given key/name and index
-    std::string fetch_path(const std::string & name_, int index_ = 0) const;
-
-    //! Fetch a file path from a string scalar value stored with a given key/name
-    std::string fetch_path_scalar(const std::string & name_) const;
-
-    //! Fetch a file path from a string vector value stored with a given key/name and index
-    std::string fetch_path_vector(const std::string & name_, int index_) const;
+    char fetch_one_character(const std::string & name_, size_t index_ = 0) const;
 
     //! Basic print
     void dump(std::ostream & out_ = std::clog) const;
@@ -1441,9 +1020,9 @@ namespace datatools {
     /// Merge with another properties with overriding possibilities
     ///
     /// If the allow_override_ flag is set, any key also existing in other_,
-    /// with the same type, is overriden by the value stored in other_. 
+    /// with the same type, is overriden by the value stored in other_.
     void merge_with(const properties & other_, bool allow_overrride_ = false);
-    
+
     std::string key_to_string(const std::string & key_) const;
 
     std::string key_to_property_string(const std::string & key_) const;
@@ -1451,45 +1030,50 @@ namespace datatools {
     void export_to_string_based_dictionary(std::map<std::string, std::string> & dict_,
                                            bool quoted_strings_ = true) const;
 
-    //! Store the properties' container object in an ASCII text file
-    void write_configuration(const std::string & filename_,
-                             uint32_t options_ = config::SMART_MODULO | config::SKIP_PRIVATE) const;
-
-    //! Load the properties' container object from an ASCII text file
-    //!
-    //! \see The datatools::properties::config::read method for file format
-    void read_configuration(const std::string & filename_,
-                            uint32_t options_ = config::SMART_MODULO);
-
-    //! Store the properties' container object in an ASCII text file
-    static void write_config(const std::string & filename_,
-                             const properties & props_,
-                             uint32_t options_ = 0);
-
-    //! Load the properties' container object from an ASCII text file
-    //!
-    //! \see The datatools::properties::config::read method for file format
-    static void read_config(const std::string & filename_,
-                            properties & props_,
-                            uint32_t options_ = 0);
-
     //! Build a new property key from a prefix and a key
     static std::string build_property_key(const std::string & prefix_,
                                           const std::string & subkey_);
 
-     
   private:
+    /// Return reference to element at key, throwing if not present
+    data& _get_valid_data_(const std::string& key);
 
-    void _check_nokey_(const std::string & prop_key_) const;
+    /// Return rconst eference to element at key, throwing if not present
+    const data& _get_valid_data_(const std::string& key) const;
 
-    void _check_key_(const std::string & prop_key_, data ** data_);
+    /// Throw if key is already stored
+    void _check_nokey_(const std::string& prop_key_) const;
 
-    void _check_key_(const std::string & prop_key_, const data ** data_) const;
-
+    /// Throw if key does not meet requirements
     void _validate_key_(const std::string & prop_key_) const;
 
-  private:
+    /// Store (put) scalar value at key with optional description and lock
+    template <typename T>
+    void _store_scalar_impl_(const std::string& a_key, const T& value_,
+                             const std::string& description_, bool a_lock);
 
+    /// Store (put) vector value at key with optional description and lock
+    template <typename T>
+    void _store_vector_impl_(const std::string& a_key, const std::vector<T>& values,
+                           const std::string& description, bool a_lock);
+
+    /// Change scalar value at key/index
+    template <typename T>
+    void _change_scalar_impl_(const std::string& key, const T& value, size_t index);
+
+    /// Change vector values at key
+    template <typename T>
+    void _change_vector_impl_(const std::string& a_key, const std::vector<T> values);
+
+       /// Fetch (get) scalar value from key, index
+    template <typename T>
+    void _fetch_scalar_impl_(const std::string& a_key, T& value, size_t index) const;
+
+    /// Fetch (get) vector value from key
+    template <typename T>
+    void _fetch_vector_impl_(const std::string& a_key, std::vector<T>& values) const;
+
+   private:
     // Internal data:
     std::string _description_ = ""; //!< Description string
     pmap        _props_{};          //!< Internal list of properties
@@ -1512,17 +1096,66 @@ namespace datatools {
   const properties & empty_config();
 
   //----------------------------------------------------------------------
+  // properties::data class template method definitions
+  template <>
+  inline bool properties::data::is_type<bool>() const {return is_boolean();}
+
+  template <>
+  inline bool properties::data::is_type<int>() const {return is_integer();}
+
+  template <>
+  inline bool properties::data::is_type<double>() const {return is_real();}
+
+  template <>
+  inline bool properties::data::is_type<std::string>() const {return is_string();}
+
+  template <>
+  inline int properties::data::assign<bool>(size_t size_) {return boolean(size_);}
+
+  template <>
+  inline int properties::data::assign<int>(size_t size_) {return integer(size_);}
+
+  template <>
+  inline int properties::data::assign<double>(size_t size_) {return real(size_);}
+
+  template <>
+  inline int properties::data::assign<std::string>(size_t size_) {return string(size_);}
+
+  template <>
+  inline bool properties::data::defaults::default_value() {return defaults::boolean_value();}
+
+  template <>
+  inline int properties::data::defaults::default_value() {return defaults::integer_value();}
+
+  template <>
+  inline double properties::data::defaults::default_value() {return defaults::real_value();}
+
+  template <>
+  inline std::string properties::data::defaults::default_value() {return defaults::string_value();}
+
+  //----------------------------------------------------------------------
   // properties class template method definitions
   //
+  template <typename T>
+  void properties::update(const std::string& a_key, const T& value) {
+    //static_assert(can_hold_t_<T>::value, "property_set cannot hold values of type T");
+    if (this->has_key(a_key)) {
+      this->change(a_key, value);
+    } else {
+      this->store(a_key, value);
+    }
+    return;
+  }
+
   template <class key_predicate>
   void properties::export_if(properties & props_,
                              const key_predicate & predicate_) const
   {
     DT_THROW_IF (this == &props_,
                  std::logic_error, "Self export is not allowed !");
-    for(const auto& p : _props_) {
-      if (predicate_(p.first)) {
-        props_._props_[p.first] = p.second;
+    for (const auto& pair : _props_) {
+      if (predicate_(pair.first)) {
+        props_.store(pair.first, pair.second);
       }
     }
     return;
@@ -1532,15 +1165,119 @@ namespace datatools {
   void properties::export_not_if(properties & props_,
                                  const key_predicate & predicate_) const
   {
-    DT_THROW_IF (this == &props_,
-                 std::logic_error, "Self export is not allowed !");
-    for(const auto& p : _props_) {
-      if (!predicate_(p.first)) {
-        props_._props_[p.first] = p.second;
-      }
+    export_if(props_, std::not1(predicate_));
+    return;
+  }
+
+  template <typename T>
+  void properties::_store_scalar_impl_(const std::string &a_key, const T &value_,
+                                       const std::string &description_, bool a_lock) {
+    this->_check_nokey_(a_key);
+    this->_validate_key_(a_key);
+    data a_data(value_, data::SCALAR_DEF);
+    a_data.set_description(description_);
+    if (a_lock) a_data.lock();
+    _props_[a_key] = a_data;
+    return;
+  }
+
+  template <typename T>
+  void properties::_store_vector_impl_(const std::string &a_key, const std::vector<T> &values,
+                                       const std::string &description, bool a_lock) {
+    this->_check_nokey_(a_key);
+    this->_validate_key_(a_key);
+    size_t valsize = values.size();
+    data a_data(data::defaults::default_value<T>(), valsize);
+    a_data.set_description(description);
+    if (a_lock) a_data.lock();
+
+    for (size_t i{0}; i < valsize; ++i) {
+      a_data.set_value(values[i], i);
+    }
+
+    _props_[a_key] = a_data;
+    return;
+  }
+
+  template <typename T>
+  void properties::_change_scalar_impl_(const std::string& a_key, const T& value, size_t index)
+  {
+    auto& data_ptr = this->_get_valid_data_(a_key);
+    int error = data_ptr.set_value(value, index);
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot change value for " << data_ptr.get_type_label() << " property '"
+                << a_key << "' in properties described by '" << get_description() << "' : "
+                << data::get_error_message(error) << "!");
+    return;
+  }
+
+  template <typename T>
+  void properties::_change_vector_impl_(const std::string& a_key, const std::vector<T> values)
+  {
+    auto& data_ptr = this->_get_valid_data_(a_key);
+
+    // Some problems with logic that follows...
+    // 1. resize() will clear data, even for locked data elements, so should surely check for locking *first*?
+    // 2. Should not need the DT_THROW_IF in second for loop since everything will have been checked by this point.
+
+    DT_THROW_IF(!data_ptr.is_type<T>() || !data_ptr.is_vector(),
+                std::logic_error,
+                "Property '" << a_key << "' is not a vector of " << data_ptr.get_type_label() << " in properties described by '" << get_description() << "' !");
+
+    if (values.size() != data_ptr.get_size()) {
+      int error = data_ptr.assign<T>(values.size());
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of " << data_ptr.get_type_label() << " property '"
+                  << a_key << "': "
+                  << data::get_error_message(error) << " in properties described by '" << get_description() << "' !");
+    }
+    for (size_t i{0}; i < values.size(); ++i) {
+      int error = data_ptr.set_value(values[i], i);
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of booleans property '"
+                  << a_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
     return;
   }
+  template <typename T>
+  void properties::_fetch_scalar_impl_(const std::string& a_key, T& value, size_t index) const
+  {
+    auto& data_ptr = this->_get_valid_data_(a_key);
+    int error = data_ptr.get_value(value, index);
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot fetch " << data_ptr.get_type_label() << "value from property '"
+                << a_key << "' in properties described by '" << get_description() << "': "
+                << data::get_error_message(error) << " !");
+    return;
+  }
+
+  template <typename T>
+  void properties::_fetch_vector_impl_(const std::string& a_key, std::vector<T>& values) const
+  {
+    auto& data_ptr = this->_get_valid_data_(a_key);
+    DT_THROW_IF(!data_ptr.is_type<T>() || !data_ptr.is_vector(),
+                std::logic_error,
+                "Property '" << a_key << "' is not a vector of " << data_ptr.get_type_label() << " !");
+    values.resize(data_ptr.size(), data::defaults::default_value<T>());
+    for (size_t i{0}; i < values.size(); ++i) {
+      T val;
+      int error = data_ptr.get_value(val, i);
+      // Logically, nothing can actually fail here because we have checked type, vector and size
+      // so get_value will never throw, but we need to check the value
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot fetch a vector of " << data_ptr.get_type_label() << " from property '"
+                  << a_key << "': " << data::get_error_message(error) << " !");
+      values[i] = val;
+    }
+    return;
+  }
+
 
 } // end of namespace datatools
 

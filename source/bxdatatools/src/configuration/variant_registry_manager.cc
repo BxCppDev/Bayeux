@@ -27,6 +27,7 @@
 
 // This project (Bayeux/datatools):
 #include <datatools/exception.h>
+#include <datatools/multi_properties_config.h>
 #include <datatools/configuration/variant_model.h>
 #include <datatools/configuration/parameter_model.h>
 
@@ -240,8 +241,8 @@ namespace datatools {
       DT_THROW_IF(is_initialized(), std::logic_error, "Variant manager is locked !");
       std::string file_name = items_config_file_;
       uint32_t reader_opts = 0;
-      reader_opts |= multi_properties::config::FORBID_VARIANTS;
-      _mp_.read(file_name, reader_opts);
+      reader_opts |= multi_properties_config::FORBID_VARIANTS;
+      datatools::read_config(file_name, _mp_, reader_opts);
       // DT_LOG_TRACE(get_logging_priority(), "Variant manager multi-configuration: ");
       // _mp_.tree_dump(std::cerr,"", "TRACE: ");
       return;

@@ -10,6 +10,7 @@
 
 // This project:
 #include <datatools/properties.h>
+#include <datatools/properties_config.h>
 
 /// Parameters for the application
 struct app_config
@@ -102,8 +103,8 @@ int main(int argc_, char ** argv_)
         {
           std::string config_name = "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_service.conf";
           uint32_t reader_opts = 0;
-          reader_opts |= datatools::properties::config::RESOLVE_PATH;
-          datatools::properties::config reader(reader_opts);
+          reader_opts |= datatools::properties_config::RESOLVE_PATH;
+          datatools::properties_config reader(reader_opts);
           reader.read(config_name,pconfig);
           pconfig.tree_dump(std::clog, "Configuration parameters after variant processing: ");
         }

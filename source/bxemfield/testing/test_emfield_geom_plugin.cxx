@@ -89,7 +89,7 @@ int main (int argc_, char ** argv_)
     datatools::properties gm_setup;
     std::string gm_filename = "${EMFIELD_TESTING_DIR}/config/geometry/test_manager.conf";
     datatools::fetch_path_with_env(gm_filename);
-    datatools::properties::read_config(gm_filename, gm_setup);
+    datatools::read_config(gm_filename, gm_setup);
     geo_manager.initialize (gm_setup);
     // Load additional plugins :
     geo_manager.get_plugins_factory_register().tree_dump (std::clog,

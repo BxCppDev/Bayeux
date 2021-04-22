@@ -15,6 +15,7 @@
 
 // This project:
 #include <datatools/properties.h>
+#include <datatools/properties_config.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
@@ -430,7 +431,7 @@ namespace datatools {
       if (is_string()) {
         return _default_value_string_ != "__??__";
       }
-    } 
+    }
     return false;
   }
 
@@ -1565,7 +1566,7 @@ namespace datatools {
       }
       // Check fixed sized array :
       if (cpd_.is_fixed_sized_array()) {
-        if (cpd_.get_array_fixed_size() != pd.get_size()) {
+        if (cpd_.get_array_fixed_size() != (int)pd.get_size()) {
           std::ostringstream message_oss;
           message_oss << "Expected array size "
                       << cpd_.get_array_fixed_size()
@@ -1763,8 +1764,8 @@ namespace datatools {
     PROP.set_description (std::string("Sample configuration for class ") + get_class_name());
 
     // Not fully implemented yet !!
-    properties::config PC(properties::config::SMART_MODULO
-                          | properties::config::HEADER_FOOTER);
+    properties_config PC(properties_config::SMART_MODULO
+                          | properties_config::HEADER_FOOTER);
 
     // PC.write_header(out_, topic_);
     const std::string prop_comment_prefix = "### ";

@@ -404,7 +404,7 @@ namespace genvtx {
     _geo_mgr_.reset(new geomtools::manager);
     datatools::fetch_path_with_env(_params_.GeoMgrConfigFile);
     datatools::properties GeoMgrConfig;
-    datatools::properties::read_config(_params_.GeoMgrConfigFile, GeoMgrConfig);
+    datatools::read_config(_params_.GeoMgrConfigFile, GeoMgrConfig);
     _geo_mgr_->initialize(GeoMgrConfig);
     if (_logging_ >= datatools::logger::PRIO_DEBUG) {
       _geo_mgr_->tree_dump(std::clog, "Geometry manager embedded in the vertex generator manager: ");
@@ -441,7 +441,7 @@ namespace genvtx {
     }
     datatools::fetch_path_with_env(_params_.VGMgrConfigFile);
     datatools::properties VGMgrConfig;
-    datatools::properties::read_config(_params_.VGMgrConfigFile, VGMgrConfig);
+    datatools::read_config(_params_.VGMgrConfigFile, VGMgrConfig);
     _vtx_mgr_->initialize(VGMgrConfig);
     DT_LOG_DEBUG(_logging_, "The vertex generator manager: ");
     if (_logging_ >= datatools::logger::PRIO_DEBUG) {

@@ -158,7 +158,7 @@ int main (/* int argc_, char ** argv_ */)
         datatools::properties config6;
         string file6 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_1.conf";
         datatools::fetch_path_with_env (file6);
-        datatools::properties::read_config (file6, config6);
+        datatools::read_config (file6, config6);
         sf6.initialize (config6);
         sf6.dump ();
         if (sf6.has_filename ("${DATATOOLS_TESTING_DIR}/test_smart_filename.cxx"))
@@ -173,7 +173,7 @@ int main (/* int argc_, char ** argv_ */)
         datatools::properties config7;
         string file7 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_2.conf";
         datatools::fetch_path_with_env (file7);
-        datatools::properties::read_config (file7, config7);
+        datatools::read_config (file7, config7);
         sf7.initialize (config7);
         sf7.dump ();
         if (sf7.has_filename ("/tmp/mauger/file_3.data"))
@@ -192,7 +192,7 @@ int main (/* int argc_, char ** argv_ */)
         datatools::properties config8;
         string file8 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_3.conf";
         datatools::fetch_path_with_env (file8);
-        datatools::properties::read_config (file8, config8);
+        datatools::read_config (file8, config8);
         sf8.initialize (config8);
         sf8.dump ();
         if (sf8.has_filename ("test_a.data"))
@@ -207,7 +207,7 @@ int main (/* int argc_, char ** argv_ */)
         datatools::properties config9;
         string file9 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_4.conf";
         datatools::fetch_path_with_env (file9);
-        datatools::properties::read_config (file9, config9);
+        datatools::read_config (file9, config9);
         sf9.initialize (config9);
         sf9.dump ();
         if (! sf9.has_filename ("/tmp/${USER}/run_1.data"))
@@ -238,7 +238,7 @@ int main (/* int argc_, char ** argv_ */)
         datatools::properties config10;
         string file10 = "${DATATOOLS_TESTING_DIR}/config/test_smart_filename_5.conf";
         datatools::fetch_path_with_env (file10);
-        datatools::properties::read_config (file10, config10);
+        datatools::read_config (file10, config10);
         sf10.initialize (config10);
         sf10.dump ();
         if (! sf10.has_filename ("/tmp/${USER}/run_11.data"))

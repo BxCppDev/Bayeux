@@ -351,7 +351,7 @@ namespace geomtools {
                   "Cannot fetch path from geometry manager configuration file '"
                   << geo_mgr_config_file << "' !");
       datatools::properties geo_mgr_config;
-      datatools::properties::read_config(geo_mgr_config_file,
+      datatools::read_config(geo_mgr_config_file,
                                          geo_mgr_config);
       _geo_mgr_.get()->initialize(geo_mgr_config);
       _geo_factory_ref_ = &_geo_mgr_.get()->get_factory();

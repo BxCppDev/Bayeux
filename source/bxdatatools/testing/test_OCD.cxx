@@ -413,7 +413,7 @@ int main (int /*argc_*/, char ** /*argv_*/)
             = "${DATATOOLS_TESTING_DIR}/config/test_OCD_foo.conf";
           datatools::fetch_path_with_env(foo_config_file);
           datatools::properties foo_config;
-          datatools::properties::read_config(foo_config_file, foo_config);
+          datatools::read_config(foo_config_file, foo_config);
 
           if (OCD.has_validation_support()) {
             std::string message;

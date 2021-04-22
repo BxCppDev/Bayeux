@@ -34,6 +34,7 @@
 #include <datatools/service_manager.h>
 #include <datatools/library_query_service.h>
 #include <datatools/urn_query_service.h>
+#include <datatools/properties_config.h>
 
 #if DATATOOLS_WITH_QT_GUI == 1
 #include <QStyleFactory>
@@ -587,7 +588,7 @@ namespace datatools {
       // Set the kernel logging priority threshold (only if  not already set):
       this->_logging_ = datatools::logger::get_priority(_params_.logging_label);
     }
-    
+
     if (_params_.inhibit_urn_query) {
       DT_LOG_TRACE(_logging_, "Inhibit the URN query service...");
       this->_activate_urn_query_service_ = false;
@@ -901,11 +902,11 @@ namespace datatools {
         DT_LOG_TRACE(_logging_, "Variant configuration file '"
                      << config_filename << "'...");
         uint32_t reader_opts = 0;
-        reader_opts |= datatools::properties::config::RESOLVE_PATH;
-        reader_opts |= datatools::properties::config::FORBID_VARIANTS;
+        reader_opts |= datatools::properties_config::RESOLVE_PATH;
+        reader_opts |= datatools::properties_config::FORBID_VARIANTS;
         // std::bitset<12> optbs = reader_opts;
         // DT_LOG_TRACE(_logging_, "Parser reader_opts = [" << optbs << "]");
-        datatools::properties::config reader(reader_opts);
+        datatools::properties_config reader(reader_opts);
         reader.read(config_filename, config);
         DT_LOG_TRACE(_logging_, "Variant configuration file '"
                      << config_filename << "' has been parsed.");
@@ -1163,7 +1164,7 @@ namespace datatools {
     for (const auto & uarg : _unrecognized_args_) {
       DT_LOG_TRACE(_logging_, " - unrecognized arg = '" << uarg << "'");
     }
- 
+
     if (_params_.help) {
       print_opt_desc(opts, std::cout);
     }

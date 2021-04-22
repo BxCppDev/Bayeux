@@ -47,13 +47,13 @@
  *     parameters.store ("max_users", 7, "The maximum number of users");
  *
  *     // Store the set of parameters in an ASCII text file :
- *     datatools::properties::write_config ("params.conf", parameters);
+ *     datatools::write_config ("params.conf", parameters);
  *   }
  *
  *   {
  *     datatools::properties parameters; 
  *     // Read the sets of parameters from an ASCII text file :
- *     datatools::properties::read_config ("params.conf", parameters);
+ *     datatools::read_config ("params.conf", parameters);
  *     if ( parameters.has_flag (debug) )
  *       {
  *          cout << "Debug mode is activated." << endl;

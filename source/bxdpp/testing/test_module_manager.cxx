@@ -166,7 +166,7 @@ int main (int argc_, char ** argv_)
       std::clog << "Manager config. file : '" << MM_config_file << "'" << std::endl;
 
       datatools::properties MM_config;
-      datatools::properties::read_config (MM_config_file, MM_config);
+      datatools::read_config (MM_config_file, MM_config);
       MM.initialize (MM_config);
       MM.tree_dump (std::clog, "Module manager (initialized) : ");
 

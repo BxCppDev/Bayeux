@@ -87,7 +87,7 @@ int main(int /* argc_ */, char ** /* argv_ */)
       std::string mat_mgr_setup_file = "${MATERIALS_RESOURCE_DIR}/../testing/config/test_manager.conf";
       datatools::fetch_path_with_env(mat_mgr_setup_file);
       datatools::properties mat_mgr_setup;
-      datatools::properties::read_config(mat_mgr_setup_file, mat_mgr_setup);
+      datatools::read_config(mat_mgr_setup_file, mat_mgr_setup);
       mat_mgr.initialize(mat_mgr_setup);
       mat_mgr.tree_dump(std::clog, "Material manager: ");
 

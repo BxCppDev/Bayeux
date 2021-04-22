@@ -70,11 +70,11 @@ void tpm()
     baseConfig.merge_with(addonConfig, allow_override);
     baseConfig.print_tree(std::clog);
    
-    datatools::properties::write_config("base_config.conf", baseConfig);
+    datatools::write_config("base_config.conf", baseConfig);
 
     {
       datatools::properties baseConfig2;
-      datatools::properties::read_config("base_config.conf", baseConfig2);
+      datatools::read_config("base_config.conf", baseConfig2);
       std::clog << "\nloaded: " << std::endl;
       baseConfig2.dump(std::clog);
     }

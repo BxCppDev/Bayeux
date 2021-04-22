@@ -85,7 +85,7 @@ namespace geomtools {
 
     datatools::fetch_path_with_env(geometry_manager_configuration_file);
     datatools::properties geometry_manager_config;
-    datatools::properties::read_config(geometry_manager_configuration_file,
+    datatools::read_config(geometry_manager_configuration_file,
                                        geometry_manager_config);
     bool manager_build_mapping = false;
     if(a_config.has_flag("manager.build_mapping")) {
