@@ -36,16 +36,16 @@ namespace geomtools {
   // static
   const int gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
 
-  gnuplot_drawer::visibility_rules::visibility_rules()
-  {
-    active = false;
-    show_volume = true;
-    show_envelope = false;
-    show_daughters = true;
-    daughter_level = 1;
-    color.clear();
-    return;
-  }
+  // gnuplot_drawer::visibility_rules::visibility_rules()
+  // {
+  //   active = false;
+  //   show_volume = true;
+  //   show_envelope = false;
+  //   show_daughters = true;
+  //   daughter_level = 1;
+  //   color.clear();
+  //   return;
+  // }
 
   void gnuplot_drawer::visibility_rules::reset()
   {
@@ -201,18 +201,12 @@ namespace geomtools {
 
   bool gnuplot_drawer::dd_entry::is_valid() const
   {
-    return _dd_address_ != 0 && _pl_.is_valid ();
-  }
-
-  gnuplot_drawer::dd_entry::dd_entry()
-  {
-    _dd_address_ = 0;
-    return;
+    return _dd_address_ != nullptr && _pl_.is_valid ();
   }
 
   void gnuplot_drawer::dd_entry::reset()
   {
-    _dd_address_ = 0;
+    _dd_address_ = nullptr;
     _pl_.reset();
     return;
   }
@@ -279,7 +273,6 @@ namespace geomtools {
     out_ << "set " << axis << "range [" << min << ':' << max << "]";
     return;
   }
-
 
   void gnuplot_drawer::wait_for_key ()
   {
@@ -477,10 +470,10 @@ namespace geomtools {
            i != _cstreams_.end ();
            i++) {
         cstream & cs = i->second;
-        if (cs.oss != 0) {
+        if (cs.oss != nullptr) {
           cs.oss->flush ();
           delete cs.oss;
-          cs.oss = 0;
+          cs.oss = nullptr;
         }
       }
       _cstreams_.clear ();
@@ -541,20 +534,24 @@ namespace geomtools {
                               const placement & p_,
                               int max_display_level_)
   {
-    const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    char * envStr = getenv("GNUPLOT_DRAWER_DEBUG");
+    if (envStr != nullptr) {
+      local_priority = datatools::logger::PRIO_DEBUG;
+    }
     int max_display_level = max_display_level_;
     if (max_display_level_ < 0) {
       max_display_level = 0;
     }
+    DT_LOG_DEBUG(local_priority, "max_display_level = " << max_display_level);
     const geomtools::logical_volume & log = log_;
     try {
       int display_level = 0;
 
       datatools::properties log_visu_config;
       visibility::extract(log.get_parameters (), log_visu_config);
-
-      DT_LOG_TRACE (local_priority, "Logical volume '" << log.get_name() << "' visibility properties:");
-      if (local_priority >= datatools::logger::PRIO_TRACE) {
+      DT_LOG_DEBUG(local_priority, "Logical volume '" << log.get_name() << "' visibility properties:");
+      if (datatools::logger::is_debug(local_priority)) {
         log_visu_config.tree_dump(std::cerr);
       }
 
@@ -563,17 +560,21 @@ namespace geomtools {
 
       // Really useful ?
       if (visibility::is_shown(log_visu_config)) {
+        DT_LOG_DEBUG(local_priority, "found shown directive in log visu config");
         shown = true;
       }
       if (visibility::is_hidden(log_visu_config)) {
+        DT_LOG_DEBUG(local_priority, "found hidden directive in log visu config");
         shown = false;
       }
       if (get_properties().has_key(force_show_property_name())) {
+        DT_LOG_DEBUG(local_priority, "found '" << force_show_property_name() << "' directive in log visu config");
         shown = get_properties().fetch_boolean(force_show_property_name());
       }
 
       // Default envelope visibility for the logical volume:
       if (visibility::is_hidden_envelope(log_visu_config)) {
+        DT_LOG_DEBUG(local_priority, "found hidden envelope directive in log visu config");
         shown_envelope = false;
       }
       // Force envelope visibility from the Gnuplot drawer:
@@ -581,11 +582,12 @@ namespace geomtools {
         shown_envelope = get_properties().fetch_boolean(force_show_envelope_property_name());
       }
 
-      DT_LOG_TRACE (local_priority, "Show         = " << shown);
-      DT_LOG_TRACE (local_priority, "Show envelope = " << shown_envelope);
+      DT_LOG_DEBUG (local_priority, "Show         = " << shown);
+      DT_LOG_DEBUG (local_priority, "Show envelope = " << shown_envelope);
 
       // Draw the envelope volume :
       if (shown && shown_envelope){
+        DT_LOG_DEBUG (local_priority, "Wired         = " << is_wired());
         if (is_wired()) {
           std::string color_label = color::default_color();
           if (visibility::has_envelope_color(log_visu_config)) {
@@ -594,7 +596,7 @@ namespace geomtools {
           } else if (visibility::has_color(log_visu_config)) {
             // Then search for color :
             color_label = visibility::get_color(log_visu_config);
-            DT_LOG_TRACE(local_priority, "Found color '" << color_label
+            DT_LOG_DEBUG(local_priority, "Found color '" << color_label
                           << "' for logical '" << log.get_name() << "'...");
           }
           if (color_label != color::transparent()) {
@@ -619,6 +621,9 @@ namespace geomtools {
                                options);
           }
         } // if (is_wired())
+        
+      } else {
+        DT_LOG_DEBUG (local_priority, "Do not draw the envelope volume");
       }
 
       // Draw the children volume :
@@ -645,43 +650,41 @@ namespace geomtools {
         draw_children = get_properties().fetch_boolean(force_show_children_property_name());
       }
 
-      DT_LOG_TRACE (local_priority, "Drawing children...");
+      DT_LOG_DEBUG(local_priority, "Drawing children (" << log.get_physicals().size() << " items)");
       display_level++;
       for (geomtools::logical_volume::physicals_col_type::const_iterator iter
              = log.get_physicals().begin();
            iter != log.get_physicals().end();
            ++iter) {
         const physical_volume & phys = *(iter->second);
+        DT_LOG_DEBUG(local_priority, "Processing child '" <<  phys.get_name() << "'...");
         const geomtools::logical_volume & log_child = phys.get_logical();
         // Default behaviour:
         bool draw_it = true;
         if (! draw_children) {
           draw_it = false;
         }
-        /*
+        DT_LOG_DEBUG(local_priority, "Drawing child log : " << draw_it);
+         /*
         // 2016-05-04 FM: removed
         if (visibility::has_flag(log_child.get_parameters(),visibility::constants::instance().VISIBILITY_HIDDEN_FLAG)) {
           draw_it = false;
         }
         */
         std::string phys_label = i_model::extract_label_from_physical_volume_name(iter->first);
-        bool devel = false;
-        // if (phys_label == "PHYSLABEL") {
-        //   devel = true;
-        // }
-        if (devel) std::cerr << "\n\nDEVEL: phys_label = '" << phys_label << "'" << std::endl;
+        DT_LOG_DEBUG(local_priority, "phys_label = '" << phys_label << "'");
         // Individual hidden child volume:
         int explicit_vis_key = 0;
         std::ostringstream vis_child_name_hidden_key;
         vis_child_name_hidden_key << "visibility.daughters." << phys_label << ".hidden";
         {
-          if (devel) std::cerr << "DEVEL: vis key = '" << vis_child_name_hidden_key.str() << "'" << std::endl;
+          DT_LOG_DEBUG(local_priority, "vis key = '" << vis_child_name_hidden_key.str() << "'");
           if (log_visu_config.has_flag(vis_child_name_hidden_key.str())) {
-            if (devel) std::cerr << "DEVEL: has vis hidden flag" << std::endl;
-            bool hidden = true; // log_visu_config.fetch_boolean(vis_child_name_hidden_key.str());
+            DT_LOG_DEBUG(local_priority, "has vis hidden flag");
+            bool hidden = log_visu_config.fetch_boolean(vis_child_name_hidden_key.str());
             if (hidden) {
               explicit_vis_key++;
-              if (devel) std::cerr << "DEVEL: vis hidden" << std::endl;
+              DT_LOG_DEBUG(local_priority, "vis hidden");
               draw_it = false;
             }
           }
@@ -690,9 +693,9 @@ namespace geomtools {
         std::ostringstream vis_child_name_shown_key;
         vis_child_name_shown_key << "visibility.daughters." << phys_label << ".shown";
         {
-          if (devel) std::cerr << "DEVEL: vis key = '" << vis_child_name_shown_key.str() << "'" << std::endl;
+          DT_LOG_DEBUG(local_priority, "vis key = '" << vis_child_name_shown_key.str() << "'");
           if (log_visu_config.has_flag(vis_child_name_shown_key.str())) {
-            if (devel) std::cerr << "DEVEL: has vis shown key" << std::endl;
+            DT_LOG_DEBUG(local_priority, "has vis shown key");
             bool local_shown = true; // log_visu_config.fetch_boolean(vis_child_name_shown_key.str());
             if (local_shown) {
               if (explicit_vis_key > 0) {
@@ -703,14 +706,14 @@ namespace geomtools {
                 draw_it = false;
                 explicit_vis_key++;
               } else {
-                if (devel) std::cerr << "DEVEL: vis shown" << std::endl;
+                DT_LOG_DEBUG(local_priority, "vis shown");
                 draw_it = true;
               }
             }
           }
         }
         if (! draw_it) {
-          if (devel) std::cerr << "DEVEL: not drawn" << std::endl;
+          DT_LOG_DEBUG(local_priority, "Not drawn");
           continue;
         }
         const geomtools::i_placement * pp = &(phys.get_placement());
@@ -719,11 +722,15 @@ namespace geomtools {
           geomtools::placement p;
           // Get placement from the daughter physical #i:
           pp->get_placement(i, p);
-          if (devel) pp->tree_dump(std::clog, "item placement (child)", "DEVEL: ");
+          if (datatools::logger::is_debug(local_priority)) {
+            pp->tree_dump(std::clog, "item placement (child)", "[debug] ");
+          }
           geomtools::placement pt = p;
           // compute the placement relative to the mother volume:
           p_.child_to_mother(p, pt);
-          if (devel) pt.tree_dump(std::clog, "item placement (mother)", "DEVEL: ");
+          if (datatools::logger::is_debug(local_priority)) {
+            pt.tree_dump(std::clog, "item placement (mother)", "[debug] ");
+          }
           // Recursive invocation of the visualization data generation
           // for daughter #i:
           _rendering_options_depth_--;
@@ -750,28 +757,40 @@ namespace geomtools {
                                     const std::string & title_,
                                     bool drawing_display_data_)
   {
-    const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    char * envStr = getenv("GNUPLOT_DRAWER_DEBUG");
+    if (envStr != nullptr) {
+      local_priority = datatools::logger::PRIO_DEBUG;
+    }
     int max_display_level = max_display_level_;
     if (max_display_level_ < 0) {
       max_display_level = 0;
     }
-
+    DT_LOG_DEBUG(local_priority, "max_display_level = " << max_display_level);
     if (drawing_display_data_) {
+      DT_LOG_DEBUG(local_priority, "drawing display data...");
       _draw_display_data(p_);
     }
 
     datatools::properties visu_config;
     visibility::extract (log_.get_parameters (), visu_config);
+    DT_LOG_DEBUG(local_priority, "visu_config:");
+    if (datatools::logger::is_debug(local_priority)) {
+      visu_config.tree_dump(std::cerr, "", "[debug] ");
+    }
 
     bool shown = true;
     //bool shown_envelope = true;
     if (visibility::is_hidden (visu_config)) {
+      DT_LOG_DEBUG(local_priority, "found hidden directive in visu config");
       shown = false;
     }
     if (visibility::is_shown (visu_config)) {
+      DT_LOG_DEBUG(local_priority, "found shown directive in visu config");
       shown = true;
     }
     if (visibility::is_hidden_envelope (visu_config)) {
+      DT_LOG_DEBUG(local_priority, "found hidden envelope directive in visu config (unused)");
       //shown_envelope = false;
     }
 
@@ -779,8 +798,8 @@ namespace geomtools {
     color::code_type former_color = color::get_color(color::default_color());
     if (visibility::has_color (visu_config)) {
       color = color::get_color (visibility::get_color(visu_config));
-      DT_LOG_TRACE (local_priority, "Found color '" << visibility::get_color (visu_config)
-                    << "' color is : " << color);
+      DT_LOG_DEBUG(local_priority, "Found color '" << visibility::get_color (visu_config)
+                   << "' color is : " << color);
     }
 
     // Activate a drawing bounding box computer :
@@ -790,6 +809,7 @@ namespace geomtools {
     gnuplot_draw::color_context().set_color_code(former_color);
 
     if (shown) {
+      DT_LOG_DEBUG(local_priority, "shown!");
       gnuplot_drawer::_draw_(log_, p_, max_display_level);
     }
 

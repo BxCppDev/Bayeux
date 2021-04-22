@@ -3,13 +3,9 @@
  * Creation date: 2010-02-20
  * Last modified: 2014-07-16
  *
- * License:
- *
  * Description:
  *
  *  Algorithm to recursively draw the geometry using gnuplot.
- *
- * History:
  *
  */
 
@@ -72,7 +68,7 @@ namespace geomtools {
     {
       std::string label;
       std::string filename;
-      std::ostringstream * oss;
+      std::ostringstream * oss = nullptr;
       int color;
 
       cstream ();
@@ -85,7 +81,7 @@ namespace geomtools {
     class dd_entry
     {
     public:
-      dd_entry();
+      dd_entry() = default;
       void reset();
       void set_placement(const placement &);
       void set_display_data(const display_data &);
@@ -94,7 +90,7 @@ namespace geomtools {
       bool is_valid() const;
     private:
       placement            _pl_;         //!< The placement of the display data
-      const display_data * _dd_address_; //!< The handle of the display data
+      const display_data * _dd_address_ = nullptr; //!< The handle of the display data
     };
 
     /// \brief Predicate that tests the address of a display data
@@ -104,7 +100,7 @@ namespace geomtools {
       has_dd_addr(const display_data &);
       bool operator()(const dd_entry & dde_) const;
     private:
-      const display_data * _dd_address_; //!< The address of the display data to be checked
+      const display_data * _dd_address_ = nullptr; //!< The address of the display data to be checked
     };
 
     /// Collection of display data handle
@@ -112,14 +108,14 @@ namespace geomtools {
 
     /// \brief Visibility rules for 3D volume rendering
     struct visibility_rules {
-      visibility_rules();
+      visibility_rules() = default;
       void reset();
     public:
-      bool active;
-      bool show_volume;
-      bool show_envelope;
-      bool show_daughters;
-      int daughter_level;
+      bool active = false;
+      bool show_volume = true;
+      bool show_envelope = false;
+      bool show_daughters = true;
+      int  daughter_level = 1;
       std::string color;
     };
 
@@ -301,25 +297,25 @@ namespace geomtools {
 
   private:
 
-    bool                  _initialized_;
+    bool                  _initialized_ = false;
     cstreams_col_type     _cstreams_;
     datatools::properties _props_;
     std::string _view_;
-    bool        _using_title_;
-    bool        _labels_;
+    bool        _using_title_ = true;
+    bool        _labels_ = true;
     std::string _mode_;
     range _xrange_;
     range _yrange_;
     range _zrange_;
-    //visibility_rules _vis_rules_;
-    bool        _drawing_display_data_;
+    // visibility_rules _vis_rules_;
+    bool        _drawing_display_data_ = true;
     dd_col_type _display_data_;
     std::string _terminal_;
     std::string _terminal_options_;
     std::string _output_;
-    int         _max_display_level_; // XXX
-    uint32_t    _rendering_options_current_;
-    int32_t     _rendering_options_depth_;
+    // int         _max_display_level_; 
+    uint32_t    _rendering_options_current_ = 0;
+    int32_t     _rendering_options_depth_ = 0;
 
   }; // class gnuplot_drawer
 

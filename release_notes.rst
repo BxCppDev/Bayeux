@@ -28,9 +28,12 @@ Additions
 * Add  load/store  methods in  ``geomtools::tessellated_solid``  class
   (using  a  simple  ASCII  format,  alternative  to  the  STL  import
   features).
-* Add ``geomtools::model_with_internal_items_tools::init_internal_items`` method
-  to enable automatic setup of internal physical volumes without using initialization
-  through a ``datatools::properties`` object (like in ``geomtools::model_with_internal_items_tools::plug_internal_models``).
+* Add
+  ``geomtools::model_with_internal_items_tools::init_internal_items``
+  method  to  enable  automatic  setup of  internal  physical  volumes
+  without  using  initialization through  a  ``datatools::properties``
+  object                            (like                           in
+  ``geomtools::model_with_internal_items_tools::plug_internal_models``).
 * Add ranking features in the datatools variant system. Some dedicated
   metadata are parsed from any CSV  file used for large enumeration of
   string values for an enumerated string parameter. A few levels of UI
@@ -39,6 +42,8 @@ Additions
   provides  a check  box per  variant  registry panel  to inhibit  the
   display of values of *secondary* interest in combo boxes (for string
   parameters only).
+* Add  support for  ``GNUPLOT_DRAWER_DEBUG`` environment  variable for
+  debugging in the ``geomtools::gnuplot_drawer``.
 
   
 Removals
