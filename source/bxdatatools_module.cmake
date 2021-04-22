@@ -74,6 +74,7 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/archives_list.h
   ${module_include_dir}/${module_name}/base_service.h
   ${module_include_dir}/${module_name}/bit_mask.h
+  ${module_include_dir}/${module_name}/bit_utils.h
   ${module_include_dir}/${module_name}/caster_utils.h
   ${module_include_dir}/${module_name}/clhep_units.h
   ${module_include_dir}/${module_name}/command_utils.h
@@ -121,15 +122,18 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/memory_streambuf.h
   ${module_include_dir}/${module_name}/multi_properties.h
   ${module_include_dir}/${module_name}/multi_properties.ipp
+  ${module_include_dir}/${module_name}/numeric.h
   ${module_include_dir}/${module_name}/object_configuration_description.h
   ${module_include_dir}/${module_name}/ocd_macros.h
   ${module_include_dir}/${module_name}/ocd_driver.h
+  ${module_include_dir}/${module_name}/path_utils.h
   ${module_include_dir}/${module_name}/properties.h
   ${module_include_dir}/${module_name}/properties.ipp
   ${module_include_dir}/${module_name}/range_tools.h
   ${module_include_dir}/${module_name}/real_range.h
   ${module_include_dir}/${module_name}/reflection_interface.h
   ${module_include_dir}/${module_name}/resource.h
+  ${module_include_dir}/${module_name}/return_types.h
   ${module_include_dir}/${module_name}/safe_serial.h
   ${module_include_dir}/${module_name}/serialization_macros.h
   ${module_include_dir}/${module_name}/service_manager.h
@@ -138,6 +142,7 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/service_tools-inl.h
   ${module_include_dir}/${module_name}/smart_filename.h
   ${module_include_dir}/${module_name}/smart_ref.h
+  ${module_include_dir}/${module_name}/string_utils.h
   ${module_include_dir}/${module_name}/temporary_files.h
   ${module_include_dir}/${module_name}/things.h
   ${module_include_dir}/${module_name}/things.ipp
@@ -289,9 +294,11 @@ ${module_source_dir}/file_include.cc
 ${module_source_dir}/logger.cc
 ${module_source_dir}/memory_streambuf.cc
 ${module_source_dir}/multi_properties.cc
+${module_source_dir}/numeric.cc
 ${module_source_dir}/object_configuration_description.cc
 ${module_source_dir}/ocd_driver.cc
 ${module_source_dir}/ocd_utils.cc
+${module_source_dir}/path_utils.cc
 ${module_source_dir}/properties.cc
 ${module_source_dir}/range_tools.cc
 ${module_source_dir}/real_range.cc
@@ -299,6 +306,7 @@ ${module_source_dir}/resource.cc
 ${module_source_dir}/service_manager.cc
 ${module_source_dir}/service_tools.cc
 ${module_source_dir}/smart_filename.cc
+${module_source_dir}/string_utils.cc
 ${module_source_dir}/temporary_files.cc
 ${module_source_dir}/the_serializable.cc
 ${module_source_dir}/things.cc
@@ -306,7 +314,6 @@ ${module_source_dir}/time_tools.cc
 ${module_source_dir}/tracer.cc
 ${module_source_dir}/types.cc
 ${module_source_dir}/units.cc
-${module_source_dir}/utils.cc
 ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
