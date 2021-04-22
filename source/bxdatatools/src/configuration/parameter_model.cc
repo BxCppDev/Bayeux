@@ -158,6 +158,7 @@ namespace datatools {
 
     parameter_model::base_enum_metadata::base_enum_metadata(uint32_t flags_)
     {
+      _rank = RANK_DEFAULT; 
       _no_group_support_ = false;
       if (flags_ & CTOR_NO_GROUP_SUPPORT) {
         _no_group_support_ = true;
@@ -213,6 +214,19 @@ namespace datatools {
     const std::set<std::string> & parameter_model::base_enum_metadata::get_variants() const
     {
       return _variants;
+    }
+
+    void parameter_model::base_enum_metadata::set_rank(int rank_)
+    {
+      DT_THROW_IF(rank_ < 0 or rank_ > RANK_LAST, std::domain_error,
+                  "Rank [" << std::to_string(rank_) << "] is not valid!");
+      _rank = rank_;
+      return;
+    }
+
+    int parameter_model::base_enum_metadata::get_rank() const
+    {
+      return _rank;
     }
 
     bool parameter_model::base_enum_metadata::has_group() const
@@ -1343,6 +1357,11 @@ namespace datatools {
       return has;
     }
 
+    const parameter_model::string_enum_dict_type & parameter_model::get_string_enumeration() const
+    {
+      return _string_enumeration_;
+    }
+
     bool parameter_model::enumerated_real_value_has_group(const double value_) const
     {
       DT_THROW_IF(! is_real(), std::logic_error, "Parameter model '" << get_name() << "' is not of real type!");
@@ -1582,6 +1601,29 @@ namespace datatools {
       return;
     }
 
+    struct compare_enum_string_values_by_rank
+    {
+      compare_enum_string_values_by_rank(const parameter_model::string_enum_dict_type & str_enum_)
+        : str_enum(str_enum_) {}
+      bool operator()(const std::string & value1_, const std::string & value2_) const
+      {
+        return parameter_model::compare_enum_value_metadata_by_rank(str_enum.find(value1_)->second, str_enum.find(value2_)->second);
+      } 
+      const parameter_model::string_enum_dict_type & str_enum;
+    };
+
+    void parameter_model::rank_list_of_enumerated_string_values(const std::set<std::string> & values_,
+                                                                std::list<std::string> & ranked_values_) const
+    {
+      ranked_values_.clear();
+      for (const auto & value : values_) {
+        ranked_values_.push_back(value);
+      }
+      compare_enum_string_values_by_rank compareByRank(_string_enumeration_);
+      ranked_values_.sort(compareByRank);
+      return;
+    }
+  
     void parameter_model::build_list_of_enumerated_string_values_in_group(const std::string & group_,
                                                                           std::set<std::string> & values_) const
     {
@@ -2750,6 +2792,7 @@ namespace datatools {
       std::size_t line_counter = 0;
       while (fin && !fin.eof()) {
         bool default_value_flag = false;
+        int value_rank = -1;
         std::string line;
         std::getline(fin, line);
         line_counter++;
@@ -2775,9 +2818,31 @@ namespace datatools {
         if (line[0] == '*') {
           line = line.substr(1);
           DT_THROW_IF(!default_value.empty(), std::logic_error, "Default string enumerated value is already set!");
-          DT_LOG_DEBUG(logging, "Found the default value mark at line #" <<  line_counter);
+          DT_LOG_DEBUG(logging, "Found the default value mark at line #" << line_counter);
           default_value_flag = true;
         }
+        /*
+        if (line[0] == '+') {
+          line = line.substr(1);
+          DT_LOG_DEBUG(logging, "Found a highlight rank mark at line #" <<  line_counter);
+          value_rank = string_enum_value_metadata::RANK_HIGHLIGHTED;
+        } else if (line[0] == '-') {
+          line = line.substr(1);
+          cut_head=1;
+          DT_LOG_DEBUG(logging, "Found a last rank mark at line #" <<  line_counter);
+          value_rank = string_enum_value_metadata::RANK_LAST;
+        } else if (line.substr(0,2) == ">>") {
+          line = line.substr(2);
+          cut_head=2;
+          DT_LOG_DEBUG(logging, "Found a ternary rank mark at line #" <<  line_counter);
+          value_rank = string_enum_value_metadata::RANK_TERNARY;
+        } else if (line.substr(0,1) == ">") {
+          line = line.substr(1);
+          cut_head=1;
+          DT_LOG_DEBUG(logging, "Found a secondary rank mark at line #" <<  line_counter);
+          value_rank = string_enum_value_metadata::RANK_SECONDARY;
+        }
+        */
         std::vector<std::string> tokens;
         boost::algorithm::split(tokens, line, boost::is_any_of(csv_separators)); // , boost::token_compress_on);
         std::string se_value;
@@ -2786,6 +2851,7 @@ namespace datatools {
           se_value = tokens[0];
           boost::algorithm::trim(se_value);
         }
+        // XX remove leading '+*>>'
         DT_THROW_IF(se_value.empty(), std::logic_error, "Empty enumerated string value!");
         if (!value_regex_.empty()) {
           static const boost::regex e(value_regex_, boost::regex::extended);
@@ -2819,6 +2885,13 @@ namespace datatools {
           se_variants = tokens[3];
           boost::algorithm::trim(se_variants);
         }
+        std::string se_metas;
+        if (tokens.size() > 4) {
+          // CSV column :
+          se_metas = tokens[4];
+          boost::algorithm::trim(se_metas);
+        }
+        
         // Process:
         string_enum_value_metadata strmetadata;
         DT_LOG_DEBUG(logging, "Adding a new string value '" << se_value << "'...");
@@ -2853,12 +2926,50 @@ namespace datatools {
             }
           }
         }
+        if (!se_metas.empty()) {
+          std::vector<std::string> metas;
+          std::string csv_subseparators;
+          csv_subseparators.push_back(csv_subseparator_);
+          boost::split(metas, se_metas, boost::is_any_of(csv_subseparators));
+          for (std::size_t iv = 0; iv < metas.size(); iv++) {
+            std::string se_meta = metas[iv];
+            boost::algorithm::trim(se_meta);
+            if (!se_meta.empty()) {
+              DT_LOG_DEBUG(logging,
+                           "Associating meta '" << se_meta << "' to value '" << se_value << "'...");
+              std::string rank_tok;
+              if (se_meta.substr(0,5) == "rank=") {
+                rank_tok = se_meta.substr(5);
+              }
+              if (! rank_tok.empty()) {
+                boost::algorithm::trim(rank_tok);
+                if (rank_tok == "highlight") {
+                  value_rank=string_enum_value_metadata::RANK_HIGHLIGHTED;
+                } else if (rank_tok == "first") {
+                  value_rank=string_enum_value_metadata::RANK_PRIMARY;
+                } else if (rank_tok == "second") {
+                  value_rank=string_enum_value_metadata::RANK_SECONDARY;
+                } else if (rank_tok == "third") {
+                  value_rank=string_enum_value_metadata::RANK_TERNARY;
+                } else if (rank_tok == "last") {
+                  value_rank=string_enum_value_metadata::RANK_LAST;
+                } else { 
+                  value_rank=std::stoi(rank_tok);
+                }
+              }
+            }
+          }
+        }
+        if (default_value_flag) {
+          // Automatically highlighted:
+          value_rank = string_enum_value_metadata::RANK_HIGHLIGHTED;
+        }
+        if (value_rank >= 0) {
+          strmetadata.set_rank(value_rank);
+        }
         add_enumerated_string_value(se_value, strmetadata, default_value_flag);
         fin >> std::ws;
       }
-      // if (!default_value.empty()) {
-      //   set_default_string(default_value);
-      // }
       return;
     }
 

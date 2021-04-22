@@ -39,6 +39,7 @@
 // This project:
 #include <datatools/configuration/variant_record.h>
 #include <datatools/configuration/variant_registry.h>
+#include <datatools/configuration/variant_repository.h>
 #include <datatools/configuration/parameter_model.h>
 #include <datatools/configuration/variant_model.h>
 #include <datatools/exception.h>
@@ -1109,6 +1110,9 @@ namespace datatools {
                                                   const std::string & registry_name_)
       {
         DT_LOG_TRACE(_logging_, "Entering...");
+        if (registry_.has_parent_repository()) {
+          set_read_only(! registry_.get_parent_repository().get_ui_config().writable_at_start);
+        }
         std::string top_variant_name = variant_registry::default_top_variant_name();
         // if (top_variant_name.empty()) {
         //   top_variant_name = registry_.get_top_variant_name();

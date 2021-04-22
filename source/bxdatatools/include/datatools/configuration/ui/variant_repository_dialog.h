@@ -36,6 +36,9 @@
 #include <QDialog>
 #include <QObject>
 
+// This project:
+#include <datatools/bit_mask.h>
+
 // Forward declaration:
 class QWidget;
 class QHBoxLayout;
@@ -61,15 +64,26 @@ namespace datatools {
 
       public:
 
+        enum flags_type
+          {
+           FLAG_HIDE_DISABLED = datatools::bit_mask::bit00
+          };
+
         /// Default Constructor
         variant_repository_dialog(QWidget * parent_ = 0);
 
         /// Constructor
         variant_repository_dialog(variant_repository & repository_,
                                   QWidget * parent_ = 0);
+        /// Constructor
+        variant_repository_dialog(variant_repository & repository_,
+                                  uint32_t flags_,
+                                  QWidget * parent_ = 0);
 
         /// Destructor
         virtual ~variant_repository_dialog();
+
+        bool are_disabled_hidden() const;
 
         /// Check if the repository handle is set
         bool has_repository() const;
@@ -108,6 +122,7 @@ namespace datatools {
       private:
 
         variant_repository * _repository_; //!< Handle to a repository
+        bool _hide_disabled_ = false;
 
         // Widgets:
         variant_repository_viewer * _viewer_; //!< The embedded viewer widget

@@ -52,6 +52,7 @@ namespace datatools {
       void variant_repository_dialog::_set_default()
       {
         _repository_ = 0;
+        _hide_disabled_ = false;
         _viewer_ = 0;
         _bottom_buttons_bar_ = 0;
         _snapshot_button_ = 0;
@@ -62,6 +63,11 @@ namespace datatools {
         _ok_button_ = 0;
         _main_layout_ = 0;
         return;
+      }
+
+      bool variant_repository_dialog::are_disabled_hidden() const
+      {
+        return _hide_disabled_;
       }
 
       variant_repository_dialog::variant_repository_dialog(QWidget * parent_) :
@@ -76,6 +82,19 @@ namespace datatools {
         QDialog(parent_)
       {
         _set_default();
+        set_repository(repository_);
+        return;
+      }
+
+      variant_repository_dialog::variant_repository_dialog(variant_repository & repository_,
+                                                           uint32_t flags_,
+                                                           QWidget * parent_) :
+        QDialog(parent_)
+      {
+        _set_default();
+        if (flags_ & FLAG_HIDE_DISABLED) {
+          _hide_disabled_ = true;
+        }
         set_repository(repository_);
         return;
       }
@@ -119,7 +138,8 @@ namespace datatools {
         _main_layout_ = new QVBoxLayout(this);
 
         // Create the viewer:
-        _viewer_ = new variant_repository_viewer;
+        // _viewer_ = new variant_repository_viewer;
+        _viewer_ = new variant_repository_viewer(this);
         _viewer_->set_repository(*_repository_);
 
         // Create the cancel button:

@@ -337,6 +337,21 @@ namespace datatools {
         return has_parent_repository();
       }
 
+      bool parameter_item_delegate::has_max_combo_rank() const
+      {
+        return _max_combo_rank_ >= 0;
+      }
+
+      void parameter_item_delegate::set_max_combo_rank(int max_rank_)
+      {
+        if (max_rank_ > 1000 or max_rank_ < 0) {
+          _max_combo_rank_ = -1;
+        } else {
+          _max_combo_rank_ = max_rank_;
+        }
+        return;
+      }
+
       void parameter_item_delegate::set_logging(datatools::logger::priority p_)
       {
         _logging_ = p_;
@@ -352,6 +367,10 @@ namespace datatools {
         : QStyledItemDelegate(parent_)
       {
         _logging_ = datatools::logger::PRIO_FATAL;
+        _hide_disabled_groups_ = false;
+        _hide_disabled_values_ = false;
+        _hide_disabled_groups_ = true;
+        _hide_disabled_values_ = true;
         return;
       }
 
@@ -360,6 +379,28 @@ namespace datatools {
         return;
       }
 
+      bool parameter_item_delegate::are_disabled_groups_hidden() const
+      {
+        return _hide_disabled_groups_;
+      }
+      
+      void parameter_item_delegate::set_hide_disabled_groups(bool hdg_)
+      {
+        _hide_disabled_groups_ = hdg_;
+        return ;
+      }
+
+      bool parameter_item_delegate::are_disabled_values_hidden() const
+      {
+        return _hide_disabled_values_;
+      }
+      
+      void parameter_item_delegate::set_hide_disabled_values(bool hdv_)
+      {
+        _hide_disabled_values_ = hdv_;
+        return ;
+      }
+ 
       QWidget * parameter_item_delegate::_create_boolean_editor(QWidget * parent_,
                                                                 const QStyleOptionViewItem & /* option_ */,
                                                                 const QModelIndex & /* index_ */,
@@ -796,10 +837,15 @@ namespace datatools {
           }
         } // is_free
 
+        int starting_index = 0;
+        int best_rank = -1; 
+        int best_rank_index = -1; 
         if (param_model.is_enumeration()) {
           // Enumeration:
           QComboBox * string_combo = new QComboBox(parent_);
           string_combo->setAutoFillBackground(true);
+          string_combo->setCurrentIndex(starting_index);
+          // string_combo->setMaxVisibleItems(15);
           std::set<std::string> groups;
           param_model.build_list_of_enumerated_string_groups(groups);
           if (datatools::logger::is_debug(_logging_)) {
@@ -808,7 +854,7 @@ namespace datatools {
               DT_LOG_DEBUG_SHORT(_logging_, " --> Group = '" << group << "'");
             }
           }
-          typedef std::map<std::string, std::set<std::string>> group_values_dict_type;
+          typedef std::map<std::string, std::list<std::string>> group_values_dict_type;
           group_values_dict_type group_values_dict;
           static const std::string NOGROUP_NAME("__nogroup__");
           std::set<std::string> nogroup_values;
@@ -820,19 +866,23 @@ namespace datatools {
               DT_LOG_DEBUG_SHORT(_logging_, " --> value = '" << nogroup_value << "'");
             }
           }
+          std::list<std::string> ranked_nogroup_values;
+          param_model.rank_list_of_enumerated_string_values(nogroup_values, ranked_nogroup_values);
           std::size_t nb_value_total = 0;
-          if (nogroup_values.size()) {
-            nb_value_total += nogroup_values.size();
-            group_values_dict[NOGROUP_NAME] = nogroup_values;
+          if (ranked_nogroup_values.size()) {
+            nb_value_total += ranked_nogroup_values.size();
+            group_values_dict[NOGROUP_NAME] = ranked_nogroup_values;
           }
           DT_LOG_DEBUG(_logging_, "Done.");
           for (const auto & group : groups) {
             DT_LOG_DEBUG(_logging_, "Processing group '" << group << "'...");
             std::set<std::string> group_values;
             param_model.build_list_of_enumerated_string_values_in_group(group, group_values);
-            if (group_values.size()) {
-              nb_value_total += group_values.size();
-              group_values_dict[group] = group_values;
+            std::list<std::string> ranked_group_values;
+            param_model.rank_list_of_enumerated_string_values(group_values, ranked_group_values);
+            if (ranked_group_values.size()) {
+              nb_value_total += ranked_group_values.size();
+              group_values_dict[group] = ranked_group_values;
             }
           }
 
@@ -851,13 +901,40 @@ namespace datatools {
           if (var_rec_.value_is_set()) {
             command::returned_info cri = var_rec_.get_string_value(current_value);
           }
+          const parameter_model & paramModel = var_rec_.get_parameter_model();
           std::size_t group_counter = 0;
           int index = 0;
           for (const auto & grpval : group_values_dict) {
             const std::string & group_name = grpval.first;
+            // std::cerr << "*** DEVEL *** Processing group=" << group_name << "...\n";
+
+            // Count ranks associated to values:
+            std::set<int> set_ranks;
+            int max_rank = (_max_combo_rank_ == -1 ? 100000 : _max_combo_rank_);
+            // Loop on the values:
+            for (const auto & value : grpval.second) {
+              const parameter_model::string_enum_value_metadata & strEnumMeta
+                = paramModel.get_enumerated_string_value_metadata(value);
+              int current_rank = strEnumMeta.get_rank();
+              if (current_rank <= max_rank) {
+                set_ranks.insert(current_rank);
+              }
+            }
+            
             bool enabled_group = true;
             if (group_name != NOGROUP_NAME) {
               enabled_group = var_rec_.check_enabled_group(group_name);
+            }
+            if (set_ranks.size() == 0) {
+              enabled_group = false;
+            }
+
+            if (group_name != NOGROUP_NAME) {
+              if (are_disabled_groups_hidden() and not enabled_group) {
+                // Skip this group:
+                // std::cerr << "*** DEVEL *** Group=" << group_name << " is disabled\n";
+                continue;
+              }
               QStandardItem * item = new QStandardItem(QString::fromStdString(group_name));
               item->setFlags(item->flags() & ~(/* Qt::ItemIsEnabled | */ Qt::ItemIsSelectable));
               item->setData( "parent", Qt::AccessibleDescriptionRole );
@@ -868,7 +945,12 @@ namespace datatools {
               itemModel->appendRow(item);
               ++index;
             }
+            
+            // Loop on the values:
+            int last_rank = -1;
             for (const auto & value : grpval.second) {
+              const parameter_model::string_enum_value_metadata & strEnumMeta
+                = paramModel.get_enumerated_string_value_metadata(value);
               bool enabled_value = true;
               if (!enabled_group) {
                 enabled_value = false;
@@ -876,6 +958,56 @@ namespace datatools {
                 parameter_value_type param_value = value;
                 enabled_value = var_rec_.check_enabled_value(param_value);
               }
+              if (are_disabled_values_hidden() and not enabled_value) {
+                // Skip this value:
+                // std::cerr << "*** DEVEL *** Value=" << value << " is disabled\n";
+                continue;
+              }
+              int current_rank = strEnumMeta.get_rank();
+              if (current_rank > max_rank) {
+                continue;
+              }
+              // Process the value:
+              bool start_rank_block = false;
+              if (best_rank_index == -1 or current_rank < best_rank) {
+                best_rank = current_rank;
+                best_rank_index = index;
+              }
+              if (last_rank >= 0) {
+                if (current_rank > last_rank) {
+                  // separate groups of items with same rank
+                  string_combo->insertSeparator(++index);
+                  start_rank_block = true;
+                }
+              } else {
+                start_rank_block = true;
+              }
+              if (set_ranks.size() > 1 and start_rank_block) {
+                std::string rank_label;
+                if (current_rank == parameter_model::base_enum_metadata::RANK_HIGHLIGHTED) {
+                  rank_label = "Top choices";
+                } else if (current_rank == parameter_model::base_enum_metadata::RANK_PRIMARY) {
+                  rank_label = "Primary choices";
+                } else if (current_rank == parameter_model::base_enum_metadata::RANK_SECONDARY) {
+                  rank_label = "Secondary choices";
+                } else if (current_rank == parameter_model::base_enum_metadata::RANK_TERNARY) {
+                  rank_label = "Unlikely choices";
+                }              
+                if (! rank_label.empty()) {
+                  QStandardItem * item = new QStandardItem(QString::fromStdString(rank_label));
+                  item->setFlags(item->flags() & ~(/* Qt::ItemIsEnabled | */ Qt::ItemIsSelectable));
+                  item->setData( "parent", Qt::AccessibleDescriptionRole );
+                  // item->setData( Qt::AlignRight, Qt::TextAlignmentRole );
+                  QFont font = item->font();
+                  font.setItalic(true);
+                  int pointSize = font.pointSize();
+                  font.setPointSize(pointSize > 6 ? pointSize - 2 : pointSize);
+                  item->setFont(font);
+                  QStandardItemModel * itemModel = (QStandardItemModel*) string_combo->model();
+                  itemModel->appendRow(item);
+                  ++index;
+                }
+              } 
               string_combo->insertItem(index, QString::fromStdString(value));
               const QStandardItemModel* model = qobject_cast<const QStandardItemModel*>(string_combo->model());
               QStandardItem* item = model->item(index);
@@ -888,14 +1020,18 @@ namespace datatools {
                 string_combo->setCurrentIndex(index);
               }
               index++;
-            }
+              last_rank = current_rank;
+            } // Value loop
             ++group_counter;
             if (group_counter != group_values_dict.size()) {
               string_combo->insertSeparator(++index);
             }
-          }
+          } // Group loop
           editor = string_combo;
-
+          if (best_rank_index >= 0)  {
+            starting_index = best_rank_index;
+          }
+          string_combo->setCurrentIndex(starting_index);
         } // is_enumeration
 
         std::string editor_repr = "<null>";

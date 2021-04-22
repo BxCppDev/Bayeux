@@ -44,6 +44,7 @@
 // This project:
 #include <datatools/configuration/variant_record.h>
 #include <datatools/configuration/variant_registry.h>
+#include <datatools/configuration/variant_repository.h>
 #include <datatools/configuration/parameter_model.h>
 #include <datatools/configuration/variant_model.h>
 #include <datatools/configuration/io.h>
@@ -51,6 +52,7 @@
 #include <datatools/configuration/ui/parameter_item_delegate.h>
 #include <datatools/qt/led.h>
 #include <datatools/ioutils.h>
+#include <datatools/configuration/ui/variant_repository_dialog.h>
 
 namespace datatools {
 
@@ -62,6 +64,7 @@ namespace datatools {
         : QWidget(parent_)
       {
         _devel_mode_ = false;
+        _inhibit_secondary_choices_ = false;
         _logging_ = datatools::logger::PRIO_FATAL;
         _registry_name_title_label_ = new QLabel(this);
         _registry_name_title_label_->setText("Configuration registry:");
@@ -69,11 +72,24 @@ namespace datatools {
         _accomplished_label_ = new QLabel(this);
         _accomplished_led_ = new datatools::qt::led(this);
         _read_only_cb_ = new QCheckBox("Read-only", this);
+        
+        _inhibit_secondary_choices_cb_ = new QCheckBox("Inhibit secondaries", this);
+        QObject::connect(this, SIGNAL(sig_inhibit_secondary_choices_changed(bool)),
+                         this, SLOT(slot_update_isc_cb(bool)));
+
         _tree_view_ = new QTreeView(this);
         _tree_view_->setDragEnabled(false);
         _tree_view_->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         _value_delegate_ = new parameter_item_delegate(parent_);
-        _tree_view_->setItemDelegateForColumn(2, _value_delegate_);
+        auto * dialog = dynamic_cast<variant_repository_dialog*>(parent_);
+        if (dialog != nullptr) {
+          _value_delegate_->set_hide_disabled_groups(dialog->are_disabled_hidden());
+          _value_delegate_->set_hide_disabled_values(dialog->are_disabled_hidden());
+          slot_update_isc_delegate(_inhibit_secondary_choices_);
+        }
+        QObject::connect(this, SIGNAL(sig_inhibit_secondary_choices_changed(bool)),
+                         this, SLOT(slot_update_isc_delegate(bool)));
+       _tree_view_->setItemDelegateForColumn(2, _value_delegate_);
         //_tree_view_->header()->setResizeMode(1, QHeaderView::Stretch); // QHeaderView::ResizeToContents
         _expand_only_active_button_ = new QPushButton("Expand only &active", this);
         _expand_all_button_ = new QPushButton("&Expand all", this);
@@ -130,9 +146,21 @@ namespace datatools {
         return;
       }
 
+      void variant_registry_viewer::set_inhibit_secondary_choices(bool isc_)
+      {
+        _inhibit_secondary_choices_ = isc_;
+        emit sig_inhibit_secondary_choices_changed(isc_);
+        return;
+      }
+
+      bool variant_registry_viewer::is_inhibit_secondary_choices() const
+      {
+        return _inhibit_secondary_choices_;
+      }
+
       bool variant_registry_viewer::has_registry_tree_model() const
       {
-        return _registry_tree_model_ != 0;
+        return _registry_tree_model_ != nullptr;
       }
 
       void variant_registry_viewer::set_registry_tree_model(variant_registry_tree_model & rtm_,
@@ -140,11 +168,7 @@ namespace datatools {
       {
         _devel_mode_ = devel_mode_;
         _registry_tree_model_ = &rtm_;
-        _registry_tree_model_->set_read_only(true);
-        if (get_registry().has_parent_repository()) {
-          _value_delegate_->set_parent_repository(get_registry().get_parent_repository());
-        }
-        _construct();
+         _construct();
         return;
       }
 
@@ -193,10 +217,8 @@ namespace datatools {
           _registry_name_display_label_->setToolTip(QString::fromStdString(_registry_tree_model_->get_registry().get_terse_description()));
         }
 
-        slot_update_read_only_cb(_registry_tree_model_->is_read_only());
-
-        QObject::connect(_read_only_cb_, SIGNAL(stateChanged(int)),
-                         this,           SLOT(slot_update_model_read_only_from_check_state(int)));
+        QObject::connect(_inhibit_secondary_choices_cb_, SIGNAL(stateChanged(int)),
+                         this,           SLOT(slot_update_isc_from_check_state(int)));
 
         QObject::connect(_expand_all_button_, SIGNAL(clicked()),
                          this,                SLOT(slot_expand_all()));
@@ -225,11 +247,11 @@ namespace datatools {
         QObject::connect(_registry_tree_model_, SIGNAL(dataChanged(const QModelIndex &,const QModelIndex &)),
                          this,                  SLOT(slot_expand_only_active()));
 
-        QObject::connect(_registry_tree_model_, SIGNAL(sig_read_only_changed(bool)),
-                         this,                  SLOT(slot_update_read_only_cb(bool)));
+        QObject::connect(_read_only_cb_, SIGNAL(stateChanged(int)),
+                         this,           SLOT(slot_update_model_read_only_from_check_state(int)));
 
         QObject::connect(_registry_tree_model_, SIGNAL(sig_read_only_changed(bool)),
-                         this,                  SIGNAL(sig_read_only_changed(bool)));
+                         this,                  SLOT(slot_update_read_only_cb(bool)));
 
         _accomplished_label_->setText("Accomplished:");
         _accomplished_led_->set_shape(datatools::qt::led::Square);
@@ -245,6 +267,7 @@ namespace datatools {
         top_layout->addWidget(_registry_name_title_label_);
         top_layout->addWidget(_registry_name_display_label_);
         top_layout->addStretch();
+        top_layout->addWidget(_inhibit_secondary_choices_cb_);
         top_layout->addWidget(_accomplished_label_);
         top_layout->addWidget(_accomplished_led_);
         top_layout->addWidget(_read_only_cb_);
@@ -271,6 +294,12 @@ namespace datatools {
         main_layout->addWidget(_tree_view_);
         main_layout->addLayout(bottom_layout);
 
+        if (get_registry().has_parent_repository()) {
+          _value_delegate_->set_parent_repository(get_registry().get_parent_repository());
+          set_inhibit_secondary_choices(get_registry().get_parent_repository().get_ui_config().inhibit_secondary_choices);
+        }
+        slot_update_read_only_cb(_registry_tree_model_->is_read_only());
+        // slot_update_isc_cb(_inhibit_secondary_choices_);
         slot_update_leds();
         slot_expand_only_active();
 
@@ -295,6 +324,60 @@ namespace datatools {
         return;
       }
 
+      void variant_registry_viewer::slot_update_isc(bool isc_)
+      {
+        DT_LOG_TRACE(_logging_, "Entering...");
+        slot_update_isc_delegate(isc_);
+        slot_update_isc_cb(isc_);
+        DT_LOG_TRACE(_logging_, "Exiting.");
+        return;
+      }
+
+      void variant_registry_viewer::slot_update_isc_delegate(bool isc_)
+      {
+        DT_LOG_TRACE(_logging_, "Entering...");
+        if (_value_delegate_) {
+          if (isc_) {
+            _value_delegate_->set_max_combo_rank(1);
+          } else {
+            _value_delegate_->set_max_combo_rank(-1);
+          }
+        }
+        DT_LOG_TRACE(_logging_, "Exiting.");
+        return;
+      }
+
+      void variant_registry_viewer::slot_update_isc_cb(bool isc_)
+      {
+        DT_LOG_TRACE(_logging_, "Entering...");
+        if (_inhibit_secondary_choices_cb_) {
+          if (isc_) {
+            _inhibit_secondary_choices_cb_->setCheckState(Qt::Checked);
+           } else {
+            _inhibit_secondary_choices_cb_->setCheckState(Qt::Unchecked);
+          }
+        }
+        DT_LOG_TRACE(_logging_, "Exiting.");
+        return;
+      }
+
+      void variant_registry_viewer::slot_update_isc_from_check_state(int check_state_)
+      {
+        DT_LOG_TRACE(_logging_, "Entering...");
+        if (check_state_ == Qt::Checked) {
+          DT_LOG_TRACE(_logging_, "Inhibit secondary choices ON");
+          _inhibit_secondary_choices_ = true;
+          _value_delegate_->set_max_combo_rank(1);         
+        } else {
+          DT_LOG_TRACE(_logging_, "Inhibit secondary choices OFF");
+          _inhibit_secondary_choices_ = false;
+          _value_delegate_->set_max_combo_rank(-1);
+        }
+        DT_LOG_TRACE(_logging_, "Inhibit secondary choices = " << _inhibit_secondary_choices_);
+        DT_LOG_TRACE(_logging_, "Exiting.");
+        return;
+      }
+
       void variant_registry_viewer::slot_update_read_only_cb(bool read_only_)
       {
         DT_LOG_TRACE(_logging_, "Entering...");
@@ -312,12 +395,14 @@ namespace datatools {
       void variant_registry_viewer::slot_update_model_read_only_from_check_state(int check_state_)
       {
         DT_LOG_TRACE(_logging_, "Entering...");
-        if (check_state_ == Qt::Checked ) {
-          DT_LOG_TRACE(_logging_, "Model read-only ON");
-          _registry_tree_model_->set_read_only(true);
-        } else {
-          DT_LOG_TRACE(_logging_, "Model read-only OFF");
-          _registry_tree_model_->set_read_only(false);
+        if (_registry_tree_model_) {
+          if (check_state_ == Qt::Checked ) {
+            DT_LOG_TRACE(_logging_, "Model read-only ON");
+            _registry_tree_model_->set_read_only(true);
+          } else {
+            DT_LOG_TRACE(_logging_, "Model read-only OFF");
+            _registry_tree_model_->set_read_only(false);
+          }
         }
         DT_LOG_TRACE(_logging_, "Model read-only = " << _registry_tree_model_->is_read_only());
         DT_LOG_TRACE(_logging_, "Exiting.");

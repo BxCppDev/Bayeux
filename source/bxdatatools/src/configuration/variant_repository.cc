@@ -398,6 +398,16 @@ namespace datatools {
       return;
     }
 
+    const variant_repository::ui_config_type & variant_repository::get_ui_config() const
+    {
+      return _ui_config_;
+    }
+
+    variant_repository::ui_config_type & variant_repository::grab_ui_config()
+    {
+      return _ui_config_;
+    }
+
     variant_reporting & variant_repository::grab_reporting()
     {
       DT_THROW_IF(!has_reporting(), std::logic_error, "Repository has no attached reporting object!");

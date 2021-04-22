@@ -218,6 +218,19 @@ namespace datatools {
         /// Return the logging priority
         datatools::logger::priority get_logging() const;
 
+        bool are_disabled_groups_hidden() const;
+
+        void set_hide_disabled_groups(bool);
+ 
+        bool are_disabled_values_hidden() const;
+
+        void set_hide_disabled_values(bool);
+
+        bool has_max_combo_rank() const;
+        
+        void set_max_combo_rank(int);
+                                            
+
       private slots:
 
         QWidget * _create_boolean_editor(QWidget * parent_,
@@ -262,6 +275,11 @@ namespace datatools {
 
         datatools::logger::priority _logging_ = datatools::logger::PRIO_FATAL; //!< Logging priority
         const variant_repository *  _parent_repository_ = nullptr; //!< Handle to the parent repository
+        // bool _hide_disabled_groups_ = false;
+        // bool _hide_disabled_values_ = false;
+        bool _hide_disabled_groups_ = true;
+        bool _hide_disabled_values_ = true;
+        int  _max_combo_rank_ = -1;
 
       };
 

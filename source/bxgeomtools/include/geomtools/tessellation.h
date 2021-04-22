@@ -3,8 +3,6 @@
  * Creation date: 2010-06-04
  * Last modified: 2021-04-13
  *
- * License:
- *
  * Description: Tessellated solid
  *
  */

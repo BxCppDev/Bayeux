@@ -58,6 +58,12 @@ namespace datatools {
     {
     public:
 
+      struct ui_config_type
+      {
+        bool writable_at_start = false; //!< Start UI in writable mode
+        bool inhibit_secondary_choices = false; //!< Start UI inhibiting secondary choices
+      };
+      
       /// Extract the registry name and variant path from an
       /// activated variant directive.
       ///
@@ -162,6 +168,12 @@ namespace datatools {
       /// Destructor
       ~variant_repository() override;
 
+      /// Return the UI configuration
+      const ui_config_type & get_ui_config() const;
+
+      /// Return the UI configuration
+      ui_config_type & grab_ui_config();
+      
       /// Check the name of the organization
       bool has_organization() const;
 
@@ -200,9 +212,9 @@ namespace datatools {
 
       /// Smart print
       void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_ = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const override;
+                     const std::string & title_ = "",
+                     const std::string & indent_ = "",
+                     bool inherit_ = false) const override;
 
       /// Return the number of registries
       unsigned int get_number_of_registries() const;
@@ -410,7 +422,8 @@ namespace datatools {
       std::string        _organization_;         //!< The name of the organization
       std::string        _application_;          //!< The name of the application
       bool               _requested_lock_ = false; //!< Lock request
-
+      ui_config_type     _ui_config_; //!< UI config
+      
       // Working data:
       bool               _locked_ = false;       //!< Lock flag
       registry_dict_type _registries_;           //!< Dictionary of configuration variant registries

@@ -223,7 +223,7 @@ namespace datatools {
         bool _devel_mode_;                             //!< Development mode flag
         datatools::logger::priority _logging_;         //!< Logging priority
         variant_repository * _repository_;             //!< Handle to a variant repository
-        bool                 _read_only_;              //!< Read-only flag
+        bool                 _read_only_ = true;       //!< Read-only flag (default to true)
         model_dict_type _models_;                      //!< Dictionary of registry tree models
         QLabel *      _repository_name_title_label_;   //!< Label for the title of the repository name
         QLabel *      _repository_name_display_label_; //!< Display the repository name

@@ -31,7 +31,14 @@ Additions
 * Add ``geomtools::model_with_internal_items_tools::init_internal_items`` method
   to enable automatic setup of internal physical volumes without using initialization
   through a ``datatools::properties`` object (like in ``geomtools::model_with_internal_items_tools::plug_internal_models``).
-
+* Add ranking features in the datatools variant system. Some dedicated
+  metadata are parsed from any CSV  file used for large enumeration of
+  string values for an enumerated string parameter. A few levels of UI
+  ranking             directives             are             available
+  (``rank=highlight|first|second|third|last``).   The variant  GUI now
+  provides  a check  box per  variant  registry panel  to inhibit  the
+  display of values of *secondary* interest in combo boxes (for string
+  parameters only).
 
   
 Removals

@@ -156,6 +156,28 @@ namespace datatools {
       return;
     }
 
+    bool variant_service::is_ui_writable_at_start() const
+    {
+      return _ui_writable_at_start_;
+    }
+
+    void variant_service::set_ui_writable_at_start(bool was_)
+    {
+      _ui_writable_at_start_ = was_;
+      return;
+    }
+    
+    bool variant_service::is_ui_inhibit_secondary_choices() const
+    {
+      return _ui_inhibit_secondary_choices_;
+    }
+
+    void variant_service::set_ui_inhibit_secondary_choices(bool uisc_)
+    {
+      _ui_inhibit_secondary_choices_ = uisc_;
+      return;
+    }
+
     // static
     void variant_service::init_options(boost::program_options::options_description & opts_,
                                         config & cfg_,
@@ -175,6 +197,8 @@ namespace datatools {
       bool parse_settings        = true;
       bool parse_profile_store   = true;
       bool parse_reporting       = true;
+      bool parse_ui_writable_at_start = true;
+      bool parse_ui_inhibit_secondary_choices = true;
 
       // Inhibition of the parsinf for specific options:
       if (flags_ & NO_LABEL) parse_label = false;
@@ -187,6 +211,8 @@ namespace datatools {
       if (flags_ & NO_SETTINGS) parse_settings = false;
       if (flags_ & NO_PROFILE_STORE) parse_profile_store = false;
       if (flags_ & NO_REPORTING) parse_reporting = false;
+      if (flags_ & NO_UI_WRITABLE_AT_START) parse_ui_writable_at_start = false;
+      if (flags_ & NO_UI_SECONDARY_CHOICES) parse_ui_inhibit_secondary_choices = false;
 #if DATATOOLS_WITH_QT_GUI == 1
       bool parse_gui = true;
       if (flags_ & NO_GUI) parse_gui = false;
@@ -266,6 +292,18 @@ namespace datatools {
         easy_init("variant-reporting",
                   bpo::value<std::string>(&cfg_.reporting_filename)->value_name("[file]"),
                   "file in which to print the variant usage report");
+      }
+
+      if (parse_ui_writable_at_start) {
+        easy_init("variant-ui-writable-at-start",
+                  bpo::value<bool>(&cfg_.ui_writable_at_start)->zero_tokens()->default_value(false),
+                  "launch the variant repository and registries UI in write mode");
+      }
+
+      if (parse_ui_inhibit_secondary_choices) {
+        easy_init("variant-ui-inhibit-secondary-choices",
+                  bpo::value<bool>(&cfg_.ui_inhibit_secondary_choices)->zero_tokens()->default_value(false),
+                  "launch the variant registries UI inhibiting secondary choices for parameters with a large set of ranked enumerated values (combo box...");
       }
 
       return;
@@ -415,7 +453,7 @@ namespace datatools {
     }
 
     int variant_service::registry_record::init_registry(int & max_rank_,
-                                                         const std::string & registry_rule_)
+                                                        const std::string & registry_rule_)
     {
       std::string variant_registry_rule = registry_rule_;
       std::string variant_name;
@@ -568,6 +606,8 @@ namespace datatools {
       if (!cfg_.reporting_filename.empty()) {
         set_reporting_file(cfg_.reporting_filename);
       }
+      set_ui_writable_at_start(cfg_.ui_writable_at_start);
+      set_ui_inhibit_secondary_choices(cfg_.ui_inhibit_secondary_choices);
       _do_build_();
       if (lock_) {
         if (!_repository_.is_locked()) {
@@ -628,7 +668,7 @@ namespace datatools {
 
     void variant_service::start()
     {
-      DT_LOG_TRACE_ENTERING(_logging_); //, "Instantation of the variant_service singleton.")
+      DT_LOG_TRACE_ENTERING(_logging_); 
       if (is_started()) {
         return;
       }
@@ -694,7 +734,7 @@ namespace datatools {
         DT_LOG_TRACE(_logging_, "Variant service is reporting.");
         _do_variant_reporting_fini_();
       }
-       _do_variant_system_discard_();
+      _do_variant_system_discard_();
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
@@ -797,6 +837,13 @@ namespace datatools {
       DT_LOG_DEBUG(_logging_, "Initializing application variant repository from '" << config_filename << "'...");
       _repository_.set_logging_priority(_logging_);
       _repository_.initialize(rep_config);
+      // Special UI configuration:
+      _repository_.grab_ui_config().writable_at_start = is_ui_writable_at_start();
+      _repository_.grab_ui_config().inhibit_secondary_choices = is_ui_inhibit_secondary_choices();
+      // std::cerr << "*** DEVEL *** variant_service::_do_variant_config_ : writable_at_start="
+      //           << _repository_.grab_ui_config().writable_at_start << "\n";
+      // std::cerr << "*** DEVEL *** variant_service::_do_variant_config_ : inhibit_secondary_choices="
+      //           << _repository_.grab_ui_config().inhibit_secondary_choices << "\n";
 
       // Additional registries:
       if (_registry_rules_.size()) {

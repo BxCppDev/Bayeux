@@ -67,7 +67,9 @@ namespace datatools {
         NO_PROFILE_STORE          = datatools::bit_mask::bit08,
         NO_GUI                    = datatools::bit_mask::bit09,
         NO_TUI                    = datatools::bit_mask::bit10,
-        NO_REPORTING              = datatools::bit_mask::bit11
+        NO_REPORTING              = datatools::bit_mask::bit11,
+        NO_UI_WRITABLE_AT_START   = datatools::bit_mask::bit12,
+        NO_UI_SECONDARY_CHOICES   = datatools::bit_mask::bit13
       };
 
       /// \brief Variant service configuration parameters
@@ -100,6 +102,8 @@ namespace datatools {
         bool                            gui = false;        //!< Launch the variant GUI editor
 #endif // DATATOOLS_WITH_QT_GUI == 1
         bool                            tui = false;        //!< Launch the variant TUI editor
+        bool                            ui_writable_at_start = false; //!< Launch the variant repository and registries in writable mode
+        bool                            ui_inhibit_secondary_choices = false; //!< Launch the variant registries without proposing secondary choices
         std::string                     reporting_filename; //!< Variant usage reporting file
       };
 
@@ -211,6 +215,14 @@ namespace datatools {
       //! Return the next available rank for registries
       int32_t get_next_rank() const;
 
+      bool is_ui_writable_at_start() const;
+
+      void set_ui_writable_at_start(bool);
+      
+      bool is_ui_inhibit_secondary_choices() const;
+
+      void set_ui_inhibit_secondary_choices(bool);
+      
       // //! Return the first free rank for registries
       // int32_t get_free_rank() const;
 
@@ -323,6 +335,8 @@ namespace datatools {
 #endif // DATATOOLS_WITH_QT_GUI == 1
       bool                        _tui_ = false;       //!< TUI activation (optional, not implemented yet)
       std::string                 _reporting_file_;    //!< Reporting filename (optional)
+      bool                        _ui_writable_at_start_ = false; //!< Directive for starting UI in write mode
+      bool                        _ui_inhibit_secondary_choices_ = false; //<! Directive for starting UI inhibiting the display of secondary options (if any)
 
       // Embedded working data:
       bool                      _started_;    //!< Start flag

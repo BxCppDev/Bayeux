@@ -259,7 +259,8 @@ namespace datatools {
         if (!_repository_) {
           return;
         }
-
+        _read_only_ = !_repository_->get_ui_config().writable_at_start;
+        
         // Top:
         _repository_name_display_label_->setAlignment(Qt::AlignLeft);
         _repository_name_display_label_->setTextFormat(Qt::PlainText);

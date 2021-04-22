@@ -98,13 +98,31 @@ namespace datatools {
         /// Set the logging priority
         void set_logging(datatools::logger::priority p_);
 
+        /// Return the ISC flag
+        bool is_inhibit_secondary_choices() const;
+
+        /// Set the inhibit secondary choices flag
+        void set_inhibit_secondary_choices(bool isc_);
+ 
       public slots:
 
         /// Slot: set the checkbox state from the model read-only flag
         void slot_update_read_only_cb(bool read_only_);
 
+        /// Slot: set the checkbox state from the inhibit combo secondaries flag
+        void slot_update_isc_cb(bool isc_);
+
+        /// Slot: set the checkbox state from the inhibit combo secondaries flag
+        void slot_update_isc_delegate(bool isc_);
+
+        /// Slot: set the checkbox state from the inhibit combo secondaries flag
+        void slot_update_isc(bool isc_);
+
         /// Slot: set the model read-only flag from the checkbox state
         void slot_update_model_read_only_from_check_state(int check_state_);
+
+        /// Slot: set the inhibit combo secondaries flag from the checkbox state
+        void slot_update_isc_from_check_state(int check_state_);
 
         /// Slot: dump the registry
         void slot_dump_registry();
@@ -157,8 +175,11 @@ namespace datatools {
         /// Signal: emitted when the logging has changed
         void sig_logging_changed(datatools::logger::priority);
 
-        /// Signal: emitted when the read-only state has changed
-        void sig_read_only_changed(bool);
+        // /// Signal: emitted when the read-only state has changed
+        // void sig_read_only_changed(bool);
+
+        /// Signal: emitted when the inhibit secondary choices state has changed
+        void sig_inhibit_secondary_choices_changed(bool);
 
       protected:
 
@@ -171,6 +192,7 @@ namespace datatools {
       private:
 
         bool _devel_mode_; //!< Development mode flag
+        bool _inhibit_secondary_choices_ = false;
         datatools::logger::priority   _logging_;             //!< Logging priority
         variant_registry_tree_model * _registry_tree_model_; //!< The variant registry tree model
         QLabel *      _registry_name_title_label_;   //!< Label for the title of the registry name
@@ -178,6 +200,7 @@ namespace datatools {
         QLabel *      _accomplished_label_;          //!< Label for accomplished status
         datatools::qt::led * _accomplished_led_;     //!< LED for accomplished status
         QCheckBox *   _read_only_cb_;                //!< Check box for the read-only lock
+        QCheckBox *   _inhibit_secondary_choices_cb_;  //!< Check box for combo secondaries inhibition
         QTreeView *   _tree_view_;                   //!< Tree view
         parameter_item_delegate * _value_delegate_;  //!< Item delegate for parameters' values
         QPushButton * _expand_all_button_;           //!< Button for expand all items

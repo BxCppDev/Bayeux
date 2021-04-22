@@ -136,6 +136,14 @@ namespace datatools {
           CTOR_NO_GROUP_SUPPORT = datatools::bit_mask::bit00 //!< No group support bit
         };
 
+        // Ranking
+        static const int RANK_HIGHLIGHTED = 0;
+        static const int RANK_PRIMARY     = 1;
+        static const int RANK_SECONDARY   = 2;
+        static const int RANK_TERNARY     = 3;
+        static const int RANK_LAST        = 1000; 
+        static const int RANK_DEFAULT     = RANK_PRIMARY;
+
         /// Constructor
         base_enum_metadata(uint32_t flags_ = 0);
 
@@ -178,6 +186,12 @@ namespace datatools {
         /// Check if a group name matches the group set
         bool match_group(const std::string & group_name_) const;
 
+        /// Set rank
+        void set_rank(int rank_);
+
+        /// Return the rank
+        int get_rank() const;
+
         /// Initialization
         void initialize(const datatools::properties & config_,
                         parameter_model & parmod_);
@@ -209,11 +223,18 @@ namespace datatools {
         std::string _documentation;      //!< Terse documentation string associated to the enumerated item
         std::set<std::string> _variants; //!< Set of variants associated to /triggered by the value
         std::string _group;              //!< Group the value belongs to
+        int _rank = RANK_DEFAULT;        //!< Priority rank for UI display
 
       private:
         bool _no_group_support_ = false;
       };
 
+      static bool compare_enum_value_metadata_by_rank(const base_enum_metadata & emd1_,
+                                                      const base_enum_metadata & emd2_)
+      {
+        return emd1_.get_rank() < emd2_.get_rank();
+      };
+ 
       /// \brief Boolean enumeration support
       struct boolean_enum_value_metadata : public base_enum_metadata  {
         boolean_enum_value_metadata();
@@ -593,6 +614,9 @@ namespace datatools {
       /// Return the metadata associated to an enumerated string value
       string_enum_value_metadata & grab_enumerated_string_value_metadata(const std::string & value_);
 
+      /// Return the map of string enumerated values
+      const string_enum_dict_type & get_string_enumeration() const;
+      
       /// Build the list of groups associated to enumerated strings
       void build_list_of_enumerated_string_groups(std::set<std::string> & groups_) const;
 
@@ -603,6 +627,9 @@ namespace datatools {
       /// Build the list of enumerated string values
       void build_list_of_enumerated_string_values(std::set<std::string> & values_) const;
 
+      void rank_list_of_enumerated_string_values(const std::set<std::string> & values_,
+                                                 std::list<std::string> & ranked_values_) const;
+      
       //
       // Group
 
