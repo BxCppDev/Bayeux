@@ -1,14 +1,10 @@
 /// \file geomtools/rotated_boxed_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
- * Last modified: 2013-06-27
- *
- * License:
+ * Last modified: 2021-04-23
  *
  * Description:
  *   Factory for geometry models
- *
- * History:
  *
  */
 
@@ -48,19 +44,18 @@ namespace geomtools {
 
     std::string get_model_id () const override;
 
-    void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const override;
+    void tree_dump (std::ostream & out_ = std::clog,
+                    const std::string & title_ = "",
+                    const std::string & indent_ = "",
+                    bool inherit_ = false) const override;
 
   protected:
 
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_ = nullptr) override;
   private:
 
-    const i_model *  _boxed_model_;
+    const i_model *  _boxed_model_ = nullptr;
     placement        _boxed_placement_;
     physical_volume  _boxed_phys_;
     geomtools::box   _solid_;

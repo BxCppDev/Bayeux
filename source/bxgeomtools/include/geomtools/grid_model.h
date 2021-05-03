@@ -90,15 +90,14 @@ namespace geomtools {
 
     /// Post construction
     void _post_construct (datatools::properties & setup_,
-                                  models_col_type * models_) override;
+                          models_col_type * models_) override;
 
     /// Construction
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_) override;
   private:
 
-    const i_model *            _model_; /// Replicated model
+    const i_model *            _model_ = nullptr; /// Replicated model
     regular_grid_placement     _grid_placement_; /// Replication placement on the grid
     physical_volume            _phys_; /// Physical volume
     std::string    _grid_daughter_label_; /// Labels for daughter volumes

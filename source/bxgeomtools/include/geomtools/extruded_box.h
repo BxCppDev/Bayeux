@@ -2,14 +2,11 @@
 /* Author(s):     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
  *                François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-10-27
- * Last modified: 2015-03-23
- *
- * License:
+ * Last modified: 2021-04-24
  *
  * Description:
- *  Interface:
  *
- * History:
+ *  Extruded box 3D solid shape with box extrusion
  *
  */
 
@@ -261,6 +258,12 @@ namespace geomtools {
     /// Generate a list of polylines representing the contour of the shape (for display clients)
     void generate_wires_self(wires_type & wires_,
                                      uint32_t options_ = 0) const override;
+
+    /// Compute the outer box envelope with user tolerance
+    void compute_envelope(box & envelope_,
+                          double x_tolerance_,
+                          double y_tolerance_,
+                          double z_tolerance_);
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);

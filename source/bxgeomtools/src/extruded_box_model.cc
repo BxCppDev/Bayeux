@@ -65,8 +65,7 @@ namespace geomtools {
     return;
   }
 
-  void extruded_box_model::_at_construct(const std::string & name_,
-                                         const datatools::properties & config_,
+  void extruded_box_model::_at_construct(const datatools::properties & config_,
                                          models_col_type * /*models_*/)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
@@ -78,26 +77,26 @@ namespace geomtools {
     }
 
     DT_THROW_IF(! config_.has_key("material.ref"), std::logic_error,
-                "Missing 'material.ref' property in extruded box model '" << name_ << "' !");
+                "Missing 'material.ref' property in extruded box model '" << get_name() << "' !");
     const std::string material_name = config_.fetch_string("material.ref");
 
     DT_THROW_IF(! config_.has_key("x"), std::logic_error,
-                "Missing 'x' property in extruded box model '" << name_ << "' !");
+                "Missing 'x' property in extruded box model '" << get_name() << "' !");
     double x = config_.fetch_real("x");
     if(! config_.has_explicit_unit("x")) x *= lunit;
 
     DT_THROW_IF(! config_.has_key("y"), std::logic_error,
-                "Missing 'y' property in extruded box model '" << name_ << "' !");
+                "Missing 'y' property in extruded box model '" << get_name() << "' !");
     double y = config_.fetch_real("y");
     if(! config_.has_explicit_unit("y")) y *= lunit;
 
     DT_THROW_IF(! config_.has_key("z"), std::logic_error,
-                "Missing 'z' property in extruded box model '" << name_ << "' !");
+                "Missing 'z' property in extruded box model '" << get_name() << "' !");
     double z = config_.fetch_real("z");
     if(! config_.has_explicit_unit("z")) z *= lunit;
 
     DT_THROW_IF(! config_.has_key("thickness"), std::logic_error,
-                "Missing 'thickness' property in extruded box model '" << name_ << "' !");
+                "Missing 'thickness' property in extruded box model '" << get_name() << "' !");
     double thickness = config_.fetch_real("thickness");
     if(! config_.has_explicit_unit("thickness")) thickness *= lunit;
 
@@ -128,7 +127,7 @@ namespace geomtools {
     _mother_box_.set_y(_extruded_box_.get_y());
     _mother_box_.set_z(_extruded_box_.get_z());
     DT_THROW_IF(! _mother_box_.is_valid(), std::logic_error,
-                "Invalid mother box dimensions in extruded box model '" << name_ << "' !");
+                "Invalid mother box dimensions in extruded box model '" << get_name() << "' !");
     _mother_box_.lock();
 
     double daughter_z   = _extruded_box_.get_z();
@@ -148,7 +147,7 @@ namespace geomtools {
     _daughter_box_.set_z(daughter_z);
     _daughter_box_.lock();
     DT_THROW_IF(! _daughter_box_.is_valid(), std::logic_error,
-                "Invalid daughter box dimensions in extruded box model '" << name_ << "' !");
+                "Invalid daughter box dimensions in extruded box model '" << get_name() << "' !");
 
     const placement p2(vector_3d(0.0, 0.0, daughter_pos * _extruded_box_.get_thickness() / 2.),
                        0.0, 0.0, 0.0);
@@ -233,7 +232,7 @@ namespace geomtools {
     _subtraction_box_.set_wires_drawer(*_drawer_);
     _subtraction_box_.lock();
 
-    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_name(i_model::make_logical_volume_name(get_name()));
     grab_logical().set_shape(_subtraction_box_);
     grab_logical().set_material_ref(material_name);
     grab_logical().set_geometry_model(*this);

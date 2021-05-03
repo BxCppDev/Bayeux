@@ -1,15 +1,11 @@
 /// \file geomtools/surrounded_boxed_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
- * Last modified: 2010-04-02
- *
- * License:
+ * Last modified: 2021-04-23
  *
  * Description:
  *
  *   Geometry model with multiple surrounded boxes.
- *
- * History:
  *
  */
 
@@ -116,16 +112,15 @@ namespace geomtools {
 
     /// Smart print
     void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const override;
+                    const std::string & title_  = "",
+                    const std::string & indent_ = "",
+                    bool inherit_          = false) const override;
 
   protected:
 
     /// Construction
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_) override;
 
   private:
 

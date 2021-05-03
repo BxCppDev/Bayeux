@@ -253,13 +253,10 @@ namespace geomtools {
     void build_default_bounding_data();
 
     /// Smart print
-    void tree_dump(std::ostream & a_out         = std::clog,
-                           const std::string & a_title  = "",
-                           const std::string & a_indent = "",
-                           bool a_inherit               = false) const override;
-
-    /// OCD support
-    static void init_ocd(datatools::object_configuration_description &);
+    void tree_dump(std::ostream & a_out = std::clog,
+                   const std::string & a_title = "",
+                   const std::string & a_indent = "",
+                   bool a_inherit = false) const override;
 
     /// Check the lock flag
     bool is_locked() const;
@@ -269,6 +266,9 @@ namespace geomtools {
 
     /// Unlock the shape
     void unlock();
+
+    /// OCD support
+    static void init_ocd(datatools::object_configuration_description &);
 
   protected:
 
@@ -282,7 +282,7 @@ namespace geomtools {
     virtual void _at_unlock();
 
     /// Initialize from properties
-    void _initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void _initialize(const datatools::properties &, const handle_dict_type * = nullptr);
 
     /// Reset
     void _reset();
@@ -341,9 +341,9 @@ namespace geomtools {
   private:
 
     // Work data:
-    bool                   _locked_;              //!< Lock flag
-    bool                   _owns_stackable_data_; //!< Ownership flag for stackable data
-    const stackable_data * _stackable_data_;      //!< Handle to stackable data
+    bool                   _locked_ = false;              //!< Lock flag
+    bool                   _owns_stackable_data_ = false; //!< Ownership flag for stackable data
+    const stackable_data * _stackable_data_ = nullptr;    //!< Handle to stackable data
     bounding_data          _bounding_data_;       //!< Bounding data
     boost::optional<double> _forced_volume_;      //!< Forced volume
     datatools::handle<face_info_collection_type> _computed_faces_; //!< Computed faces
@@ -352,6 +352,21 @@ namespace geomtools {
     DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
+
+  // class wrapper_shaped_3d : public i_shape_3d
+  // {
+  // public:
+
+  //   wrapper_shaped_3d(i_shape_3d & shape_)
+  //     : _shape_ref_(shape_) {}
+
+  //   operator i_shape_3d() const { return _shape_ref_; }
+    
+  // private:
+
+  //   i_shape_3d & _shaped_ref_;
+    
+  // };
 
 } // end of namespace geomtools
 

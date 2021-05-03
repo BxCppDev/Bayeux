@@ -60,11 +60,11 @@ namespace geomtools {
 
   private:
 
-    const quadric * _quadric_; //!< Referenced quadric
-    double _epsilon_; //!< Tolerance (dimension of a length)
+    const quadric * _quadric_ = nullptr; //!< Referenced quadric
+    double _epsilon_; //!< Tolerance (expected dimension of a length or the dimension of the traversed space)
     double _alpha_max_; //!< Maximum (dimensionless)
     unsigned int _max_iter_; //!< Maximum number of iterations
-    bool _debug_; //!< Debug flag
+    bool _debug_ = false; //!< Debug flag
     std::string _debug_filename_; //!< Debug filename
 
   };

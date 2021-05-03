@@ -304,6 +304,16 @@ namespace geomtools {
     }
     uint32_t nsamples_x = nsamples;
     uint32_t nsamples_y = nsamples;
+    if (options_ & WR_BASE_BEST_GRID_SAMPLING) {
+      double lstep =(_x_+_y_) / 3;
+      int guessed_nsamples_x = (int) (_x_ / lstep);
+      if (guessed_nsamples_x < 2) guessed_nsamples_x = 2;
+      nsamples_x = guessed_nsamples_x;
+      int guessed_nsamples_y = (int) (_y_ / lstep);
+      if (guessed_nsamples_y < 2) guessed_nsamples_y = 2;
+      nsamples_y = guessed_nsamples_y;
+    }
+    
     double dx = _x_ / (nsamples_x - 1);
     double dy = _y_ / (nsamples_y - 1);
     for (int j = AXIS_X; j <= AXIS_Y; j++) {

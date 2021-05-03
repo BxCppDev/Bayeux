@@ -1,13 +1,11 @@
 /// \file geomtools/cylinder.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-24
- * Last modified: 2015-02-15
- *
- * License:
+ * Last modified: 2021-04-24
  *
  * Description:
  *
- *  A cylinder on z-axis
+ *  A cylinder 3D solid shape on z-axis
  *
  */
 
@@ -70,6 +68,21 @@ namespace geomtools {
     /// Return a collection of face info objects
     unsigned int compute_faces(face_info_collection_type & faces_) const override;
 
+    /// Compute a deflated version of the cylinder
+    void compute_deflated(cylinder & deflated_,
+                          double by_r_,
+                          double by_z_);
+
+    /// Compute an inflated version of the cylinder
+    void compute_inflated(cylinder & deflated_,
+                          double by_r_,
+                          double by_z_);
+ 
+    /// Compute an envelope cylinder at user tolerance
+    void compute_envelope(cylinder & envelope_,
+                          double tolerance_r_,
+                          double tolerance_z_);
+    
     /// Return the min X coordinates (bounding box)
     double get_xmin () const override;
 
@@ -199,7 +212,7 @@ namespace geomtools {
 
     /// Generate a list of polylines representing the contour of the shape (for display clients)
     void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const override;
+                             uint32_t options_ = 0) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);

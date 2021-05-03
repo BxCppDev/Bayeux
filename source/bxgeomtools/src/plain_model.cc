@@ -73,18 +73,22 @@ namespace geomtools {
      return;
    }
 
-  void plain_model::_at_construct (const std::string & name_,
-                                   const datatools::properties & /* config_ */,
+  void plain_model::_at_construct (const datatools::properties & /* config_ */,
                                    models_col_type * /* models_ */)
   {
 
     // Set the envelope solid shape:
-    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_name(i_model::make_logical_volume_name(get_name()));
     grab_logical().set_shape(*_solid_);
     grab_logical().set_material_ref(_material_name_);
     grab_logical().set_geometry_model(*this);
     return;
   }
+
+  // void plain_model::_at_destroy (models_col_type * /* models_ */)
+  // {
+  //   return;
+  // }
   
 } // end of namespace geomtools
 

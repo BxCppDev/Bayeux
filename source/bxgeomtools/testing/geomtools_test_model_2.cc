@@ -32,13 +32,11 @@ namespace geomtools {
     return;
   }
 
-  void test_model_2::_at_construct (const string & name_,
-                                    const datatools::properties & config_,
+  void test_model_2::_at_construct (const datatools::properties & config_,
                                     models_col_type * models_)
   {
     bool devel = false;
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Entering..." << endl;
-    set_name (name_);
     double gas_pressure = 1. * CLHEP::atmosphere;
     double gas_temperature = 300. * CLHEP::kelvin;
     double distance = 50. * CLHEP::mm;
@@ -183,7 +181,7 @@ namespace geomtools {
       }
 
     // initialize the 'logical_volume' of this model:
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_name (i_model::make_logical_volume_name (get_name()));
     grab_logical ().set_shape (_solid_);
     grab_logical ().set_material_ref (material);
 

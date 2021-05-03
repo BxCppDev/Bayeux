@@ -93,9 +93,8 @@ namespace geomtools {
                                   models_col_type * models_) override;
 
     /// Construction
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_) override;
   private:
 
     const i_model *            _model_; /// Replicated model

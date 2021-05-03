@@ -734,12 +734,16 @@ namespace geomtools {
 
   void i_shape_3d::_at_unlock()
   {
+    if (has_computed_faces()) {
+      reset_computed_faces();
+    }
     _reset_bounding_data();
     return;
   }
 
   void i_shape_3d::build_default_bounding_data()
   {
+    
     _build_bounding_data();
     return;
   }
@@ -762,7 +766,6 @@ namespace geomtools {
     return _computed_faces_.has_data() && _computed_faces_.get().size() > 0;
   }
 
-  /// Return the collection of faces
   const face_info_collection_type & i_shape_3d::get_computed_faces() const
   {
     if (! _computed_faces_.has_data()) {

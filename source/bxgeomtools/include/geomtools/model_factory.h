@@ -1,14 +1,10 @@
 /// \file geomtools/model_factory.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
- * Last modified: 2010-02-24
- *
- * License:
+ * Last modified: 2021-04-23
  *
  * Description:
  *   Factory for geometry models
- *
- * History:
  *
  */
 
@@ -72,7 +68,7 @@ namespace geomtools {
     datatools::multi_properties & grab_mp();
 
     /// Get a non-mutable collection of geometry models
-    const models_col_type & get_models() const;
+    const model_bus_type & get_models() const;
 
     /// Get a non-mutable collection of geometry logicals associated to models
     const logical_volume::dict_type & get_logicals() const;
@@ -139,8 +135,17 @@ namespace geomtools {
                                       const std::string & argv_ = "",
                                       std::ostream & out_ = std::clog);
 
+    void external_model_instance_registration(i_model & model_);
+
+    void external_model_instance_unregistration(i_model & model_);
+
   private:
 
+    /// Register a model instance
+    void _model_instance_registration_(i_model * model_);
+    
+    void _model_instance_unregistration_(i_model * model_);
+    
     /// Basic construction of the model factory
     void _basic_construct_();
 
@@ -153,16 +158,22 @@ namespace geomtools {
     /// Construct the virtual geometry hierarchy
     void _construct_();
 
+    /// Get a mutable collection of geometry models
+    model_bus_type & _grab_models_();
+
+    /// Get a non-mutable collection of geometry models
+    const model_bus_type & _get_models_() const;
+
   private:
 
-    shape_factory *             _shape_factory_ = nullptr;    //!< Handle to an external shape factory
-    i_model::factory_register_type _factory_register_; //!< Register of model factories
+    shape_factory *             _shape_factory_ = nullptr; //!< Handle to an external shape factory
+    i_model::factory_register_type _factory_register_; //!< Register of model factories where geometry model classes are self registrated
     bool                        _locked_;              //!< Lock flag
     datatools::logger::priority _logging_priority_;    //!< Logging priority threshold
     datatools::multi_properties _mp_;                  //!< Multi-container of parameters
-    models_col_type             _models_;              //!< Dictionary of geometry models
-    std::set<std::string>       _owned_models_;        //!< Registry of owned models
-    logical_volume::dict_type   _logicals_;            //!< Dictionary of geometry logical volumes
+    std::set<std::string>       _owned_models_;        //!< List of owned model instances ny name
+    std::unique_ptr<model_bus_type> _models_;         //!< Dictionary of geometry model instances
+    logical_volume::dict_type   _logicals_;            //!< Dictionary of geometry logical volume instances
     std::vector<std::string>    _property_prefixes_;   //!< List of proprety prefixes to be preserved in logical volumes
 
   };

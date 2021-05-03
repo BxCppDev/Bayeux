@@ -56,8 +56,8 @@ namespace geomtools {
     static const std::string & exported_properties_prefixes_key();
 
     /// \brief The collection of geometry models:
-    typedef geomtools::models_col_type models_col_type;
-
+    typedef geomtools::model_bus_type models_col_type;
+    
     model_with_internal_mesh_data & grab_meshes();
 
     const model_with_internal_mesh_data & get_meshes() const;
@@ -68,7 +68,7 @@ namespace geomtools {
     /// Check if the geometry model is "phantom"
     bool is_phantom_solid() const;
 
-    /// Check if the name of the geometry model exists
+    /// Check if the name of the geometry model exists (it should after construction)
     bool has_name() const;
 
     /// Set the name of the geometry model
@@ -102,19 +102,25 @@ namespace geomtools {
     geomtools::logical_volume & grab_logical();
 
     /// Method that constructs the geometry model
-    virtual void construct(const std::string & name_,
-                           const datatools::properties & setup_,
-                           models_col_type * models_ = nullptr);
+    void construct(models_col_type * models_ = nullptr);
+
+    /// Method that constructs the geometry model
+    void construct(const std::string & name_,
+                   models_col_type * models_ = nullptr);
+
+    /// Method that constructs the geometry model
+    void construct(const std::string & name_,
+                   const datatools::properties & setup_,
+                   models_col_type * models_ = nullptr);
 
     /// Main method that constructs the geometry model
-    virtual void construct(const std::string & name_,
-                           const datatools::properties & setup_,
-                           const std::vector<std::string> & properties_prefixes_,
-                           models_col_type * models_);
+    void construct(const std::string & name_,
+                   const datatools::properties & setup_,
+                   const std::vector<std::string> & properties_prefixes_,
+                   models_col_type * models_);
 
     /// Method that destroys the geometry model
-    virtual void destroy(const std::string & name_,
-                         models_col_type * models_ = nullptr);
+    void destroy(models_col_type * models_ = nullptr);
 
     /// Get the model ID
     virtual std::string get_model_id() const = 0;
@@ -157,10 +163,14 @@ namespace geomtools {
     /// Pre-construction hook
     virtual void _pre_construct(datatools::properties & setup_, models_col_type * models_);
 
-    /// The main construction hook
+    /// The main construction hook (replace the former construction hook method)
+    virtual void _at_construct(const datatools::properties & setup_,
+                               models_col_type * models_ = nullptr);
+
+    /// @deprecated Old/broken construction hook interface (a legacy design error)
     virtual void _at_construct(const std::string & name_,
                                const datatools::properties & setup_,
-                               models_col_type * models_ = 0) = 0;
+                               models_col_type * models_);
 
     /// Post-construction hook
     virtual void _post_construct(datatools::properties & setup_, models_col_type * models_);
@@ -169,8 +179,7 @@ namespace geomtools {
     void _mandatory_post_construct(datatools::properties & setup_, models_col_type * models_);
 
     /// The main destruction hook
-    virtual void _at_destroy(const std::string & name_,
-                             models_col_type * models_ = nullptr);
+    virtual void _at_destroy(models_col_type * models_ = nullptr);
 
   protected:
 

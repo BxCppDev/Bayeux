@@ -63,15 +63,14 @@ namespace geomtools {
 
   protected:
 
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_ = nullptr) override;
   private:
 
     std::string    _material_name_;
-    double         _x_;
-    double         _y_;
-    double         _z_;
+    double         _x_ = datatools::invalid_real();
+    double         _y_ = datatools::invalid_real();
+    double         _z_ = datatools::invalid_real();
     geomtools::box _solid_;
 
     // registration interface :

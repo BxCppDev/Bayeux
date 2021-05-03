@@ -1,15 +1,11 @@
 /// \file geomtools/polycone.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-14
- * Last modified: 2015-03-12
- *
- * License:
+ * Last modified: 2021-04-23
  *
  * Description:
  *
  *   Polycone 3D solid shape
- *
- * History:
  *
  */
 
@@ -110,7 +106,7 @@ namespace geomtools {
     /// Return the Z dimension
     double get_z () const;
 
-    /// Check if the nappe has partial phi angle
+    /// Check if the polycone has partial phi angle
     bool has_partial_angle() const;
 
     /// Check the start phi angle
@@ -267,6 +263,24 @@ namespace geomtools {
 
     /// Compute the outer polycone
     void compute_outer_polycone (polycone & op_);
+
+    /// Compute a deflated polycone
+    void compute_deflated(polycone & deflated_,
+                          double by_r_,
+                          double by_z_,
+                          double by_angle_ = -1.0);
+
+    /// Compute an inflated polycone
+    void compute_inflated(polycone & inflated_,
+                          double by_r_,
+                          double by_z_,
+                          double by_angle_ = -1.0);
+
+    /// Compute the polycone envelope
+    void compute_envelope(polycone & envelope_,
+                          double r_tolerance_,
+                          double z_tolerance_,
+                          double angle_tolerance_ = -1.0);
 
     /// Compute the volume
     double get_volume (uint32_t flags_ = 0) const override;

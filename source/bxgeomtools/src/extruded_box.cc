@@ -1123,6 +1123,29 @@ namespace geomtools {
 
     return nfaces;
   }
+  
+  void extruded_box::compute_envelope(box & envelope_,
+                                      double x_tolerance_,
+                                      double y_tolerance_,
+                                      double z_tolerance_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+    double x_eps = 0.0;
+    double y_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(x_tolerance_) and x_tolerance_ > 0.0) x_eps = x_tolerance_;
+    if (datatools::is_valid(y_tolerance_) and y_tolerance_ > 0.0) y_eps = y_tolerance_;
+    if (datatools::is_valid(z_tolerance_) and z_tolerance_ > 0.0) z_eps = z_tolerance_;
+    double x = get_x();
+    double y = get_y();
+    double z = get_z();
+    x += (2 * x_eps);
+    y += (2 * y_eps);
+    z += (2 * z_eps);
+    envelope_.reset();
+    envelope_.set(x, y, z);
+    envelope_.lock();    
+  }
 
   void extruded_box::generate_wires_self(wires_type & wires_,
                                          uint32_t options_) const

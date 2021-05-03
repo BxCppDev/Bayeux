@@ -1,15 +1,10 @@
 /// \file geomtools/extruded_box_model.h
 /* Author(s) :    Arnaud Chapon <chapon@lpccaen.in2p3.fr>
  * Creation date: 2015-10-27
- * Last modified: 2015-10-27
- *
- * License:
- *
+ * Last modified: 2021-04-23
  * Description:
  *
  *   Geometry model for an extruded box
- *
- * History:
  *
  */
 
@@ -60,9 +55,9 @@ namespace geomtools {
 
     /// Smart print
     void tree_dump(std::ostream & out_         = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_          = false) const override;
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_          = false) const override;
 
     /// Return the embedded extruded box
     const geomtools::extruded_box & get_extruded_box() const;
@@ -79,15 +74,14 @@ namespace geomtools {
 
       //! Generate a list of polylines representing the contour of the shape (for display clients)
       void generate_wires_self(wires_type & wires_,
-                                       uint32_t options_ = 0) const override;
+                               uint32_t options_ = 0) const override;
     };
 
-   protected:
+  protected:
 
     /// Executed at construct
-    void _at_construct(const std::string & name_,
-                               const datatools::properties & config_,
-                               models_col_type * models_ = 0) override;
+    void _at_construct(const datatools::properties & config_,
+                       models_col_type * models_ = nullptr) override;
 
   private:
 

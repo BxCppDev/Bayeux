@@ -59,8 +59,7 @@ namespace geomtools {
     return;
   }
 
-  void plate_with_hole_model::_at_construct(const std::string & name_,
-                                            const datatools::properties & config_,
+  void plate_with_hole_model::_at_construct(const datatools::properties & config_,
                                             geomtools::models_col_type * /*models_*/)
   {
     /* Parse properties */
@@ -71,22 +70,22 @@ namespace geomtools {
       lunit = datatools::units::get_length_unit_from(lunit_str);
     }
 
-    DT_THROW_IF (!config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in plate with hole model '" << name_ << "' !");
+    DT_THROW_IF (!config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in plate with hole model '" << get_name() << "' !");
     _material_ = config_.fetch_string ("material.ref");
 
-    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property in plate with hole model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing 'x' property in plate with hole model '" << get_name() << "' !");
     double x = config_.fetch_real ("x");
     if (! config_.has_explicit_unit ("x")) {
       x *= lunit;
     }
 
-    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property in plate with hole model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing 'y' property in plate with hole model '" << get_name() << "' !");
     double y = config_.fetch_real ("y");
     if (! config_.has_explicit_unit ("y")) {
       y *= lunit;
     }
 
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property in plate with hole model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property in plate with hole model '" << get_name() << "' !");
     double z = config_.fetch_real ("z");
     if (! config_.has_explicit_unit ("z")) {
       z *= lunit;
@@ -107,12 +106,12 @@ namespace geomtools {
     datatools::invalidate (x_hole);
     datatools::invalidate (y_hole);
     if (! datatools::is_valid (r_hole)) {
-      DT_THROW_IF (! config_.has_key ("x_hole"), std::logic_error, "Missing 'x_hole' property in plate with hole model '" << name_ << "' !");
+      DT_THROW_IF (! config_.has_key ("x_hole"), std::logic_error, "Missing 'x_hole' property in plate with hole model '" << get_name() << "' !");
       x_hole = config_.fetch_real ("x_hole");
       if (! config_.has_explicit_unit ("x_hole")) {
         x_hole *= lunit;
       }
-      DT_THROW_IF (! config_.has_key ("y_hole"), std::logic_error, "Missing 'y_hole' property in plate with hole model '" << name_ << "' !");
+      DT_THROW_IF (! config_.has_key ("y_hole"), std::logic_error, "Missing 'y_hole' property in plate with hole model '" << get_name() << "' !");
       y_hole = config_.fetch_real ("y_hole");
       if (! config_.has_explicit_unit ("y_hole")) {
         y_hole *= lunit;
@@ -164,11 +163,11 @@ namespace geomtools {
 
     DT_THROW_IF ((hole_x_min < -0.5 * _x_) || (hole_x_max > 0.5 * _x_),
                  std::logic_error,
-                 "Hole size is too large for mother box dimension in plate with hole model '" << name_ << "' !");
+                 "Hole size is too large for mother box dimension in plate with hole model '" << get_name() << "' !");
 
     DT_THROW_IF ((hole_y_min < -0.5 * _y_) || (hole_y_max > 0.5 * _y_),
                  std::logic_error,
-                 "Hole size is too large for mother box dimension in plate with hole model '" << name_ << "' !");
+                 "Hole size is too large for mother box dimension in plate with hole model '" << get_name() << "' !");
 
     _mother_.set_x (_x_);
     _mother_.set_y (_y_);
@@ -177,7 +176,7 @@ namespace geomtools {
 
     DT_THROW_IF (! _mother_.is_valid (),
                  std::logic_error,
-                 "Invalid dimension(s) for the mother box in plate with hole model '" << name_ << "' !");
+                 "Invalid dimension(s) for the mother box in plate with hole model '" << get_name() << "' !");
 
     geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0, 0, 0, 0);
     double hole_vol = 0.0;
@@ -195,7 +194,7 @@ namespace geomtools {
       _solid_.set_shapes(_mother_, _box_hole_, hole_placement);
       hole_vol = _box_hole_.get_volume();
     } else {
-      DT_THROW_IF (true, std::logic_error, "No defined shape for hole in plate with hole model '" << name_ << "' !");
+      DT_THROW_IF (true, std::logic_error, "No defined shape for hole in plate with hole model '" << get_name() << "' !");
     }
     hole_vol *= (_z_ / _z_hole_);
     _solid_.set_forced_volume(_mother_.get_volume() - hole_vol);
@@ -217,7 +216,7 @@ namespace geomtools {
     _solid_.set_wires_drawer(*_drawer_);
     _solid_.lock();
 
-    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_name(i_model::make_logical_volume_name(get_name()));
     grab_logical().set_shape(_solid_);
     grab_logical().set_material_ref(_material_);
 

@@ -602,36 +602,243 @@ namespace geomtools {
     return;
   }
 
-  void polycone::compute_inner_polycone (polycone & ip_)
+  void polycone::compute_inner_polycone (polycone & inner_)
   {
-    ip_.reset ();
+    inner_.reset ();
     for (polycone::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++) {
       double z = i->first;
-      double rmax = i->second.rmin;
+      double rmin = i->second.rmin;
       bool add_it = true;
       if (add_it) {
-        ip_.add (z, rmax, false);
+        inner_.add (z, rmin, false);
       }
     }
-    ip_._compute_all_ ();
-    ip_.lock();
+    inner_._start_angle_ = this->_start_angle_;
+    inner_._delta_angle_ = this->_delta_angle_;
+    inner_._compute_all_ ();
+    inner_.lock();
     return;
   }
 
-  void polycone::compute_outer_polycone (polycone & op_)
+  void polycone::compute_outer_polycone (polycone & outer_)
   {
-    op_.reset ();
+    outer_.reset ();
     for (polycone::rz_col_type::const_iterator i = _points_.begin ();
          i != _points_.end ();
          i++) {
       double z = i->first;
       double rmax = i->second.rmax;
-      op_.add (z, 0.0, rmax, false);
+      outer_.add (z, 0.0, rmax, false);
     }
-    op_._compute_all_ ();
-    op_.lock();
+    outer_._start_angle_ = this->_start_angle_;
+    outer_._delta_angle_ = this->_delta_angle_;
+    outer_._compute_all_();
+    outer_.lock();
+    return;
+  }
+
+  void polycone::compute_inflated(polycone & inflated_,
+                                  double by_r_,
+                                  double by_z_,
+                                  double by_angle_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    bool apply_inflated_z = false;
+    if (z_eps > 0.0) {
+      apply_inflated_z = true;
+    }
+    inflated_.reset();
+    size_t sz = _points_.size();
+    std::size_t counter = 0;
+    double maxR = -1.0;
+    for (polycone::rz_col_type::const_iterator i = _points_.begin();
+         i != _points_.end();
+         i++) {
+      double z = i->first;
+      double rmin = i->second.rmin;
+      double rmax = i->second.rmax;
+      rmax += r_eps;
+      if (datatools::is_valid(rmin) and rmin >= 0.0) {
+        rmin -= r_eps;
+      } else {
+        rmin = 0.0;
+      }
+      if (maxR < 0.0 or rmax > maxR) {
+        maxR = rmax;
+      }
+      if (rmax < 0.0) rmax = 0.0;
+      if (rmin < 0.0) rmin = 0.0;
+      if (apply_inflated_z) {
+        if (counter == 0) {
+          if (rmin < rmax) {
+            inflated_.add(z - z_eps, rmin, rmax, false);
+          } else {
+            inflated_.add(z - z_eps, i->second.rmin, i->second.rmax, false);
+          }
+        }
+      }
+      inflated_.add(z, rmin, rmax, false);
+      if (apply_inflated_z) {
+        if (counter + 1 == sz) {
+          if (rmin < rmax) {
+            inflated_.add(z + z_eps, rmin, rmax, false);
+          }else {
+            inflated_.add(z + z_eps, i->second.rmin, i->second.rmax, false);
+          }
+        }
+      }
+      counter++;
+    }
+    double eps_angle = by_angle_;
+    if (eps_angle < 0.0) {
+      eps_angle = r_eps / maxR;
+    }
+    if (has_partial_angle()) {
+      double start_angle = get_start_angle();
+      double delta_angle = get_delta_angle();
+      if (eps_angle > 0.0) {
+        start_angle += eps_angle;
+        delta_angle -= 2 * eps_angle;
+        if (delta_angle < 0.0)  {   
+          start_angle = get_start_angle() + 0.5 * get_delta_angle() - 0.25 * eps_angle;
+          delta_angle = 0.5 * eps_angle;
+        }
+      }
+      inflated_.set_start_angle(start_angle);
+      inflated_.set_delta_angle(delta_angle);
+    }
+    inflated_._compute_all_();
+    inflated_.lock();
+    return;
+  }
+
+  void polycone::compute_deflated(polycone & deflated_,
+                                  double by_r_,
+                                  double by_z_,
+                                  double by_angle_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    bool apply_tolerance_z = false;
+    if (z_eps > 0.0) {
+      apply_tolerance_z = true;
+    }
+    deflated_.reset();
+    size_t sz = _points_.size();
+    std::size_t counter = 0;
+    bool skip_next = true;
+    double maxR = -1.0;
+    for (polycone::rz_col_type::const_iterator i = _points_.begin();
+         i != _points_.end();
+         i++) {
+      double z = i->first;
+      double rmin = i->second.rmin;
+      double rmax = i->second.rmax;
+      rmax -= r_eps;
+      if (datatools::is_valid(rmin) and rmin > 0.0) {
+        rmin += r_eps;
+      } else {
+        rmin = 0.0;
+      }
+      if (maxR < 0.0 or rmax > maxR) {
+        maxR = rmax;
+      }
+      if (rmax < 0.0) rmax = 0.0;
+      if (rmin < 0.0) rmin = 0.0;
+      if (rmax < rmin) {
+        double rmed = 0.5 * (rmax + rmin);
+        rmax = rmed;
+        rmin = rmed;
+      }
+      double z0 = z;
+      if (apply_tolerance_z) {
+        if (skip_next) {
+          z0 += z_eps;
+          auto j = i;
+          j++;
+          double z1 = j->first;
+          if (z0 <= z1) skip_next = false;
+        }
+      }
+      deflated_.add(z0, rmin, rmax, false);
+      counter++;
+      if (counter == sz / 2) {
+        break;
+      }
+    }
+    counter = 0;
+    skip_next = true;
+    for (polycone::rz_col_type::const_reverse_iterator i = _points_.rbegin ();
+         i != _points_.rend ();
+         i++) {
+      double z = i->first;
+      double rmin = i->second.rmin;
+      double rmax = i->second.rmax;
+      rmax -= r_eps;
+      if (datatools::is_valid(rmin)) {
+        rmin -= r_eps;
+      } else {
+        rmin = 0.0;
+      }
+      if (maxR < 0.0 or rmax > maxR) {
+        maxR = rmax;
+      }
+      if (rmax < 0.0) rmax = 0.0;
+      if (rmin < 0.0) rmin = 0.0;
+      double z0 = z;
+      if (apply_tolerance_z) {
+        if (skip_next) {
+          z0 -= z_eps;
+          auto j = i;
+          j++;
+          double z1 = j->first;
+          if (z0 <= z1) skip_next = false;
+        }
+      }
+      deflated_.add(z0, rmin, rmax, false);
+      counter++;
+      if (counter > sz / 2) {
+        break;
+      }
+    }
+    double eps_angle = by_angle_;
+    if (eps_angle < 0.0) {
+      eps_angle = r_eps / maxR;
+    }
+    if (has_partial_angle()) {
+      double start_angle = get_start_angle();
+      double delta_angle = get_delta_angle();
+      if (eps_angle > 0.0) {
+        start_angle += eps_angle;
+        delta_angle -= 2 * eps_angle;
+        if (delta_angle < 0.0)  {   
+          start_angle = get_start_angle() + 0.5 * get_delta_angle() - 0.25 * eps_angle;
+          delta_angle = 0.5 * eps_angle;
+        }
+      }
+      deflated_.set_start_angle(start_angle);
+      deflated_.set_delta_angle(delta_angle);
+    }
+    deflated_._compute_all_();
+    deflated_.lock();
+    return;
+  }
+
+  void polycone::compute_envelope(polycone & envelope_,
+                                  double r_tolerance_,
+                                  double z_tolerance_,
+                                  double angle_tolerance_)
+  {
+    compute_inflated(envelope_, r_tolerance_, z_tolerance_, angle_tolerance_);
     return;
   }
 

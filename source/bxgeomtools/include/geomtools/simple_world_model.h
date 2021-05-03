@@ -51,13 +51,12 @@ namespace geomtools {
 
   protected:
 
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & setup_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & setup_,
+                        models_col_type * models_) override;
 
   private:
 
-    const i_model      *        _setup_model_;
+    const i_model      *        _setup_model_ = nullptr;
     geomtools::placement        _setup_placement_;
     geomtools::physical_volume  _setup_phys_;
     geomtools::box              _solid_;

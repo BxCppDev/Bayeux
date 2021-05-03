@@ -820,8 +820,8 @@ namespace geomtools {
 
   void tube::compute_inner_cylinder (cylinder & ic_)
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     ic_.reset();
-    DT_THROW_IF (! is_valid (),logic_error, "Tube is not valid !");
     ic_.set(get_inner_r (), get_z ());
     ic_.lock();
     return;
@@ -831,9 +831,127 @@ namespace geomtools {
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     oc_.reset ();
-    DT_THROW_IF (! is_valid (),logic_error, "Tube is not valid !");
-    oc_.set (get_outer_r (), get_z ());
+    oc_.set(get_outer_r(), get_z());
     oc_.lock();
+    return;
+  }
+
+  void tube::compute_deflated(tube & deflated_,
+                              double by_r_,
+                              double by_z_,
+                              double by_angle_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double rmax = get_outer_r();
+    double z = get_z();
+    double rmin = get_inner_r();
+    rmax -= r_eps;
+    if (has_inner_r()) {
+      rmin += r_eps;
+    }
+    z -= (2 * z_eps);
+    deflated_.reset();
+    if (has_inner_r()) {
+      deflated_.set(rmin, rmax, z);
+    } else {
+      deflated_.set(rmax, z);
+    }
+    double eps_angle = by_angle_;
+    if (eps_angle < 0.0) {
+      eps_angle = r_eps / rmax;
+    }
+    if (has_partial_phi()) {
+      double start_phi = get_start_phi();
+      double delta_phi = get_delta_phi();
+      if (eps_angle > 0.0) {
+        start_phi += eps_angle;
+        delta_phi -= 2 * eps_angle;
+        if (delta_phi < 0.0)  {   
+          // DT_THROW_IF(std::range_error, "Cannot compute deflated tube!");
+          start_phi = get_start_phi() + 0.5 * get_delta_phi() - 0.25 * eps_angle;
+          delta_phi = 0.5 * eps_angle;
+        }
+      }
+      deflated_.set_start_phi(start_phi);
+      deflated_.set_delta_phi(delta_phi);
+    }
+    deflated_.lock();
+    return;
+  }
+
+  void tube::compute_inflated(tube & inflated_,
+                              double by_r_,
+                              double by_z_,
+                              double by_angle_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double rmax = get_outer_r();
+    double z = get_z();
+    double rmin = get_inner_r();
+    rmax += r_eps;
+    if (has_inner_r()) {
+      rmin -= r_eps;
+    }
+    z += (2 * z_eps);
+    inflated_.reset();
+    if (has_inner_r() and rmin > 0.0) {
+      inflated_.set(rmin, rmax, z);
+    } else {
+      inflated_.set(rmax, z);
+    }
+    double eps_angle = by_angle_;
+    if (eps_angle < 0.0) {
+      eps_angle = r_eps / rmax;
+    }
+    if (has_partial_phi()) {
+      double start_phi = get_start_phi();
+      double delta_phi = get_delta_phi();
+      if (eps_angle > 0.0) {
+        start_phi -= eps_angle;
+        delta_phi += 2 * eps_angle;
+      }
+      if (delta_phi < 2 * M_PI) {
+        inflated_.set_start_phi(start_phi);
+        inflated_.set_delta_phi(delta_phi);
+      }
+    }
+    inflated_.lock();
+    return;
+  }
+
+  void tube::compute_envelope(tube & envelope_,
+                              double r_tolerance_,
+                              double z_tolerance_,
+                              double angle_tolerance_)
+  {
+    compute_inflated(envelope_, r_tolerance_, z_tolerance_, angle_tolerance_);
+    return;
+  }
+
+  void tube::compute_envelope(cylinder & envelope_,
+                              double r_tolerance_,
+                              double z_tolerance_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(r_tolerance_) and r_tolerance_ > 0.0) r_eps = r_tolerance_;
+    if (datatools::is_valid(z_tolerance_) and z_tolerance_ > 0.0) z_eps = z_tolerance_;
+    double rmax = get_outer_r();
+    double z = get_z();
+    rmax += r_eps;
+    z += (2 * z_eps);
+    envelope_.reset();
+    envelope_.set(rmax, z);
+    envelope_.lock();
     return;
   }
 

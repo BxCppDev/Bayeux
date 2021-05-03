@@ -1,9 +1,7 @@
 /// \file geomtools/stacked_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
- * Last modified: 2017-02-23
- *
- * License:
+ * Last modified: 2021-04-23
  *
  * Description:
  *
@@ -42,10 +40,10 @@ namespace geomtools {
     static const double DEFAULT_NUMERICS_PLAY;
 
     enum stacking_axis_t {
-      STACKING_ALONG_INVALID = -1,
-      STACKING_ALONG_X = AXIS_X,
-      STACKING_ALONG_Y = AXIS_Y,
-      STACKING_ALONG_Z = AXIS_Z
+                          STACKING_ALONG_INVALID = -1,
+                          STACKING_ALONG_X = AXIS_X,
+                          STACKING_ALONG_Y = AXIS_Y,
+                          STACKING_ALONG_Z = AXIS_Z
     };
 
     struct stacked_item
@@ -140,16 +138,15 @@ namespace geomtools {
 
     /// Smart print
     void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const override;
+                    const std::string & title_  = "",
+                    const std::string & indent_ = "",
+                    bool inherit_          = false) const override;
 
   protected:
 
     /// Construction
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_) override;
 
   private:
 

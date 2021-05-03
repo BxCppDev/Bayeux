@@ -122,9 +122,9 @@ namespace geomtools {
     return *_shape_factory_;
   }
 
-  const models_col_type & model_factory::get_models() const
+  const model_bus_type & model_factory::get_models() const
   {
-    return _models_;
+    return _get_models_();
   }
 
   const logical_volume::dict_type & model_factory::get_logicals() const
@@ -145,6 +145,7 @@ namespace geomtools {
         _factory_register_.tree_dump(std::cerr, "Geometry model factory: ", "INFO: ");
       }
     }
+    _models_.reset(new model_bus_type(*this));
     return;
   }
 
@@ -152,7 +153,7 @@ namespace geomtools {
     :  _factory_register_("geomtools::i_model/model_factory",
                           (lp_ >= datatools::logger::PRIO_NOTICE) ? i_model::factory_register_type::verbose : 0)
   {
-    _shape_factory_ = 0;
+    _shape_factory_ = nullptr;
     _locked_ = false;
     _logging_priority_ = lp_;
     _basic_construct_();
@@ -164,7 +165,7 @@ namespace geomtools {
                           core_factory_verbose_ ? i_model::factory_register_type::verbose : 0)
 
   {
-    _shape_factory_ = 0;
+    _shape_factory_ = nullptr;
     _locked_ = false;
     _logging_priority_ = datatools::logger::PRIO_FATAL;
     if (debug_) _logging_priority_ = datatools::logger::PRIO_DEBUG;
@@ -177,7 +178,19 @@ namespace geomtools {
     if (_locked_) {
       reset();
     }
+    _models_.reset();
     return;
+  }
+
+  model_bus_type & model_factory::_grab_models_()
+  {
+    return *_models_;
+  }
+
+  const model_bus_type & model_factory::_get_models_() const
+  {
+    model_factory * mutable_this = const_cast<model_factory *>(this); 
+    return const_cast<model_bus_type &>(mutable_this->_grab_models_());
   }
 
   // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
@@ -283,26 +296,28 @@ namespace geomtools {
     // The container of logicals does not have ownership of the pointers :
     _logicals_.clear();
     // Memory leak to be fixed:
-    for (models_col_type::iterator i = _models_.begin();
-         i != _models_.end();
+    for (model_bus_type::iterator i = _grab_models_().begin();
+         i != _grab_models_().end();
          i++) {
       const std::string & model_name = i->first;
       i_model * model_ptr = i->second;
       if (model_ptr != nullptr) {
-        if (model_ptr->is_constructed()) {
-          // This is the place from which individual models can perform
-          // special cleaning operations (see the overriden _at_destroy method)
-          model_ptr->destroy(model_name, &_models_);
-        }
         if (is_owned_model(model_name)) {
+          if (model_ptr->is_constructed()) {
+            // This is the place from which individual models can perform
+            // special cleaning operations (see the overriden _at_destroy method)
+            model_ptr->destroy(_models_.get());
+          }
           DT_LOG_DEBUG(_logging_priority_,"Deleting registered model '" << model_name << "'.");
           delete model_ptr;
         } else {
+          // We do not explicitely destroy a not-owned mode here for this is not the responsabilty
+          // of the factory.
           model_ptr = nullptr;
         }
       }
     }
-    _models_.clear();
+    _grab_models_().clear();
     _owned_models_.clear();
     _mp_.reset();
     _property_prefixes_.clear();
@@ -328,6 +343,75 @@ namespace geomtools {
   bool model_factory::is_owned_model(const std::string & model_name_) const
   {
     return _owned_models_.count(model_name_) > 0;
+  }
+
+  void model_factory::external_model_instance_registration(i_model & model_)
+  {
+    _model_instance_registration_(&model_);
+    return;
+  }
+
+  void model_factory::external_model_instance_unregistration(i_model & model_)
+  {
+    DT_THROW_IF(_owned_models_.count(model_.get_name()),
+                std::logic_error,
+                "Model instance with name '" << model_.get_name() << "' is not an external model instance!");
+    _model_instance_unregistration_(&model_);
+    return;
+  }
+    
+  void model_factory::_model_instance_unregistration_(i_model * model_)
+  {
+    DT_THROW_IF(! _get_models_().count(model_->get_name()),
+                std::logic_error,
+                "No model instance with name '" << model_->get_name() << "' is known from the registry of model instances!");
+    
+    // Unregister all daughter logical volumes in the registry of logical volumes:
+    for (logical_volume::physicals_col_type::const_iterator iphys
+           = model_->get_logical().get_physicals().begin();
+         iphys != model_->get_logical().get_physicals().end();
+         iphys++) {
+      const physical_volume & phys_vol = *iphys->second;
+      if (phys_vol.has_logical()) {
+        const logical_volume & log_vol = phys_vol.get_logical();
+        if (_logicals_.find(log_vol.get_name()) != _logicals_.end()) {
+          _logicals_.erase(log_vol.get_name());
+        }
+      }
+    }
+    // Unregister the main logical volume from the model:
+    _logicals_.erase(model_->get_logical().get_name());
+    _grab_models_().erase(model_->get_name());
+    return;
+  }
+
+  void model_factory::_model_instance_registration_(i_model * model_)
+  {
+    DT_THROW_IF(_get_models_().count(model_->get_name()),
+                std::logic_error,
+                "A model instance with name '" << model_->get_name() << "' is aalready known from the registry of model instances!");
+    _grab_models_()[model_->get_name()] = model_;
+    std::string log_name = model_->get_logical().get_name();
+    if (_logicals_.find(log_name) == _logicals_.end()) {
+      _logicals_[log_name] = &(model_->get_logical());
+    } else {
+      DT_THROW(std::logic_error,
+               "Logical volume '" << log_name << "' is already referenced in the model factory !");
+    }
+    // Register all daughter logical volumes in the registry of logical volumes:
+    for (logical_volume::physicals_col_type::const_iterator iphys
+           = model_->get_logical().get_physicals().begin();
+         iphys != model_->get_logical().get_physicals().end();
+         iphys++) {
+      const physical_volume & phys_vol = *iphys->second;
+      if (phys_vol.has_logical()) {
+        const logical_volume & log_vol = phys_vol.get_logical();
+        if (_logicals_.find(log_vol.get_name()) == _logicals_.end()) {
+          _logicals_[log_vol.get_name()] = &log_vol;
+        }
+      }
+    }
+    return;
   }
 
   void model_factory::_construct_()
@@ -363,18 +447,22 @@ namespace geomtools {
       if (has_shape_factory()) {
         model->set_shape_factory(grab_shape_factory());
       }
-      model->construct(model_name, e.get_properties(), _property_prefixes_, &_models_);
-      _models_[model_name] = model;
+      model->construct(model_name, e.get_properties(), _property_prefixes_, _models_.get());
       _owned_models_.insert(model_name);
-      DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
+      DT_LOG_DEBUG(_logging_priority_,"Adding owned model '" << model_name << "' in the registry of models...");
+      _model_instance_registration_(model);
+      /*
+      _models_[model_name] = model;
       std::string log_name = model->get_logical().get_name();
       if (_logicals_.find(log_name) == _logicals_.end()) {
         _logicals_[log_name] = &(model->get_logical());
       } else {
-        DT_THROW_IF(true, std::runtime_error,
-                    "Logical volume '" << log_name << "' is already referenced in the model factory !");
+        DT_THROW(std::runtime_error,
+                 "Logical volume '" << log_name << "' is already referenced in the model factory !");
       }
-      for (logical_volume::physicals_col_type::const_iterator iphys = model->get_logical().get_physicals().begin();
+      // Register all daughter logical volumes in the logical registry:
+      for (logical_volume::physicals_col_type::const_iterator iphys
+             = model->get_logical().get_physicals().begin();
            iphys != model->get_logical().get_physicals().end();
            iphys++) {
         const physical_volume & phys_vol = *iphys->second;
@@ -385,8 +473,8 @@ namespace geomtools {
           }
         }
       }
-
-      DT_LOG_DEBUG(_logging_priority_,"New model is:");
+      */
+      DT_LOG_DEBUG(_logging_priority_, "New model is:");
       if (is_debug()) model->tree_dump(std::clog, "", "[debug]: ");
     }
     DT_LOG_TRACE(_logging_priority_,"Exiting.");
@@ -454,23 +542,23 @@ namespace geomtools {
     {
       out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Geometry models : ";
-      if ( _models_.size() == 0) {
+      if ( _get_models_().size() == 0) {
         out_ << "<empty>";
       } else {
-        out_ << "[" << _models_.size() << "]";
+        out_ << "[" << _get_models_().size() << "]";
       }
       out_ << std::endl;
-      for (models_col_type::const_iterator i = _models_.begin();
-           i != _models_.end();
+      for (model_bus_type::const_iterator i = _get_models_().begin();
+           i != _get_models_().end();
            i++) {
         const std::string & key = i->first;
         const i_model * a_model = i->second;
         std::ostringstream indent_oss;
         out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
         indent_oss << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
-        models_col_type::const_iterator j = i;
+        model_bus_type::const_iterator j = i;
         j++;
-        if (j == _models_.end()) {
+        if (j == _get_models_().end()) {
           out_ << datatools::i_tree_dumpable::inherit_tag(inherit_);
           indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
         } else {
@@ -540,7 +628,7 @@ namespace geomtools {
     //std::cerr << "DEVEL: model_factory::print_list_of_models: Parsed options. \n";
 
     std::vector<const std::string*> selected_models;
-    for (geomtools::models_col_type::const_iterator i
+    for (geomtools::model_bus_type::const_iterator i
            = mf_.get_models().begin();
          i != mf_.get_models().end();
          i++) {

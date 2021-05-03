@@ -1,14 +1,11 @@
 /// \file geomtools/tube.h
 /* Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-28
- * Last modified: 2015-02-22
- *
- * License:
+ * Last modified: 2021-04-24
  *
  * Description:
- *   3D tube description
  *
- * History:
+ *  Tube 3D solid shape
  *
  */
 
@@ -49,26 +46,26 @@ namespace geomtools {
 
     /// \brief Face flags
     enum faces_mask_type {
-      FACE_NONE       = face_identifier::FACE_BITS_NONE,
-      FACE_OUTER_SIDE = datatools::bit_mask::bit00,
-      FACE_BOTTOM     = datatools::bit_mask::bit01,
-      FACE_TOP        = datatools::bit_mask::bit02,
-      FACE_INNER_SIDE = datatools::bit_mask::bit03,
-      FACE_START_ANGLE = datatools::bit_mask::bit04,
-      FACE_STOP_ANGLE = datatools::bit_mask::bit05,
-      FACE_ALL        = (FACE_OUTER_SIDE
-                         | FACE_BOTTOM
-                         | FACE_TOP
-                         | FACE_INNER_SIDE
-                         | FACE_START_ANGLE
-                         | FACE_STOP_ANGLE)
+                          FACE_NONE       = face_identifier::FACE_BITS_NONE,
+                          FACE_OUTER_SIDE = datatools::bit_mask::bit00,
+                          FACE_BOTTOM     = datatools::bit_mask::bit01,
+                          FACE_TOP        = datatools::bit_mask::bit02,
+                          FACE_INNER_SIDE = datatools::bit_mask::bit03,
+                          FACE_START_ANGLE = datatools::bit_mask::bit04,
+                          FACE_STOP_ANGLE = datatools::bit_mask::bit05,
+                          FACE_ALL        = (FACE_OUTER_SIDE
+                                             | FACE_BOTTOM
+                                             | FACE_TOP
+                                             | FACE_INNER_SIDE
+                                             | FACE_START_ANGLE
+                                             | FACE_STOP_ANGLE)
     };
 
     /// \brief Volume flags
     enum volumes_mask_type {
-      VOLUME_NONE   = 0,
-      VOLUME_BULK   = datatools::bit_mask::bit00,
-      VOLUME_CAVITY = datatools::bit_mask::bit01
+                            VOLUME_NONE   = 0,
+                            VOLUME_BULK   = datatools::bit_mask::bit00,
+                            VOLUME_CAVITY = datatools::bit_mask::bit01
     };
 
     /// Return the identifier label for the class
@@ -187,6 +184,29 @@ namespace geomtools {
     /// Compute the outer nappe
     void compute_outer_cylinder(cylinder & oc_);
 
+    /// Compute a deflated version of the tube
+    void compute_deflated(tube & deflated_,
+                          double by_r_,
+                          double by_z_,
+                          double by_angle_ = -1.0);
+
+    /// Compute an inflated version of the tube 
+    void compute_inflated(tube & deflated_,
+                          double by_r_,
+                          double by_z_,
+                          double by_angle_ = -1.0);
+ 
+    /// Compute the outer envelope with user tolerance
+    void compute_envelope(tube & oc_,
+                          double r_tolerance_,
+                          double z_tolerance_,
+                          double angle_tolerance_ = -1.0);
+
+    /// Compute the outer cylindric envelope with user tolerance
+    void compute_envelope(cylinder & oc_,
+                          double r_tolerance_,
+                          double z_tolerance_);
+ 
     /// Default constructor
     tube();
 
@@ -228,26 +248,26 @@ namespace geomtools {
 
     /// Check if a point is inside the tube
     bool is_inside(const vector_3d &,
-                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                   double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the tube
     bool is_outside(const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                    double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
     face_identifier on_surface(const vector_3d &,
-                                       const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                               const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
+                               double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the vector normal to the surface at some position
     vector_3d get_normal_on_surface(const vector_3d & a_position,
-                                            const face_identifier & a_surface_bit) const override;
+                                    const face_identifier & a_surface_bit) const override;
 
     /// Find the intercept point with a face of the tube
     bool find_intercept(const vector_3d & from_,
-                                const vector_3d & direction_,
-                                face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                        const vector_3d & direction_,
+                        face_intercept_info & intercept_,
+                        double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Output operator
     friend std::ostream &
@@ -259,30 +279,30 @@ namespace geomtools {
 
     /// Smart print
     void tree_dump(std::ostream & out_         = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_          = false) const override;
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_          = false) const override;
 
     /// \brief 3D rendering options
     enum tube_wires_rendering_option_type {
-      WR_TUBE_NO_BOTTOM_FACE      = (WR_BASE_LAST << 1),           //!< Do not render the bottom face
-      WR_TUBE_NO_TOP_FACE         = (WR_BASE_LAST << 2),           //!< Do not render the top face
-      WR_TUBE_NO_INNER_FACE       = (WR_BASE_LAST << 3),           //!< Do not render the inner face
-      WR_TUBE_NO_OUTER_FACE       = (WR_BASE_LAST << 4),           //!< Do not render the outer face
-      WR_TUBE_NO_START_ANGLE_FACE = (WR_BASE_LAST << 5),           //!< Do not render the start angle face
-      WR_TUBE_NO_STOP_ANGLE_FACE  = (WR_BASE_LAST << 6),           //!< Do not render the stop angle face
-      WR_TUBE_LAST                = (WR_TUBE_NO_STOP_ANGLE_FACE),  //!< Last defined bit
-      WR_TUBE_MASK                = (WR_TUBE_NO_BOTTOM_FACE
-                                     | WR_TUBE_NO_TOP_FACE
-                                     | WR_TUBE_NO_INNER_FACE
-                                     | WR_TUBE_NO_OUTER_FACE
-                                     | WR_TUBE_NO_START_ANGLE_FACE
-                                     | WR_TUBE_NO_STOP_ANGLE_FACE) //!< Rendering options bit mask
+                                           WR_TUBE_NO_BOTTOM_FACE      = (WR_BASE_LAST << 1),           //!< Do not render the bottom face
+                                           WR_TUBE_NO_TOP_FACE         = (WR_BASE_LAST << 2),           //!< Do not render the top face
+                                           WR_TUBE_NO_INNER_FACE       = (WR_BASE_LAST << 3),           //!< Do not render the inner face
+                                           WR_TUBE_NO_OUTER_FACE       = (WR_BASE_LAST << 4),           //!< Do not render the outer face
+                                           WR_TUBE_NO_START_ANGLE_FACE = (WR_BASE_LAST << 5),           //!< Do not render the start angle face
+                                           WR_TUBE_NO_STOP_ANGLE_FACE  = (WR_BASE_LAST << 6),           //!< Do not render the stop angle face
+                                           WR_TUBE_LAST                = (WR_TUBE_NO_STOP_ANGLE_FACE),  //!< Last defined bit
+                                           WR_TUBE_MASK                = (WR_TUBE_NO_BOTTOM_FACE
+                                                                          | WR_TUBE_NO_TOP_FACE
+                                                                          | WR_TUBE_NO_INNER_FACE
+                                                                          | WR_TUBE_NO_OUTER_FACE
+                                                                          | WR_TUBE_NO_START_ANGLE_FACE
+                                                                          | WR_TUBE_NO_STOP_ANGLE_FACE) //!< Rendering options bit mask
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
     void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const override;
+                             uint32_t options_ = 0) const override;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);

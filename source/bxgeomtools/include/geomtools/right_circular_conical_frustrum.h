@@ -194,6 +194,24 @@ namespace geomtools {
     /// Compute the bottom face
     void compute_bottom_face(disk & bottom_disk_, placement &) const;
 
+    /// Compute a deflated version of the frustrum
+    void compute_deflated(right_circular_conical_frustrum & deflated_,
+                          double by_r_,
+                          double by_z_,
+                          double by_angle_ = -1.0);
+
+    /// Compute an inflated version of the frustrum
+    void compute_inflated(right_circular_conical_frustrum & deflated_,
+                          double by_r_,
+                          double by_z_,
+                          double by_angle_ = -1.0);
+
+    /// Compute an envelope of the frustrum
+    void compute_envelope(right_circular_conical_frustrum & envelope_,
+                          double tolerance_r_,
+                          double tolerance_z_,
+                          double angle_tolerance_ = -1.0);
+
     /// \brief Start/stop angle face type
     ///
     ///
