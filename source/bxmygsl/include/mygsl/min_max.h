@@ -55,6 +55,9 @@ namespace mygsl {
     /// Default constructor
     min_max();
 
+    /// Desctructor
+    ~min_max() override = default;
+
     /// Reset
     void reset();
 
