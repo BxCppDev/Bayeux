@@ -442,6 +442,13 @@ namespace geomtools {
     /// Check the validity
     bool is_valid() const override;
 
+    /// \brief Print options
+    enum tessella_print_option_type {
+      PRINT_VERTEXES = 0x1,
+      PRINT_SEGMENTS = 0x2,
+      PRINT_FACETS   = 0x4
+    };
+
     /// Smart print
     void tree_dump(std::ostream & a_out         = std::clog,
                    const std::string & a_title  = "",
@@ -498,6 +505,12 @@ namespace geomtools {
     /// Check internal data
     bool _check_();
 
+  public:
+
+    void set_full_print();
+
+    uint16_t print_options = 0;
+    
   private:
 
     bool              _consistent_; //!< Flag to tag coherence of the tessellated solid
