@@ -1190,30 +1190,6 @@ namespace geomtools {
     return _zrange_.get_max();
   }
 
-  // // virtual
-  // void tessellated_solid::compute_bounding_box(box & bb_)
-  // {
-  //   this->i_object_3d::compute_bounding_box(bb_);
-  //   if (_xrange_.is_valid() && _yrange_.is_valid() && _zrange_.is_valid()) {
-  //     double x = std::abs(_xrange_.get_min());
-  //     if (std::abs(_xrange_.get_max()) > x) {
-  //       x = std::abs(_xrange_.get_max());
-  //     }
-  //     double y = std::abs(_yrange_.get_min());
-  //     if (std::abs(_yrange_.get_max()) > y) {
-  //       y = std::abs(_yrange_.get_max());
-  //     }
-  //     double z = std::abs(_zrange_.get_min());
-  //     if (std::abs(_zrange_.get_max()) > z) {
-  //       z = std::abs(_zrange_.get_max());
-  //     }
-  //     bb_.set_x(2 * x);
-  //     bb_.set_y(2 * y);
-  //     bb_.set_z(2 * z);
-  //   }
-  //   return;
-  // }
-
   void tessellated_solid::compute_bounding_box()
   {
     _xrange_.reset();
@@ -1357,10 +1333,16 @@ namespace geomtools {
 
     // Remove the facet from the dictionnary of facets :
     //facet_found->second = 0;
-    _facets_.erase (facet_found);
+    _facets_.erase(facet_found);
 
     // Delete the facet :
     //delete the_facet_ptr;
+    return;
+  }
+
+  void tessellated_solid::set_full_print()
+  {
+    print_options = PRINT_VERTEXES | PRINT_SEGMENTS | PRINT_FACETS;
     return;
   }
 
@@ -1373,20 +1355,22 @@ namespace geomtools {
 
     a_out << a_indent << datatools::i_tree_dumpable::tag
           << "Vertices: " << _vertices_.size () << std::endl;
-    for (vertices_col_type::const_iterator i = _vertices_.begin ();
-         i != _vertices_.end ();
-         i++) {
-      a_out << a_indent << datatools::i_tree_dumpable::skip_tag;
-      {
-        vertices_col_type::const_iterator j = i;
-        if (++j == _vertices_.end ()) {
-          a_out << datatools::i_tree_dumpable::last_tag;
-        } else {
-          a_out << datatools::i_tree_dumpable::tag;
+    if (print_options & PRINT_VERTEXES) {
+      for (vertices_col_type::const_iterator i = _vertices_.begin ();
+           i != _vertices_.end ();
+           i++) {
+        a_out << a_indent << datatools::i_tree_dumpable::skip_tag;
+        {
+          vertices_col_type::const_iterator j = i;
+          if (++j == _vertices_.end ()) {
+            a_out << datatools::i_tree_dumpable::last_tag;
+          } else {
+            a_out << datatools::i_tree_dumpable::tag;
+          }
         }
+        a_out << "Vertex[" << i->first << "] : ";
+        i->second.print(a_out);
       }
-      a_out << "Vertex[" << i->first << "] : ";
-      i->second.print(a_out);
     }
 
     a_out << a_indent << datatools::i_tree_dumpable::tag
@@ -1406,42 +1390,46 @@ namespace geomtools {
 
     a_out << a_indent << datatools::i_tree_dumpable::tag
           << "Facet segments: " << _facet_segments_.size() << std::endl;
-    for (facet_segments_col_type::const_iterator i = _facet_segments_.begin ();
-         i != _facet_segments_.end ();
-         i++) {
-      a_out << a_indent << datatools::i_tree_dumpable::skip_tag;
-      {
-        facet_segments_col_type::const_iterator j = i;
-        if (++j == _facet_segments_.end ()) {
-          a_out << datatools::i_tree_dumpable::last_tag;
-        } else {
-          a_out << datatools::i_tree_dumpable::tag;
+    if (print_options & PRINT_SEGMENTS) {
+      for (facet_segments_col_type::const_iterator i = _facet_segments_.begin ();
+           i != _facet_segments_.end ();
+           i++) {
+        a_out << a_indent << datatools::i_tree_dumpable::skip_tag;
+        {
+          facet_segments_col_type::const_iterator j = i;
+          if (++j == _facet_segments_.end ()) {
+            a_out << datatools::i_tree_dumpable::last_tag;
+          } else {
+            a_out << datatools::i_tree_dumpable::tag;
+          }
         }
+        a_out << "Facet segment[" << i->first << "] : ";
+        const facet_segment & fseg = i->second;
+        a_out << "from vertex [#" << fseg.vertex0_key << "] to vertex [#"
+              << fseg.vertex1_key << "] with facets [#" << fseg.facet0_key
+              << "/#" << fseg.facet1_key << "]"
+              << std::endl;
       }
-      a_out << "Facet segment[" << i->first << "] : ";
-      const facet_segment & fseg = i->second;
-      a_out << "from vertex [#" << fseg.vertex0_key << "] to vertex [#"
-            << fseg.vertex1_key << "] with facets [#" << fseg.facet0_key
-            << "/#" << fseg.facet1_key << "]"
-            << std::endl;
     }
 
     a_out << a_indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
           << "Facets: " << _facets_.size () << std::endl;
-    for (facets_col_type::const_iterator i = _facets_.begin ();
-         i != _facets_.end ();
-         i++) {
-      a_out << a_indent << datatools::i_tree_dumpable::inherit_skip_tag(a_inherit);
-      {
-        facets_col_type::const_iterator j = i;
-        if (++j == _facets_.end ()) {
-          a_out << datatools::i_tree_dumpable::last_tag;
-        } else {
-          a_out << datatools::i_tree_dumpable::tag;
+    if (print_options & PRINT_FACETS) {
+      for (facets_col_type::const_iterator i = _facets_.begin ();
+           i != _facets_.end ();
+           i++) {
+        a_out << a_indent << datatools::i_tree_dumpable::inherit_skip_tag(a_inherit);
+        {
+          facets_col_type::const_iterator j = i;
+          if (++j == _facets_.end ()) {
+            a_out << datatools::i_tree_dumpable::last_tag;
+          } else {
+            a_out << datatools::i_tree_dumpable::tag;
+          }
         }
+        a_out << "Facet[" << i->first << "] : ";
+        i->second.print(a_out);
       }
-      a_out << "Facet[" << i->first << "] : ";
-      i->second.print(a_out);
     }
 
     return;

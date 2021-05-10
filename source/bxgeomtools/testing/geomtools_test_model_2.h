@@ -51,9 +51,8 @@ namespace geomtools {
 
     protected:
 
-      virtual void _at_construct (const std::string & name_,
-                                  const datatools::properties & config_,
-                                  models_col_type * models_ = 0);
+      virtual void _at_construct (const datatools::properties & config_,
+                                  models_col_type * models_ = nullptr);
      private:
 
       double                      _distance_;

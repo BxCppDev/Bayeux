@@ -140,17 +140,15 @@ namespace geomtools {
     return;
   }
 
-  void replicated_model::_at_construct (const std::string & name_,
-                                        const datatools::properties & config_,
+  void replicated_model::_at_construct (const datatools::properties & config_,
                                         models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    //set_name (name_);
 
     /*** material ***/
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
-                 "Missing 'material.ref' property in replicated model '" << name_ << "' !");
+                 "Missing 'material.ref' property in replicated model '" << get_name() << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
 
     if (config_.has_flag ("replicated.force_stackable"))
@@ -161,7 +159,7 @@ namespace geomtools {
                                                  stackable::STACKABLE_PREFIX);
         DT_THROW_IF (! _sd_.initialize (stackable_config),
                      std::logic_error,
-                     "Cannot build the stackable data in replicated model '" << name_ << "' !");
+                     "Cannot build the stackable data in replicated model '" << get_name() << "' !");
       }
 
     std::string replicated_label = "replicated";
@@ -170,13 +168,13 @@ namespace geomtools {
         replicated_label = config_.fetch_string ("replicated.label");
       }
 
-    DT_THROW_IF (! config_.has_key ("replicated.axis"), std::logic_error, "Missing 'replicated.axis' property in replicated model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("replicated.axis"), std::logic_error, "Missing 'replicated.axis' property in replicated model '" << get_name() << "' !");
     const std::string replicant_axis_label = config_.fetch_string ("replicated.axis");
 
-    DT_THROW_IF (! config_.has_key ("replicated.number_of_items"), std::logic_error, "Missing 'replicated.number_of_items' property in replicated model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("replicated.number_of_items"), std::logic_error, "Missing 'replicated.number_of_items' property in replicated model '" << get_name() << "' !");
     const size_t number_of_items = config_.fetch_integer ("replicated.number_of_items");
 
-    DT_THROW_IF (! config_.has_key ("replicated.model"), std::logic_error, "Missing 'replicated.model' property in replicated model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("replicated.model"), std::logic_error, "Missing 'replicated.model' property in replicated model '" << get_name() << "' !");
     const std::string model_name = config_.fetch_string ("replicated.model");
 
     double default_length_unit = CLHEP::mm;
@@ -215,22 +213,22 @@ namespace geomtools {
 
     if (config_.has_key ("replicated.step")) {
       _step_ = config_.fetch_real ("replicated.step");
-      DT_THROW_IF (_step_ <= 0.0, std::logic_error, "Invalid value for 'replicated.step' property in replicated model '" << name_ << "' !");
+      DT_THROW_IF (_step_ <= 0.0, std::logic_error, "Invalid value for 'replicated.step' property in replicated model '" << get_name() << "' !");
       if (! config_.has_explicit_unit ("replicated.step")) {
         _step_ *= default_length_unit;
       }
     }
 
-    DT_THROW_IF (number_of_items == 0, std::logic_error, "Number of items is zero in replicated model '" << name_ << "' !");
+    DT_THROW_IF (number_of_items == 0, std::logic_error, "Number of items is zero in replicated model '" << get_name() << "' !");
     set_number_of_items (number_of_items);
 
     bool axis_ok = false;
     if (replicant_axis_label == "x") axis_ok = true;
     else if (replicant_axis_label == "y") axis_ok = true;
     else if (replicant_axis_label == "z") axis_ok = true;
-    DT_THROW_IF (! axis_ok, std::logic_error, "Invalid replicant axis in replicated model '" << name_ << "' !");
+    DT_THROW_IF (! axis_ok, std::logic_error, "Invalid replicant axis in replicated model '" << get_name() << "' !");
 
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in replicated model '" << name_ << "' !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in replicated model '" << get_name() << "' !");
 
     // Stackable model:
     {
@@ -302,9 +300,9 @@ namespace geomtools {
     _solid_.set_y(_y_);
     _solid_.set_z(_z_);
     _solid_.lock();
-    DT_THROW_IF (! _solid_.is_valid(), std::logic_error, "Invalid solid in replicated model '" << name_ << "' !");
+    DT_THROW_IF (! _solid_.is_valid(), std::logic_error, "Invalid solid in replicated model '" << get_name() << "' !");
 
-    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_name(i_model::make_logical_volume_name(get_name()));
     grab_logical().set_shape(_solid_);
     grab_logical().set_material_ref(material_name);
 

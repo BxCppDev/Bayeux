@@ -29,13 +29,11 @@ namespace geomtools {
   {
   }
 
-  void test_model_1::_at_construct (const string & name_,
-                                    const datatools::properties & config_,
+  void test_model_1::_at_construct (const datatools::properties & config_,
                                     models_col_type * /* models_ */)
   {
     bool devel = false;
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Entering..." << endl;
-    set_name (name_);
     double width = 1.0 * CLHEP::mm;
     double height = 1.0 * CLHEP::mm;
     string material;
@@ -76,7 +74,7 @@ namespace geomtools {
       }
 
     // initialize the 'logical_volume' of this model:
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_name (i_model::make_logical_volume_name (get_name()));
     grab_logical ().set_shape (_solid_);
     grab_logical ().set_material_ref (material);
 

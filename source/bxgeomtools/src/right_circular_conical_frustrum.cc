@@ -1312,5 +1312,157 @@ namespace geomtools {
     }
     return;
   }
+  
+  void right_circular_conical_frustrum::compute_deflated(right_circular_conical_frustrum & deflated_,
+                                                         double by_r_,
+                                                         double by_z_,
+                                                         double by_angle_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid right circular conical frustrum!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double z = get_z();
+    double rib = get_inner_bottom_radius();
+    double rit = get_inner_top_radius();
+    double rob = get_outer_bottom_radius();
+    double rot = get_outer_top_radius();
+    z -= (2 * z_eps);
+    rib += r_eps;
+    rit += r_eps;
+    rob -= r_eps;
+    rot -= r_eps;
+    deflated_.reset();
+    if (has_inner_bottom_radius()) {
+      deflated_.set_inner_bottom_radius(rib);
+    }
+    if (has_inner_top_radius()) {
+      deflated_.set_inner_top_radius(rit);
+    }
+    deflated_.set_outer_bottom_radius(rob);
+    deflated_.set_outer_top_radius(rot);
+    deflated_.set_z(z);
+    double eps_angle = by_angle_;
+    if (eps_angle < 0.0) {
+      double delta_angle_bot = r_eps / rob;
+      double delta_angle_top = r_eps / rot;
+      eps_angle = std::max(delta_angle_bot, delta_angle_top);
+    }
+    if (has_partial_angle()) {
+      double start_angle = get_start_angle();
+      double delta_angle = get_delta_angle();
+      if (eps_angle > 0.0) {
+        start_angle -= eps_angle;
+        delta_angle += 2 * eps_angle;
+      }
+      if (delta_angle < 0.0) {
+          start_angle = get_start_angle() + 0.5 * get_delta_angle() - 0.25 * eps_angle;
+          delta_angle = 0.5 * eps_angle;
+      }
+      deflated_.set_start_angle(start_angle);
+      deflated_.set_delta_angle(delta_angle);
+    }
+    deflated_.lock();
+    return;
+  }
+
+  void right_circular_conical_frustrum::compute_inflated(right_circular_conical_frustrum & inflated_,
+                                                         double by_r_,
+                                                         double by_z_,
+                                                         double by_angle_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid right circular conical frustrum!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double z = get_z();
+    double rib = get_inner_bottom_radius();
+    double rit = get_inner_top_radius();
+    double rob = get_outer_bottom_radius();
+    double rot = get_outer_top_radius();
+    z += (2 * z_eps);
+    rib -= r_eps;
+    rit -= r_eps;
+    rob += r_eps;
+    rot += r_eps;
+    inflated_.reset();
+    if (has_inner_bottom_radius()) {
+      inflated_.set_inner_bottom_radius(rib);
+    }
+    if (has_inner_top_radius()) {
+      inflated_.set_inner_top_radius(rit);
+    }
+    inflated_.set_outer_bottom_radius(rob);
+    inflated_.set_outer_top_radius(rot);
+    inflated_.set_z(z);
+    double eps_angle = by_angle_;
+    if (eps_angle < 0.0) {
+      double delta_angle_bot = r_eps / rob;
+      double delta_angle_top = r_eps / rot;
+      eps_angle = std::max(delta_angle_bot, delta_angle_top);
+    }
+    if (has_partial_angle()) {
+      double start_angle = get_start_angle();
+      double delta_angle = get_delta_angle();
+      if (eps_angle > 0.0) {
+        start_angle -= eps_angle;
+        delta_angle += 2 * eps_angle;
+      }
+      if (delta_angle < 2 * M_PI) {
+        inflated_.set_start_angle(start_angle);
+        inflated_.set_delta_angle(delta_angle);
+      }
+    }
+    inflated_.lock();
+    return;
+  }
+
+  void right_circular_conical_frustrum::compute_envelope(right_circular_conical_frustrum & envelope_,
+                                                         double r_tolerance_,
+                                                         double z_tolerance_,
+                                                         double angle_tolerance_)
+  {
+    compute_inflated(envelope_, r_tolerance_, z_tolerance_, angle_tolerance_);
+    /*
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid right circular conical frustrum!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double z = get_z();
+    double rob = get_outer_bottom_radius();
+    double rot = get_outer_top_radius();
+    z += (2 * z_eps);
+    rib -= r_eps;
+    rit -= r_eps;
+    rob += r_eps;
+    rot += r_eps;
+    envelope_.reset();
+    envelope_.set_outer_bottom_radius(rob);
+    envelope_.set_outer_top_radius(rot);
+    envelope_.set_z(z);
+    double eps_angle = angle_tolerance_;
+    if (eps_angle_ < 0.0) {
+      double dangleb = r_eps / rob;
+      double danglet = r_eps / rot;
+      doubel eps_angle = std::max(dangleb, danglet);
+      eps_angle = r_eps / r;
+    }
+    if (eps_angle > 0.0 and has_partial_angle()) {
+      double start_angle = get_start_angle();
+      double delta_angle = get_delta_angle();
+      start_angle -= eps_angle;
+      delta_angle += 2 * eps_angle;
+      if (delta_angle < 2 * M_PI) {
+        envelope_.set_start_angle(start_angle);
+        envelope_.set_delta_angle(delta_angle);
+      }
+    }
+    envelope_.lock();
+    */
+    return;
+  }
 
 } // end of namespace geomtools

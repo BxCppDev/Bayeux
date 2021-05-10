@@ -17,6 +17,8 @@
 // This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/gnuplot_draw.h>
+#include <geomtools/tube.h>
+#include <geomtools/cylinder.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
@@ -39,6 +41,7 @@ int main (int argc_, char ** argv_)
     bool do_locate = true;
     bool do_sector = false;
     bool do_hole = false;
+    bool do_envelope = false;
     bool draw = false;
 
     int iarg = 1;
@@ -58,6 +61,7 @@ int main (int argc_, char ** argv_)
       if (arg == "-t" || arg == "--no-top") top = false;
       if (arg == "-s" || arg == "--no-start") start = false;
       if (arg == "-p" || arg == "--no-stop") stop = false;
+      if (arg == "-e" || arg == "--envelope") do_envelope = true;
 
       iarg++;
     }
@@ -177,7 +181,7 @@ int main (int argc_, char ** argv_)
       geomtools::gnuplot_draw::draw_wires(tmp_file.out(), tube_wires);
       tmp_file.out() << std::endl << std::endl;
     }
-
+   
     {
       std::clog << "test 3: Intercept..." << std::endl;
 
@@ -217,7 +221,30 @@ int main (int argc_, char ** argv_)
       }
       tmp_file.out() << std::endl << std::endl;
     }
+   
+    if (do_envelope) {
+      tmp_file.out() << "# tube envelope (index 4):" << std::endl;
+      geomtools::cylinder my_tube_envelope;
+      my_tube.compute_envelope(my_tube_envelope, 0.2, 0.2);
+      // Draw envelope :
+      geomtools::wires_type cylinder_wires;
+      my_tube_envelope.generate_wires(cylinder_wires,
+                             tube_placement,
+                             geomtools::i_wires_3d_rendering::WR_NONE
+                             | geomtools::i_wires_3d_rendering::WR_BASE_GRID
+                             | geomtools::i_wires_3d_rendering::WR_BASE_GRID_HIGH_DENSITY
+                             //| geomtools::i_wires_3d_rendering::WR_BASE_BOUNDINGS
+                             // | geomtools::i_wires_3d_rendering::WR_BASE_EXPLODE
+                             // | geomtools::tube::WR_TUBE_NO_BOTTOM_FACE
+                             // | geomtools::tube::WR_TUBE_NO_TOP_FACE
+                             // | geomtools::tube::WR_TUBE_NO_INNER_FACE
+                             // | geomtools::tube::WR_TUBE_NO_OUTER_FACE
+                             );
+      geomtools::gnuplot_draw::draw_wires(tmp_file.out(), cylinder_wires);
+      tmp_file.out() << std::endl << std::endl;
 
+    }
+  
 
     // if (interactive) {
     //   std::clog << "Enter a tube (example: '{tube 900 1000 1000}'): ";
@@ -270,7 +297,17 @@ int main (int argc_, char ** argv_)
         geomtools::gnuplot_drawer::wait_for_key ();
         usleep (200);
       }
-
+      
+      if (do_envelope) {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Tube' with lines ";
+        plot_cmd << " , '' index 4 title 'Envelope' with lines ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
+      }
+ 
 #endif
     }
 

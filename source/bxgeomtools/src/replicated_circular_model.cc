@@ -107,8 +107,7 @@ namespace geomtools {
     return;
   }
 
-  void replicated_circular_model::_at_construct(const std::string & name_,
-                                                const datatools::properties & config_,
+  void replicated_circular_model::_at_construct(const datatools::properties & config_,
                                                 models_col_type * models_)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
@@ -127,7 +126,7 @@ namespace geomtools {
 
     DT_THROW_IF(! config_.has_key("material.ref"),
                  std::logic_error,
-                 "Missing 'material.ref' property in replicated circular model '" << name_ << "' !");
+                 "Missing 'material.ref' property in replicated circular model '" << get_name() << "' !");
     const std::string material_name = config_.fetch_string("material.ref");
 
     std::string replicated_label = "replicated";
@@ -137,24 +136,24 @@ namespace geomtools {
 
     // DT_THROW_IF(! config_.has_key("replicated.rotation_axis"),
     //              std::logic_error,
-    //              "Missing 'rotation.axis' property in replicated circular model '" << name_ << "' !");
+    //              "Missing 'rotation.axis' property in replicated circular model '" << get_name() << "' !");
     // const std::string rotation_axis_label = config_.fetch_string("replicated.rotation_axis");
     const std::string rotation_axis_label = "z";
     // DT_THROW_IF( rotation_axis_label != "z",
     //              std::logic_error,
     //              "Unsupported '" << rotation_axis_label << "' "
-    //           << "rotation axis in replicated circular model '" << name_ << "' !");
+    //           << "rotation axis in replicated circular model '" << get_name() << "' !");
 
     DT_THROW_IF(! config_.has_key("replicated.model"),
                  std::logic_error,
-                 "Missing 'replicated.model' property in replicated circular model '" << name_ << "' !");
+                 "Missing 'replicated.model' property in replicated circular model '" << get_name() << "' !");
     const std::string model_name = config_.fetch_string("replicated.model");
 
     DT_THROW_IF(! config_.has_key("replicated.number_of_items"),
                  std::logic_error,
-                 "Missing 'replicated.number_of_items' property in replicated boxed model '" << name_ << "' !");
+                 "Missing 'replicated.number_of_items' property in replicated boxed model '" << get_name() << "' !");
     const size_t number_of_items = config_.fetch_integer("replicated.number_of_items");
-    DT_THROW_IF(number_of_items <= 1, std::logic_error, "Number of items is < 1 in replicated boxed model '" << name_ << "' !");
+    DT_THROW_IF(number_of_items <= 1, std::logic_error, "Number of items is < 1 in replicated boxed model '" << get_name() << "' !");
 
     bool axis_ok = false;
     rotation_axis_type replicated_rotation_axis = ROTATION_AXIS_Z;
@@ -169,19 +168,19 @@ namespace geomtools {
       replicated_rotation_axis = ROTATION_AXIS_Z;
     }
     DT_THROW_IF(! axis_ok, std::logic_error, "Invalid rotation replicant axis '" << rotation_axis_label<< "' "
-                << "in replicated circular model '" << name_ << "' !");
+                << "in replicated circular model '" << get_name() << "' !");
     DT_THROW_IF( replicated_rotation_axis != ROTATION_AXIS_Z,
                  std::logic_error,
                  "Unsupported '" << rotation_axis_label << "' "
-              << "rotation axis in replicated circular model '" << name_ << "' !");
+              << "rotation axis in replicated circular model '" << get_name() << "' !");
 
-    DT_THROW_IF(! models_, std::logic_error, "Missing logicals dictionary in replicated circular model '" << name_ << "' !");
+    DT_THROW_IF(! models_, std::logic_error, "Missing logicals dictionary in replicated circular model '" << get_name() << "' !");
     // Model:
     {
       models_col_type::const_iterator found = models_->find(model_name);
       DT_THROW_IF(found == models_->end(),
                    std::logic_error,
-                   "Cannot find model with name '" << model_name << "' in replicated circular model '" << name_ << "' !");
+                   "Cannot find model with name '" << model_name << "' in replicated circular model '" << get_name() << "' !");
       set_model(dynamic_cast<const i_model &>(*(found->second)));
     }
 
@@ -189,7 +188,7 @@ namespace geomtools {
     double replicated_radius;
     DT_THROW_IF(! config_.has_key("replicated.radius"),
                 std::logic_error,
-                "Missing 'replicated.radius' property in replicated circular model '" << name_ << "' !");
+                "Missing 'replicated.radius' property in replicated circular model '" << get_name() << "' !");
     replicated_radius = config_.fetch_real("replicated.radius");
     if (! config_.has_explicit_unit("replicated.radius")) {
       replicated_radius *= default_length_unit;
@@ -197,7 +196,7 @@ namespace geomtools {
     double replicated_step_angle;
     DT_THROW_IF(! config_.has_key("replicated.step_angle"),
                 std::logic_error,
-                "Missing 'replicated.step_angle' property in replicated circular model '" << name_ << "' !");
+                "Missing 'replicated.step_angle' property in replicated circular model '" << get_name() << "' !");
     replicated_step_angle = config_.fetch_real("replicated.step_angle");
     if (! config_.has_explicit_unit("replicated.step_angle")) {
       replicated_step_angle *= default_angle_unit;
@@ -220,7 +219,7 @@ namespace geomtools {
     double mother_z;
     DT_THROW_IF(! config_.has_key("r_max"),
                 std::logic_error,
-                "Missing 'r_max' property in replicated circular model '" << name_ << "' !");
+                "Missing 'r_max' property in replicated circular model '" << get_name() << "' !");
     mother_r_max = config_.fetch_real("r_max");
     if (! config_.has_explicit_unit("r_max")) {
       mother_r_max *= default_length_unit;
@@ -233,7 +232,7 @@ namespace geomtools {
     }
     DT_THROW_IF(! config_.has_key("z"),
                 std::logic_error,
-                "Missing 'z' property in replicated circular model '" << name_ << "' !");
+                "Missing 'z' property in replicated circular model '" << get_name() << "' !");
     mother_z = config_.fetch_real("z");
     if (! config_.has_explicit_unit("z")) {
       mother_z *= default_length_unit;
@@ -253,9 +252,9 @@ namespace geomtools {
     _solid_.set(mother_r_min, mother_r_max, mother_z);
     _solid_.lock();
     DT_THROW_IF(! _solid_.is_valid(), std::logic_error,
-                "Invalid mother tube solid in replicated circular model '" << name_ << "' !");
+                "Invalid mother tube solid in replicated circular model '" << get_name() << "' !");
 
-    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_name(i_model::make_logical_volume_name(get_name()));
     grab_logical().set_shape(_solid_);
     grab_logical().set_material_ref(material_name);
 

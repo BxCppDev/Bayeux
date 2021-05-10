@@ -1093,6 +1093,213 @@ namespace geomtools {
     return;
   }
 
+  void polyhedra::compute_inflated(polyhedra & inflated_,
+                                   double by_r_,
+                                   double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polyhedra!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    bool apply_inflated_z = false;
+    if (z_eps > 0.0) {
+      apply_inflated_z = true;
+    }
+    inflated_.reset();
+    inflated_.set_n_sides(this->get_n_sides());
+    size_t sz = _points_.size();
+    std::size_t counter = 0;
+    double maxR = -1.0;
+    for (polyhedra::rz_col_type::const_iterator i = _points_.begin();
+         i != _points_.end();
+         i++) {
+      double z = i->first;
+      double rmin = i->second.rmin;
+      double rmax = i->second.rmax;
+      rmax += r_eps;
+      if (datatools::is_valid(rmin) and rmin >= 0.0) {
+        rmin -= r_eps;
+      } else {
+        rmin = 0.0;
+      }
+      if (maxR < 0.0 or rmax > maxR) {
+        maxR = rmax;
+      }
+      if (rmax < 0.0) rmax = 0.0;
+      if (rmin < 0.0) rmin = 0.0;
+      if (apply_inflated_z) {
+        if (counter == 0) {
+          if (rmin < rmax) {
+            inflated_.add(z - z_eps, rmin, rmax, false);
+          } else {
+            inflated_.add(z - z_eps, i->second.rmin, i->second.rmax, false);
+          }
+        }
+      }
+      inflated_.add(z, rmin, rmax, false);
+      if (apply_inflated_z) {
+        if (counter + 1 == sz) {
+          if (rmin < rmax) {
+            inflated_.add(z + z_eps, rmin, rmax, false);
+          }else {
+            inflated_.add(z + z_eps, i->second.rmin, i->second.rmax, false);
+          }
+        }
+      }
+      counter++;
+    }
+    inflated_._compute_all_();
+    inflated_.lock();
+    return;
+  }
+
+  void polyhedra::compute_deflated(polyhedra & deflated_,
+                                   double by_r_,
+                                   double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polyhedra!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    bool apply_tolerance_z = false;
+    if (z_eps > 0.0) {
+      apply_tolerance_z = true;
+    }
+    deflated_.reset();
+    deflated_.set_n_sides(this->get_n_sides());
+    size_t sz = _points_.size();
+    std::size_t counter = 0;
+    bool skip_next = true;
+    double maxR = -1.0;
+    for (polyhedra::rz_col_type::const_iterator i = _points_.begin();
+         i != _points_.end();
+         i++) {
+      double z = i->first;
+      double rmin = i->second.rmin;
+      double rmax = i->second.rmax;
+      rmax -= r_eps;
+      if (datatools::is_valid(rmin) and rmin > 0.0) {
+        rmin += r_eps;
+      } else {
+        rmin = 0.0;
+      }
+      if (maxR < 0.0 or rmax > maxR) {
+        maxR = rmax;
+      }
+      if (rmax < 0.0) rmax = 0.0;
+      if (rmin < 0.0) rmin = 0.0;
+      if (rmax < rmin) {
+        double rmed = 0.5 * (rmax + rmin);
+        rmax = rmed;
+        rmin = rmed;
+      }
+      double z0 = z;
+      if (apply_tolerance_z) {
+        if (skip_next) {
+          z0 += z_eps;
+          auto j = i;
+          j++;
+          double z1 = j->first;
+          if (z0 <= z1) skip_next = false;
+        }
+      }
+      deflated_.add(z0, rmin, rmax, false);
+      counter++;
+      if (counter == sz / 2) {
+        break;
+      }
+    }
+    counter = 0;
+    skip_next = true;
+    for (polyhedra::rz_col_type::const_reverse_iterator i = _points_.rbegin ();
+         i != _points_.rend ();
+         i++) {
+      double z = i->first;
+      double rmin = i->second.rmin;
+      double rmax = i->second.rmax;
+      rmax -= r_eps;
+      if (datatools::is_valid(rmin)) {
+        rmin -= r_eps;
+      } else {
+        rmin = 0.0;
+      }
+      if (maxR < 0.0 or rmax > maxR) {
+        maxR = rmax;
+      }
+      if (rmax < 0.0) rmax = 0.0;
+      if (rmin < 0.0) rmin = 0.0;
+      double z0 = z;
+      if (apply_tolerance_z) {
+        if (skip_next) {
+          z0 -= z_eps;
+          auto j = i;
+          j++;
+          double z1 = j->first;
+          if (z0 <= z1) skip_next = false;
+        }
+      }
+      deflated_.add(z0, rmin, rmax, false);
+      counter++;
+      if (counter > sz / 2) {
+        break;
+      }
+    }
+    deflated_._compute_all_();
+    deflated_.lock();
+    return;
+  }
+
+  void polyhedra::compute_envelope(polyhedra & envelope_,
+                                  double r_tolerance_,
+                                  double z_tolerance_)
+  {
+    compute_inflated(envelope_, r_tolerance_, z_tolerance_);
+    return;
+  }
+
+  /*
+  void polyhedra::compute_envelope(polyhedra & op_,
+                                   double r_tolerance_,
+                                   double z_tolerance_)
+  {
+    op_.reset ();
+    op_.set_n_sides (this->get_n_sides());
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    bool apply_tolerance_z = false;
+    // bool apply_tolerance_r = false;
+    if (datatools::is_valid(r_tolerance_) and r_tolerance_ > 0.0) {
+      r_eps = r_tolerance_;
+      // apply_tolerance_r = true;
+    }
+    if (datatools::is_valid(z_tolerance_) and z_tolerance_ > 0.0) {
+      z_eps = z_tolerance_;
+      apply_tolerance_z = true;
+    }
+    std::size_t counter = 0;
+    for (polyhedra::rz_col_type::const_iterator i = _points_.begin ();
+         i != _points_.end ();
+         i++) {
+      double z = i->first;
+      double rmax = i->second.rmax;
+      rmax += r_eps;
+      if (apply_tolerance_z and counter == 0) {
+        op_.add(z - z_eps, 0.0, rmax, false);
+      }
+      op_.add(z, 0.0, rmax, false);
+      if (apply_tolerance_z and (counter + 1) == _points_.size()) {
+        op_.add(z + z_eps, 0.0, rmax, false);
+      }
+      counter++;
+    }
+    op_._compute_all_();
+    op_.lock();
+    return;
+  }
+  */
+  
   double polyhedra::get_surface (uint32_t mask_) const
   {
     DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");

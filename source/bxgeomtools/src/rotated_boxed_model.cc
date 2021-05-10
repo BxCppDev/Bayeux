@@ -53,16 +53,14 @@ namespace geomtools {
     return;
   }
 
-  void rotated_boxed_model::_at_construct (const std::string & name_,
-                                           const datatools::properties & config_,
+  void rotated_boxed_model::_at_construct (const datatools::properties & config_,
                                            models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    //set_name (name_);
 
     DT_THROW_IF (! config_.has_key ("material.ref"),
                  std::logic_error,
-                 "Missing 'material.ref' property in rotated boxed model '" << name_ << "' !");
+                 "Missing 'material.ref' property in rotated boxed model '" << get_name() << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
 
     /*** length unit ***/
@@ -87,7 +85,7 @@ namespace geomtools {
 
     // fetch the rotation axis:
     DT_THROW_IF (! config_.has_key ("rotated.axis"), std::logic_error,
-                 "Missing 'rotated.axis' property for model '" << name_ << "' !");
+                 "Missing 'rotated.axis' property for model '" << get_name() << "' !");
     const std::string rotation_axis_label = config_.fetch_string ("rotated.axis");
 
     bool use_special_angle = false;
@@ -104,20 +102,19 @@ namespace geomtools {
       }
       use_special_angle = false;
     } else {
-      DT_THROW_IF (true,
-                   std::logic_error,
-                   "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << name_ << "' !");
+      DT_THROW (std::logic_error,
+                "Missing 'rotated.special_angle' or 'rotation.angle' property for model '" << get_name() << "' !");
     }
 
     DT_THROW_IF (! config_.has_key ("rotated.model"),
                  std::logic_error,
-                 "Missing 'boxed_model' property for model '" << name_ << "' !");
+                 "Missing 'boxed_model' property for model '" << get_name() << "' !");
     const std::string boxed_model_name = config_.fetch_string ("rotated.model");
 
     const int rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
     DT_THROW_IF (! check_rotation_axis (rotation_axis),
                  std::logic_error,
-                 "Invalid rotation axis for model '" << name_ << "' !");
+                 "Invalid rotation axis for model '" << get_name() << "' !");
 
     // XXXX
     // dimension of the mother box:
@@ -132,7 +129,7 @@ namespace geomtools {
         get_special_rotation_angle_from_label (special_rotation_angle_label);
       DT_THROW_IF (! check_special_rotation_angle (special_rotation_angle),
                    std::logic_error,
-                   "Invalid rotation angle (" << special_rotation_angle_label << ") for model '" << name_ << "'!");
+                   "Invalid rotation angle (" << special_rotation_angle_label << ") in model '" << get_name() << "'!");
     } else { // arbitrary angles:
       if (config_.has_key ("x")) {
         x = config_.fetch_real ("x");
@@ -142,7 +139,7 @@ namespace geomtools {
       } else {
         DT_THROW_IF ((rotation_axis == ROTATION_AXIS_Y) || (rotation_axis == ROTATION_AXIS_Z),
                      std::logic_error,
-                     "Missing 'x' property !");
+                     "Missing 'x' property  in model '" << get_name() << "'!");
       }
 
       if (config_.has_key ("y")) {
@@ -153,7 +150,7 @@ namespace geomtools {
       } else {
         DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Z),
                      std::logic_error,
-                     "Missing 'y' property !");
+                     "Missing 'y' property in model '" << get_name() << "' !");
       }
 
       if (config_.has_key ("z")) {
@@ -164,23 +161,23 @@ namespace geomtools {
       } else {
         DT_THROW_IF ((rotation_axis == ROTATION_AXIS_X) || (rotation_axis == ROTATION_AXIS_Y),
                      std::logic_error,
-                     "Missing 'z' property !");
+                     "Missing 'z' property in model '" << get_name() << "'!");
       }
     }
 
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing dictionary of models!");
     // Boxed model:
     {
       models_col_type::const_iterator found = models_->find (boxed_model_name);
-      i_model * the_model = 0;
+      i_model * the_model = nullptr;
       DT_THROW_IF (found == models_->end (), std::logic_error,
-                   "The rotating model '" << the_model->get_name () << "' is not stackable !");
+                   "The rotating model '" << the_model->get_name() << "' is not stackable in model '" << get_name() << "'!");
       the_model = found->second;
       // check if the model is stackable:
       DT_THROW_IF (! i_shape_3d::check_stackability(the_model->get_logical().get_shape(),
                                                     stackable::STACKABILITY_STRONG),
                    std::logic_error,
-                   "The rotating model '" << the_model->get_name () << "' is not stackable on X/Y/Z axis!");
+                   "The rotating model '" << the_model->get_name() << "' is not stackable on X/Y/Z axis in model '" << get_name() << "'!");
       set_boxed_model (*the_model);
     }
 
@@ -298,9 +295,9 @@ namespace geomtools {
     _solid_.set_z(z);
     _solid_.lock();
 
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in model '" << get_name() << "'!");
 
-    grab_logical().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical().set_name (i_model::make_logical_volume_name (get_name()));
     grab_logical().set_shape (_solid_);
     grab_logical().set_material_ref (material_name);
     // >>> Special treatment:

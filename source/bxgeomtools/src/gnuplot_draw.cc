@@ -141,7 +141,7 @@ namespace geomtools {
   {
     // std::cerr << "DEVEL: gnuplot_draw::bounding_box: Entering..." << std::endl;
     static boost::scoped_ptr<gnuplot_draw::xyz_range> _xyz_instance;
-    if (_xyz_instance.get() == 0 ) {
+    if (_xyz_instance.get() == nullptr ) {
       // std::cerr << "DEVEL: gnuplot_draw::bounding_box: Allocating a new BB..." << std::endl;
       _xyz_instance.reset(new gnuplot_draw::xyz_range);
     }

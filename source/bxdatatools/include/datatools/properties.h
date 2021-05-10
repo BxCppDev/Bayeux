@@ -48,6 +48,7 @@
 
 // This Project:
 #include <datatools/datatools_config.h>
+#include <datatools/utils.h>
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_clear.h>

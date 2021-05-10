@@ -59,18 +59,17 @@ namespace geomtools {
 
   protected:
 
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_ = nullptr) override;
   private:
 
-    const i_model *            _boxed_model_;
+    const i_model *            _boxed_model_ = nullptr;
     regular_linear_placement   _boxed_replica_placement_;
     physical_volume            _boxed_phys_;
-    size_t         _number_of_items_;
-    double         _x_;
-    double         _y_;
-    double         _z_;
+    size_t         _number_of_items_ = 0;
+    double         _x_ = datatools::invalid_real();
+    double         _y_ = datatools::invalid_real();
+    double         _z_ = datatools::invalid_real();
     geomtools::box _solid_;
 
     // registration interface :

@@ -1,15 +1,11 @@
 /// \file geomtools/polyhedra.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-08
- * Last modified: 2015-03-19
- *
- * License:
+ * Last modified: 2021-04-23
  *
  * Description:
  *   Polyhedra 3D shape with regular polygon sections
  *   See also: http://en.wikipedia.org/wiki/Frustum
- *
- * History:
  *
  */
 
@@ -45,22 +41,22 @@ namespace geomtools {
 
     /// \brief Face flags
     enum faces_mask_type {
-      FACE_NONE         = face_identifier::FACE_BITS_NONE,
-      FACE_INNER_SIDE   = datatools::bit_mask::bit00,
-      FACE_OUTER_SIDE   = datatools::bit_mask::bit01,
-      FACE_BOTTOM       = datatools::bit_mask::bit02,
-      FACE_TOP          = datatools::bit_mask::bit03,
-      FACE_ALL          = (FACE_INNER_SIDE
-                           | FACE_OUTER_SIDE
-                           | FACE_BOTTOM
-                           | FACE_TOP)
+                          FACE_NONE         = face_identifier::FACE_BITS_NONE,
+                          FACE_INNER_SIDE   = datatools::bit_mask::bit00,
+                          FACE_OUTER_SIDE   = datatools::bit_mask::bit01,
+                          FACE_BOTTOM       = datatools::bit_mask::bit02,
+                          FACE_TOP          = datatools::bit_mask::bit03,
+                          FACE_ALL          = (FACE_INNER_SIDE
+                                               | FACE_OUTER_SIDE
+                                               | FACE_BOTTOM
+                                               | FACE_TOP)
     };
 
     /// \brief Format of the datafile for reading Z/Rmin/Rmax data
     enum datafile_column_mode {
-      RMIN_RMAX    = 0, //!< Use one first column for Rmin and second one for Rmax
-      IGNORE_RMIN  = 1, //!< Ignore first column as Rmin and use only second one for Rmax
-      RMIN_AS_RMAX = 2  //!< Use one first column as Rmax
+                               RMIN_RMAX    = 0, //!< Use one first column for Rmin and second one for Rmax
+                               IGNORE_RMIN  = 1, //!< Ignore first column as Rmin and use only second one for Rmax
+                               RMIN_AS_RMAX = 2  //!< Use one first column as Rmax
     };
 
     /*
@@ -165,7 +161,7 @@ namespace geomtools {
     /// Main initialization method from a container of configuration parameters
     void initialize (const datatools::properties & setup_, const handle_dict_type * = 0) override;
 
-   /// Reset/invalidate the solid
+    /// Reset/invalidate the solid
     void reset () override;
 
     /// Initialize from a file
@@ -213,6 +209,21 @@ namespace geomtools {
     /// Compute the outer polyhedra
     void compute_outer_polyhedra (polyhedra & op_);
 
+    /// Compute a deflated polyhedra
+    void compute_deflated(polyhedra & deflated_,
+                          double by_r_,
+                          double by_z_);
+
+    /// Compute an inflated polyhedra
+    void compute_inflated(polyhedra & inflated_,
+                          double by_r_,
+                          double by_z_);
+
+    /// Compute the polyhedra envelope
+    void compute_envelope(polyhedra & envelope_,
+                          double r_tolerance_,
+                          double z_tolerance_);
+
     /// Compute the volume
     double get_volume (uint32_t flags_ = 0) const override;
 
@@ -233,54 +244,54 @@ namespace geomtools {
 
     /// Check if a point is inside the frustrum
     bool is_inside (const vector_3d &,
-                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                    double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is outside the frustrum
     bool is_outside (const vector_3d &,
-                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                     double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
     face_identifier on_surface(const vector_3d &,
-                                       const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                               const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
+                               double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Compute the normal to the surface of the furstrum
     vector_3d get_normal_on_surface (const vector_3d & position_,
-                                             const face_identifier & ) const override;
+                                     const face_identifier & ) const override;
 
     /// Find the intercept point with a face of the frustrum
     bool find_intercept(const vector_3d & from_,
-                                const vector_3d & direction_,
-                                face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                        const vector_3d & direction_,
+                        face_intercept_info & intercept_,
+                        double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
     void tree_dump(std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const override;
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_          = false) const override;
 
     /// \brief 3D rendering options
     enum polyhedra_wires_rendering_option_type {
-      WR_POLYHEDRA_NO_BOTTOM_FACE      = (WR_BASE_LAST << 1),           //!< Do not render the bottom face
-      WR_POLYHEDRA_NO_TOP_FACE         = (WR_BASE_LAST << 2),           //!< Do not render the top face
-      WR_POLYHEDRA_NO_INNER_FACE       = (WR_BASE_LAST << 3),           //!< Do not render the inner face
-      WR_POLYHEDRA_NO_OUTER_FACE       = (WR_BASE_LAST << 4),           //!< Do not render the outer face
-      // WR_POLYHEDRA_NO_START_ANGLE_FACE = (WR_BASE_LAST << 5),           //!< Do not render the start angle face
-      // WR_POLYHEDRA_NO_STOP_ANGLE_FACE  = (WR_BASE_LAST << 6),           //!< Do not render the stop angle face
-      WR_POLYHEDRA_LAST                = (WR_POLYHEDRA_NO_OUTER_FACE),  //!< Last defined bit
-      WR_POLYHEDRA_MASK                = (WR_POLYHEDRA_NO_BOTTOM_FACE
-                                         | WR_POLYHEDRA_NO_TOP_FACE
-                                         | WR_POLYHEDRA_NO_INNER_FACE
-                                         | WR_POLYHEDRA_NO_OUTER_FACE
-                                         // | WR_POLYHEDRA_NO_START_ANGLE_FACE
-                                         // | WR_POLYHEDRA_NO_STOP_ANGLE_FACE
-                                          ) //!< Rendering options bit mask
+                                                WR_POLYHEDRA_NO_BOTTOM_FACE      = (WR_BASE_LAST << 1),           //!< Do not render the bottom face
+                                                WR_POLYHEDRA_NO_TOP_FACE         = (WR_BASE_LAST << 2),           //!< Do not render the top face
+                                                WR_POLYHEDRA_NO_INNER_FACE       = (WR_BASE_LAST << 3),           //!< Do not render the inner face
+                                                WR_POLYHEDRA_NO_OUTER_FACE       = (WR_BASE_LAST << 4),           //!< Do not render the outer face
+                                                // WR_POLYHEDRA_NO_START_ANGLE_FACE = (WR_BASE_LAST << 5),           //!< Do not render the start angle face
+                                                // WR_POLYHEDRA_NO_STOP_ANGLE_FACE  = (WR_BASE_LAST << 6),           //!< Do not render the stop angle face
+                                                WR_POLYHEDRA_LAST                = (WR_POLYHEDRA_NO_OUTER_FACE),  //!< Last defined bit
+                                                WR_POLYHEDRA_MASK                = (WR_POLYHEDRA_NO_BOTTOM_FACE
+                                                                                    | WR_POLYHEDRA_NO_TOP_FACE
+                                                                                    | WR_POLYHEDRA_NO_INNER_FACE
+                                                                                    | WR_POLYHEDRA_NO_OUTER_FACE
+                                                                                    // | WR_POLYHEDRA_NO_START_ANGLE_FACE
+                                                                                    // | WR_POLYHEDRA_NO_STOP_ANGLE_FACE
+                                                                                    ) //!< Rendering options bit mask
     };
 
     /// Generate a list of polylines representing the contour of the shape (for display clients)
     void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const override;
+                             uint32_t options_ = 0) const override;
 
     friend std::ostream & operator<< (std::ostream &, const polyhedra &);
 

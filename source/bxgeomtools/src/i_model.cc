@@ -183,6 +183,9 @@ namespace geomtools {
 
   void i_model::set_name(const std::string & name_)
   {
+    DT_THROW_IF(!datatools::name_validation(name_, datatools::NV_INSTANCE),
+                std::logic_error,
+                "Invalid model name '" << name_ << "'!");                
     _name_ = name_;
     return;
   }
@@ -224,7 +227,7 @@ namespace geomtools {
 
   bool i_model::has_shape_factory() const
   {
-    return _shape_factory_ != 0;
+    return _shape_factory_ != nullptr;
   }
 
   void i_model::set_shape_factory(shape_factory & sf_)
@@ -331,7 +334,9 @@ namespace geomtools {
 
     // Plug internal meshes:
     datatools::properties internal_mesh_setup;
-    setup_.export_and_rename_starting_with(internal_mesh_setup, model_with_internal_mesh_data::INTERNAL_MESH_PREFIX, "");
+    setup_.export_and_rename_starting_with(internal_mesh_setup,
+                                           model_with_internal_mesh_data::INTERNAL_MESH_PREFIX,
+                                           "");
     if (internal_mesh_setup.size()) {
       _meshes_.plug_internal_meshes(internal_mesh_setup, _logical, models_);
     }
@@ -339,18 +344,51 @@ namespace geomtools {
     return;
   }
 
-
-  void i_model::_at_destroy(const std::string & /* name_ */,
-                            models_col_type * /* models_ */)
+  void i_model::_at_construct(const datatools::properties & /* setup_ */,
+                              models_col_type * /* models_ */)
   {
-    // Nothing done here. TO be overriden by inherited models to free special internal resourcessetup at construction.
+    // // Nothing done here. TO be overriden by inherited models to free special internal resources setup at construction.
+    // DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+    //                  "Invoking the deprecated '_at_construct' method !");
+    // DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+    //                  "Please reimplement using the '_at_construct(const datatools::properties &, geomtools::models_col_type *)' abstract method in place in the geometry model class '" << get_model_id() << "'!")
+    // _at_construct("", setup_, models_);
+    return;
   }
-  
 
-  void i_model::destroy(const std::string & name_,
-                        models_col_type * models_)
+  void i_model::_at_construct(const std::string & /* name_ */,
+                              const datatools::properties & /* setup_ */,
+                              models_col_type * /* models_ */)
   {
-    _at_destroy(name_, models_);
+    // Unused deprecated method
+    DT_THROW(std::logic_error, "Deprecated method ! Check the new 'geomtools::i_model' interface!");
+  }
+
+  void i_model::_at_destroy(models_col_type * /* models_ */)
+  {
+    // Nothing done here. TO be overriden by inherited models to free special internal resources setup at construction.
+  }
+
+  void i_model::destroy(models_col_type * models_)
+  {
+    _at_destroy(models_);
+    return;
+  }
+
+  void i_model::construct(models_col_type * models_)
+  {
+    datatools::properties dummy_setup;
+    std::vector<std::string> dummy;
+    construct("", dummy_setup, dummy, models_);
+    return;
+  }
+
+  void i_model::construct(const std::string & name_,                           
+                          models_col_type * models_)
+  {
+    datatools::properties dummy_setup;
+    std::vector<std::string> dummy;
+    construct(name_, dummy_setup, dummy, models_);
     return;
   }
 
@@ -385,6 +423,7 @@ namespace geomtools {
     if (_name_.empty() && ! name_.empty()) {
       set_name(name_);
     }
+    DT_THROW_IF(_name_.empty(), std::logic_error, "Missing geometry model name !");
     {
       // Set description for logical parameters :
       std::ostringstream log_params_desc;
@@ -396,7 +435,7 @@ namespace geomtools {
                 properties_prefixes_);
     _mandatory_pre_construct(setup, models_);
     _pre_construct(setup, models_);
-    _at_construct(name_, setup, models_);
+    _at_construct(setup, models_);
     _post_construct(setup, models_);
     _mandatory_post_construct(setup, models_);
     _logical.set_geometry_model(*this);

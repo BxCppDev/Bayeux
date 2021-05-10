@@ -3,13 +3,9 @@
  * Creation date: 2010-02-14
  * Last modified: 2015-02-16
  *
- * License:
- *
  * Description:
  *
- *   A regular_polygon in x-y plane
- *
- * History:
+ *   A regular polygon in x-y plane 2D shape
  *
  */
 

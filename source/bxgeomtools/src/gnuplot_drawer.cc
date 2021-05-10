@@ -572,6 +572,12 @@ namespace geomtools {
         shown = get_properties().fetch_boolean(force_show_property_name());
       }
 
+      // Add 2021-05-05 (FM)
+      if (!shown) {
+        DT_LOG_DEBUG(local_priority, "force show flag for logical volume " << log_.get_name());
+        shown = true;
+      }
+
       // Default envelope visibility for the logical volume:
       if (visibility::is_hidden_envelope(log_visu_config)) {
         DT_LOG_DEBUG(local_priority, "found hidden envelope directive in log visu config");
@@ -793,7 +799,10 @@ namespace geomtools {
       DT_LOG_DEBUG(local_priority, "found hidden envelope directive in visu config (unused)");
       //shown_envelope = false;
     }
-
+    if (!shown) {
+      DT_LOG_DEBUG(local_priority, "force show flag for logical volume " << log_.get_name());
+      shown = true;
+    }
     color::code_type color = color::COLOR_DEFAULT;
     color::code_type former_color = color::get_color(color::default_color());
     if (visibility::has_color (visu_config)) {
@@ -813,13 +822,16 @@ namespace geomtools {
       gnuplot_drawer::_draw_(log_, p_, max_display_level);
     }
 
-    _xrange_.min = BB.get_x_range().get_min ();
-    _xrange_.max = BB.get_x_range().get_max ();
-    _yrange_.min = BB.get_y_range().get_min ();
-    _yrange_.max = BB.get_y_range().get_max ();
-    _zrange_.min = BB.get_z_range().get_min ();
-    _zrange_.max = BB.get_z_range().get_max ();
-
+    try {
+      _xrange_.min = BB.get_x_range().get_min ();
+      _xrange_.max = BB.get_x_range().get_max ();
+      _yrange_.min = BB.get_y_range().get_min ();
+      _yrange_.max = BB.get_y_range().get_max ();
+      _zrange_.min = BB.get_z_range().get_min ();
+      _zrange_.max = BB.get_z_range().get_max ();
+    } catch (std::exception & error) {
+      DT_THROW(std::logic_error, error.what());
+    }
     double dx = _xrange_.max - _xrange_.min;
     double dy = _yrange_.max - _yrange_.min;
     double dz = _zrange_.max - _zrange_.min;

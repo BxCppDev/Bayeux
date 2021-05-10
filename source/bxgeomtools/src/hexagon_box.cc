@@ -419,6 +419,44 @@ namespace geomtools {
     return in_;
   }
 
+  void hexagon_box::compute_deflated(hexagon_box & deflated_,
+                                     double by_r_,
+                                     double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid hexagon box!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double r = get_radius();
+    double z = get_z();
+    r -= r_eps;
+    z -= (2 * z_eps);
+    deflated_.reset();
+    deflated_.set(r, z);
+    deflated_.lock();
+    return;
+  }
+
+  void hexagon_box::compute_inflated(hexagon_box & inflated_,
+                                     double by_r_,
+                                     double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid hexagon box!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double r = get_radius();
+    double z = get_z();
+    r += r_eps;
+    z += (2 * z_eps);
+    inflated_.reset();
+    inflated_.set(r, z);
+    inflated_.lock();
+    return;
+  }
+
 } // end of namespace geomtools
 
 // end of hexagon_box.cc

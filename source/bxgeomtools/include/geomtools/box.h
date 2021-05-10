@@ -1,15 +1,11 @@
 /// \file geomtools/box.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2015-02-15
- *
- * License:
+ * Last modified: 2021-04-24
  *
  * Description:
  *
- *  Box solid shape
- *
- * History:
+ *  Box 3D solid shape
  *
  */
 
@@ -52,21 +48,21 @@ namespace geomtools {
 
     /// \brief Masks used for the 6 faces of the box
     enum faces_mask_type {
-      FACE_NONE   = face_identifier::FACE_BITS_NONE,
-      _FACE_BEGIN = 0x1,
-      FACE_BACK   = 0x1,
-      FACE_FRONT  = 0x2,
-      FACE_LEFT   = 0x4,
-      FACE_RIGHT  = 0x8,
-      FACE_BOTTOM = 0x10,
-      FACE_TOP    = 0x20,
-      _FACE_END   = 0x40,
-      FACE_ALL    = (FACE_BACK
-                     | FACE_FRONT
-                     | FACE_LEFT
-                     | FACE_RIGHT
-                     | FACE_BOTTOM
-                     | FACE_TOP)
+                          FACE_NONE   = face_identifier::FACE_BITS_NONE,
+                          _FACE_BEGIN = 0x1,
+                          FACE_BACK   = 0x1,
+                          FACE_FRONT  = 0x2,
+                          FACE_LEFT   = 0x4,
+                          FACE_RIGHT  = 0x8,
+                          FACE_BOTTOM = 0x10,
+                          FACE_TOP    = 0x20,
+                          _FACE_END   = 0x40,
+                          FACE_ALL    = (FACE_BACK
+                                         | FACE_FRONT
+                                         | FACE_LEFT
+                                         | FACE_RIGHT
+                                         | FACE_BOTTOM
+                                         | FACE_TOP)
     };
 
     /// Return the min X coordinates (bounding box)
@@ -162,22 +158,40 @@ namespace geomtools {
     /// Return a collection of face info objects
     unsigned int compute_faces(face_info_collection_type & faces_) const override;
 
+    /// Compute a deflated version of the box
+    void compute_deflated(box & deflated_,
+                          double by_x_,
+                          double by_y_,
+                          double by_z_);
+
+    /// Compute an inflated version of the box
+    void compute_inflated(box & deflated_,
+                          double by_x_,
+                          double by_y_,
+                          double by_z_);
+
+    /// Compute an envelope box at user tolerance
+    void compute_envelope(box & envelope_,
+                          double tolerance_x_,
+                          double tolerance_y_,
+                          double tolerance_z_);
+
     /// Check if a point is inside the box
     bool is_inside(const vector_3d &,
-                           double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                   double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Check if a point is inside the box
     bool is_outside(const vector_3d &,
-                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                    double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the surface bit a point belongs to
     face_identifier on_surface(const vector_3d &,
-                                       const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
-                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                               const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
+                               double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the vector normal to the surface at some position
     vector_3d get_normal_on_surface(const vector_3d & a_position,
-                                            const face_identifier & a_surface_bit) const override;
+                                    const face_identifier & a_surface_bit) const override;
 
     /// Print operator
     friend std::ostream & operator<<( std::ostream & , const box & );
@@ -187,36 +201,36 @@ namespace geomtools {
 
     /// Find the intercept point of a segment with the box
     bool find_intercept(const vector_3d & a_from,
-                                const vector_3d & a_direction,
-                                face_intercept_info & a_intercept,
-                                double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                        const vector_3d & a_direction,
+                        face_intercept_info & a_intercept,
+                        double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
     void tree_dump(std::ostream & a_out         = std::clog,
-                           const std::string & a_title  = "",
-                           const std::string & a_indent = "",
-                           bool a_inherit          = false) const override;
+                   const std::string & a_title  = "",
+                   const std::string & a_indent = "",
+                   bool a_inherit          = false) const override;
 
     /// \brief 3D rendering options
     enum box_wires_rendering_option_type {
-      WR_BOX_NO_BACK_FACE   = (WR_BASE_LAST << 1), //!< Do not render the X- (back) face
-      WR_BOX_NO_FRONT_FACE  = (WR_BASE_LAST << 2), //!< Do not render the X+ (front) face
-      WR_BOX_NO_LEFT_FACE   = (WR_BASE_LAST << 3), //!< Do not render the Y- (left) face
-      WR_BOX_NO_RIGHT_FACE  = (WR_BASE_LAST << 4), //!< Do not render the Y+ (right) face
-      WR_BOX_NO_BOTTOM_FACE = (WR_BASE_LAST << 5), //!< Do not render the Z- (bottom) face
-      WR_BOX_NO_TOP_FACE    = (WR_BASE_LAST << 6), //!< Do not render the Z+ (top) face
-      WR_BOX_LAST           = (WR_BOX_NO_TOP_FACE),    //!< Last defined bit
-      WR_BOX_MASK           = (WR_BOX_NO_BACK_FACE
-                               | WR_BOX_NO_FRONT_FACE
-                               | WR_BOX_NO_LEFT_FACE
-                               | WR_BOX_NO_RIGHT_FACE
-                               | WR_BOX_NO_BOTTOM_FACE
-                               | WR_BOX_NO_TOP_FACE)   //!< Rendering options bit mask
+                                          WR_BOX_NO_BACK_FACE   = (WR_BASE_LAST << 1), //!< Do not render the X- (back) face
+                                          WR_BOX_NO_FRONT_FACE  = (WR_BASE_LAST << 2), //!< Do not render the X+ (front) face
+                                          WR_BOX_NO_LEFT_FACE   = (WR_BASE_LAST << 3), //!< Do not render the Y- (left) face
+                                          WR_BOX_NO_RIGHT_FACE  = (WR_BASE_LAST << 4), //!< Do not render the Y+ (right) face
+                                          WR_BOX_NO_BOTTOM_FACE = (WR_BASE_LAST << 5), //!< Do not render the Z- (bottom) face
+                                          WR_BOX_NO_TOP_FACE    = (WR_BASE_LAST << 6), //!< Do not render the Z+ (top) face
+                                          WR_BOX_LAST           = (WR_BOX_NO_TOP_FACE),    //!< Last defined bit
+                                          WR_BOX_MASK           = (WR_BOX_NO_BACK_FACE
+                                                                   | WR_BOX_NO_FRONT_FACE
+                                                                   | WR_BOX_NO_LEFT_FACE
+                                                                   | WR_BOX_NO_RIGHT_FACE
+                                                                   | WR_BOX_NO_BOTTOM_FACE
+                                                                   | WR_BOX_NO_TOP_FACE)   //!< Rendering options bit mask
     };
 
     /// Generate a list of polylines representing the contour of the shape (for display clients)
     void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const override;
+                             uint32_t options_ = 0) const override;
 
     /// Compute the positions of the 8 vertexes of the box
     void compute_vertexes(std::vector<vector_3d> & vv_) const;

@@ -581,7 +581,51 @@ namespace geomtools {
     return nfaces;
   }
 
+  void cylinder::compute_deflated(cylinder & deflated_,
+                                  double by_r_,
+                                  double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double r = get_r();
+    double z = get_z();
+    r -= r_eps;
+    z -= (2 * z_eps);
+    deflated_.reset();
+    deflated_.set(r, z);
+    deflated_.lock();
+    return;
+  }
 
+  void cylinder::compute_inflated(cylinder & inflated_,
+                                  double by_r_,
+                                  double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
+    double r_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_r_) and by_r_ > 0.0) r_eps = by_r_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double r = get_r();
+    double z = get_z();
+    r += r_eps;
+    z += (2 * z_eps);
+    inflated_.reset();
+    inflated_.set(r, z);
+    inflated_.lock();
+    return;
+  }
+
+  void cylinder::compute_envelope(cylinder & envelope_,
+                                  double tolerance_r_,
+                                  double tolerance_z_)
+  {
+    compute_inflated(envelope_, tolerance_r_, tolerance_z_);
+  }
+  
   void cylinder::generate_wires_self(wires_type & wires_,
                                      uint32_t options_) const
   {

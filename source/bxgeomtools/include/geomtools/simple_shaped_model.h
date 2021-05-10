@@ -1,17 +1,13 @@
 /// \file geomtools/simple_shaped_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-13
- * Last modified: 2014-05-19
- *
- * License:
+ * Last modified: 2021-04-23
  *
  * Description:
  *
  *   Model implementing a logical volume with a simple shape
  *   box, cylinder, sphere, tube, polycone, polyhedra or whatever solid (3D-shape)
  *   registerable in a shape factory.
- *
- * History:
  *
  */
 
@@ -20,6 +16,7 @@
 
 // Standard library:
 #include <string>
+#include <memory>
 
 // This project:
 #include <geomtools/i_model.h>
@@ -27,6 +24,7 @@
 #include <geomtools/physical_volume.h>
 #include <geomtools/logical_volume.h>
 #include <geomtools/model_with_internal_items_tools.h>
+#include <geomtools/plain_model.h>
 
 namespace geomtools {
 
@@ -91,6 +89,27 @@ namespace geomtools {
 
     std::string get_model_id () const override;
 
+    struct envelope_tolerance_type
+    {
+      bool   deflated_shape = false;
+      double x_tolerance = datatools::invalid_real();
+      double y_tolerance = datatools::invalid_real();
+      double r_tolerance = datatools::invalid_real();
+      double z_tolerance = datatools::invalid_real();
+      double theta_tolerance = datatools::invalid_real();
+      double phi_tolerance = datatools::invalid_real();
+      bool has_x_tolerance() const { return datatools::is_valid(x_tolerance); }
+      bool has_y_tolerance() const { return datatools::is_valid(y_tolerance); }
+      bool has_z_tolerance() const { return datatools::is_valid(z_tolerance); }
+      bool has_r_tolerance() const { return datatools::is_valid(r_tolerance); }    
+      bool has_theta_tolerance() const { return datatools::is_valid(theta_tolerance); }    
+      bool has_phi_tolerance() const { return datatools::is_valid(phi_tolerance); }
+    };
+    
+    const envelope_tolerance_type & get_envelope_tolerance() const;
+    
+    envelope_tolerance_type & grab_envelope_tolerance();
+    
     void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
@@ -99,37 +118,30 @@ namespace geomtools {
   protected:
 
     void _pre_construct (datatools::properties & setup_,
-                                 models_col_type * models_) override;
+                         models_col_type * models_) override;
 
     void _post_construct (datatools::properties & setup_,
-                                  models_col_type * models_) override;
+                          models_col_type * models_) override;
 
-    void _at_construct (const std::string & name_,
-                                const datatools::properties & config_,
-                                models_col_type * models_ = 0) override;
+    void _at_construct (const datatools::properties & config_,
+                        models_col_type * models_) override;
 
-    virtual void _construct_box (const std::string & name_,
-                                 const datatools::properties & config_,
+    virtual void _construct_box (const datatools::properties & config_,
                                  models_col_type * models_);
 
-    virtual void _construct_cylinder (const std::string & name_,
-                                      const datatools::properties & config_,
+    virtual void _construct_cylinder (const datatools::properties & config_,
                                       models_col_type * models_);
 
-    virtual void _construct_sphere (const std::string & name_,
-                                    const datatools::properties & config_,
+    virtual void _construct_sphere (const datatools::properties & config_,
                                     models_col_type * models_);
 
-    virtual void _construct_tube (const std::string & name_,
-                                  const datatools::properties & config_,
+    virtual void _construct_tube (const datatools::properties & config_,
                                   models_col_type * models_);
 
-    virtual void _construct_polycone (const std::string & name_,
-                                      const datatools::properties & config_,
+    virtual void _construct_polycone (const datatools::properties & config_,
                                       models_col_type * models_);
 
-    virtual void _construct_polyhedra (const std::string & name_,
-                                       const datatools::properties & config_,
+    virtual void _construct_polyhedra (const datatools::properties & config_,
                                        models_col_type * models_);
 
   private:
@@ -137,29 +149,28 @@ namespace geomtools {
     shape_build_mode_type _sbm_;             //!< The shape build mode
     std::string _shape_type_id_;             //!< The type identifier of the shape
     std::string _material_name_;             //!< The name of the material the shape is made of
-    filled_utils::filled_type _filled_mode_; //!< The filled mode for tube, polycone or polyhedra (legacy)
-    std::string _filled_material_name_;      //!< The name of the material of the shape cavity for tube, polycone or polyhedra (legacy)
+    filled_utils::filled_type _filled_mode_; //!< The filled mode for closed tube, polycone or polyhedra (legacy)
+    std::string _filled_material_name_;      //!< The name of the material of the shape cavity for closed tube, polycone or polyhedra (legacy)
     std::string _filled_label_;              //!< The label of the shape in enveloppe filled mode (legacy)
+    envelope_tolerance_type _envelope_tolerance_; //!< Envelope's tolerance data (if needed)
+        
+    std::shared_ptr<geomtools::box> _box_;
+    std::shared_ptr<geomtools::cylinder> _cylinder_;
+    std::shared_ptr<geomtools::tube> _tube_;
+    std::shared_ptr<geomtools::sphere> _sphere_;
+    std::shared_ptr<geomtools::polycone> _polycone_;
+    std::shared_ptr<geomtools::polyhedra> _polyhedra_;
+    std::shared_ptr<geomtools::i_shape_3d> _solid_;       //!< Solid handle
+    std::shared_ptr<geomtools::i_shape_3d> _inner_shape_ = nullptr; //!< For filled tube or polycone or polyhedra
+    std::shared_ptr<geomtools::i_shape_3d> _outer_shape_ = nullptr; //!< For mother polycone or polyhedra
 
-    // Effective solids:
-    geomtools::box *       _box_;
-    geomtools::cylinder *  _cylinder_;
-    geomtools::tube *      _tube_;
-    geomtools::sphere *    _sphere_;
-    geomtools::polycone *  _polycone_;
-    geomtools::polyhedra * _polyhedra_;
-
-    geomtools::i_shape_3d * _solid_;       //!< Solid handle
-    geomtools::i_shape_3d * _inner_shape_; //!< For filled tube or polycone or polyhedra
-    geomtools::i_shape_3d * _outer_shape_; //!< For mother polycone or polyhedra
-
+    plain_model             _inner_model_;      //!< Inner plain model
     placement               _inner_placement_;  //!< Inner daughter volume placement
-    logical_volume          _inner_logical_;    //!< Inner logical volume
     physical_volume         _inner_phys_;       //!< Inner physical volume
 
     //logical_volume        * _daughter_owner_logical_; //!< The logical volume that is the top level mother of all daughter volumes implied by this model
 
-    MWIM                    _internals_;        //!< Internal items within the shape
+    MWIM                    _internals_;        //!< Internal items within the target shape
     MWIM                    _filled_internals_; //!< Internal items within the cavity (tube, polycone, polyhedra)
 
     // registration interface :

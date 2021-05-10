@@ -70,16 +70,15 @@ namespace geomtools {
 
     /// Pre-construction
     void _pre_construct(datatools::properties & setup_,
-                                models_col_type * models_ = 0) override;
+                        models_col_type * models_) override;
 
     /// Construction
-    void _at_construct(const std::string & name_,
-                               const datatools::properties & config_,
-                               models_col_type * models_ = 0) override;
+    void _at_construct(const datatools::properties & config_,
+                       models_col_type * models_) override;
 
     /// Post-construction
     void _post_construct (datatools::properties & setup_,
-                                  models_col_type * models_ = 0) override;
+                          models_col_type * models_) override;
 
   private:
 

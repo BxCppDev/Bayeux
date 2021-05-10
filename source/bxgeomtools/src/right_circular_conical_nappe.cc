@@ -502,6 +502,14 @@ namespace geomtools {
     // std::cerr << "DEVEL: right_circular_conical_nappe::generate_wires_self: "
     //           << "z = " << z
     //           << std::endl;
+    if (base_options & WR_BASE_BEST_GRID_SAMPLING) {
+      // double rmax = std::max(rt, rb);
+      double zstep = 0.5 * (rt+rb);
+      int guessed_nsamples_z = (int) (z / zstep);
+      if (guessed_nsamples_z < 2) guessed_nsamples_z = 2;
+      // Relative sampling density could be addressed here using sampling_level_type ratio computed from the WR_BASE_GRID_XXX_DENSITY option
+      nsamples_z = guessed_nsamples_z;
+    }
     double dz   = z / (nsamples_z - 1);
     // std::cerr << "DEVEL: right_circular_conical_nappe::generate_wires_self: "
     //           << "dz = " << dz

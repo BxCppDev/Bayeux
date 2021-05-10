@@ -52,8 +52,8 @@ namespace geomtools {
       WR_BASE_HIGH_ANGLE_SAMPLING      = (WR_BASE_GRID << 6),  //!< Use high sampling for angles
       WR_BASE_VERY_HIGH_ANGLE_SAMPLING = (WR_BASE_GRID << 7),  //!< Use very high sampling for angles
       WR_BASE_HUGE_ANGLE_SAMPLING      = (WR_BASE_GRID << 8),  //!< Use huge sampling for angles
-      WR_BASE_UNUSED_09                = (WR_BASE_GRID << 9),  //!< Reserved for future usage
-      WR_BASE_UNUSED_10                = (WR_BASE_GRID << 10), //!< Reserved for future usage
+      WR_BASE_BEST_GRID_SAMPLING       = (WR_BASE_GRID << 9),  //!< Activate grid with guessed best density
+      WR_BASE_BEST_ANGLE_SAMPLING      = (WR_BASE_GRID << 10), //!< Use guessed best sampling for angles
       WR_BASE_UNUSED_11                = (WR_BASE_GRID << 11), //!< Reserved for future usage
       WR_BASE_UNUSED_12                = (WR_BASE_GRID << 12), //!< Reserved for future usage
       WR_BASE_UNUSED_13                = (WR_BASE_GRID << 13), //!< Reserved for future usage
@@ -248,12 +248,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
- // GEOMTOOLS_I_WIRES_3D_RENDERING_H
+#endif // GEOMTOOLS_I_WIRES_3D_RENDERING_H

@@ -45,6 +45,9 @@ int main (int argc_, char ** argv_)
     bool locate_bulk   = false;
     bool draw          = false; // Interactive plot
     bool do_intercept  = true;
+    bool do_envelope = false;
+    bool do_deflated = false;
+    bool do_inflated = false;
 
     int iarg = 1;
     while (iarg < argc_) {
@@ -65,6 +68,9 @@ int main (int argc_, char ** argv_)
       // if (arg == "-T" || arg == "--no-top")    do_no_top = true;
       if (arg == "-L" || arg == "--no-locate") do_locate = false;
       if (arg == "-P" || arg == "--no-intercept") do_intercept = false;
+      if (arg == "-e" || arg == "--envelope") do_envelope = true;
+      if (arg == "-f" || arg == "--deflated") do_deflated = true;
+      if (arg == "-F" || arg == "--inflated") do_inflated = true;
 
       iarg++;
     }
@@ -291,7 +297,83 @@ int main (int argc_, char ** argv_)
       tmp_file.out() << std::endl << std::endl;
       data_index["draw2"] = gpindex++;
       std::clog << "INFO: Draw solid again done." << std::endl;
-   }
+    }
+  
+    if (do_envelope) {
+      tmp_file.out() << "# polycone envelope (index 4):" << std::endl;
+      geomtools::polycone my_polycone_envelope;
+      my_solid.compute_envelope(my_polycone_envelope, 1.0, 1.0);
+      // Draw envelope :
+      geomtools::wires_type envelope_wires;
+      my_polycone_envelope.generate_wires(envelope_wires,
+                                          my_solid_placement,
+                                          geomtools::i_wires_3d_rendering::WR_NONE
+                                          | geomtools::i_wires_3d_rendering::WR_BASE_GRID
+                                          | geomtools::i_wires_3d_rendering::WR_BASE_BEST_GRID_SAMPLING
+                                          // | geomtools::i_wires_3d_rendering::WR_BASE_GRID_HIGH_DENSITY
+                                          //| geomtools::i_wires_3d_rendering::WR_BASE_BOUNDINGS
+                                          // | geomtools::i_wires_3d_rendering::WR_BASE_EXPLODE
+                                          // | geomtools::tube::WR_TUBE_NO_BOTTOM_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_TOP_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_INNER_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_OUTER_FACE
+                                          );
+      geomtools::gnuplot_draw::draw_wires(tmp_file.out(), envelope_wires);
+      tmp_file.out() << std::endl << std::endl;
+      data_index["envelope"] = gpindex++;
+
+    }
+   
+    if (do_deflated) {
+      tmp_file.out() << "# polycone deflated (index 5):" << std::endl;
+      geomtools::polycone my_polycone_deflated;
+      my_solid.compute_deflated(my_polycone_deflated, 2.0, 2.0, -1.0);
+      // Draw deflated envelope :
+      geomtools::wires_type deflated_wires;
+      my_polycone_deflated.generate_wires(deflated_wires,
+                                          my_solid_placement,
+                                          geomtools::i_wires_3d_rendering::WR_NONE
+                                          | geomtools::i_wires_3d_rendering::WR_BASE_GRID
+                                          | geomtools::i_wires_3d_rendering::WR_BASE_BEST_GRID_SAMPLING
+                                          // | geomtools::i_wires_3d_rendering::WR_BASE_GRID_HIGH_DENSITY
+                                          //| geomtools::i_wires_3d_rendering::WR_BASE_BOUNDINGS
+                                          // | geomtools::i_wires_3d_rendering::WR_BASE_EXPLODE
+                                          // | geomtools::tube::WR_TUBE_NO_BOTTOM_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_TOP_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_INNER_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_OUTER_FACE
+                                          );
+      geomtools::gnuplot_draw::draw_wires(tmp_file.out(), deflated_wires);
+      tmp_file.out() << std::endl << std::endl;
+      data_index["deflated"] = gpindex++;
+
+    }
+   
+    if (do_inflated) {
+      tmp_file.out() << "# polycone inflated (index 6):" << std::endl;
+      geomtools::polycone my_polycone_inflated;
+      my_solid.compute_inflated(my_polycone_inflated, 2.0, 2.0, -1.0);
+      // Draw inflated envelope :
+      geomtools::wires_type inflated_wires;
+      my_polycone_inflated.generate_wires(inflated_wires,
+                                          my_solid_placement,
+                                          geomtools::i_wires_3d_rendering::WR_NONE
+                                          | geomtools::i_wires_3d_rendering::WR_BASE_GRID
+                                          | geomtools::i_wires_3d_rendering::WR_BASE_BEST_GRID_SAMPLING
+                                          // | geomtools::i_wires_3d_rendering::WR_BASE_GRID_HIGH_DENSITY
+                                          //| geomtools::i_wires_3d_rendering::WR_BASE_BOUNDINGS
+                                          // | geomtools::i_wires_3d_rendering::WR_BASE_EXPLODE
+                                          // | geomtools::tube::WR_TUBE_NO_BOTTOM_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_TOP_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_INNER_FACE
+                                          // | geomtools::tube::WR_TUBE_NO_OUTER_FACE
+                                          );
+      geomtools::gnuplot_draw::draw_wires(tmp_file.out(), inflated_wires);
+      tmp_file.out() << std::endl << std::endl;
+      data_index["inflated"] = gpindex++;
+
+    }
+    
     my_solid.tree_dump (std::clog, "Polycone");
 
     if (draw) {
@@ -345,6 +427,36 @@ int main (int argc_, char ** argv_)
         g1.showonscreen(); // window output
         geomtools::gnuplot_drawer::wait_for_key();
         usleep(2);
+      }
+      
+      if (do_envelope) {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index " << data_index["draw2"] << " title 'Polycone' with lines ";
+        plot_cmd << " , '' index " << data_index["envelope"] << " title 'Envelope' with lines ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
+      }
+      
+      if (do_deflated) {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index " << data_index["draw2"] << " title 'Polycone' with lines ";
+        plot_cmd << " , '' index " << data_index["deflated"] << " title 'Deflated outer' with lines ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
+      }
+     
+      if (do_inflated) {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index " << data_index["draw2"] << " title 'Polycone' with lines ";
+        plot_cmd << " , '' index " << data_index["inflated"] << " title 'Inflated' with lines ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
       }
 
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1

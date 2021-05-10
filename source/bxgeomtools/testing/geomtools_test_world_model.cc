@@ -31,13 +31,11 @@ namespace geomtools {
   {
   }
 
-  void test_world_model::_at_construct (const string & name_,
-                                        const datatools::properties & config_,
+  void test_world_model::_at_construct (const datatools::properties & config_,
                                         models_col_type * models_)
   {
     bool devel = false;
     if (devel) clog << "DEVEL: test_world_model::_at_construct: Entering..." << endl;
-    set_name (name_);
     string material = "vacuum";
     string setup_model_name;
     double phi = 0. * CLHEP::degree;
@@ -132,7 +130,7 @@ namespace geomtools {
         throw runtime_error ("test_world_model::_at_construct: Invalid solid !");
       }
 
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_name (i_model::make_logical_volume_name (get_name()));
     grab_logical ().set_shape (__solid);
     grab_logical ().set_material_ref (material);
 

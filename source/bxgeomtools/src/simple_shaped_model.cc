@@ -1,4 +1,4 @@
-/// \file geomtools/simple_shaped_model.cc
+// \file geomtools/simple_shaped_model.cc
 
 // Ourselves:
 #include <geomtools/simple_shaped_model.h>
@@ -55,6 +55,18 @@ namespace geomtools {
   MWIM & simple_shaped_model::grab_internals ()
   {
     return _internals_;
+  }
+
+  const simple_shaped_model::envelope_tolerance_type &
+  simple_shaped_model::get_envelope_tolerance() const
+  {
+    return _envelope_tolerance_;
+  }
+
+  simple_shaped_model::envelope_tolerance_type &
+  simple_shaped_model::grab_envelope_tolerance()
+  {
+    return _envelope_tolerance_;
   }
 
   const MWIM & simple_shaped_model::get_internals () const
@@ -120,15 +132,6 @@ namespace geomtools {
   simple_shaped_model::simple_shaped_model () : i_model ()
   {
     _sbm_                    = SBM_INVALID;
-    _box_                    = 0;
-    _cylinder_               = 0;
-    _tube_                   = 0;
-    _sphere_                 = 0;
-    _polycone_               = 0;
-    _polyhedra_              = 0;
-    _solid_                  = 0;
-    _inner_shape_            = 0;
-    _outer_shape_            = 0;
     _shape_type_id_          = ""; // no defined shape
     _material_name_          = ""; // material::material_ref_unknown();
     _filled_mode_            = filled_utils::FILLED_NONE;
@@ -139,39 +142,32 @@ namespace geomtools {
   simple_shaped_model::~simple_shaped_model ()
   {
     if (_sbm_ == SBM_LEGACY) {
-      if (_inner_shape_ != 0) delete _inner_shape_;
-      if (_outer_shape_ != 0) delete _outer_shape_;
-      if (_box_ != 0)         delete _box_;
-      if (_cylinder_ != 0)    delete _cylinder_;
-      if (_tube_ != 0)        delete _tube_;
-      if (_sphere_ != 0)      delete _sphere_;
-      if (_polycone_ != 0)    delete _polycone_;
-      if (_polyhedra_ != 0)   delete _polyhedra_;
+      if (_inner_shape_) _inner_shape_.reset();
+      if (_outer_shape_) _outer_shape_.reset();
+      if (_box_) _box_.reset();
+      if (_cylinder_) _cylinder_.reset();
+      if (_tube_) _tube_.reset();
+      if (_sphere_) _sphere_.reset();
+      if (_polycone_) _polycone_.reset();
+      if (_polyhedra_) _polyhedra_.reset();
     }
-    _box_         = 0;
-    _cylinder_    = 0;
-    _tube_        = 0;
-    _sphere_      = 0;
-    _polycone_    = 0;
-    _polyhedra_   = 0;
-    _inner_shape_ = 0;
-    _outer_shape_ = 0;
-    _solid_ = 0;
+    if (_solid_) _solid_.reset();
     return;
   }
 
-  void simple_shaped_model::_at_construct (const std::string & name_,
-                                           const datatools::properties & config_,
+  void simple_shaped_model::_at_construct (const datatools::properties & config_,
                                            models_col_type * models_)
   {
-    DT_LOG_TRACE (get_logging_priority (), "Entering...");
+    datatools::logger::priority logging = get_logging_priority();
+    logging = datatools::logger::PRIO_DEBUG;
+    DT_LOG_TRACE(logging, "Entering...");
 
     // Initialization:
     _filled_material_name_ = material::material_ref_unknown();
 
     // Main shape material:
     DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error,
-                 "Missing 'material.ref' property in simple shaped model '" << name_ << "' !");
+                 "Missing 'material.ref' property in simple shaped model '" << get_name() << "' !");
     _material_name_ = config_.fetch_string ("material.ref");
 
     if (config_.has_key("shape_build_mode")) {
@@ -182,7 +178,7 @@ namespace geomtools {
         _sbm_ = SBM_FACTORY;
       } else {
         DT_THROW(std::logic_error,
-                 "Invalid label for shape build mode ('" << sbm_label << "') property in simple shaped model '" << name_ << "' !");
+                 "Invalid label for shape build mode ('" << sbm_label << "') property in simple shaped model '" << get_name() << "' !");
       }
     }
     if (_sbm_ == SBM_INVALID) {
@@ -191,7 +187,7 @@ namespace geomtools {
     }
 
     // Set the logical name:
-    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_name(i_model::make_logical_volume_name(get_name()));
 
     // Parsing shape:
 
@@ -231,22 +227,22 @@ namespace geomtools {
         std::string shape_ref = config_.fetch_string("shape_ref");
         DT_THROW_IF(!get_shape_factory().has(shape_ref), std::logic_error,
                     "Shape factory does not contains a solid named '" << shape_ref
-                    << "' for model '" << name_ << "'!");
-        _solid_ = dynamic_cast<i_shape_3d *>(const_cast<i_object_3d *>(&get_shape_factory().get(shape_ref)));
+                    << "' for model '" << get_name() << "'!");
+        _solid_.reset(dynamic_cast<i_shape_3d *>(const_cast<i_object_3d *>(&get_shape_factory().get(shape_ref))));
       } else {
         DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error,
-                     "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
+                     "Missing 'shape_type' property in simple shaped model '" << get_name() << "' !");
         _shape_type_id_ = config_.fetch_string("shape_type");
         datatools::properties shape_config;
         config_.export_and_rename_starting_with(shape_config, "shape.", "");
         std::ostringstream solid_name_oss;
-        solid_name_oss << name_ << i_model::solid_suffix();
+        solid_name_oss << get_name() << i_model::solid_suffix();
         i_object_3d & obj3d = grab_shape_factory().create(solid_name_oss.str(), _shape_type_id_, shape_config);
         // obj3d.set_name(solid_name_oss.str());
         DT_THROW_IF(obj3d.get_dimensional() != i_object_3d::DIMENSIONAL_3,
                     std::logic_error,
                     "Object provided by the shape factory (type='" << _shape_type_id_ << "') is not a 3D-shape!");
-        _solid_ = dynamic_cast<i_shape_3d *>(&obj3d);
+        _solid_.reset(dynamic_cast<i_shape_3d *>(&obj3d));
       }
 
       // 2015-06-12, FM: Add missing material name in the logical
@@ -255,7 +251,7 @@ namespace geomtools {
     } else {
       // Legacy solid:
       DT_THROW_IF(! config_.has_key("shape_type"), std::logic_error,
-                  "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
+                  "Missing 'shape_type' property in simple shaped model '" << get_name() << "' !");
       _shape_type_id_ = config_.fetch_string("shape_type");
 
       // Shape fill mode:
@@ -265,7 +261,7 @@ namespace geomtools {
         _filled_mode_ = filled_utils::get_filled_mode(filled_mode_label);
         DT_THROW_IF(_filled_mode_ == filled_utils::FILLED_UNDEFINED,
                     std::logic_error,
-                    "Invalid filled mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << name_ << "' !");
+                    "Invalid filled mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << get_name() << "' !");
         // if (is_filled()) {
         //   DT_LOG_WARNING(get_logging_priority (),
         //                  "Filled mode '" << filled_utils::get_filled_mode_label(_filled_mode_)
@@ -274,14 +270,71 @@ namespace geomtools {
       }
 
       // Label of the shape in 'filled envelope' mode:
-      if (is_filled_by_envelope()){
+      if (is_filled_by_envelope()) {
+        DT_LOG_DEBUG(logging, "-> filled_by_envelope");
+       
+        if (config_.has_flag("envelope.deflated")) {
+          _envelope_tolerance_.deflated_shape = true;
+          DT_LOG_DEBUG(logging, "Envelope -> deflated");
+        }
+ 
+        if (config_.has_key("envelope.tolerance.r")) {
+          double r_eps = config_.fetch_real_with_explicit_dimension("envelope.tolerance.r",
+                                                                   "length");
+          DT_THROW_IF(r_eps <= 0.0, std::domain_error,
+                      "Invalid envelope radial tolerance!")
+          _envelope_tolerance_.r_tolerance = r_eps;
+          DT_LOG_DEBUG(logging, "Envelope -> tolerance.r=" <<  _envelope_tolerance_.r_tolerance);
+        }
+
+        if (config_.has_key("envelope.tolerance.x")) {
+          double x_eps = config_.fetch_real_with_explicit_dimension("envelope.tolerance.x",
+                                                                   "length");
+          DT_THROW_IF(x_eps <= 0.0, std::domain_error,
+                      "Invalid envelope tolerance on X-axis!")
+          _envelope_tolerance_.x_tolerance = x_eps;
+        }
+
+        if (config_.has_key("envelope.tolerance.y")) {
+          double y_eps = config_.fetch_real_with_explicit_dimension("envelope.tolerance.y",
+                                                                   "length");
+          DT_THROW_IF(y_eps <= 0.0, std::domain_error,
+                      "Invalid envelope tolerance on Y-axis!")
+          _envelope_tolerance_.y_tolerance = y_eps;
+        }
+
+        if (config_.has_key("envelope.tolerance.theta")) {
+          double theta_eps = config_.fetch_real_with_explicit_dimension("envelope.tolerance.theta",
+                                                                   "angle");
+          DT_THROW_IF(theta_eps <= 0.0, std::domain_error,
+                      "Invalid envelope tolerance on theta angle (colatitude)!")
+          _envelope_tolerance_.theta_tolerance = theta_eps;
+        }
+
+        if (config_.has_key("envelope.tolerance.phi")) {
+          double phi_eps = config_.fetch_real_with_explicit_dimension("envelope.tolerance.phi",
+                                                                   "angle");
+          DT_THROW_IF(phi_eps <= 0.0, std::domain_error,
+                      "Invalid envelope tolerance on phi angle (longitude)!")
+          _envelope_tolerance_.phi_tolerance = phi_eps;
+        }
+
+        if (config_.has_key("envelope.tolerance.z")) {
+          double z_eps = config_.fetch_real_with_explicit_dimension("envelope.tolerance.z",
+                                                                   "length");
+          DT_THROW_IF(z_eps <= 0.0, std::domain_error,
+                      "Invalid envelope tolerance on Z-axis!")
+          _envelope_tolerance_.z_tolerance = z_eps;
+          DT_LOG_DEBUG(logging, "Envelope -> tolerance.z=" <<  _envelope_tolerance_.z_tolerance);
+        }
+        
         _filled_label_ = _shape_type_id_ + "_by_envelope";
         if (config_.has_key("filled_label")) {
           _filled_label_ = config_.fetch_string("filled_label");
         }
         DT_THROW_IF(_filled_label_.empty(),
                      std::logic_error,
-                     "Invalid filled label '" << _filled_label_ << "' property in simple shaped (tube) model '" << name_ << "' !");
+                     "Invalid filled label '" << _filled_label_ << "' property in simple shaped (tube) model '" << get_name() << "' !");
         DT_LOG_DEBUG(get_logging_priority(), "Filled label is '" << _filled_label_ << "'!");
       }
 
@@ -290,30 +343,30 @@ namespace geomtools {
         // Parsing material:
         DT_THROW_IF (! config_.has_key ("material.filled.ref"),
                      std::logic_error,
-                     "Missing 'material.filled.ref' property in simple shaped (tube) model '" << name_ << "' !");
+                     "Missing 'material.filled.ref' property in simple shaped (tube) model '" << get_name() << "' !");
         _filled_material_name_ = config_.fetch_string ("material.filled.ref");
       }
 
       if (get_shape_type_id () == "box") {
         // Box case:
-        _construct_box (name_, config_, models_);
+        _construct_box (config_, models_);
       } else if (get_shape_type_id () == "cylinder") {
         // Cylinder case:
-        _construct_cylinder (name_, config_, models_);
+        _construct_cylinder (config_, models_);
       } else if (get_shape_type_id () == "sphere") {
         // Sphere case:
-        _construct_sphere (name_, config_, models_);
+        _construct_sphere (config_, models_);
       } else if (get_shape_type_id () == "tube") {
         // Tube case:
-        _construct_tube (name_, config_, models_);
+        _construct_tube (config_, models_);
       } else if (get_shape_type_id () == "polycone") {
         // Polycone case:
-        _construct_polycone (name_, config_, models_);
+        _construct_polycone (config_, models_);
       } else if (get_shape_type_id () == "polyhedra") {
         // Polyhedra case:
-        _construct_polyhedra (name_, config_, models_);
+        _construct_polyhedra (config_, models_);
       } else {
-        DT_THROW_IF (true, std::logic_error, "Shape '" << get_shape_type_id () << "' is not supported in simple shaped model '" << name_ << "' !");
+        DT_THROW_IF (true, std::logic_error, "Shape '" << get_shape_type_id () << "' is not supported in simple shaped model '" << get_name() << "' !");
       }
     }
 
@@ -328,13 +381,12 @@ namespace geomtools {
     return;
   }
 
-  void simple_shaped_model::_construct_box (const std::string & name_,
-                                            const datatools::properties & config_,
+  void simple_shaped_model::_construct_box (const datatools::properties & config_,
                                             models_col_type * /*models_*/)
   {
-    DT_LOG_DEBUG(get_logging_priority(), "Construct box named '" << name_ << "'");
+    DT_LOG_DEBUG(get_logging_priority(), "Construct box named '" << get_name() << "'");
     // Build the box:
-    _box_ = new box;
+    _box_.reset(new box);
     try {
       DT_LOG_DEBUG(get_logging_priority(), "Initialize box from config: ");
       if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
@@ -347,76 +399,72 @@ namespace geomtools {
       }
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
-      delete _box_;
+      _box_.reset();
       throw error;
     }
     DT_THROW_IF (! _box_->is_valid(), std::logic_error,
-                 "Invalid box parameters in simple shaped (box) model '" << name_ << "' !");
+                 "Invalid box parameters in simple shaped (box) model '" << get_name() << "' !");
     DT_LOG_DEBUG(get_logging_priority(), "Box validity: " << _box_->is_valid());
     _solid_ = _box_;
     grab_logical().set_material_ref(_material_name_);
     return;
   }
 
-  void simple_shaped_model::_construct_cylinder (const std::string & name_,
-                                                 const datatools::properties & config_,
+  void simple_shaped_model::_construct_cylinder (const datatools::properties & config_,
                                                  models_col_type * /*models_*/)
   {
     // Build the cylinder:
-    _cylinder_ = new cylinder;
+    _cylinder_.reset(new cylinder);
     try {
       _cylinder_->initialize(config_);
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
-      delete _cylinder_;
+      _cylinder_.reset();
       throw error;
     }
     DT_THROW_IF (! _cylinder_->is_valid(), std::logic_error,
-                 "Invalid cylinder dimensions in simple shaped (cylinder) model '" << name_ << "'");
+                 "Invalid cylinder dimensions in simple shaped (cylinder) model '" << get_name() << "'");
     _solid_ = _cylinder_;
     grab_logical().set_material_ref(_material_name_);
 
     return;
   }
 
-  void simple_shaped_model::_construct_sphere (const std::string & name_,
-                                               const datatools::properties & config_,
+  void simple_shaped_model::_construct_sphere (const datatools::properties & config_,
                                                models_col_type* /*models_*/)
   {
     // Build the sphere:
-    _sphere_ = new sphere;
+    _sphere_.reset(new sphere);
     try {
       _sphere_->initialize(config_);
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
-      delete _sphere_;
+      _sphere_.reset();
       throw error;
     }
     DT_THROW_IF (! _sphere_->is_valid(), std::logic_error,
-                 "Invalid sphere parameters in simple shaped (sphere) model '" << name_ << "' !");
+                 "Invalid sphere parameters in simple shaped (sphere) model '" << get_name() << "' !");
     _solid_ = _sphere_;
     grab_logical().set_material_ref(_material_name_);
 
     return;
   }
 
-  void simple_shaped_model::_construct_tube (const std::string & name_,
-                                             const datatools::properties & config_,
-                                             models_col_type* /*models_*/)
+  void simple_shaped_model::_construct_tube (const datatools::properties & config_,
+                                             models_col_type* models_)
   {
     // Build the tube:
-    _tube_ = new tube;
+    _tube_.reset(new tube);
     try {
       _tube_->initialize(config_);
-      // _tube_->tree_dump(std::cerr, "simple_shaped_model -- Initialized tube: ", "DEVEL: ");
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
-      delete _tube_;
+      _tube_.reset();
       throw error;
     }
 
     DT_THROW_IF (! _tube_->is_valid(), std::logic_error,
-                 "Invalid tube dimensions in simple shaped (tube) model '" << name_ << "' !");
+                 "Invalid tube dimensions in simple shaped (tube) model '" << get_name() << "' !");
 
     // Use the plain tube as solid envelope of the model:
     if (_filled_mode_ == filled_utils::FILLED_NONE) {
@@ -426,7 +474,7 @@ namespace geomtools {
 
     DT_THROW_IF(_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION,
                 std::logic_error,
-                "No support for tube construction 'by extrusion' in simple shaped (tube) model '" << name_ << "' !");
+                "No support for tube construction 'by extrusion' in simple shaped (tube) model '" << get_name() << "' !");
 
     /*
      *          _____________________
@@ -441,7 +489,7 @@ namespace geomtools {
     // Make the envelope a cylinder:
     _cylinder_ = new cylinder;
     _tube_->compute_outer_cylinder (*_cylinder_);
-    DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
+    DT_THROW_IF (! _cylinder_->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << get_name() << "' !");
     _solid_ = _cylinder_;
     grab_logical ().set_material_ref (_material_name_);
     grab_logical ().set_effective_shape (*_tube_);
@@ -455,7 +503,7 @@ namespace geomtools {
     if (! inner_cyl->is_valid ()) {
     delete inner_cyl;
     DT_THROW_IF (true, std::logic_error,
-    "Invalid 'inner' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
+    "Invalid 'inner' cylinder dimensions in simple shaped (tube) model '" << get_name() << "' !");
     }
     _inner_shape_ = inner_cyl;
     // Inner placement for the extrusion:
@@ -477,48 +525,67 @@ namespace geomtools {
     // Build the tube as a child of a mother cylinder:
     if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE) {
       // std::cerr << "DEVEL: geomtools::simple_shaped_model::_construct_tube: FILLED_BY_ENVELOPE" << std::endl;
+      double r_eps = 0.0;
+      if (_envelope_tolerance_.has_r_tolerance()) {
+        r_eps = _envelope_tolerance_.r_tolerance;
+      }
+      double z_eps = 0.0;
+      if (_envelope_tolerance_.has_z_tolerance()) {
+        z_eps = _envelope_tolerance_.z_tolerance;
+      }
+      double in_r  = datatools::invalid_real();
+      double out_r = _tube_->get_outer_r();
+      double z     = _tube_->get_z();
       // Make the envelope a cylinder:
-      _cylinder_ = new cylinder;
-      _tube_->compute_outer_cylinder(*_cylinder_);
-      DT_THROW_IF (! _cylinder_->is_valid(), std::logic_error,
-                   "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
+      _cylinder_.reset(new cylinder);
+      if (_envelope_tolerance_.deflated_shape) {
+        std::shared_ptr<tube> deflated_tube;
+        if (_tube_->has_inner_r()) {
+          in_r = _tube_->get_inner_r();
+          deflated_tube.reset(new tube(in_r, out_r - r_eps, z - 2 * z_eps));
+        } else {
+          deflated_tube.reset(new tube(out_r - r_eps, z - 2 * z_eps));
+        }
+        _tube_->compute_outer_cylinder(*_cylinder_);
+        // Replace the original tube by the deflated one:
+        _tube_ = deflated_tube;
+      } else {
+        // Build the inflated cylinder envelope:
+        _tube_->compute_envelope(*_cylinder_, r_eps, z_eps);
+        DT_THROW_IF (! _cylinder_->is_valid(), std::logic_error,
+                     "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << get_name() << "' !");
+      }
       _solid_ = _cylinder_;
       grab_logical().set_material_ref(_filled_material_name_);
-      //grab_logical().set_effective_shape(*_tube_);
-      //grab_logical().set_effective_material_ref(_material_name_);
       // If the tube is extruded, add the tube within the 'outer' envelope cylinder:
-      _inner_placement_.set(0, 0, 0, 0, 0, 0);
-      //const std::string inner_name = "__" + get_logical ().get_name () + "." + _filled_label_;
-      const std::string inner_name = "__" + get_name() + "." + _filled_label_;
-      _inner_logical_.set_name(i_model::make_logical_volume_name(inner_name));
-      _inner_logical_.set_material_ref(_material_name_);
-      _inner_logical_.set_shape(*_tube_);
-      _inner_logical_.set_geometry_model(*this);
+      _inner_placement_.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+      std::string model_basename = extract_basename_from_model_name(get_name());
+      const std::string inner_name = "__" + model_basename + "." + _filled_label_;
+      _inner_model_.set_solid(*_tube_);
+      _inner_model_.set_material_name(_material_name_);
+      _inner_model_.construct(inner_name, models_);
       _inner_phys_.set_name(i_model::make_physical_volume_name(_filled_label_));
       _inner_phys_.set_placement(_inner_placement_);
-      _inner_phys_.set_logical(_inner_logical_);
+      _inner_phys_.set_logical(_inner_model_.get_logical());
       _inner_phys_.set_mother(this->get_logical());
     }
-
-    // _tube_->tree_dump(std::cerr, "simple_shaped_model -- Constructed tube: ", "DEVEL: ");
     return;
   }
 
-  void simple_shaped_model::_construct_polycone (const std::string & name_,
-                                                 const datatools::properties & config_,
-                                                 models_col_type* /*models_*/)
+  void simple_shaped_model::_construct_polycone (const datatools::properties & config_,
+                                                 models_col_type * models_)
   {
     // Build the polycone:
-    _polycone_ = new polycone;
+    _polycone_.reset(new polycone);
     try {
       _polycone_->initialize(config_);
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
-      delete _polycone_;
+      _polycone_.reset();
       throw error;
     }
     DT_THROW_IF (! _polycone_->is_valid (), std::logic_error,
-                 "Invalid polycone build parameters in simple shaped (polycone) model '" << name_ << "' !");
+                 "Invalid polycone build parameters in simple shaped (polycone) model '" << get_name() << "' !");
 
     DT_LOG_TRACE (get_logging_priority (), "Polycone:");
     if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
@@ -533,7 +600,7 @@ namespace geomtools {
     /*
       DT_THROW_IF(_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION,
       std::runtime_error,
-      "No support for polycone construction 'by extrusion' in simple shaped (polycone) model '" << name_ << "' !");
+      "No support for polycone construction 'by extrusion' in simple shaped (polycone) model '" << get_name() << "' !");
 
       // Build the polycone model by extrusion of a mother polycone:
       if (_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION) {
@@ -541,7 +608,7 @@ namespace geomtools {
       polycone * envelope_polycone = new polycone;
       _polycone_->compute_outer_polycone (*envelope_polycone);
       DT_THROW_IF (! envelope_polycone->is_valid (), std::logic_error,
-      "Invalid envelope polycone in simple shaped (polycone) model '" << name_ << "' !");
+      "Invalid envelope polycone in simple shaped (polycone) model '" << get_name() << "' !");
       _outer_shape_ = envelope_polycone;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_material_name_);
@@ -556,7 +623,7 @@ namespace geomtools {
       if (! inner_pol->is_valid ()) {
       delete inner_pol;
       DT_THROW_IF (true, std::logic_error,
-      "Invalid 'inner' polycone dimensions in simple shaped (polycone) model '" << name_ << "' !");
+      "Invalid 'inner' polycone dimensions in simple shaped (polycone) model '" << get_name() << "' !");
       }
       _inner_shape_ = inner_pol;
       // Inner placement for the extrusion:
@@ -577,26 +644,47 @@ namespace geomtools {
 
     // Build the polycone as a filled child of a mother filled polycone:
     if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE) {
-      // Make the envelope a cylinder:
-      polycone * outer_polycone = new polycone;
-      _polycone_->compute_outer_polycone (*outer_polycone);
-      DT_THROW_IF (! outer_polycone->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (polycone) model '" << name_ << "' !");
-      _outer_shape_ = outer_polycone;
+      double r_eps = 0.0;
+      if (_envelope_tolerance_.has_r_tolerance()) {
+        r_eps = _envelope_tolerance_.r_tolerance;
+      }
+      double z_eps = 0.0;
+      if (_envelope_tolerance_.has_z_tolerance()) {
+        z_eps = _envelope_tolerance_.z_tolerance;
+      }
+      double theta_eps = 0.0;
+      if (_envelope_tolerance_.has_theta_tolerance()) {
+        theta_eps = _envelope_tolerance_.theta_tolerance;
+      }
+
+      // Make the envelope a polycone:
+      polycone outer_polycone;
+      _polycone_->compute_outer_polycone(outer_polycone);
+      std::shared_ptr<polycone> envelope_polycone(new polycone);
+      if ((r_eps or z_eps) and _envelope_tolerance_.deflated_shape) {
+        outer_polycone.compute_envelope(*envelope_polycone, 0.0, 0.0, 0.0);
+        std::shared_ptr<polycone> deflated_polycone(new polycone);
+        _polycone_->compute_deflated(*deflated_polycone, r_eps, z_eps, theta_eps);
+        // Replace the original polycone by the deflated one:
+        _polycone_ = deflated_polycone;
+      } else {
+        outer_polycone.compute_envelope(*envelope_polycone, r_eps, z_eps, theta_eps);
+      }
+      _outer_shape_ = envelope_polycone;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_filled_material_name_);
-      //grab_logical ().set_effective_shape (*_polycone_);
-      //grab_logical ().set_effective_material_ref (_material_name_);
       // If the polycone is extruded, add the 'inner' polycone
       // within the 'outer' envelope polycone:
-      _inner_placement_.set (0, 0, 0, 0, 0, 0);
-      const std::string inner_name = "__" + get_name () + "." + _filled_label_;
-      _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
-      _inner_logical_.set_material_ref (_material_name_);
-      _inner_logical_.set_shape (*_polycone_);
-      _inner_logical_.set_geometry_model(*this);
+      _inner_placement_.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+      std::string model_basename = extract_basename_from_model_name(get_name());
+      const std::string inner_name = "__" + model_basename + "." + _filled_label_;
+      _inner_model_.set_solid(*_polycone_);
+      _inner_model_.set_material_name(_material_name_);
+      _inner_model_.construct(inner_name, models_);
+      
       _inner_phys_.set_name (i_model::make_physical_volume_name (_filled_label_));
       _inner_phys_.set_placement (_inner_placement_);
-      _inner_phys_.set_logical (_inner_logical_);
+      _inner_phys_.set_logical (_inner_model_.get_logical());
       _inner_phys_.set_mother (this->get_logical ());
     }
 
@@ -604,21 +692,20 @@ namespace geomtools {
   }
 
 
-  void simple_shaped_model::_construct_polyhedra (const std::string & name_,
-                                                  const datatools::properties & config_,
-                                                  models_col_type* /*models_*/)
+  void simple_shaped_model::_construct_polyhedra (const datatools::properties & config_,
+                                                  models_col_type* models_)
   {
-    _polyhedra_ = new polyhedra;
+    _polyhedra_.reset(new polyhedra);
     try {
       _polyhedra_->initialize(config_);
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
-      delete _polyhedra_;
+      _polyhedra_.reset();
       throw error;
     }
     _polyhedra_->initialize (config_);
     DT_THROW_IF (! _polyhedra_->is_valid (), std::logic_error,
-                 "Invalid polyhedra build parameters in simple shaped (polyhedra) model '" << name_ << "' !");
+                 "Invalid polyhedra build parameters in simple shaped (polyhedra) model '" << get_name() << "' !");
 
     DT_LOG_TRACE (get_logging_priority (), "Polyhedra:");
     if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
@@ -632,7 +719,7 @@ namespace geomtools {
 
     DT_THROW_IF(_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION,
                 std::runtime_error,
-                "No support for polyhedra construction 'by extrusion' in simple shaped (polyhedra) model '" << name_ << "' !");
+                "No support for polyhedra construction 'by extrusion' in simple shaped (polyhedra) model '" << get_name() << "' !");
 
     // build the polyhedra by extrusion of a mother polyhedra:
     /*
@@ -640,7 +727,7 @@ namespace geomtools {
       // make the envelope a polyhedra:
       polyhedra * envelope_polyhedra = new polyhedra;
       _polyhedra_->compute_outer_polyhedra (*envelope_polyhedra);
-      DT_THROW_IF (! envelope_polyhedra->is_valid (), std::logic_error, "Invalid envelope polyhedra in simple shaped (polyhedra) model '" << name_ << "' !");
+      DT_THROW_IF (! envelope_polyhedra->is_valid (), std::logic_error, "Invalid envelope polyhedra in simple shaped (polyhedra) model '" << get_name() << "' !");
       _outer_shape_ = envelope_polyhedra;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_material_name_);
@@ -655,7 +742,7 @@ namespace geomtools {
       _polyhedra_->compute_inner_polyhedra (*inner_pol);
       if (! inner_pol->is_valid ()) {
       delete inner_pol;
-      DT_THROW_IF (true, std::logic_error, "Invalid 'inner' polyhedra dimensions in simple shaped (polyhedra) model '" << name_ << "' !");
+      DT_THROW_IF (true, std::logic_error, "Invalid 'inner' polyhedra dimensions in simple shaped (polyhedra) model '" << get_name() << "' !");
       }
       _inner_shape_ = inner_pol;
       // inner placement for the extrusion:
@@ -676,26 +763,43 @@ namespace geomtools {
 
     // build the polyhedra as a filled child of a mother filled polyhedra:
     if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE) {
-      // make the envelope a cylinder:
-      polyhedra * outer_polyhedra = new polyhedra;
-      _polyhedra_->compute_outer_polyhedra (*outer_polyhedra);
-      DT_THROW_IF (! outer_polyhedra->is_valid (), std::logic_error, "Invalid 'outer' cylinder dimensions in simple shaped (polyhedra) model '" << name_ << "' !");
-      _outer_shape_ = outer_polyhedra;
+      double r_eps = 0.0;
+      if (_envelope_tolerance_.has_r_tolerance()) {
+        r_eps = _envelope_tolerance_.r_tolerance;
+      }
+      double z_eps = 0.0;
+      if (_envelope_tolerance_.has_z_tolerance()) {
+        z_eps = _envelope_tolerance_.z_tolerance;
+      }
+
+      // Make the envelope a polyhedra:
+      polyhedra outer_polyhedra;
+      _polyhedra_->compute_outer_polyhedra(outer_polyhedra);
+      std::shared_ptr<polyhedra> envelope_polyhedra(new polyhedra);
+      if ((r_eps or z_eps) and _envelope_tolerance_.deflated_shape) {
+        outer_polyhedra.compute_envelope(*envelope_polyhedra, 0.0, 0.0);
+        std::shared_ptr<polyhedra> deflated_polyhedra(new polyhedra);
+        _polyhedra_->compute_deflated(*deflated_polyhedra, r_eps, z_eps);
+        // Replace the original polyhedra by the deflated one:
+        _polyhedra_ = deflated_polyhedra;
+      } else {
+        outer_polyhedra.compute_envelope(*envelope_polyhedra, r_eps, z_eps);
+      }
+      _outer_shape_ = envelope_polyhedra;
       _solid_ = _outer_shape_;
       grab_logical ().set_material_ref (_filled_material_name_);
-      //grab_logical ().set_effective_shape (*_polyhedra_);
-      //grab_logical ().set_effective_material_ref (_material_name_);
-      // if the polyhedra is extruded, add the polyhedra
-      // within the 'outer' envelope polyhedra:
-      _inner_placement_.set (0, 0, 0, 0, 0, 0);
-      const std::string inner_name = "__" + get_name () + _filled_label_;
-      _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
-      _inner_logical_.set_material_ref (_material_name_);
-      _inner_logical_.set_shape (*_polyhedra_);
-      _inner_logical_.set_geometry_model(*this);
+      // If the polycone is extruded, add the 'inner' polycone
+      // within the 'outer' envelope polycone:
+      _inner_placement_.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+      std::string model_basename = extract_basename_from_model_name(get_name());
+      const std::string inner_name = "__" + model_basename + "." + _filled_label_;
+      _inner_model_.set_solid(*_polyhedra_);
+      _inner_model_.set_material_name(_material_name_);
+      _inner_model_.construct(inner_name, models_);
+      
       _inner_phys_.set_name (i_model::make_physical_volume_name (_filled_label_));
       _inner_phys_.set_placement (_inner_placement_);
-      _inner_phys_.set_logical (_inner_logical_);
+      _inner_phys_.set_logical (_inner_model_.get_logical());
       _inner_phys_.set_mother (this->get_logical ());
     }
 
@@ -754,7 +858,7 @@ namespace geomtools {
           std::ostringstream log_params_desc;
           log_params_desc << "Auxiliary properties for shape logical volume in model '"
                           << get_name() << "'";
-          _inner_logical_.grab_parameters().set_description(log_params_desc.str());
+          _inner_model_.grab_logical().grab_parameters().set_description(log_params_desc.str());
         }
         std::vector<std::string> exported_prefixes;
         if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
@@ -775,7 +879,7 @@ namespace geomtools {
           // Only 'top' properties :
           tmp_params.erase_all_starting_with(filled_topic_prefix);
           // Inner logical inherits the 'top' properties :
-          tmp_params.export_starting_with(_inner_logical_.grab_parameters(), topic_prefix);
+          tmp_params.export_starting_with(_inner_model_.grab_logical().grab_parameters(), topic_prefix);
           // Top logical inherits the 'filled' properties :
           grab_logical().grab_parameters().erase_all_starting_with(filled_topic_prefix);
           grab_logical().grab_parameters().erase_all_starting_with(topic_prefix);
@@ -798,13 +902,13 @@ namespace geomtools {
                       << _filled_internals_.get_number_of_items());
 
         DT_LOG_DEBUG (log_level, "Processing internal items in shape...");
-        _internals_.plug_internal_models(_inner_logical_.get_parameters(),
-                                         _inner_logical_,
+        _internals_.plug_internal_models(_inner_model_.get_logical().get_parameters(),
+                                         _inner_model_.grab_logical(),
                                          models_);
         DT_LOG_DEBUG (log_level, "Number of items in shape : "
                       << _internals_.get_number_of_items());
       }
-      _inner_logical_.lock();
+      // _inner_logical_.lock();
     } else {
       DT_LOG_DEBUG (log_level, "Processing internal items (none)...");
       // Top logical is the shape :
@@ -891,7 +995,7 @@ namespace geomtools {
       std::ostringstream indent_oss;
       indent_oss << indent;
       indent_oss << datatools::i_tree_dumpable::skip_tag;
-      _inner_logical_.tree_dump(out_, "",indent_oss.str ());
+      _inner_model_.get_logical().tree_dump(out_, "",indent_oss.str ());
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Number of internal items within cavity: '" << _filled_internals_.get_number_of_items() << "'" << std::endl;

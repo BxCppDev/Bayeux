@@ -408,6 +408,62 @@ namespace geomtools {
     return;
   }
 
+  void box::compute_deflated(box & deflated_,
+                             double by_x_,
+                             double by_y_,
+                             double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
+    deflated_.reset();
+    double x_eps = 0.0;
+    double y_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_x_) and by_x_ > 0.0) x_eps = by_x_;
+    if (datatools::is_valid(by_y_) and by_y_ > 0.0) y_eps = by_y_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double x = get_x();
+    double y = get_y();
+    double z = get_z();
+    x -= (2 * x_eps);
+    y -= (2 * y_eps);
+    z -= (2 * z_eps);
+    deflated_.set(x, y, z);
+    deflated_.lock();
+    return;
+  }
+
+  void box::compute_inflated(box & inflated_,
+                             double by_x_,
+                             double by_y_,
+                             double by_z_)
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
+    double x_eps = 0.0;
+    double y_eps = 0.0;
+    double z_eps = 0.0;
+    if (datatools::is_valid(by_x_) and by_x_ > 0.0) x_eps = by_x_;
+    if (datatools::is_valid(by_y_) and by_y_ > 0.0) y_eps = by_y_;
+    if (datatools::is_valid(by_z_) and by_z_ > 0.0) z_eps = by_z_;
+    double x = get_x();
+    double y = get_y();
+    double z = get_z();
+    x += (2 * x_eps);
+    y += (2 * y_eps);
+    z += (2 * z_eps);
+    inflated_.reset();
+    inflated_.set(x, y, z);
+    inflated_.lock();
+    return;
+  }
+
+  void box::compute_envelope(box & envelope_,
+                             double tolerance_x_,
+                             double tolerance_y_,
+                             double tolerance_z_)
+  {
+    compute_inflated(envelope_, tolerance_x_, tolerance_y_, tolerance_z_);
+  }
+  
   bool
   box::is_outside(const vector_3d & a_position, double a_skin) const
   {

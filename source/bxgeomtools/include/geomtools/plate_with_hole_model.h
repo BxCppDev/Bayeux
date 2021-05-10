@@ -96,9 +96,8 @@ namespace geomtools {
   protected:
 
     /// Construction
-    void _at_construct(const std::string & name_,
-                               const datatools::properties & setup_,
-                               geomtools::models_col_type * models_ = 0) override;
+    void _at_construct(const datatools::properties & setup_,
+                       geomtools::models_col_type * models_ = nullptr) override;
 
   private:
 

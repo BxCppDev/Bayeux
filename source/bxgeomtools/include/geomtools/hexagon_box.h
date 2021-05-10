@@ -1,14 +1,9 @@
 /// \file geomtools/hexagon_box.h
 /* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2008-05-23
+ * Last modified: 2021-04-24
  *
- * License:
- *
- * Description:
- *  Interface:
- *
- * History:
+ * Description: hexagon box 3D solid shape
  *
  */
 
@@ -142,10 +137,20 @@ namespace geomtools {
 
     static bool xy_is_on_hexagon (double r_, double x_, double y_, double skin_);
 
+    /// Compute a deflated version of the hexagon box
+    void compute_deflated(hexagon_box & deflated_,
+                          double by_r_,
+                          double by_z_);
+
+    /// Compute an inflated version of the hexagon box
+    void compute_inflated(hexagon_box & deflated_,
+                          double by_r_,
+                          double by_z_);
+
   private:
 
-    double _radius_; /// Radius of the hexagonal box
-    double _z_;      /// Height of the hexagonal box
+    double _radius_; ///< Radius of the hexagonal box
+    double _z_;      ///< Height of the hexagonal box
 
   };
 

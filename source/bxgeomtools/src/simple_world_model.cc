@@ -2,9 +2,13 @@
 /* simple_world_model.cc
  */
 
+// Ourselves:
 #include <geomtools/simple_world_model.h>
 
+// Standard library:
 #include <exception>
+
+// This project:
 #include <geomtools/visibility.h>
 #include <datatools/units.h>
 
@@ -34,12 +38,10 @@ namespace geomtools {
     return;
   }
 
-  void simple_world_model::_at_construct (const std::string & name_,
-                                          const datatools::properties & config_,
+  void simple_world_model::_at_construct (const datatools::properties & config_,
                                           models_col_type * models_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    //set_name (name_);
 
     double length_unit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
@@ -109,15 +111,15 @@ namespace geomtools {
       material = config_.fetch_string ("material.ref");
     }
 
-    DT_THROW_IF (! config_.has_key ("setup.model"), std::logic_error, "Missing 'setup_model' property in simple world model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("setup.model"), std::logic_error, "Missing 'setup_model' property in simple world model '" << get_name() << "' !");
     const std::string setup_model_name = config_.fetch_string ("setup.model");
 
-    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in simple world model '" << name_ << "' !");
+    DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in simple world model '" << get_name() << "' !");
 
     // Setup model:
     {
       models_col_type::const_iterator found = models_->find (setup_model_name);
-      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find setup model with name '"<< setup_model_name << "' in simple world model '" << name_ << "' !");
+      DT_THROW_IF (found == models_->end (), std::logic_error, "Cannot find setup model with name '"<< setup_model_name << "' in simple world model '" << get_name() << "' !");
       //_setup_model_ = (dynamic_cast<const test_model_2 *> (found->second));
       _setup_model_ = found->second;
     }
@@ -164,7 +166,7 @@ namespace geomtools {
 
     DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid !");
 
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical ().set_name (i_model::make_logical_volume_name (get_name()));
     grab_logical ().set_shape (_solid_);
     grab_logical ().set_material_ref(material);
 
