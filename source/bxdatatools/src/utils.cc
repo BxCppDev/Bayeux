@@ -657,7 +657,6 @@ namespace datatools {
         }
       }
     }
-
     if (trace) {
       DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
     }
@@ -718,7 +717,7 @@ namespace datatools {
         DT_THROW(std::logic_error, "The path resolution from a mount point is not allowed!");
       }
       if (trace) {
-        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering '@' mode...");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering '@' mode for text='" << text << "'");
       }
       DT_THROW_IF(! datatools::kernel::is_instantiated(),
                   std::runtime_error,
@@ -731,13 +730,18 @@ namespace datatools {
                   << "No support for '@foo[.topic]:bar/blah.txt' syntax !");
       const datatools::library_info & lib_info_reg =
         datatools::kernel::instance().get_library_info_register();
-
+      if (trace) {
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "text='" << text << "'");
+      }
       std::string resolved_path;
       std::string errmsg;
       if (!lib_info_reg.resolve_path(text, resolved_path, errmsg)) {
         DT_THROW(std::logic_error,
                  "Cannot resolve path from mount point : " << errmsg << "!");
       } else {
+        if (trace) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "resolved_path='"<< resolved_path << "'");
+        }
         text = resolved_path;
         registered_lib_topic = true;
       }
