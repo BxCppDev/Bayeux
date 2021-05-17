@@ -18,8 +18,7 @@ namespace mygsl {
 
   const size_t multidimensional_minimization::DEFAULT_MAX_ITER    = 1000;
   const size_t multidimensional_minimization::DEFAULT_MODULO_ITER = 100;
-  const double multidimensional_minimization::DEFAULT_EPSABS   = 1.e-3;
-
+  const double multidimensional_minimization::DEFAULT_EPSABS      = 1.e-3;
   const double multidimensional_minimization_system::DEFAULT_OUT_OF_LIMIT_SLOPE = 1.e10;
 
   void multidimensional_minimization_system::set_numeric_eval_df (bool use_)

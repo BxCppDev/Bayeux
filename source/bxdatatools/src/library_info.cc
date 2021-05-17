@@ -484,6 +484,8 @@ namespace datatools {
                                   std::string & resolved_path_,
                                   std::string & error_msg_) const
   {
+    bool devel = false;
+    if (devel) std::cerr << "[devel] ************** library_info::resolve_path : " << path_ << std::endl;
     bool failure = false;
     resolved_path_.clear();
     error_msg_.clear();
@@ -502,7 +504,7 @@ namespace datatools {
       return failure;
     }
     std::string library_directive = path1.substr(0, cpos);
-    // std::cerr << "[devel] library_directive = " << library_directive << std::endl;
+    if (devel) std::cerr << "[devel] library_directive = " << library_directive << std::endl;
     std::vector<std::string> lib_tokens;
     boost::split(lib_tokens, library_directive, boost::is_any_of("."));
     if (lib_tokens.size() == 0 || lib_tokens.size() > 2) {
@@ -510,39 +512,53 @@ namespace datatools {
       return  failure;
     }
     std::string library_name = lib_tokens[0];
-    // std::cerr << "[devel] library_name = " << library_name << std::endl;
+    if (devel) std::cerr << "  [devel] ************** library_name = " << library_name << std::endl;
     std::string library_topic = library_info::default_topic_label();
     if (lib_tokens.size() > 1) {
       library_topic = lib_tokens[1];
     }
-    // std::cerr << "[devel] library_topic = " << library_topic << std::endl;
+    if (devel) std::cerr << "  [devel] ************** library_topic = " << library_topic << std::endl;
     if (!library_info::topic_labels().count(library_topic)) {
       error_msg_ = "Unsupported topic '" + library_topic + "' in '" + path_ + "'";
       return  failure;
     }
     std::string install_path_key = library_info::topic_label_to_install_key(library_topic);
     std::string environ_path_key = library_info::topic_label_to_env_key(library_topic);
-
+    if (devel) {
+      std::cerr << "  [devel] ************** install_path_key = " << install_path_key << std::endl;
+      std::cerr << "  [devel] ************** environ_path_key = " << environ_path_key << std::endl;
+    }
+    
     if (!this->has(library_name)) {
-      error_msg_ = "Unregistered library '" + library_name + "' in the kernel library register";
+      error_msg_ = "Unregistered library/component '" + library_name + "' in the kernel library register";
+      if (devel) std::cerr << "  [devel] ************** error: " << error_msg_ << std::endl;
       return failure;
     }
     const datatools::properties & lib_infos = this->get(library_name);
-
+    if (devel) {
+      std::cerr << "  [devel] ************** lib_infos=" << std::hex << &lib_infos << std::endl;
+      lib_infos.tree_dump(std::cerr, "Lib info: ", "  [devel] ");
+    }
+    
     // Search for the topic directory path from the register:
     std::string topic_dir_str;
-
     // Attempt 1: from the registered environment variable name (if any):
     if (topic_dir_str.empty() && !environ_path_key.empty()) {
       if ( lib_infos.has_key(environ_path_key)) {
+        if (devel) std::cerr << "  [devel] ************** using environ_path_key = " << environ_path_key << std::endl;
         std::string env_topic_dir = lib_infos.fetch_string(environ_path_key);
+        if (devel) std::cerr << "  [devel] ************** env_topic_dir = " << env_topic_dir << std::endl;
         if (! env_topic_dir.empty()) {
+           if (devel) std::cerr << "  [devel] ************** Searching env_value ..." << std::endl;
           const char *env_value = getenv(env_topic_dir.c_str());
           if (env_value != 0) {
             // Found the 'env_topic_dir' environment variable:
             topic_dir_str = std::string(env_value);
+            if (devel) std::cerr << "  [devel] ************** topic_dir_str=" << topic_dir_str << std::endl;
           }
         }
+      } else {
+        if (devel) std::cerr << "  [devel] ************** No environ_path_key" << std::endl;
       }
     }
 
@@ -911,6 +927,8 @@ namespace datatools {
     if (!title_.empty()) {
       out_ << indent << title_ << std::endl;
     }
+    out_ << indent << i_tree_dumpable::tag
+         << "@Address      : " << std::hex << this << std::endl;
     out_ << indent << i_tree_dumpable::tag
          << "Initialized   : " << _initialized_ << std::endl;
     std::vector<std::string> libnames;

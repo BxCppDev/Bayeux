@@ -238,12 +238,12 @@ namespace datatools {
   private:
 
     // Management:
-    bool                              _initialized_; //!< Initialization flag
-    logger::priority                  _logging_;     //!< Logging priority
+    bool             _initialized_ = false; //!< Initialization flag
+    logger::priority _logging_     = datatools::logger::PRIO_WARNING; //!< Logging priority
 
     // Working data:
-    datatools::multi_properties       _db_;          //!< Main register
-    std::map<std::string,std::string> _db_aliases_;  //!< Dictionary of aliases
+    datatools::multi_properties       _db_;         //!< Main register
+    std::map<std::string,std::string> _db_aliases_; //!< Dictionary of aliases
 
   };
 
