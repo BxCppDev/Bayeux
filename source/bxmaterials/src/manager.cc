@@ -422,7 +422,7 @@ namespace materials {
         }
         DT_THROW_IF(! props.has_key("material"),
                     std::logic_error,
-                    "Missing property 'material' for a material alias !");
+                    "Missing property 'material' for a material alias with name '" << name << "'!");
         std::string alias_material = props.fetch_string("material");
         DT_THROW_IF(alias_material == name, std::logic_error,
                     "Material alias named '" << alias_material << "' cannot reference itself !");

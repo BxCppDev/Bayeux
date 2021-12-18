@@ -681,12 +681,12 @@ namespace geomtools {
     // Pass the shape factory to the model factory:
     _factory_.set_shape_factory(_shape_factory_);
 
-    // Load on list file of geometry models defintion files:
+    // Load on list file of geometry models definition files:
     if (config_.has_key ("factory.geom_list")) {
       std::string factory_geom_list = config_.fetch_string ("factory.geom_list");
       factory_geom_lists.push_back(factory_geom_list);
     } else {
-      // Load several list files of geometry models defintion files:
+      // Load several list files of geometry models definition files:
       if (config_.has_key ("factory.geom_lists")) {
         config_.fetch("factory.geom_lists", factory_geom_lists);
       }
