@@ -40,7 +40,7 @@ namespace datatools {
                        const std::string & lib_filename_  = "",
                        const std::string & lib_full_path_ = "",
                        const std::string & lib_version_   = "",
-                       bool lib_autoload_                = true);
+                       bool lib_autoload_                 = true);
 
     virtual ~library_entry_type();
 
