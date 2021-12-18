@@ -47,7 +47,7 @@ namespace geomtools {
     return datatools::is_valid(_radius_)
       && datatools::is_valid(_step_)
       && datatools::is_valid(_t1_)
-      && datatools::is_valid(_t1_)
+      && datatools::is_valid(_t2_)
       && geomtools::is_valid(_center_)
       ;
   }
