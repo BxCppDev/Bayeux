@@ -770,8 +770,10 @@ namespace datatools {
       bool variant_active = false;
       // NOTE: 2017-06-08 FM: Should we use : if (!has_repository()) ...
       if (!repository_is_active()) {
+        DT_LOG_TRACE(_logging_, "repository is not active");
         // If variant repository is not activated:
         if (has_variant_default) {
+          DT_LOG_TRACE(_logging_, "using variant default value");
           // We fallback to the default value if any. Syntax is:
           //   {variant-description}|true
           //   {variant-description}|false
@@ -779,11 +781,14 @@ namespace datatools {
           variant_reverse_ = false;
           return cri;
         } else {
+          DT_LOG_TRACE(_logging_, "no variant default value");
           // It is an error: no variant repository nor fallback default value is available:
           DT_COMMAND_RETURNED_ERROR(cri, command::CEC_CONTEXT_INVALID,
                                     "Inactive variant repository while processing '" << variant_desc << "' !");
           return cri;
         }
+      } else {
+        DT_LOG_TRACE(_logging_, "repository is active");
       }
       const variant_repository & rep = get_repository();
       if (!rep.has_registry(variant_registry_name)) {
