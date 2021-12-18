@@ -193,7 +193,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.4.3, you may use, assuming a
+For example, to download Bayeux version 3.5.0, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -201,16 +201,17 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/3.4.3.tar.gz
-   $ mkdir Bayeux-3.4.3 && tar xvzf 3.4.3.tar.gz -C Bayeux-3.4.3 --strip-components 1
-   $ cd Bayeux-3.4.3/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.0.tar.gz
+   $ mkdir Bayeux-3.5.0 && \
+       tar xvzf Bayeux-3.5.0.tar.gz -C Bayeux-3.5.0 --strip-components=1
+   $ cd Bayeux-3.5.0/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.4.3/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.5.0/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.4.3
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.0
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -253,9 +254,10 @@ distributions  derived from  Debian and Fedora (RedHat) provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
--  Ubuntu 16.04LTS (deprecated but should work), 18.04LTS, 20.04LTS (current development system):
-   http://www.ubuntu.com
--  CentOS 7.5: https://www.centos.org/
+- Ubuntu  20.04LTS (current  development  system), 18.04LTS,  16.04LTS
+  (deprecated but should work with  upgrade of some software tools) :
+  http://www.ubuntu.com
+- CentOS 7.5: https://www.centos.org/
 
 If you have problems on systems other than these, please contact us,
 though support will be on a best effort basis.
@@ -273,7 +275,7 @@ Core Software Required
   
   * Ubuntu 18.04 provides GCC version 6.5 and 7.3.
   * Ubuntu 20.04 provides GCC version 9.3.
-
+  * Bayeux is known to work on CentOS with GCC 4.9
   
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
@@ -283,7 +285,8 @@ file (example: ``cmake-3.17.2-Linux-x86_64.sh``) from:
 
   http://www.cmake.org/cmake/resources/software.html
 
-and follow the instructions on that page to install it.
+and follow the  instructions on that page to install  it. You can also
+install CMake from source.
 
 On macOS, simply install CMake from the latest ``Darwin64`` dmg
 bundle available from:
@@ -301,25 +304,31 @@ Core Libraries Required
 
 It is  possible to use system  installation of the below  libraries if
 your OS distribution provides  adequate support. Some software package
-managers  (Linuwbrew,  Spack) may  help  too  and should  be  probably
-recommended.
+managers  (Linuxbrew,  Spack) may  help  too.
+
+
+.. https://github.com/BxCppDev/BxInstallers
+
+.. _`Bayeux-3.5.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.0
 
 We list below the third party softwares required by Bayeux. If some of
 them are not available from the  system package manager, you will have
 to install them manually.
 
 
-* Boost  1.69.0, 1.71.0 (tough 1.70 et 1.72+ should work):  http://www.boost.org  with the  following
+* Boost  1.69.0, 1.71.0 (tough 1.70 and 1.72+ should work):  http://www.boost.org  with the  following
   libraries:    filesystem,    system,    serialization,    iostreams,
   program_options, regex and thread.
 
-  * Ubuntu 18.04 provides broken (for Bayeux) version 1.65.0 so you'll need to install Boost >= 1.69 by yourself
+  * Ubuntu 18.04  provides version 1.65.0  which is broken  for Bayeux
+    (bug in the Boost/serialization library) so you'll need to install
+    Boost >= 1.69 by yourself
   * Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
 
-  **Beware**: Boost versions 1.65 (default on Ubuntu 18.04) to 1.68 are
-  expected to  cause some crash with  GCC under Linux due  to a subtle
-  bug concerning the Boost/Serialization singleton class. Boost 1.69 should
-  fix this issue.
+  **Beware**: Boost  versions 1.65 (default  on Ubuntu 18.04)  to 1.68
+  are  expected to  cause some  crash with  GCC under  Linux due  to a
+  subtle bug concerning the Boost/Serialization singleton class. Boost
+  1.69 should fix this issue.
   
 * Camp >=0.8.0 (or 0.8.4 recommended) : https://github.com/IRCAD-IHU/camp
   
@@ -369,28 +378,38 @@ to install them manually.
   libxpm-dev, libpng-dev,  libjpeg-dev, libgif-dev, libafterimage-dev,
   libtiff5-dev,      liblzma-dev,       liblz4-dev,      libfftw3-dev,
   libgraphviz-dev, libftgl-dev, libglew-dev, libpcre3-dev.
- 
 
 * Qt5 (optional)
 
   * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5,
     qt5-default, qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev)
 
-* BxDecay0 (>=1.0.9) : https://github.com/BxCppDev/bxdecay0
+* BxDecay0 (>=1.0.9, 1.0.12 recommended) : https://github.com/BxCppDev/bxdecay0
 
-  You must install BxDecay0 by yourself. BxDecay0 depends on GSL so you should synchronize
-  this dependency from Bayeux's dependency on GSL.
+  You must  install BxDecay0 by  yourself. BxDecay0 depends on  GSL so
+  you should  synchronize this dependency from  the Bayeux's dependency on
+  GSL.
 
   **Remark**  : The  BxDecay0 C++  port of  the legacy  Fortran decay0
   program is now an independant  project which has been extracted from
   the ``Bayeux/genbb_help``  legacy module.  BxDecay0 is  now the only
   implementation of the Decay0 C++ port supported by Bayeux.
 
+Install dependencies with BxInstallers
+..........................................
+
+We provide  a collection  of semi-automated installation  scripts from
+the BxInstallers_ project. ``BxInstallers`` is mostly dedicated to the
+Ubuntu  20.04  system. It  allows  to  build,  install and  setup  the
+software dependency stack for Bayeux.
+
+.. _BxInstallers: https://github.com/BxCppDev/BxInstallers
+
 
 Install dependencies with LinuxBrew
 ...................................
 
-We have  experienced that the use  of Linuxbrew is not  the definitive
+We have  experienced that  the use  of Linuxbrew  is not  a definitive
 robust solution  to solve the software  dependency problem.  Linuxbrew
 regularly fails to provide a proper and stable environment to host and
 use  Bayeux,  due   to  rapidly  changing  brew   formulas  and  their
@@ -399,8 +418,8 @@ proper formulas for Ubuntu Linux. However  we have decided to stop the
 support of this tap (`bxcppdev/bxtap`_).
 
 Note however that it is  perfectly possible to use system installation
-of  the above  libraries  if your  OS  distribution provides  adequate
-support.
+of  some of  the  above  libraries if  your  OS distribution  provides
+adequate support.
 
 Install dependencies with Spack
 ...................................
@@ -414,7 +433,8 @@ Additional Software Required
 * Bayeux/datatools requires the Qt5 library when the ``BAYEUX_WITH_QT_GUI``
   option is set (experimental).
 
-  On Ubuntu 18.04/20.04, this implies the installation of the following packages:
+  On  Ubuntu  18.04/20.04,  this   implies  the  installation  of  the
+  following packages:
 
   .. code:: sh
 
@@ -432,7 +452,8 @@ Additional Software Required
      $ sudo apt-get install gnuplot 
   ..
 
-  Gnuplot uses by default the ``gnuplot-qt`` interface. You may want to use the ``gnuplot-x11`` package.
+  Gnuplot uses by  default the ``gnuplot-qt`` interface.  You may want
+  to use the ``gnuplot-x11`` package.
 
 * Bayeux/datatools and Bayeux/geomtools uses the Readline library, if available:
 
@@ -500,15 +521,18 @@ Installing Bayeux
 
 Bayeux provides a CMake_ based  build system. We'll assume for brevity
 that you are using  a UNIX system on the command  line (i.e.  macOS or
-Linux).   We'll also  assume that  you're going  to use  the Linuxbrew
-`bxcppdev/bxtap`_ tap to provide some required third party packages.
+Linux).  We'll also  assume  you have already setup all third party software
+Bayeux depends on using the tool of your choice.
+
+.. We'll also  assume that  you're going  to use  the Linuxbrew
+   `bxcppdev/bxtap`_ tap to provide some required third party packages.
 
 .. _`bxcppdev/bxtap`: https://github.com/BxCppDev/homebrew_bxtap
 .. _CMake: http://www.cmake.org
 
 Configuring the Installation
 ----------------------------
-
+   
 The directory in which this  ``README.rst`` file resides is called the
 "source directory"  of Bayeux. Because  CMake generates many  files as
 part of the configuration and  build process, we perform configuration
@@ -516,27 +540,38 @@ in a directory isolated from the  source directory. This enables us to
 quickly clean  up in  the event  of issues,  and prevents  commital of
 generated (and hence system dependent) files to the repository.
 
-To configure Bayeux, simply do, from the source directory of Bayeux:
+To configure  Bayeux under  Ubuntu 20.04, simply  do, from  the source
+directory of Bayeux:
 
 .. code:: sh
 
    $ mkdir Bayeux-build
    $ cd Bayeux-build/
-   $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> \
-	   -DCMAKE_PREFIX_PATH=<path to your Linuxbrew install> \
-	   ..
+   $ cmake \
+	  -DCMAKE_INSTALL_PREFIX="${HOME}/Bayeux-install" \
+	  -DBAYEUX_WITH_QT_GUI=ON \
+	  -DROOT_DIR="`root-config --prefix`/share/root/cmake" \
+          -DBxDecay0_DIR=`bxdecay0-config --cmakedir` \
+	  -DBAYEUX_WITH_GEANT4_MODULE=ON \
+	  -DGeant4_DIR="`geant4-config --prefix`" \
+	  ..
 ..
 
-You may also  use an arbitrary temporary build  directory somewhere in
+You may also  use an arbitrary temporary build directory somewhere in
 your filesystem:
 
 .. code:: sh
 
    $ mkdir /tmp/Bayeux-build
    $ cd /tmp/Bayeux-build
-   $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> \
-	   -DCMAKE_PREFIX_PATH=<path to your Linuxbrew install> \
-	   <path to the Bayeux source directory>
+   $ cmake \
+	  -DCMAKE_INSTALL_PREFIX="${HOME}/Bayeux-install" \
+	  -DBAYEUX_WITH_QT_GUI=ON \
+	  -DROOT_DIR="`root-config --prefix`/share/root/cmake" \
+          -DBxDecay0_DIR=`bxdecay0-config --cmakedir` \
+	  -DBAYEUX_WITH_GEANT4_MODULE=ON \
+	  -DGeant4_DIR="`geant4-config --prefix`" \
+	  <path to the Bayeux source directory>
 ..
 
 CMake Configuration Options
@@ -551,6 +586,13 @@ to deal with the following three in most cases:
   writable directory. It defaults to ``/usr/local`` so you will want
   to change this.
 
+``CMAKE_BUILD_TYPE``
+  Build type, e.g. ``Release``, ``Debug``. You will want this to be
+  set  to ``Release``  in most  cases. ``Debug``  builds are  only
+  needed if you  are needing to follow debugging  symbols into one
+  of   Linuxbrew's  thid   party  binaries.    It  defaults   to
+  ``Release``, so you will not need to change it in most cases.
+
 ``CMAKE_PREFIX_PATH``
   Path under which  Linuxbrew is installed and where  some of the
   third party software (dependencies) should be searched for.
@@ -560,13 +602,6 @@ to deal with the following three in most cases:
 
      $ cmake -DCMAKE_PREFIX_PATH=$(brew --prefix)
   ..
-
-``CMAKE_BUILD_TYPE``
-  Build type, e.g. ``Release``, ``Debug``. You will want this to be
-  set  to ``Release``  in most  cases. ``Debug``  builds are  only
-  needed if you  are needing to follow debugging  symbols into one
-  of   Linuxbrew's  thid   party  binaries.    It  defaults   to
-  ``Release``, so you will not need to change it in most cases.
 
 Note also  that you can  ask CMake to use  the Ninja_ build  system in
 place of the legacy ``make`` command. Use the ``-GNinja`` switch with your
@@ -617,9 +652,6 @@ These options control the core configuration of Bayeux.
 ``BAYEUX_WITH_GEANT4_EXPERIMENTAL``
   Build the Bayeux/mctools Geant4 library extension module with
   experimental Geant4 support (>=10.5, experts only). Default is OFF.
-
-``BAYEUX_WITH_LAHAGUE``
-  Build the Bayeux/lahague library module. Default is OFF.
 
 ``BAYEUX_WITH_QT_GUI``
   Build the Qt-based GUI basic components (experimental). Default is OFF.
@@ -775,6 +807,7 @@ command above by ``ninja`` :
 
    PageBreak oneColumn
 
+   
 Running test
 ------------
 
@@ -861,7 +894,8 @@ Bayeux is built with *some* documentation, although incomplete:
 * The Bayeux  source code  provides some test  programs that  *may* be
   used as sample code. However, it is not their original purpose.
 * Bayeux  modules  contains some  example  code  implemented as  small
-  projects. See the source code for example in ``share/Bayeux-{Bayeux's version}/examples/``
+  projects. See the source code for example in
+  ``share/Bayeux-{Bayeux's version}/examples/``
   from the Bayeux's installation directory.
   
 Troubleshooting
