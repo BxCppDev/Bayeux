@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2021-01-10
+:Date:    2021-12-18
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -135,7 +135,8 @@ Bayeux contains some code extracted  from :
 
 Vladimir Tretyak has kindly accepted that the C++ wrapper and C++ port
 of the  original Genbb/Decay0 Fortran  library is published  under the
-GPL 3 within Bayeux.
+GPL 3 within Bayeux. This part of the code is now hosted in the
+BxDecay0_ project.
 
 Some parts of code or  management/build scripts are released under the
 MIT License.
@@ -168,9 +169,9 @@ Spack_ package manager to satisfy Bayeux's software dependencies.
 Releases
 --------
 
-* Latest release: `Bayeux-3.4.3`_
+* Latest release: `Bayeux-3.5.0`_
 
-.. _`Bayeux-3.4.3`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.4.3
+.. _`Bayeux-3.5.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.0
 
 .. raw:: pdf
 
