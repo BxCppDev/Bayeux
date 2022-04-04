@@ -298,8 +298,6 @@ namespace mctools {
       // THIS IS NOW INVALIDATED: 2011-04-19 FM: moved these bits to 'event_action::BeginOfEventAction' :
       // Clear event data:
       // FIX BUG: 2011-05-10  FM+XG : DO CLEAR THE EVENT DATA MODEL HERE !
-      // clog << "DEVEL: primary_generator::GeneratePrimaries: "
-      //      << "Clear event data..." << endl;
       _event_action_->grab_event_data().clear();
       _event_action_->set_aborted_event(false);
       _event_action_->set_killed_event(false);
@@ -380,7 +378,6 @@ namespace mctools {
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["EG"].stop();
       }
-      // current_generated_event.set_time(0.0 * CLHEP::ns);
 
       // Default event reference time:
       double event_time = 0.0;
@@ -417,7 +414,6 @@ namespace mctools {
       }
 
       // Should we check the validity of the primary event here ?
-
       if (_event_action_->is_aborted_event()) {
         return;
       }
@@ -692,7 +688,7 @@ namespace mctools {
           std::clog << tag2 << tag << "Geant4 name  = "
                     << g4_particle_name
                     << std::endl;
-           std::clog << tag2 << tag << "Time       = "
+          std::clog << tag2 << tag << "Time       = "
                     << _particle_gun_->GetParticleTime() / CLHEP::ns << " ns"
                     << std::endl;
           std::clog << tag2 << tag << "Position   = " << _current_vertex_ / CLHEP::mm << " mm" << std::endl;
