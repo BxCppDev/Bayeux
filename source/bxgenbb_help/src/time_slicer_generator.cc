@@ -317,11 +317,16 @@ namespace genbb {
             }
           }
         } // end of particle loop
-
+  
+        double ref_time = 0.0;
+        // We ignore event time information:
+        // if (working_event.has_time()) {
+        //   ref_time = working_event.get_time();
+        // }
+        
+        // Specific processing of the extracted prompt event:
         if (prompt_event.get_number_of_particles() > 0) {
-          if (working_event.has_time()) {
-            prompt_event.set_time(working_event.get_time());
-          }
+          prompt_event.set_time(ref_time); // Force prompt event's time to zero
           if (working_event.has_vertex()) {
             prompt_event.set_vertex(working_event.get_vertex());
           }
@@ -333,11 +338,10 @@ namespace genbb {
           }
         }
 
+        // Specific processing of the extracted delayed event:
         if (delayed_event.get_number_of_particles() > 0) {
-          if (working_event.has_time()) {
-            delayed_event.set_time(working_event.get_time() - first_delayed_time);
-          }
-          delayed_event.shift_particles_time(-first_delayed_time);
+          delayed_event.set_time(ref_time); // Force delayed event's time to zero
+          delayed_event.shift_particles_time(-first_delayed_time); // Shift delayed particles 
           if (working_event.has_vertex()) {
             delayed_event.set_vertex(working_event.get_vertex());
           }
@@ -348,13 +352,17 @@ namespace genbb {
             delayed_event.set_genbb_weight(working_event.get_genbb_weight());
           }
         }
+        
         if (prompt_event.get_number_of_particles() > 0) {
+          // Deliver the prompt event:
           event_ = prompt_event;
           if (delayed_event.get_number_of_particles() > 0) {
+            // Save the delayed event in the buffered event:
             _buffer_event_ = delayed_event;
           }
           need_new_event = false;
         } else if (delayed_event.get_number_of_particles() > 0) {
+          // Deliver the delayed event:
           event_ = delayed_event;
           need_new_event = false;
         }

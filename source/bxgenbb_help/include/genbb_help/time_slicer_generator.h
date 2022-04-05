@@ -23,7 +23,7 @@
  *
  * Description:
  *
- *   A generator of GENBB-like event that use another generator and
+ *   A generator of GENBB-like event that uses another generator and
  *   clusterize primary particles in special time slices.
  *
  * History:
@@ -51,9 +51,11 @@ namespace genbb {
   ///
   /// This generator uses the output primary event from another particle generator and classifies
   /// its primary particles in two sets of particles falling in subsequent time slices.
+  ///
   /// \code
+  ///       Event #0                                                           Event #1
   ///         primary event with many particles along time
-  ///   ----[o--o-oo---o--o---------o-o----o-----------o-o--o--------o]----------------------> time
+  ///   ----[o--o-oo---o--o---------o-o----o-----------o-o--o--------o]--------[-o-oo------o-/ /---> time
   /// \endcode
   ///
   /// The result consists in several primary event instances:
@@ -62,10 +64,12 @@ namespace genbb {
   /// - particles with time in [time_cut,+infinity[ are dropped.
   ///
   /// \code
-  ///         prompt particles   delayed particles   ignored particles
-  ///   ----[o--o-oo---o--o---][----o-o----o------][---o-o--o--------o]----------------------> time
+  ///         Event #0.0          Event #0.1                                   Event #1.0
+  ///         prompt particles   delayed particles   ignored particles          prompt particles...
+  ///   ----[o--o-oo---o--o---][----o-o----o------][---o-o--o--------o]--------[-o-oo------o-/ /---> time
   ///                    time_threshold        time_cut
   /// \endcode
+  ///
   class time_slicer_generator
     : public i_genbb
   {
@@ -155,7 +159,7 @@ namespace genbb {
     double _time_cut_;        //!< Time cut above whom particles are ignored
     slice_mode_type _mode_ = SM_UNDEF; //!< Slicing mode
     bool _record_original_event_id_ = true; //!< Flag to record the original event ID in the auxiliaries
-
+ 
     // Working data:
     primary_event _buffer_event_;
     std::size_t   _original_event_counter_ = 0;

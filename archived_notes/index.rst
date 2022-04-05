@@ -16,6 +16,7 @@ Version                 Release Date
 3.4.2_                   2020-07-15
 3.4.3_                   2020-07-23
 3.4.4_                   2021-01-10
+3.5.0_                   2021-05-17
 ======================= ============
 
 .. _3.1.2: release_notes-3.1.2.rst
@@ -26,3 +27,4 @@ Version                 Release Date
 .. _3.4.2: release_notes-3.4.2.rst
 .. _3.4.3: release_notes-3.4.3.rst
 .. _3.4.4: release_notes-3.4.4.rst
+.. _3.5.0: release_notes-3.5.0.rst
