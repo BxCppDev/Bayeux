@@ -33,7 +33,7 @@ Fixes
 =====
 
 * Fix the  ``genbb::time_slicer_generator`` class with respect to the
-  determination of particles' time.
+  determination of particles' time (issue #58).
     
 Bugs
 ====
