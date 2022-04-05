@@ -14,9 +14,9 @@ the `release notes archive`_.
 Requirements
 ============
 
-Bayeux  3.5.1 requires  Linux (recommended  Ubuntu >=18.04  (preferred
-20.04), CentOS >=7.5), or macOS 10.
-
+* Bayeux  3.5.1 requires  Linux (recommended  Ubuntu >=18.04  (preferred
+  20.04), CentOS >=7.5), or macOS 10.
+* Bayeux 3.5.1 depends on BxDecay >=1.1.0.
 
 Additions
 =========
