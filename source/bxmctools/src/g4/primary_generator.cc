@@ -779,8 +779,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::primary_generator,ocd_)
   ocd_.set_class_library("mctools_g4");
 
   // The class detailed documentation :
-  ocd_.set_class_documentation("This is Geant4 simulation engine embedded primary generator action. \n"
-                                );
+  ocd_.set_class_documentation("This is Geant4 simulation engine embedded primary generator action.\n");
 
   {
     // Description of the 'logging.priority' configuration property :
