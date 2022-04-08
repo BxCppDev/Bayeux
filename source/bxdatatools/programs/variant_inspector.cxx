@@ -1,7 +1,7 @@
 //! \file  bxvariant_inspector.cxx
 //! \brief Variant parameters inspector program
 
-// Copyright (c) 2016 by François Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2016-2022 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
 // This file is part of Bayeux.
 //
@@ -240,6 +240,9 @@ int main(int argc_, char * argv_[])
         }
         if (params.variants.is_active()) {
           dtc::variant_service vserv;
+          // DT_LOG_DEBUG(datatools::logger::PRIO_ALWAYS,
+          //              "Repository lock = " << std::boolalpha << vserv.get_repository().is_locked());
+
           vserv.configure(params.variants);
 
           if (datatools::logger::is_debug(logging)) {
@@ -325,8 +328,8 @@ void app_dump_debug(std::ostream & out_, const dtc::variant_repository & vrep_)
   out_ << "  Organization : '" << vrep_.get_organization() << "'" << std::endl;
   out_ << "  Application  : '" << vrep_.get_application() << "'" << std::endl;
   out_ << "  Description  : '" << vrep_.get_terse_description() << "'" << std::endl;
-  out_ << "  Accomplished : " << vrep_.is_accomplished() << "" << std::endl;
-  out_ << "  Locked       : " << vrep_.is_locked() << "'" << std::endl;
+  out_ << "  Accomplished : " << std::boolalpha << vrep_.is_accomplished() << std::endl;
+  out_ << "  Locked       : " << std::boolalpha << vrep_.is_locked() << std::endl;
   out_ << "  Registries   : [" << vrep_.get_registries().size() << "]" << std::endl;
 
   std::vector<std::string> vreg_keys;

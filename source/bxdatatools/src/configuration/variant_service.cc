@@ -583,6 +583,8 @@ namespace datatools {
     void variant_service::configure(const config & cfg_, bool lock_)
     {
       DT_LOG_TRACE_ENTERING(_logging_);
+      // DT_LOG_DEBUG(datatools::logger::PRIO_ALWAYS, "Requested lock = " << std::boolalpha << lock_);
+      // DT_LOG_DEBUG(datatools::logger::PRIO_ALWAYS, "Repository lock = " << std::boolalpha << _repository_.is_locked());
       DT_THROW_IF(is_started(), std::logic_error, "variant service is already started!");
       datatools::logger::priority prio = datatools::logger::get_priority(cfg_.logging);
       if (prio != datatools::logger::PRIO_UNDEFINED) {
@@ -608,16 +610,20 @@ namespace datatools {
       }
       set_ui_writable_at_start(cfg_.ui_writable_at_start);
       set_ui_inhibit_secondary_choices(cfg_.ui_inhibit_secondary_choices);
+      DT_LOG_DEBUG(_logging_, "Repository lock = " << std::boolalpha << _repository_.is_locked());
       _do_build_();
       if (lock_) {
         if (!_repository_.is_locked()) {
+          DT_LOG_DEBUG(_logging_, "Lock the repository");
           _repository_.lock();
         }
       } else {
         if (_repository_.is_locked()) {
+          DT_LOG_DEBUG(_logging_, "Unlock the repository");
           _repository_.unlock();
         }
       }
+      DT_LOG_DEBUG(_logging_, "Repository lock = " << std::boolalpha << _repository_.is_locked());
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
@@ -625,6 +631,7 @@ namespace datatools {
     void variant_service::_do_build_()
     {
       DT_LOG_TRACE_ENTERING(_logging_);
+      // DT_LOG_DEBUG(datatools::logger::PRIO_ALWAYS, "Repository lock = " << std::boolalpha << _repository_.is_locked());
       // Initialize the repository:
       _do_variant_config_();
 
