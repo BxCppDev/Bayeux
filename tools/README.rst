@@ -20,7 +20,13 @@ Build and install
 
   .. code:: bash
 	    
-     $ linuxbrew_setup # Please use here your own command(s) to setup Bayeux's dependencies
+     $ bayeux_build_env 
+     [info] camp_setup: CAMP version 0.8.4 is now setup !
+     [info] clhep_2_1_4_2_setup: CLHEP version 2.1.4.2 is now setup !
+     [info] g4datasets_9_6_4_setup: Geant4 datasets version 9.6.4 is now setup !
+     [info] geant4_9_6_4_setup: GEANT4 version 9.6.4 is now setup !
+     [info] bxdecay0_1_1_0_setup: BxDecay0 version 1.1.0 is now setup !
+     [info] root_6_16_00_setup: ROOT version 6.16.00 is now setup !
      $ ./tools/build.sh --help
      $ rm -fr /scratch/sw/Bayeux/build-develop
      $ ./tools/build.sh \
