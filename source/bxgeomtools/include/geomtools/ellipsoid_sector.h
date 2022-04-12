@@ -8,8 +8,6 @@
  * Description:
  *   3D ellipsoid description
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_ELLIPSOID_SECTOR_H
@@ -35,7 +33,8 @@ namespace datatools {
 namespace geomtools {
 
   /// \brief The 2D shape/surface model for an ellipsoid sector
-  class ellipsoid_sector : public i_shape_2d
+  class ellipsoid_sector
+    : public i_shape_2d
   {
   public:
 
@@ -116,7 +115,7 @@ namespace geomtools {
     bool is_valid() const override;
 
     /// Initialize from properties and a dictionary of 3D-objects
-    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
+    void initialize(const datatools::properties &, const handle_dict_type * = nullptr) override;
 
     /// Reset the ellipsoid sector
     void reset() override;
@@ -126,41 +125,41 @@ namespace geomtools {
 
     /// Check if a point is on the surface
     bool is_on_surface(const vector_3d & ,
-                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                       double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the normal at a given position of the surface
     vector_3d get_normal_on_surface(const vector_3d & position_,
-                                            bool check_ = true,
-                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                                    bool check_ = true,
+                                    double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Find the intercept point of a segment with the surface
     bool find_intercept(const vector_3d & from_,
-                                const vector_3d & direction_,
-                                face_intercept_info & intercept_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                        const vector_3d & direction_,
+                        face_intercept_info & intercept_,
+                        double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Smart print
     void tree_dump(std::ostream & out_         = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_               = false) const override;
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_               = false) const override;
 
     /// \brief 3D rendering options
     enum ellsec_wires_rendering_option_type {
-      WR_ELLSEC_NO_BOTTOM_EDGE      = (WR_BASE_LAST << 1),        //!< Do not render the bottom edge
-      WR_ELLSEC_NO_TOP_EDGE         = (WR_BASE_LAST << 2),        //!< Do not render the top edge
-      WR_ELLSEC_NO_START_ANGLE_EDGE = (WR_BASE_LAST << 3),        //!< Do not render the start angle edge
-      WR_ELLSEC_NO_STOP_ANGLE_EDGE  = (WR_BASE_LAST << 4),        //!< Do not render the stop angle edge
-      WR_ELLSEC_LAST                = (WR_ELLSEC_NO_STOP_ANGLE_EDGE), //!< Last defined bit
-      WR_ELLIPSOID_MASK             = (WR_ELLSEC_NO_BOTTOM_EDGE
-                                      | WR_ELLSEC_NO_START_ANGLE_EDGE
-                                      | WR_ELLSEC_NO_STOP_ANGLE_EDGE
-                                      )  //!< Rendering options bit mask
+                                             WR_ELLSEC_NO_BOTTOM_EDGE      = (WR_BASE_LAST << 1),        //!< Do not render the bottom edge
+                                             WR_ELLSEC_NO_TOP_EDGE         = (WR_BASE_LAST << 2),        //!< Do not render the top edge
+                                             WR_ELLSEC_NO_START_ANGLE_EDGE = (WR_BASE_LAST << 3),        //!< Do not render the start angle edge
+                                             WR_ELLSEC_NO_STOP_ANGLE_EDGE  = (WR_BASE_LAST << 4),        //!< Do not render the stop angle edge
+                                             WR_ELLSEC_LAST                = (WR_ELLSEC_NO_STOP_ANGLE_EDGE), //!< Last defined bit
+                                             WR_ELLIPSOID_MASK             = (WR_ELLSEC_NO_BOTTOM_EDGE
+                                                                              | WR_ELLSEC_NO_START_ANGLE_EDGE
+                                                                              | WR_ELLSEC_NO_STOP_ANGLE_EDGE
+                                                                              )  //!< Rendering options bit mask
     };
 
     /// Generate a sequence of polylines for wires 3D rendering
     void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const override;
+                             uint32_t options_ = 0) const override;
 
   protected:
 

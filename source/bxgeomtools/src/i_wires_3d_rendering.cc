@@ -935,4 +935,45 @@ namespace geomtools {
     return count;
   }
 
+  void wires_3d_rendering_hints::initialize(const datatools::properties & config_)
+  {
+    if (config_.has_flag("reset")) {
+      wr_options = i_wires_3d_rendering::WR_NONE;
+    }
+     if (config_.has_flag("grid")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_GRID;
+    }
+    if (config_.has_flag("grid_low_density")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_GRID_LOW_DENSITY;
+    }
+    if (config_.has_flag("grid_high_density")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_GRID_HIGH_DENSITY;
+    }
+    if (config_.has_flag("grid_very_high_density")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_GRID_VERY_HIGH_DENSITY;
+    }
+    if (config_.has_flag("grid_huge_density")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_GRID_HUGE_DENSITY;
+    }
+    if (config_.has_flag("low_angle_sampling")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_LOW_ANGLE_SAMPLING;
+    }
+    if (config_.has_flag("high_angle_sampling")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_HIGH_ANGLE_SAMPLING;
+    }
+    if (config_.has_flag("very_high_angle_sampling")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_VERY_HIGH_ANGLE_SAMPLING;
+    }
+    if (config_.has_flag("huge_angle_sampling")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_HUGE_ANGLE_SAMPLING;
+    }
+    if (config_.has_flag("boundings")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_BOUNDINGS;
+    }
+    if (config_.has_flag("explode")) {
+      wr_options |= i_wires_3d_rendering::WR_BASE_EXPLODE;
+    }
+    return;
+  }
+
 } // end of namespace geomtools

@@ -228,21 +228,27 @@ namespace geomtools {
         DT_THROW_IF(!get_shape_factory().has(shape_ref), std::logic_error,
                     "Shape factory does not contains a solid named '" << shape_ref
                     << "' for model '" << get_name() << "'!");
-        _solid_.reset(dynamic_cast<i_shape_3d *>(const_cast<i_object_3d *>(&get_shape_factory().get(shape_ref))));
+        // _solid_.reset(dynamic_cast<i_shape_3d *>(const_cast<i_object_3d *>(&get_shape_factory().get(shape_ref))));
+        i_object_3d::handle_type refShape = grab_shape_factory().grab_shared_ptr(shape_ref);
+        DT_THROW_IF(refShape->get_dimensional() != i_object_3d::DIMENSIONAL_3,
+                    std::logic_error,
+                    "Object provided by the shape factory (type='" << refShape->get_shape_name() << "') is not a 3D-shape!");
+        _solid_ = std::dynamic_pointer_cast<i_shape_3d>(refShape);
       } else {
-        DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error,
+        DT_THROW_IF(! config_.has_key ("shape_type"), std::logic_error,
                      "Missing 'shape_type' property in simple shaped model '" << get_name() << "' !");
         _shape_type_id_ = config_.fetch_string("shape_type");
         datatools::properties shape_config;
         config_.export_and_rename_starting_with(shape_config, "shape.", "");
         std::ostringstream solid_name_oss;
         solid_name_oss << get_name() << i_model::solid_suffix();
-        i_object_3d & obj3d = grab_shape_factory().create(solid_name_oss.str(), _shape_type_id_, shape_config);
-        // obj3d.set_name(solid_name_oss.str());
-        DT_THROW_IF(obj3d.get_dimensional() != i_object_3d::DIMENSIONAL_3,
+        i_object_3d::handle_type obj3dPtr = grab_shape_factory().create(solid_name_oss.str(), _shape_type_id_, shape_config);
+        DT_THROW_IF(obj3dPtr->get_dimensional() != i_object_3d::DIMENSIONAL_3,
                     std::logic_error,
                     "Object provided by the shape factory (type='" << _shape_type_id_ << "') is not a 3D-shape!");
-        _solid_.reset(dynamic_cast<i_shape_3d *>(&obj3d));
+        // std::shared_ptr<i_shape_3d> sh3dPtr = std::dynamic_cast<std::shared_ptr<i_shape_3d>>(obj3dPtr);
+        // _solid_.reset(sh3dPtr); //dynamic_cast<i_shape_3d *>(&obj3dPtr));
+        _solid_ = std::dynamic_pointer_cast<i_shape_3d>(obj3dPtr);
       }
 
       // 2015-06-12, FM: Add missing material name in the logical
@@ -386,7 +392,7 @@ namespace geomtools {
   {
     DT_LOG_DEBUG(get_logging_priority(), "Construct box named '" << get_name() << "'");
     // Build the box:
-    _box_.reset(new box);
+    _box_ = std::make_shared<box>();
     try {
       DT_LOG_DEBUG(get_logging_priority(), "Initialize box from config: ");
       if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
@@ -414,7 +420,7 @@ namespace geomtools {
                                                  models_col_type * /*models_*/)
   {
     // Build the cylinder:
-    _cylinder_.reset(new cylinder);
+    _cylinder_ = std::make_shared<cylinder>();
     try {
       _cylinder_->initialize(config_);
     } catch (std::exception & error) {
@@ -434,7 +440,7 @@ namespace geomtools {
                                                models_col_type* /*models_*/)
   {
     // Build the sphere:
-    _sphere_.reset(new sphere);
+    _sphere_ = std::make_shared<sphere>();
     try {
       _sphere_->initialize(config_);
     } catch (std::exception & error) {
@@ -454,7 +460,7 @@ namespace geomtools {
                                              models_col_type* models_)
   {
     // Build the tube:
-    _tube_.reset(new tube);
+    _tube_ = std::make_shared<tube>();
     try {
       _tube_->initialize(config_);
     } catch (std::exception & error) {
@@ -537,14 +543,14 @@ namespace geomtools {
       double out_r = _tube_->get_outer_r();
       double z     = _tube_->get_z();
       // Make the envelope a cylinder:
-      _cylinder_.reset(new cylinder);
+      _cylinder_ = std::make_shared<cylinder>();
       if (_envelope_tolerance_.deflated_shape) {
         std::shared_ptr<tube> deflated_tube;
         if (_tube_->has_inner_r()) {
           in_r = _tube_->get_inner_r();
-          deflated_tube.reset(new tube(in_r, out_r - r_eps, z - 2 * z_eps));
+          deflated_tube = std::make_shared<tube>(in_r, out_r - r_eps, z - 2 * z_eps);
         } else {
-          deflated_tube.reset(new tube(out_r - r_eps, z - 2 * z_eps));
+          deflated_tube = std::make_shared<tube>(out_r - r_eps, z - 2 * z_eps);
         }
         _tube_->compute_outer_cylinder(*_cylinder_);
         // Replace the original tube by the deflated one:
@@ -576,7 +582,7 @@ namespace geomtools {
                                                  models_col_type * models_)
   {
     // Build the polycone:
-    _polycone_.reset(new polycone);
+    _polycone_ = std::make_shared<polycone>();
     try {
       _polycone_->initialize(config_);
     } catch (std::exception & error) {
@@ -660,10 +666,10 @@ namespace geomtools {
       // Make the envelope a polycone:
       polycone outer_polycone;
       _polycone_->compute_outer_polycone(outer_polycone);
-      std::shared_ptr<polycone> envelope_polycone(new polycone);
+      std::shared_ptr<polycone> envelope_polycone = std::make_shared<polycone>();
       if ((r_eps or z_eps) and _envelope_tolerance_.deflated_shape) {
         outer_polycone.compute_envelope(*envelope_polycone, 0.0, 0.0, 0.0);
-        std::shared_ptr<polycone> deflated_polycone(new polycone);
+        std::shared_ptr<polycone> deflated_polycone = std::make_shared<polycone>();
         _polycone_->compute_deflated(*deflated_polycone, r_eps, z_eps, theta_eps);
         // Replace the original polycone by the deflated one:
         _polycone_ = deflated_polycone;
@@ -695,7 +701,7 @@ namespace geomtools {
   void simple_shaped_model::_construct_polyhedra (const datatools::properties & config_,
                                                   models_col_type* models_)
   {
-    _polyhedra_.reset(new polyhedra);
+    _polyhedra_ = std::make_shared<polyhedra>();
     try {
       _polyhedra_->initialize(config_);
     } catch (std::exception & error) {
@@ -775,10 +781,10 @@ namespace geomtools {
       // Make the envelope a polyhedra:
       polyhedra outer_polyhedra;
       _polyhedra_->compute_outer_polyhedra(outer_polyhedra);
-      std::shared_ptr<polyhedra> envelope_polyhedra(new polyhedra);
+      std::shared_ptr<polyhedra> envelope_polyhedra = std::make_shared<polyhedra>();
       if ((r_eps or z_eps) and _envelope_tolerance_.deflated_shape) {
         outer_polyhedra.compute_envelope(*envelope_polyhedra, 0.0, 0.0);
-        std::shared_ptr<polyhedra> deflated_polyhedra(new polyhedra);
+        std::shared_ptr<polyhedra> deflated_polyhedra = std::make_shared<polyhedra>();
         _polyhedra_->compute_deflated(*deflated_polyhedra, r_eps, z_eps);
         // Replace the original polyhedra by the deflated one:
         _polyhedra_ = deflated_polyhedra;

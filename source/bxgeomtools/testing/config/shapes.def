@@ -42,16 +42,27 @@ x : real as length = 4.25 mm
 y : real as length = 2.50 mm
 z : real as length = 0.25 mm
 
-# [name="o106" type="geomtools::tessellated_solid"]
-# # length_unit : string = "mm"
-# length_unit_value : real as length = 0.1 mm
+[name="o106" type="geomtools::tessellated_solid"]
+# length_unit : string = "mm"
+length_unit_value : real as length = 0.1 mm
 # stl_file    : string as path = "${GEOMTOOLS_TESTING_DIR}/data/test_stl_import.stl"
-# # stl_file    : string as path = "${GEOMTOOLS_TESTING_DIR}/data/test_stl_pave2.stl"
+stl_file    : string as path = "${GEOMTOOLS_TESTING_DIR}/data/test_stl_pave2.stl"
 
 [name="o107" type="geomtools::box"]
 x : real as length = 0.5 mm
 y : real as length = 0.5 mm
 z : real as length = 0.5 mm
+
+[name="o108" type="geomtools::subtraction_3d"]
+shape_1.name : string = "o101"
+shape_2.name : string = "o105"
+shape_2.placement : string = "0.0 0.0 -1.5 (mm) / x 30. degree"
+
+
+[name="o109" type="geomtools::intersection_3d"]
+shape_1.name : string = "o102"
+shape_2.name : string = "o105"
+shape_2.placement : string = "0.0 0.0 -0.5 (mm) / x 30. degree"
 
 
 # end

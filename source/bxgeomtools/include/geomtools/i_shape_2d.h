@@ -9,8 +9,6 @@
  *
  *  Interface for 2D shaped surfaces
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_I_SHAPE_2D_H
@@ -34,9 +32,10 @@
 namespace geomtools {
 
   /// \brief The abstract base class for all 2D shapes/surfaces
-  class i_shape_2d : public i_object_3d,
-                     public i_find_intercept,
-                     public i_wires_3d_rendering
+  class i_shape_2d
+    : public i_object_3d
+    , public i_find_intercept
+    , public i_wires_3d_rendering
   {
   public:
 
@@ -83,7 +82,7 @@ namespace geomtools {
     i_shape_2d(double tolerance_, double angular_tolerance_);
 
     /// Destructor
-    ~i_shape_2d() override;
+    virtual ~i_shape_2d() override;
 
     /// Check is a given point belongs to the surface of the 2D shape
     ///

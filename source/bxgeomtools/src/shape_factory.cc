@@ -15,13 +15,6 @@
 
 namespace geomtools {
 
-  shape_factory::shape_factory()
-  {
-    _logging_priority_ = datatools::logger::PRIO_FATAL;
-    _initialized_ = false;
-    return;
-  }
-
   shape_factory::~shape_factory()
   {
     if (is_initialized()) {
@@ -42,85 +35,67 @@ namespace geomtools {
     return;
   }
 
+  void shape_factory::keys(std::unordered_set<std::string> & keys_) const
+  {
+    keys_.clear();
+    for (i_object_3d::handle_dict_type::const_iterator i = _shapes_.begin();
+         i != _shapes_.end();
+         i++) {
+      keys_.insert(i->first);
+    }
+    return;
+  }
+
   const i_object_3d::handle_dict_type & shape_factory::get_shapes() const
   {
     return _shapes_;
   }
 
-  i_object_3d * shape_factory::_create(const std::string & name_,
-                                       const std::string & type_id_,
-                                       const datatools::properties & config_,
-                                       bool store_)
+  std::unique_ptr<i_object_3d> shape_factory::_create(const std::string & type_id_,
+                                                      const datatools::properties & config_)
   {
-    if (store_) {
-      // Check if an object with given nalme is already stored in the factory:
-      DT_THROW_IF(has(name_), std::logic_error,
-                  "Object named '" << name_ << "' already exists!");
-    }
     DT_THROW_IF(! _factory_register_.has(type_id_),
                 std::runtime_error,
                 "Cannot find any registered 3D object/shape class factory with ID '"
-                << type_id_ << "' for shape '" << name_ << " !");
-     const i_object_3d::factory_register_type::factory_type & the_factory
-       = _factory_register_.get(type_id_);
-     i_object_3d * obj = the_factory();
-     // obj->set_name(name_);
-     if (store_) {
-       {
-         i_object_3d::object_entry oe;
-         _shapes_[name_] = oe;
-       }
-       i_object_3d::object_entry & oentry = _shapes_.find(name_)->second;
-       oentry.set_object(obj);
-     }
-     obj->initialize(config_, &_shapes_);
-     // std::cerr << "DEVEL: shape_factory::_create: Shape " << name_ << " is initialized" << std::endl;
-     if (obj->get_dimensional() == i_object_3d::DIMENSIONAL_3) {
-       i_shape_3d * sh_ptr = dynamic_cast<i_shape_3d*>(obj);
-       if (!sh_ptr->is_locked()) {
-         DT_LOG_NOTICE(get_logging_priority(), "Locking shape '" << name_ << "'");
-         sh_ptr->lock();
-       }
-     }
-     return obj;
-  }
-
-  i_object_3d * shape_factory::create_ptr(const std::string & name_,
-                                          const std::string & type_id_,
-                                          const datatools::properties & config_)
-  {
-    return _create(name_, type_id_, config_, false);
-  }
-
-  i_object_3d & shape_factory::create(const std::string & name_,
-                                      const std::string & type_id_,
-                                      const datatools::properties & config_,
-                                      bool store_)
-  {
-    return *_create(name_, type_id_, config_, store_);
-    /*
-    DT_THROW_IF(has(name_), std::logic_error,
-                "Object named '" << name_ << "' already exists!");
-    DT_THROW_IF(! _factory_register_.has(type_id_),
-                std::runtime_error,
-                "Cannot find any registered 3D object/shape class factory with ID '"
-                << type_id_ << "' for shape '" << name_ << " !");
+                << type_id_ << "'!");
     const i_object_3d::factory_register_type::factory_type & the_factory
       = _factory_register_.get(type_id_);
-    i_object_3d * obj = the_factory();
-    obj->set_name(name_);
-    {
-      i_object_3d::object_entry oe;
-      // Not needed here:
-      //oe.set_name(name_);
-      //oe.set_type_id(type_id_);
-      _shapes_[name_] = oe;
-    }
-    i_object_3d::object_entry & oentry = _shapes_.find(name_)->second;
-    oentry.set_object(obj);
+    std::unique_ptr<i_object_3d> obj(the_factory());
     obj->initialize(config_, &_shapes_);
-    return *obj;
-    */
+    if (obj->get_dimensional() == i_object_3d::DIMENSIONAL_3) {
+      i_shape_3d * sh_ptr = dynamic_cast<i_shape_3d*>(obj.get());
+      if (!sh_ptr->is_locked()) {
+        DT_LOG_NOTICE(get_logging_priority(), "Locking shape of type '" << type_id_ << "'");
+        sh_ptr->lock();
+      }
+    }
+    return obj;
+  }
+ 
+  std::unique_ptr<i_object_3d> shape_factory::create_unique_ptr(const std::string & type_id_,
+                                                                const datatools::properties & config_)
+  {
+    return _create(type_id_, config_);
+  }
+
+  i_object_3d::handle_type shape_factory::create(const std::string & name_,
+                                                 const std::string & type_id_,
+                                                 const datatools::properties & config_)
+  {
+    DT_THROW_IF(has(name_), std::logic_error,
+                "Object named '" << name_ << "' already exists!");
+    i_object_3d::handle_type sp = _create(type_id_, config_);
+    _shapes_.emplace(name_, i_object_3d::object_entry(name_, type_id_, config_, sp));
+    DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Shape factory now stores object='" << name_ << "'");
+    return sp;
+  }
+
+  const i_object_3d & shape_factory::create_reference(const std::string & name_,
+                                                      const std::string & type_id_,
+                                                      const datatools::properties & config_)
+  {
+    auto sp = create(name_, type_id_, config_);
+    return *sp;
   }
 
   bool shape_factory::has(const std::string & name_, const std::string & type_id_) const
@@ -148,6 +123,24 @@ namespace geomtools {
     DT_THROW_IF(! oe.has_object(), std::logic_error,
                 "Entry named '" << name_ << "' has no object!");
     return oe.get_object();
+  }
+
+  i_object_3d::const_handle_type shape_factory::get_shared_ptr(const std::string & name_) const
+  {
+    i_object_3d::handle_dict_type::const_iterator found = _shapes_.find(name_);
+    DT_THROW_IF(found == _shapes_.end(), std::logic_error,
+                "No entry named '" << name_ << "' exists in the shape factory!");
+    const i_object_3d::object_entry & oe = found->second;
+    return oe.get_handle();
+  }
+
+  i_object_3d::handle_type shape_factory::grab_shared_ptr(const std::string & name_)
+  {
+    i_object_3d::handle_dict_type::iterator found = _shapes_.find(name_);
+    DT_THROW_IF(found == _shapes_.end(), std::logic_error,
+                "No entry named '" << name_ << "' exists in the shape factory!");
+    i_object_3d::object_entry & oe = found->second;
+    return oe.grab_handle(); 
   }
 
   datatools::logger::priority shape_factory::get_logging_priority() const
@@ -197,12 +190,9 @@ namespace geomtools {
       config_.fetch("shapes_files", factory_shapes_files);
     }
 
-    // _at_init();
-
     _initialized_ = true;
 
     // Post initialization:
-
     if (! factory_shapes_list.empty ()) {
       load_list(factory_shapes_list);
     }
@@ -227,6 +217,12 @@ namespace geomtools {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Shape factory is not initialized!");
     _initialized_ = false;
+    if (datatools::logger::is_debug(get_logging_priority())) {
+      this->tree_dump(std::cerr, "About to reset the shape factory: ", "[debug] ");
+    }
+    // for (auto & p : _shapes_) {
+    //   p.second.reset();
+    // }
     _shapes_.clear();
     return;
   }
@@ -247,9 +243,9 @@ namespace geomtools {
       const datatools::multi_properties::entry * e = *i;
       const std::string & shape_name = e->get_key();
       const std::string & shape_type_id = e->get_meta();
-      shape_factory::create(shape_name,
-                            shape_type_id,
-                            e->get_properties());
+      this->create(shape_name,
+                   shape_type_id,
+                   e->get_properties());
     }
     return;
   }
@@ -354,11 +350,25 @@ namespace geomtools {
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Initialized : "
-         << _initialized_ << std::endl;
+         << std::boolalpha << _initialized_ << std::endl;
 
     out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
          << "Shapes : "
          << '[' << _shapes_.size() << ']' << std::endl;
+
+    {
+      size_t count = 0;
+      for (const auto & p : _shapes_) {
+        out_ << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+        if (count + 1 == _shapes_.size()) {
+          out_ << last_tag;
+        } else {
+          out_ << tag;
+        }
+        out_ << "Shape '" << p.first << "' of type='" << p.second.get_object().get_shape_name() << "' (entry=" << &p.second << ", address=" << &p.second.get_object() << ")" << std::endl;
+        count++;
+      }
+    }
 
     return;
   }

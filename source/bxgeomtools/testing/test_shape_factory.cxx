@@ -57,28 +57,39 @@ int main (int argc_, char ** argv_)
 
 void test0(bool draw_, bool dump_)
 {
+  datatools::logger::priority logging = datatools::logger::PRIO_DEBUG;
+  
   bool dump = dump_;
   bool dump2 = false;
+  if (datatools::logger::is_debug(logging)) {
+    dump = true;
+    dump2 = true;
+  }
 
   datatools::temp_file tmp_file;
   tmp_file.set_remove_at_destroy(true);
   tmp_file.create("/tmp", "test_shape_factory_");
 
   geomtools::shape_factory SF;
+  DT_LOG_DEBUG(logging, "Initializing the shape factory...");
+  SF.initialize_simple();
   std::string shapes_def = "${GEOMTOOLS_TESTING_DIR}/config/shapes.def";
   datatools::fetch_path_with_env(shapes_def);
-  SF.initialize_simple();
+  DT_LOG_DEBUG(logging, "Loading shapes' definitions...");
   SF.load(shapes_def);
-
+  if (dump) {
+    SF.tree_dump(std::cerr, " Shape factory: ", "[debug] ");
+  }
   bool more = true;
   more = false;
   if (more) {
+    DT_LOG_DEBUG(logging, "Creating more shapes...");
     {
       datatools::properties b0_cfg;
       b0_cfg.store("x", 3.4 * CLHEP::mm);
       b0_cfg.store("y", 5.6 * CLHEP::mm);
       b0_cfg.store("z", 1.2 * CLHEP::mm);
-      geomtools::i_object_3d & b0 = SF.create("b0", "geomtools::box", b0_cfg);
+      const geomtools::i_object_3d & b0 = SF.create_reference("b0", "geomtools::box", b0_cfg);
       if (dump2) b0.tree_dump(std::clog, "Shape 'b0' : ");
     }
 
@@ -87,7 +98,7 @@ void test0(bool draw_, bool dump_)
       b1_cfg.store("x", 1.2 * CLHEP::mm);
       b1_cfg.store("y", 3.4 * CLHEP::mm);
       b1_cfg.store("z", 5.6 * CLHEP::mm);
-      geomtools::i_object_3d & b1= SF.create("b1", "geomtools::box", b1_cfg);
+      const geomtools::i_object_3d & b1 = SF.create_reference("b1", "geomtools::box", b1_cfg);
       if (dump2) b1.tree_dump(std::clog, "Shape 'b1' : ");
     }
 
@@ -95,7 +106,7 @@ void test0(bool draw_, bool dump_)
       datatools::properties c3_cfg;
       c3_cfg.store("r", 0.5 * CLHEP::mm);
       c3_cfg.store("z", 2.2 * CLHEP::mm);
-      geomtools::i_object_3d & c3 = SF.create("c3", "geomtools::cylinder", c3_cfg);
+      const geomtools::i_object_3d & c3 = SF.create_reference("c3", "geomtools::cylinder", c3_cfg);
       if (dump2) c3.tree_dump(std::clog, "Shape 'c3' : ");
     }
 
@@ -104,7 +115,7 @@ void test0(bool draw_, bool dump_)
       u2_cfg.store("shape_1.name", "b0");
       u2_cfg.store("shape_2.name", "b1");
       u2_cfg.store("shape_2.position", "2.3 1.2 0.5 (mm) / z 45 (degree)");
-      geomtools::i_object_3d & u2 = SF.create("u2", "geomtools::union_3d", u2_cfg);
+      const geomtools::i_object_3d & u2 = SF.create_reference("u2", "geomtools::union_3d", u2_cfg);
       if (dump2) u2.tree_dump(std::clog, "Shape 'u2' : ");
     }
 
@@ -113,37 +124,48 @@ void test0(bool draw_, bool dump_)
       s4_cfg.store("shape_1.name", "b0");
       s4_cfg.store("shape_2.name", "b1");
       s4_cfg.store("shape_2.position", "2.3 1.2 0.5 (mm) / z 45 (degree)");
-      geomtools::i_object_3d & s4 = SF.create("s4", "geomtools::subtraction_3d", s4_cfg);
+      const geomtools::i_object_3d & s4 = SF.create_reference("s4", "geomtools::subtraction_3d", s4_cfg);
       if (dump2) s4.tree_dump(std::clog, "Shape 's4' : ");
     }
 
   }
   if (dump) SF.tree_dump(std::clog, "Shape factory: ");
 
+  DT_LOG_DEBUG(logging, "Building shape display map...");
   std::vector<std::string> names;
   SF.keys(names);
   std::map<int, std::string> display_map;
-  double r = 6.0 * CLHEP::mm;
-  int index = 0;
-  for (size_t i(0); i < names.size(); ++i) {
-    const std::string & name = names[i];
-    // if (name != "o106" && name != "o107") {
-    //   continue;
-    // }
-    const geomtools::i_object_3d & obj = SF.get(name);
-    if (dump) {
-      obj.tree_dump(std::clog, name, "[dump] ");
+  {
+    double r = 6.0 * CLHEP::mm;
+    int index = 0;
+    for (size_t i(0); i < names.size(); ++i) {
+      const std::string & name = names[i];
+      // if (name != "o106" && name != "o107") {
+      //   continue;
+      // }
+      const geomtools::i_object_3d & obj = SF.get(name);
+      if (dump) {
+        obj.tree_dump(std::clog, name, "[dump] ");
+      }
+      geomtools::placement plcmt;
+      double theta = i * 45.0 * CLHEP::degree;
+      int nloops = (int) (theta / (360.0  * CLHEP::degree));
+      double z = nloops * 5.0 * CLHEP::mm;
+      plcmt.set(r * std::cos(theta), r * std::sin(theta), z, 0.0, 0.0, 0.0);
+      tmp_file.out() << "# Shape: '" << name << "'" << '\n';
+      uint32_t draw_options = 0;
+      draw_options |= geomtools::i_wires_3d_rendering::WR_BASE_GRID;
+      draw_options |= geomtools::i_wires_3d_rendering::WR_BASE_GRID_VERY_HIGH_DENSITY;
+      draw_options |= geomtools::i_wires_3d_rendering::WR_BASE_HIGH_ANGLE_SAMPLING;
+      geomtools::gnuplot_draw::draw(tmp_file.out(), plcmt, obj, draw_options);
+      tmp_file.out() << "\n\n";
+      display_map[index++] = name;
+      DT_LOG_DEBUG(logging, "display_map size=" << display_map.size());
     }
-    geomtools::placement plcmt;
-    double theta = i * 45.0 * CLHEP::degree;
-    int nloops = (int) (theta / (360.0  * CLHEP::degree));
-    double z = nloops * 5.0 * CLHEP::mm;
-    plcmt.set(r * std::cos(theta), r * std::sin(theta), z, 0.0, 0.0, 0.0);
-    tmp_file.out() << "# Shape: '" << name << "'" << '\n';
-    geomtools::gnuplot_draw::draw(tmp_file.out(), plcmt, obj);
-    tmp_file.out() << "\n\n";
-    display_map[index++] = name;
+    DT_LOG_DEBUG(logging, "End of shape loop.");
   }
+  DT_LOG_DEBUG(logging, "Shape display map is built.");
+  if (dump) SF.tree_dump(std::clog, "Shape factory: ");
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
   if (draw_) {

@@ -47,23 +47,24 @@ namespace geomtools {
     static const std::string & box_label();
 
     /// \brief Masks used for the 6 faces of the box
-    enum faces_mask_type {
-                          FACE_NONE   = face_identifier::FACE_BITS_NONE,
-                          _FACE_BEGIN = 0x1,
-                          FACE_BACK   = 0x1,
-                          FACE_FRONT  = 0x2,
-                          FACE_LEFT   = 0x4,
-                          FACE_RIGHT  = 0x8,
-                          FACE_BOTTOM = 0x10,
-                          FACE_TOP    = 0x20,
-                          _FACE_END   = 0x40,
-                          FACE_ALL    = (FACE_BACK
-                                         | FACE_FRONT
-                                         | FACE_LEFT
-                                         | FACE_RIGHT
-                                         | FACE_BOTTOM
-                                         | FACE_TOP)
-    };
+    enum faces_mask_type
+      {
+       FACE_NONE   = face_identifier::FACE_BITS_NONE,
+       _FACE_BEGIN = 0x1,
+       FACE_BACK   = 0x1,
+       FACE_FRONT  = 0x2,
+       FACE_LEFT   = 0x4,
+       FACE_RIGHT  = 0x8,
+       FACE_BOTTOM = 0x10,
+       FACE_TOP    = 0x20,
+       _FACE_END   = 0x40,
+       FACE_ALL    = (FACE_BACK
+                      | FACE_FRONT
+                      | FACE_LEFT
+                      | FACE_RIGHT
+                      | FACE_BOTTOM
+                      | FACE_TOP)
+      };
 
     /// Return the min X coordinates (bounding box)
     double get_xmin() const override;
@@ -141,7 +142,7 @@ namespace geomtools {
     bool is_valid() const override;
 
     /// Initialize the box from properties
-    void initialize(const datatools::properties &, const handle_dict_type * = 0) override;
+    void initialize(const datatools::properties &, const handle_dict_type * = nullptr) override;
 
     /// Reset
     void reset() override;

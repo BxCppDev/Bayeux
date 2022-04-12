@@ -91,7 +91,7 @@ int main (int argc_, char ** argv_)
     } else {
       inter1.set_shape2(c2, p2);
     }
-    inter1.dump (std::clog);
+    inter1.tree_dump(std::clog, "Intersection 3D: ");
     inter1.lock();
 
     box ibb;

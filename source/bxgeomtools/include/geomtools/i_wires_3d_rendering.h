@@ -25,6 +25,7 @@
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/bit_mask.h>
+#include <datatools/properties.h>
 
 // This project:
 #include <geomtools/placement.h>
@@ -244,6 +245,15 @@ namespace geomtools {
     // Work:
     std::list<classified_segment> _clsegs_; //!< Collection of accumulated classified segments
 
+  };
+
+
+  struct wires_3d_rendering_hints
+  {
+    uint32_t wr_options = 0;
+
+    void initialize(const datatools::properties & config_);
+    
   };
 
 } // end of namespace geomtools

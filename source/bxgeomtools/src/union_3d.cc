@@ -35,7 +35,8 @@ namespace geomtools {
     return union_3d_label();
   }
 
-  union_3d::union_3d () : i_composite_shape_3d ()
+  union_3d::union_3d ()
+    : i_composite_shape_3d ()
   {
     return;
   }

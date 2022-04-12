@@ -9,8 +9,6 @@
  * Description:
  *  Interface:
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_UNION_3D_H
@@ -22,7 +20,8 @@
 namespace geomtools {
 
   //! \brief Union of two 3D shapes
-  class union_3d : public i_composite_shape_3d
+  class union_3d
+    : public i_composite_shape_3d
   {
   public:
 
@@ -36,7 +35,7 @@ namespace geomtools {
     union_3d();
 
     /// Destructor
-    ~union_3d() override;
+    virtual ~union_3d() override;
 
     /// Check if a point is inside the cylinder
     bool is_inside(const vector_3d & position_,

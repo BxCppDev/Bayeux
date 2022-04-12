@@ -8,8 +8,6 @@
  * Description:
  *   Logical volume.
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_LOGICAL_VOLUME_H

@@ -10,7 +10,6 @@
 
 // This project:
 #include <geomtools/i_wires_3d_rendering.h>
-#include <geomtools/utils.h>
 
 namespace geomtools {
 
@@ -20,23 +19,52 @@ namespace geomtools {
 
   i_object_3d::object_entry::object_entry()
   {
-    _status_ = 0;
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this << "  name='" << "<none>" << "'");
+    return;
+  }
+
+  i_object_3d::object_entry::object_entry(const std::string & name_,
+                                          const std::string & type_id_,
+                                          const datatools::properties & config_,
+                                          const handle_type & handle_)
+  {
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this << "  name='" << name_ << "'");
+    set_name(name_);
+    set_type_id(type_id_);
+    set_config(config_);
+    set_handle(handle_);
     return;
   }
 
   i_object_3d::object_entry::~object_entry()
   {
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "DTOR=" << this << "  name='" << _name_ << "'");
     reset();
     return;
   }
 
   void i_object_3d::object_entry::reset()
   {
-    _config_.clear();
-    _name_.clear();
-    _type_id_.clear();
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Entering...");
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "  Name='" << _name_ << "'");
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "  Handle=" << std::boolalpha << bool(_hobject_));
+    // if (_hobject_) {
+    //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "   Test handle data");
+    //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "   unique = " << _hobject_.unique());
+    //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "   count = " << _hobject_.use_count());
+    //   const auto & obj = *_hobject_;
+    //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "   obj type = " << typeid(obj).name());
+    // } else {
+    //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "No handled data");
+    // }
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Reset handle...");
     _hobject_.reset();
-    _status_ = 0;
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "handle is reset.");
+    _config_.clear();
+    _type_id_.clear();
+    _name_.clear();
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "config/name/type_id cleared.");
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Exiting.");
     return;
   }
 
@@ -62,41 +90,42 @@ namespace geomtools {
     return _type_id_;
   }
 
-  void i_object_3d::object_entry::set_status(uint32_t s_)
-  {
-    _status_ = s_;
-    return;
-  }
-
-  uint32_t i_object_3d::object_entry::get_status() const
-  {
-    return _status_;
-  }
-
   const datatools::properties & i_object_3d::object_entry::get_config() const
   {
     return _config_;
   }
-
-  datatools::properties & i_object_3d::object_entry::grab_config()
+  
+  void i_object_3d::object_entry::set_config(const datatools::properties & config_)
   {
-    return _config_;
+    _config_ = config_;
+    return;
   }
 
   bool i_object_3d::object_entry::has_object() const
   {
-    return _hobject_.has_data();
+    return bool(_hobject_);
   }
 
   const i_object_3d & i_object_3d::object_entry::get_object() const
   {
-    return _hobject_.get();
+    DT_THROW_IF(!bool(_hobject_), std::logic_error, "Null object handle!");
+    return *_hobject_;
   }
 
-  void i_object_3d::object_entry::set_object(i_object_3d * obj_)
+  void i_object_3d::object_entry::set_handle(const i_object_3d::handle_type & handle_)
   {
-    _hobject_.reset(obj_);
+    _hobject_ = handle_;
     return;
+  }
+
+  i_object_3d::const_handle_type i_object_3d::object_entry::get_handle() const
+  {
+    return _hobject_;
+  }
+
+  i_object_3d::handle_type i_object_3d::object_entry::grab_handle()
+  {
+    return _hobject_;
   }
 
   /* i_object_3d */
@@ -177,13 +206,13 @@ namespace geomtools {
     _logging_priority_ = datatools::logger::PRIO_FATAL;
     _tolerance_ = constants::get_default_tolerance();
     _angular_tolerance_ = constants::get_default_angular_tolerance();
-    _wires_drawer_ = 0;
+    _wires_drawer_ = nullptr;
     return;
   }
 
   bool i_object_3d::has_wires_drawer() const
   {
-    return _wires_drawer_ != 0;
+    return _wires_drawer_ != nullptr;
   }
 
   void i_object_3d::set_wires_drawer(i_wires_3d_rendering & wires_drawer_)
@@ -194,8 +223,8 @@ namespace geomtools {
 
   void i_object_3d::reset_wires_drawer()
   {
-    if (_wires_drawer_ != 0) {
-      _wires_drawer_ = 0;
+    if (_wires_drawer_ != nullptr) {
+      _wires_drawer_ = nullptr;
     }
     return;
   }
@@ -216,13 +245,15 @@ namespace geomtools {
 
   i_object_3d::i_object_3d()
   {
-    _set_defaults();
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this);
+    // _set_defaults();
     return;
   }
 
   i_object_3d::i_object_3d(double tolerance_)
   {
-    _set_defaults();
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this);
+    // _set_defaults();
     if (tolerance_ <= 0.0) {
       _tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE;
     } else {
@@ -233,7 +264,8 @@ namespace geomtools {
 
   i_object_3d::i_object_3d(double tolerance_, double angular_tolerance_)
   {
-    _set_defaults();
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this);
+    // _set_defaults();
     if (tolerance_ <= 0.0 || !datatools::is_valid(tolerance_)) {
       _tolerance_ = constants::get_default_tolerance();
     } else {
@@ -249,7 +281,8 @@ namespace geomtools {
 
   i_object_3d::i_object_3d(const i_object_3d & src_)
   {
-    _set_defaults();
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this);
+    // _set_defaults();
     _tolerance_ = src_._tolerance_;
     _angular_tolerance_ = src_._angular_tolerance_;
     _wires_drawer_ = src_._wires_drawer_;
@@ -269,14 +302,15 @@ namespace geomtools {
 
   i_object_3d::~i_object_3d()
   {
-    this->i_object_3d::reset();
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "DTOR=" << this);
+    this->i_object_3d::_reset();
     return;
   }
 
   void i_object_3d::initialize_simple()
   {
     datatools::properties dummy_config;
-    initialize(dummy_config, 0);
+    initialize(dummy_config, nullptr);
     return;
   }
 

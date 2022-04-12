@@ -29,6 +29,22 @@ Build and install
 	    --install-base-dir /scratch/sw/Bayeux/install-develop 
   ..
 
+Special build
+================
+
+* Build:
+
+  .. code:: bash
+
+     $ bayeux_build_env
+     $ ./tools/build.sh \
+	    --nprocs 6 \
+	    --build-base-dir /scratch/sw/Bayeux/build-test \
+	    --install-base-dir /scratch/sw/Bayeux/install-test \
+	    -with-geant4 \
+	    -with-qt 
+	    
+  ..
   
 * Select a specific Boost prefix:
 
@@ -49,6 +65,20 @@ Build and install
 
      $ ctest -VV -I 41,41
   ..
+
+
+Special build
+================
+
+
+./tools/build.sh \
+	    --nprocs 6 \
+	    --build-base-dir /scratch/sw/Bayeux/build-minimal \
+	    --install-base-dir /scratch/sw/Bayeux/install-minimal \
+	    --minimal-build
+
+
+
 
 
 .. end

@@ -317,18 +317,20 @@ namespace geomtools {
   {
     _locked_ = false;
     _owns_stackable_data_ = false;
-    _stackable_data_ = 0;
+    _stackable_data_ = nullptr;
     return;
   }
 
   i_shape_3d::i_shape_3d() : i_object_3d()
   {
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this);
     _set_defaults();
     return;
   }
 
   i_shape_3d::i_shape_3d(double a_skin) : i_object_3d(a_skin)
   {
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this);
     _set_defaults();
     return;
   }
@@ -337,6 +339,7 @@ namespace geomtools {
                          double angular_tolerance_)
     : i_object_3d(a_skin, angular_tolerance_)
   {
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "CTOR=" << this);
     _set_defaults();
     return;
   }
@@ -359,7 +362,21 @@ namespace geomtools {
 
   i_shape_3d::~i_shape_3d ()
   {
+    // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "DTOR=" << this);
     reset_stackable_data();
+    return;
+  }
+
+  void i_shape_3d::initialize(const datatools::properties & config_,
+                               const handle_dict_type * objects_)
+  {
+    this->i_shape_3d::_initialize(config_, objects_);
+    return;
+  }
+
+  void i_shape_3d::reset()
+  {
+    this->i_shape_3d::_reset();
     return;
   }
 

@@ -244,7 +244,7 @@ namespace geomtools {
     _extruded_solid_.lock();
     DT_LOG_TRACE (get_logging_priority(), "Extruded solid:");
     if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-      _extruded_solid_.dump(std::cerr);
+      _extruded_solid_.tree_dump(std::cerr, "", "[trace] ");
     }
 
     /*

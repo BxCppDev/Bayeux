@@ -689,7 +689,7 @@ namespace geomtools {
 
     // Keep only base rendering bits:
     uint32_t base_options = options_ & WR_BASE_MASK;
-
+    DT_LOG_DEBUG(datatools::logger::PRIO_ALWAYS, "base_options=" << base_options);
     // bool edge00 = false;
     // bool edge01 = false;
     // bool edge02 = false;

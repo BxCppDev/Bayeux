@@ -1,16 +1,14 @@
 /// \file geomtools/i_object_3d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2015-04-25
+ * Last modified: 2022-04-12
  *
- * License:
+ * License: GPL 3.0
  *
  * Description:
  *
  *  Interface for object than can be described in a 3D reference frame
  *  and possibly drawn with some graphics renderer.
- *
- * History:
  *
  */
 
@@ -22,11 +20,12 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include <unordered_map>
+#include <memory>
 
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/ocd_macros.h>
-#include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_serializable.h>
 #include <datatools/logger.h>
@@ -61,8 +60,9 @@ namespace geomtools {
     };
 
     /// A handle to a 3D object
-    typedef datatools::handle<i_object_3d> handle_type;
-
+    typedef std::shared_ptr<i_object_3d> handle_type;
+    typedef std::shared_ptr<const i_object_3d> const_handle_type;
+ 
     /// \brief An entry that stores a 3D object
     class object_entry
     {
@@ -71,6 +71,12 @@ namespace geomtools {
       /// Default constructor
       object_entry();
 
+      /// Constructor
+      object_entry(const std::string & name_,
+                   const std::string & type_id_,
+                   const datatools::properties & config_,
+                   const handle_type & handle_);
+        
       /// Destructor
       ~object_entry();
 
@@ -89,39 +95,41 @@ namespace geomtools {
       /// Return the type identifier of the object
       const std::string & get_type_id() const;
 
-      /// Set status
-      void set_status(uint32_t);
-
-      /// Return status
-      uint32_t get_status() const;
-
       /// Return the reference to the configuration
       const datatools::properties & get_config() const;
 
-      /// Return the reference to the configuration
-      datatools::properties & grab_config();
+      // /// Return the reference to the configuration
+      // datatools::properties & grab_config();
+
+      /// Set the configuration of the object
+      void set_config(const datatools::properties & config_);
 
       /// Check object
       bool has_object() const;
 
-      /// Return the reference to the object
+      /// Return the cosnt reference to the object
       const i_object_3d & get_object() const;
 
       /// Set object handle
-      void set_object(i_object_3d *);
+      void set_handle(const handle_type & handle_);
+
+      /// Return the non mutable object handle
+      const_handle_type get_handle() const;
+
+      /// Return the mutable object handle
+      handle_type grab_handle();
 
     private:
 
       std::string           _name_;    //!< Object name
       std::string           _type_id_; //!< Object type identifier
-      uint32_t              _status_;  //!< Status of the entry
       datatools::properties _config_;  //!< Configuration of the entry
       handle_type           _hobject_; //!< Handle to the 3D-object (if created)
 
     };
 
     /// Dictionary of handle of 3D object entries
-    typedef std::map<std::string, object_entry> handle_dict_type;
+    typedef std::unordered_map<std::string, object_entry> handle_dict_type;
 
     /// Return the dimension of the object
     virtual int get_dimensional() const = 0;
@@ -196,7 +204,7 @@ namespace geomtools {
     void initialize_simple();
 
     /// Initialize from properties and a dictionary of 3D-objects
-    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    virtual void initialize(const datatools::properties &, const handle_dict_type * = nullptr);
 
     /// Reset
     virtual void reset();
@@ -216,7 +224,7 @@ namespace geomtools {
     void _set_defaults();
 
     /// Initialize from properties
-    void _initialize(const datatools::properties &, const handle_dict_type * = 0);
+    void _initialize(const datatools::properties &, const handle_dict_type * = nullptr);
 
     /// Reset
     void _reset();
@@ -224,12 +232,12 @@ namespace geomtools {
   private:
 
     // Parameters:
-    datatools::logger::priority _logging_priority_; //!< Logging priority threshold
-    double _tolerance_;         //!< Length tolerance to check surface/curve belonging
-    double _angular_tolerance_; //!< Angular tolerance to check surface/curve belonging
+    datatools::logger::priority _logging_priority_ = datatools::logger::PRIO_FATAL; //!< Logging priority threshold
+    double _tolerance_ = constants::get_default_tolerance();         //!< Length tolerance to check surface/curve belonging
+    double _angular_tolerance_ = constants::get_default_angular_tolerance(); //!< Angular tolerance to check surface/curve belonging
 
     // Work:
-    i_wires_3d_rendering * _wires_drawer_; //!< The handle on an external wires drawer object (may be used by some display tool, i.e. the gnuplot renderer)
+    i_wires_3d_rendering * _wires_drawer_ = nullptr; //!< The handle on an external wires drawer object (may be used by some display tool, i.e. the gnuplot renderer)
 
     // Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION()

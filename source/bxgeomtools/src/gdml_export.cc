@@ -289,13 +289,13 @@ namespace geomtools {
        */
       if (shape_name == "union_3d") {
         const union_3d & u = static_cast<const union_3d &>(shape_);
-        std::string shape_ref_1 = u.get_shape1().get_shape_ref();
-        if (shape_ref_1.empty()) {
-          shape_ref_1 = solid_name_ + ".union.first_ref" + i_model::solid_suffix();
+        std::string shape_label_1 = u.get_shape1().get_shape_label();
+        if (shape_label_1.empty()) {
+          shape_label_1 = solid_name_ + ".union.first_ref" + i_model::solid_suffix();
         }
-        std::string shape_ref_2 = u.get_shape2().get_shape_ref();
-        if (shape_ref_2.empty()) {
-          shape_ref_2 = solid_name_ + ".union.second_ref" + i_model::solid_suffix();
+        std::string shape_label_2 = u.get_shape2().get_shape_label();
+        if (shape_label_2.empty()) {
+          shape_label_2 = solid_name_ + ".union.second_ref" + i_model::solid_suffix();
         }
         std::string pos_ref = solid_name_ + ".union.pos_ref";
         std::string rot_ref = solid_name_ + ".union.rot_ref";
@@ -306,23 +306,23 @@ namespace geomtools {
         _writer_.add_rotation (rot_ref,
                                u.get_shape2 ().get_placement ().get_rotation (),
                                _angle_unit_);
-        this->_export_gdml_solid (u.get_shape1 ().get_shape (), shape_ref_1);
-        this->_export_gdml_solid (u.get_shape2 ().get_shape (), shape_ref_2);
+        this->_export_gdml_solid (u.get_shape1 ().get_shape (), shape_label_1);
+        this->_export_gdml_solid (u.get_shape2 ().get_shape (), shape_label_2);
 
         _writer_.add_gdml_union (solid_name_,
-                                 shape_ref_1,
-                                 shape_ref_2,
+                                 shape_label_1,
+                                 shape_label_2,
                                  pos_ref,
                                  rot_ref);
       } else if (shape_name == "subtraction_3d") {
         const subtraction_3d & s = static_cast<const subtraction_3d &>(shape_);
-        std::string shape_ref_1 = s.get_shape1().get_shape_ref();
-        if (shape_ref_1.empty()) {
-          shape_ref_1 = solid_name_ + ".subtraction.first_ref" + i_model::solid_suffix();
+        std::string shape_label_1 = s.get_shape1().get_shape_label();
+        if (shape_label_1.empty()) {
+          shape_label_1 = solid_name_ + ".subtraction.first_ref" + i_model::solid_suffix();
         }
-        std::string shape_ref_2 = s.get_shape2().get_shape_ref();
-        if (shape_ref_2.empty()) {
-          shape_ref_2 = solid_name_ + ".subtraction.second_ref" + i_model::solid_suffix();
+        std::string shape_label_2 = s.get_shape2().get_shape_label();
+        if (shape_label_2.empty()) {
+          shape_label_2 = solid_name_ + ".subtraction.second_ref" + i_model::solid_suffix();
         }
         std::string pos_ref = solid_name_ + ".subtraction.pos_ref";
         std::string rot_ref = solid_name_ + ".subtraction.rot_ref";
@@ -334,23 +334,23 @@ namespace geomtools {
         _writer_.add_rotation (rot_ref,
                                s.get_shape2 ().get_placement ().get_rotation (),
                                _angle_unit_);
-        this->_export_gdml_solid (s.get_shape1 ().get_shape (), shape_ref_1);
-        this->_export_gdml_solid (s.get_shape2 ().get_shape (), shape_ref_2);
+        this->_export_gdml_solid (s.get_shape1 ().get_shape (), shape_label_1);
+        this->_export_gdml_solid (s.get_shape2 ().get_shape (), shape_label_2);
 
         _writer_.add_gdml_subtraction (solid_name_,
-                                       shape_ref_1,
-                                       shape_ref_2,
+                                       shape_label_1,
+                                       shape_label_2,
                                        pos_ref,
                                        rot_ref);
       } else if (shape_name == "intersection_3d") {
         const intersection_3d & i = static_cast<const intersection_3d &> (shape_);
-        std::string shape_ref_1 = i.get_shape1().get_shape_ref();
-        if (shape_ref_1.empty()) {
-          shape_ref_1 = solid_name_ + ".intersection.first_ref" + i_model::solid_suffix();
+        std::string shape_label_1 = i.get_shape1().get_shape_label();
+        if (shape_label_1.empty()) {
+          shape_label_1 = solid_name_ + ".intersection.first_ref" + i_model::solid_suffix();
         }
-        std::string shape_ref_2 = i.get_shape2().get_shape_ref();
-        if (shape_ref_2.empty()) {
-          shape_ref_2 = solid_name_ + ".intersection.second_ref" + i_model::solid_suffix();
+        std::string shape_label_2 = i.get_shape2().get_shape_label();
+        if (shape_label_2.empty()) {
+          shape_label_2 = solid_name_ + ".intersection.second_ref" + i_model::solid_suffix();
         }
         std::string pos_ref = solid_name_ + ".intersection.pos_ref";
         std::string rot_ref = solid_name_ + ".intersection.rot_ref";
@@ -362,12 +362,12 @@ namespace geomtools {
         _writer_.add_rotation (rot_ref,
                                i.get_shape2 ().get_placement ().get_rotation (),
                                _angle_unit_);
-        this->_export_gdml_solid (i.get_shape1 ().get_shape (), shape_ref_1);
-        this->_export_gdml_solid (i.get_shape2 ().get_shape (), shape_ref_2);
+        this->_export_gdml_solid (i.get_shape1 ().get_shape (), shape_label_1);
+        this->_export_gdml_solid (i.get_shape2 ().get_shape (), shape_label_2);
 
         _writer_.add_gdml_intersection (solid_name_,
-                                        shape_ref_1,
-                                        shape_ref_2,
+                                        shape_label_1,
+                                        shape_label_2,
                                         pos_ref,
                                         rot_ref);
       } else {

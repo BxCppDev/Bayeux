@@ -253,10 +253,10 @@ namespace geomtools {
     void build_default_bounding_data();
 
     /// Smart print
-    void tree_dump(std::ostream & a_out = std::clog,
-                   const std::string & a_title = "",
-                   const std::string & a_indent = "",
-                   bool a_inherit = false) const override;
+    virtual void tree_dump(std::ostream & a_out = std::clog,
+                           const std::string & a_title = "",
+                           const std::string & a_indent = "",
+                           bool a_inherit = false) const override;
 
     /// Check the lock flag
     bool is_locked() const;
@@ -269,6 +269,12 @@ namespace geomtools {
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
+
+    /// Initialize from properties
+    void initialize(const datatools::properties &, const handle_dict_type * = nullptr) override;
+
+    /// Reset
+    void reset() override;
 
   protected:
 
@@ -352,21 +358,6 @@ namespace geomtools {
     DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
-
-  // class wrapper_shaped_3d : public i_shape_3d
-  // {
-  // public:
-
-  //   wrapper_shaped_3d(i_shape_3d & shape_)
-  //     : _shape_ref_(shape_) {}
-
-  //   operator i_shape_3d() const { return _shape_ref_; }
-    
-  // private:
-
-  //   i_shape_3d & _shaped_ref_;
-    
-  // };
 
 } // end of namespace geomtools
 

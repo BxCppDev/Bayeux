@@ -90,7 +90,7 @@ int main (int argc_, char ** argv_)
     }
 
     subtraction_3d sub1;
-    sub1.set_shape1 (b1, p1);
+    sub1.set_shape1(b1, p1);
     if (!cyl2) {
       sub1.set_shape2(b2, p2);
     } else {
@@ -98,7 +98,7 @@ int main (int argc_, char ** argv_)
     }
     sub1.lock();
 
-    sub1.dump (std::clog);
+    sub1.tree_dump(std::clog, "Subtraction 3D: ");
 
     box sbb;
     placement sbbp;
