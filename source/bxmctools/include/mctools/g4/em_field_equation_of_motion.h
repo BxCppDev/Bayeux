@@ -9,8 +9,6 @@
  *
  *   G4 electromagnetic field equation of motion
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_G4_EM_FIELD_EQUATION_OF_MOTION_H
@@ -85,20 +83,24 @@ namespace mctools {
                                      const G4double field_[6],
                                      G4double dydx_[]) const override;
 
-      /// Set the charge, momentum and mass of the current particle
-      /// used to set the equation's coefficients
-      /// Override a manadatory virtual method in Geant 4.9.6
-      /// Signature has changed for some Geant 4.10.X version (see below)
-      void SetChargeMomentumMass(G4double particle_charge_, // in e+ units
-                                 G4double particle_momentum_,
-                                 G4double particle_mass_) override;
-      
 #if G4VERSION_NUMBER >= 1000
       // New signature for this virtual method in Geant 4.10.X
-      void SetChargeMomentumMass(G4ChargeState particle_charge_, // with charge attribute in e+ units
-                                 G4double particle_momentum_,
-                                 G4double particle_mass_);
+      virtual void SetChargeMomentumMass(G4ChargeState particle_charge_, // with charge attribute in e+ units
+                                         G4double particle_momentum_,
+                                         G4double particle_mass_) override;
+#else
+      /// Set the charge, momentum and mass of the current particle
+      /// used to set the equation's coefficients
+      /// Override a mandatory virtual method in Geant 4.9.6
+      /// Signature has changed for some Geant 4.10.X version (see below)
+      virtual void SetChargeMomentumMass(G4double particle_charge_, // in e+ units
+                                         G4double particle_momentum_,
+                                         G4double particle_mass_) override;
 #endif
+      
+      void _SetChargeMomentumMass(G4double particle_charge_, // in e+ units
+                                  G4double particle_momentum_,
+                                  G4double particle_mass_);
       
       /// Set the magnetic anomaly of the particle
       void set_anomaly(double a_);

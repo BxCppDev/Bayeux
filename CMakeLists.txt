@@ -59,6 +59,9 @@ bx_version_set(Bayeux 3 5)
 message(STATUS "[info] Project version = '${PROJECT_VERSION}'")
 
 #-----------------------------------------------------------------------
+set(BAYEUX_DEFINITIONS)
+
+#-----------------------------------------------------------------------
 # Common LPC utilities
 #
 include(LPCCMakeSettings)
@@ -191,6 +194,9 @@ endif()
 
 #-----------------------------------------------------------------------
 include(BayeuxDependencies)
+
+#-----------------------------------------------------------------------
+add_definitions(${BAYEUX_DEFINITIONS})
 
 #-----------------------------------------------------------------------
 # Build the subdirectories

@@ -103,7 +103,7 @@ namespace mctools {
 
       private:
 
-        bool          _initialized_; ///< Initialization flag
+        bool          _initialized_ = false; ///< Initialization flag
         fact_reg_type _reg_;         ///< Internal factory registration table
 
       };

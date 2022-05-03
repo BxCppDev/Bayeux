@@ -84,7 +84,8 @@ list(APPEND ${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/file_include.h
   ${module_include_dir}/${module_name}/detail/api.h
   ${module_include_dir}/${module_name}/detail/Configure.h
-  ${module_include_dir}/${module_name}/detail/DynamicLoader.h
+  ${module_include_dir}/${module_name}/detail/Configure.hxx
+  ${module_include_dir}/${module_name}/detail/DynamicLoader.hxx
   ${module_include_dir}/${module_name}/detail/ocd_utils.h
   ${module_include_dir}/${module_name}/enriched_base.h
   ${module_include_dir}/${module_name}/enriched_base.ipp
@@ -269,7 +270,8 @@ ${module_source_dir}/base_service.cc
 ${module_source_dir}/bit_mask.cc
 ${module_source_dir}/command_utils.cc
 ${module_source_dir}/datatools.cc
-${module_source_dir}/DynamicLoader.cc
+# ${module_source_dir}/DynamicLoader.cc
+${module_source_dir}/DynamicLoader.cxx
 ${module_source_dir}/enriched_base.cc
 ${module_source_dir}/event_id.cc
 ${module_source_dir}/factory.cc
@@ -438,6 +440,7 @@ if (BAYEUX_WITH_QT_GUI)
     )
 endif()
 
+set(KWSYS_NAMESPACE datatools)
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")

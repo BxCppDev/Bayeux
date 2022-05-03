@@ -3,13 +3,11 @@
  * Creation date: 2010-04-10
  * Last modified: 2013-03-09
  *
- * License:
+ * License: GPL3.0
  *
  * Description:
  *
  *   G4 user run action class
- *
- * History:
  *
  */
 
@@ -18,6 +16,7 @@
 
 // Standard library:
 #include <string>
+#include <memory>
 
 // Third party:
 // - Boost:
@@ -56,8 +55,9 @@ namespace mctools {
     class event_action;
 
     /// \brief The Geant4 run action
-    class run_action : public G4UserRunAction,
-                       public loggable_support
+    class run_action
+      : public G4UserRunAction
+      , public loggable_support
     {
     public:
 
@@ -215,7 +215,7 @@ namespace mctools {
 
       /// \brief PIMPL-ized I/O working resources:
       struct io_work_type;
-      boost::scoped_ptr<io_work_type> _io_work_; //!< I/O
+      std::unique_ptr<io_work_type> _io_work_; //!< I/O
 
     };
 

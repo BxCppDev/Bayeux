@@ -9,8 +9,6 @@
  *
  *   G4 electromagnetic extra models
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_G4_PROCESSES_EM_EXTRA_MODELS_H

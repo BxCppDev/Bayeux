@@ -69,13 +69,13 @@ namespace mctools {
 
     const ::mctools::simulated_data & event_action::get_event_data () const
     {
-      if (_external_event_data_ != 0) return *_external_event_data_;
+      if (_external_event_data_ != nullptr) return *_external_event_data_;
       return _event_data_;
     }
 
     ::mctools::simulated_data & event_action::grab_event_data ()
     {
-      if (_external_event_data_ != 0) return *_external_event_data_;
+      if (_external_event_data_ != nullptr) return *_external_event_data_;
       return _event_data_;
     }
 
@@ -94,15 +94,13 @@ namespace mctools {
                                 const detector_construction & dctor_)
     {
       _initialized_           = false;
-
       _save_only_tracked_events_ = true;
-
       _run_action_            = &run_action_;
       _run_action_->register_event_action(*this);
       _detector_construction_ = &dctor_;
       _aborted_event_         = false;
       _killed_event_          = false;
-      _external_event_data_   = 0;
+      _external_event_data_   = nullptr;
       return;
     }
 
@@ -346,11 +344,11 @@ namespace mctools {
         simulation_ctrl & SimCtrl = _run_action_->grab_manager ().grab_simulation_ctrl();
         {
           DT_LOG_TRACE(_logprio(), "Acquire the event control lock...");
-          boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
+          std::unique_lock<std::mutex> lock(*SimCtrl.event_mutex);
           DT_LOG_TRACE(_logprio(), "Wait for event control to be available again...");
           while (SimCtrl.event_availability_status != simulation_ctrl::AVAILABLE_FOR_G4) {
             DT_LOG_TRACE(_logprio(), "Not yet...");
-            SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
+            SimCtrl.event_available_condition->wait(lock); 
           }
           DT_LOG_TRACE(_logprio(), "Ok let's go on...");
           if (SimCtrl.event_availability_status == simulation_ctrl::ABORT) {
@@ -359,16 +357,16 @@ namespace mctools {
           SimCtrl.event_availability_status = simulation_ctrl::NOT_AVAILABLE_FOR_G4;
           SimCtrl.counts++;
           DT_LOG_TRACE(_logprio(), "Notify the external simulation run manager...");
-          SimCtrl.event_available_condition->notify_one ();
+          SimCtrl.event_available_condition->notify_one();
         }
 
         // Wait for the release of the event control by the external process :
         {
           DT_LOG_TRACE(_logprio(), "Wait for the release of the event control by the external process...");
-          boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
+          std::unique_lock<std::mutex> lock(*SimCtrl.event_mutex);
           while (SimCtrl.event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4) {
             DT_LOG_TRACE(_logprio(), "Not yet...");
-            SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
+            SimCtrl.event_available_condition->wait(lock); 
           }
           DT_LOG_TRACE(_logprio(), "Ok ! The event control is released by the external process...");
           if (SimCtrl.event_availability_status == simulation_ctrl::ABORT) {
@@ -403,7 +401,7 @@ namespace mctools {
       return;
     }
 
-    void event_action::_clear_hits_collections_(const G4Event* event_)
+    void event_action::_clear_hits_collections_(const G4Event * event_)
     {
       // Detach the hits collections from this event :
       G4HCofThisEvent * HCE = event_->GetHCofThisEvent();
@@ -415,7 +413,7 @@ namespace mctools {
       //}
       for (int i = 0; i < (int) HCE->GetCapacity(); i++) {
         G4VHitsCollection * hcol = HCE->GetHC(i);
-        if (hcol != 0) {
+        if (hcol != nullptr) {
           // clog << datatools::io::devel
           //           << "event_action::EndOfEventAction: Detach '"
           //           << hcol->GetName () << "' hits collection"
@@ -438,7 +436,7 @@ namespace mctools {
       DT_LOG_DEBUG(_logprio(), "List of sensitive hit collections : ");
       for (int i = 0; i < (int) HCE->GetCapacity(); i++ ) {
         G4VHitsCollection * hc = HCE->GetHC(i);
-        if (hc != 0) {
+        if (hc != nullptr) {
           DT_LOG_DEBUG(_logprio(), "Hit collection '" << hc->GetName()
                        << "' for sensitive detector '" << hc->GetSDname()<< "' @ " << hc);
         }
@@ -452,7 +450,7 @@ namespace mctools {
       DT_LOG_DEBUG(_logprio(), "List of sensitive hit collections : ");
       for (int i = 0; i < (int) HCE->GetCapacity(); i++ ) {
         G4VHitsCollection * hc = HCE->GetHC(i);
-        if (hc != 0) {
+        if (hc != nullptr) {
           DT_LOG_DEBUG(_logprio(), "Hit collection '" << hc->GetName()
                        << "' for sensitive detector '" << hc->GetSDname()<< "' @ " << hc);
         }
@@ -471,7 +469,7 @@ namespace mctools {
                      << sensitive_category << "'...");
         // sensitive_detector::make_hit_collection_name (sensitive_category)
         G4VHitsCollection * the_hits_collection = HCE->GetHC(the_detector.get_HCID());
-        if (the_hits_collection == 0) {
+        if (the_hits_collection == nullptr) {
           DT_LOG_DEBUG(_logprio(),
                        "No hit to process from sensitive detector '"
                        << sensitive_category << "'...");
@@ -561,7 +559,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::event_action,ocd_)
   ocd_.set_class_library ("mctools_g4");
 
   // The class detailed documentation :
-  ocd_.set_class_documentation ("This is Geant4 simulation engine embedded event action.      \n"
+  ocd_.set_class_documentation ("This is Geant4 simulation engine embedded event action. \n"
                                 );
 
   logger::declare_ocd_logging_configuration(ocd_, "warning");
@@ -586,3 +584,5 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::event_action' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::event_action,"mctools::g4::event_action")
+
+// end

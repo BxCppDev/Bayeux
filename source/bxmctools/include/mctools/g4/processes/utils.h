@@ -7,7 +7,7 @@
  *
  * Description:
  *
- *   G4 electromagnetic model factory
+ *   G4 processes utilities
  *
  * History:
  *

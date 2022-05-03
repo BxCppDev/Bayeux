@@ -43,7 +43,7 @@ Options:
    --with-geant4           : Build the Geant4 module (default)
    --with-geant4-experimental : 
                              Build the Geant4 module (experimental mode).
-		  	     Allows Geant4 10.5
+		  	     Allows Geant4 >= 10
    --with-qt               : Do build the Qt-based GUI material (default)
    --qt-prefix path        : Set the Qt installation prefix path
    --qt-dir path           : Set the Qt base dir for CMake
@@ -57,12 +57,19 @@ Options:
    --bayeux-suffix name    : Set a special suffix for the build directory (default: branch name)
    --gcc-version version   : Set GCC version
 
-Example:
+Examples:
 
-    $ ./tools/build.sh \
-       --build-base-dir /scratch/Bayeux/build-devel \
-       --install-base-dir /scratch/Bayeux/install-devel \
+    $ ./tools/build.sh \\
+       --build-base-dir /scratch/sw/Bayeux/build-devel \\
+       --install-base-dir /scratch/sw/Bayeux/install-devel \\
        --dry-run  
+
+    Build with Geant4 11.0 needs C++17 : 
+    $ ./tools/build.sh \\
+       --build-base-dir /scratch/sw/Bayeux/build-test \\
+       --install-base-dir /scratch/sw/Bayeux/install-test \\
+       --cxx17 \\
+       --with-geant4-experimental  
 
 EOF
     return
@@ -93,6 +100,7 @@ boost_versions_added=
 minimal_build=false
 gcc_version=
 use_ninja=false
+bayeux_cxx_options="-DBAYEUX_CXX_STANDARD=11"
 
 function cl_parse()
 {
@@ -101,6 +109,10 @@ function cl_parse()
 	if [ "${arg}" = "--help" ]; then
 	    my_usage
 	    my_exit 0
+	elif [ "${arg}" = "--cxx14" ]; then
+	    bayeux_cxx_options="-DBAYEUX_CXX_STANDARD=14"
+	elif [ "${arg}" = "--cxx17" ]; then
+	    bayeux_cxx_options="-DBAYEUX_CXX_STANDARD=17"
 	elif [ "${arg}" = "--debug" ]; then
 	    debug=1
 	elif [ "${arg}" = "--dry-run" ]; then
@@ -594,6 +606,7 @@ if [ ${minimal_build} == true ]; then
     # qt_option4=
 fi
 
+
 compiler_options=
 if [ "x${gcc_version}" != "x" ]; then
     compiler_options="\
@@ -654,6 +667,7 @@ cmake \
     -DBAYEUX_WITH_DOCS=ON \
     -DBAYEUX_WITH_DOCS_OCD=ON \
     ${ninja_option} \
+    ${bayeux_cxx_options} \
     ${bayeux_source_dir}
 if [ $? -ne 0 ]; then
     echo >&2 "[error] Bayeux ${bayeux_version} configuration failed!"

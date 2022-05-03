@@ -3,14 +3,17 @@
  * Creation date: 2010-04-10
  * Last modified: 2015-04-30
  *
- * License:
+ * License: GPL 3.0
  *
  * Description:
  *
  *   G4 physics list
- *
- * History:
- *
+ *   - https://geant4.web.cern.ch/support/physics_lists/particle_physics
+ *   - https://geant4.web.cern.ch/support/physics_lists/particle_physics/use_cases
+ *   - https://geant4-userdoc.web.cern.ch/UsersGuides/PhysicsListGuide/html/index.html
+ *   - https://geant4-userdoc.web.cern.ch/UsersGuides/PhysicsListGuide/html/reference_PL/index.html
+ *   - https://geant4-userdoc.web.cern.ch/UsersGuides/PhysicsListGuide/html/electromagnetic/index.html
+ *   - https://twiki.cern.ch/twiki/bin/view/Geant4/LowePhysicsLists
  */
 
 #ifndef MCTOOLS_G4_PHYSICS_LIST_H
@@ -94,7 +97,7 @@ namespace mctools {
 
       };
 
-      /// Check if the physics list uses a Geant4 physics list
+      /// Check if the physics list uses an official Geant4 physics list
       bool has_geant4_physics_list() const;
 
       /// Return a const reference to the embedded Geant4 physics list
@@ -168,7 +171,7 @@ namespace mctools {
       std::map<std::string, production_cuts_info> _production_cuts_per_region_; //!< Map region and specific production cuts
 
       // Internal resources and data:
-      boost::scoped_ptr<G4VModularPhysicsList>         _geant4_physics_list_;  //!< Handle to an official Geant4 physics list
+      std::unique_ptr<G4VModularPhysicsList>           _geant4_physics_list_;  //!< Handle to an official Geant4 physics list
       base_physics_constructor::factory_register_type  _factory_register_;     //!< The embedded factory register for physics constructors
       physics_constructor_dict_type                    _physics_constructors_; //!< The embedded dictionnary of physics constructors
 

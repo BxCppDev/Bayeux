@@ -17,7 +17,7 @@
 #include <boost/preprocessor/stringize.hpp>
 
 // This Project:
-#include <datatools/detail/DynamicLoader.h>
+#include <datatools/detail/DynamicLoader.hxx>
 #include <datatools/utils.h>
 #include <datatools/handle.h>
 #include <datatools/multi_properties.h>
@@ -54,7 +54,7 @@ namespace datatools {
     std::string version;
     bool        autoload;
     int         status;
-    datatools::detail::DynamicLoader::LibraryHandle handle;
+    datatools::DynamicLoader::LibraryHandle handle = nullptr;
   };
 
   class library_loader::LibraryCollection
@@ -75,21 +75,20 @@ namespace datatools {
                                          bool lib_autoload_)
     : name(lib_name_), directory(lib_directory_), filename(lib_filename_),
       full_path(lib_full_path_), version(lib_version_),
-      autoload(lib_autoload_), status(0), handle(0)
+      autoload(lib_autoload_), status(0), handle(nullptr)
   {
     return;
   }
 
   library_entry_type::~library_entry_type()
   {
-    if (handle != 0) {
-      int statusOnClose = datatools::detail::DynamicLoader::CloseLibrary(handle);
+    if (handle != nullptr) {
+      int statusOnClose = datatools::DynamicLoader::CloseLibrary(handle);
       if (statusOnClose != 1) {
         std::ostringstream message;
-        message << "library_entry_type::dtor: The '"
-                << name << "' library was not closed ! "
-                << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
-                << datatools::detail::DynamicLoader::LastError()
+        message << "The '" << name << "' library was not closed ! "
+          // << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
+                << datatools::DynamicLoader::LastError()
                 << "' !";
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
       }
@@ -201,9 +200,9 @@ namespace datatools {
 
     if (le.filename.empty()) {
       std::ostringstream filename_ss;
-      filename_ss << datatools::detail::DynamicLoader::LibPrefix();
+      filename_ss << datatools::DynamicLoader::LibPrefix();
       filename_ss << le.name;
-      filename_ss << datatools::detail::DynamicLoader::LibExtension();
+      filename_ss << datatools::DynamicLoader::LibExtension();
 
       if (!le.version.empty()) {
         filename_ss << le.version;
@@ -251,6 +250,8 @@ namespace datatools {
                            const std::string& filename_,
                            const std::string& full_lib_path_,
                            const std::string& version_) {
+    datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+    // logging = datatools::logger::PRIO_DEBUG;
     std::vector<std::string> lib_dir_tokens;
     boost::split(lib_dir_tokens, lib_name_, boost::is_any_of("@"));
     DT_THROW_IF(lib_dir_tokens.size() == 0, std::logic_error,
@@ -272,8 +273,7 @@ namespace datatools {
                                       true);
       if (status != EXIT_SUCCESS) {
         std::ostringstream message;
-        message << "datatools::library_loader::load: "
-                << "Cannot register library '"
+        message << "Cannot register library '"
                 << lib_name << "' !";
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR, message.str());
         return EXIT_FAILURE;
@@ -282,17 +282,20 @@ namespace datatools {
     }
     library_entry_type& le = found->second.grab();
     std::string check = le.full_path;
-    fetch_path_with_env(check);
-    le.handle = datatools::detail::DynamicLoader::OpenLibrary(check.c_str());
+    DT_LOG_DEBUG(logging, "check = '" << check << "'");
 
-    if (le.handle != 0) {
+    fetch_path_with_env(check);
+    DT_LOG_DEBUG(logging, "fetched check = '" << check << "'");
+    le.handle = datatools::DynamicLoader::OpenLibrary(check.c_str());
+    DT_LOG_DEBUG(logging, "le.handle = " << le.handle);
+
+    if (le.handle != nullptr) {
       _lib_entries_->_stacked_libraries_.push_front(found->second);
     } else {
       std::ostringstream message;
-      message << "datatools::library_loader::load: "
-              << "The '" << lib_name << "' library was not loaded ! "
-              << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
-              << datatools::detail::DynamicLoader::LastError() << "' !";
+      message << "The '" << lib_name << "' library was not loaded ! "
+        // << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE) << " says: '"
+              << datatools::DynamicLoader::LastError() << "' !";
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
       return EXIT_FAILURE;
     }
@@ -301,12 +304,14 @@ namespace datatools {
 
   int library_loader::close(const std::string& lib_name_) {
     if (!this->is_loaded(lib_name_)) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"No loaded library '" << lib_name_ << "' to be closed !");
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "No loaded library '" << lib_name_ << "' to be closed !");
       return EXIT_FAILURE;
     }
 
     if (_lib_entries_->_stacked_libraries_.front().get().name != lib_name_) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Cannot close library '" << lib_name_ << "' !");
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                   "Cannot close library '" << lib_name_ << "' !");
       return EXIT_FAILURE;
     }
 
@@ -314,14 +319,14 @@ namespace datatools {
     handle_library_entry_type& hle = found->second;
     library_entry_type& le = hle.grab();
 
-    int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
+    int status = datatools::DynamicLoader::CloseLibrary(le.handle);
     if (status != 1) {
       std::ostringstream message;
       message << "datatools::library_loader::close: "
               << "The '" << le.name << "' library was not closed ! "
               << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE)
               << " says: '"
-              << datatools::detail::DynamicLoader::LastError() << "' !";
+              << datatools::DynamicLoader::LastError() << "' !";
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
       return EXIT_FAILURE;
     } else {
@@ -341,7 +346,7 @@ namespace datatools {
         library_entry_type& le = hle.grab();
         if (le.handle != 0) {
           //DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Closing library '" << le.name << "'...");
-          int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
+          int status = datatools::DynamicLoader::CloseLibrary(le.handle);
           if (status != 1) {
             std::ostringstream message;
             message << "datatools::library_loader::close_all: The '"
@@ -349,7 +354,7 @@ namespace datatools {
                     << "' library was not closed ! "
                     << BOOST_PP_STRINGIZE(DATATOOLS_SYS_NAMESPACE)
                     << " says: '"
-                    << datatools::detail::DynamicLoader::LastError()
+                    << datatools::DynamicLoader::LastError()
                     << "' !";
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR,message.str());
             //return;
@@ -422,14 +427,14 @@ namespace datatools {
     DT_THROW_IF (found->second.get().handle == 0,
                  std::logic_error,
                  "The shared library file '" << lib_name_ << "' is not loaded !");
-    return datatools::detail::DynamicLoader::GetSymbolAddress(found->second.get().handle, symbol_.c_str());
+    return datatools::DynamicLoader::GetSymbolAddress(found->second.get().handle, symbol_.c_str());
   }
 
   void library_loader::_init()
   {
     if (_config_.empty()) return;
 
-    BOOST_FOREACH(const multi_properties::entry* ptr, _config_.ordered_entries()) {
+    for (const multi_properties::entry * ptr : _config_.ordered_entries()) {
       const multi_properties::entry& e = *ptr;
       const properties & lib_properties = e.get_properties();
       std::string lib_name       = e.get_key ();
@@ -471,7 +476,7 @@ namespace datatools {
                      "Automatic loading of library='" << lib_name << "' failed !");
       }
       continue;
-    } // BOOST_FOREACH
+    } 
   }
 } // end of namespace datatools
 

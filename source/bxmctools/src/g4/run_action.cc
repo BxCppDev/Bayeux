@@ -77,10 +77,10 @@ namespace mctools {
       //! Destructor
       ~io_work_type();
       // I/O engines:
-      boost::scoped_ptr<datatools::data_writer> writer;       //!< Plain data writer
-      boost::scoped_ptr<brio::writer>           brio_writer;  //!< Plain data writer (brio)
-      boost::scoped_ptr<dpp::output_module>     out_module;   //!< Bank writer
-      boost::scoped_ptr<datatools::things>      data_record;  //!< Data record for bank
+      std::unique_ptr<datatools::data_writer> writer;      //!< Plain data writer
+      std::unique_ptr<brio::writer>           brio_writer; //!< Plain data writer (brio)
+      std::unique_ptr<dpp::output_module>     out_module;  //!< Bank writer
+      std::unique_ptr<datatools::things>      data_record; //!< Data record for bank
     };
 
     run_action::io_work_type::io_work_type()
@@ -90,16 +90,16 @@ namespace mctools {
 
     run_action::io_work_type::~io_work_type()
     {
-      if (writer.get() != 0) {
+      if (writer) {
         writer.reset();
       }
-      if (brio_writer.get() != 0) {
+      if (brio_writer) {
         brio_writer.reset();
       }
-      if (data_record.get() != 0) {
+      if (data_record) {
         data_record.reset();
       }
-      if (out_module.get() != 0) {
+      if (out_module) {
         out_module.reset();
       }
       return;
@@ -224,7 +224,7 @@ namespace mctools {
 
     bool run_action::has_out_module() const
     {
-      return _io_work_.get() != 0 && _io_work_->out_module.get() != 0;
+      return _io_work_.get() != nullptr && _io_work_->out_module.get() != nullptr;
     }
 
     const dpp::output_module & run_action::get_out_module() const
@@ -241,7 +241,7 @@ namespace mctools {
 
     bool run_action::has_brio_writer() const
     {
-      return _io_work_.get() != 0 && _io_work_->brio_writer.get() != 0;
+      return _io_work_.get() != nullptr && _io_work_->brio_writer.get() != nullptr;
     }
 
     const brio::writer & run_action::get_brio_writer() const
@@ -258,7 +258,7 @@ namespace mctools {
 
     bool run_action::has_writer() const
     {
-      return _io_work_.get() != 0 && _io_work_->writer.get() != 0;
+      return _io_work_.get() != nullptr && _io_work_->writer.get() != nullptr;
     }
 
     datatools::data_writer & run_action::grab_writer()
@@ -286,8 +286,8 @@ namespace mctools {
       _output_file_format_                    = "ascii";
       _output_file_compression_               = "gzip";
       _output_file_                           = "";
-      _manager_                               = 0;
-      _event_action_                          = 0;
+      _manager_                               = nullptr;
+      _event_action_                          = nullptr;
       _brio_general_info_store_label_         = io_utils::GENERAL_INFO_STORE;
       _brio_plain_simulated_data_store_label_ = io_utils::PLAIN_SIMULATED_DATA_STORE;
       return;
@@ -317,8 +317,8 @@ namespace mctools {
 
     void run_action::reset()
     {
-      _event_action_ = 0;
-      if (_io_work_.get() != 0) {
+      _event_action_ = nullptr;
+      if (_io_work_) {
         _io_work_.reset();
       }
       return;
@@ -424,7 +424,7 @@ namespace mctools {
       } // (search_file_directives)
 
       // Allocate the PIMPL I/O structure:
-      _io_work_.reset(new io_work_type);
+      _io_work_ = std::make_unique<io_work_type>();
 
       _initialized_ = true;
       return;
@@ -447,7 +447,6 @@ namespace mctools {
     void run_action::_build_run_header()
     {
       _run_header_.set_description("mctools::g4 run header");
-
       const mygsl::seed_manager & the_seed_manager = _manager_->get_seed_manager();
       std::vector<std::string> seed_labels;
       the_seed_manager.get_labels(seed_labels);
@@ -457,17 +456,14 @@ namespace mctools {
         seed_key << "seed." << seed_labels[i];
         _run_header_.store(seed_key.str(), seed);
       }
-
       return;
     }
 
     void run_action::_build_run_footer()
     {
       _run_footer_.set_description("mctools::g4 run footer");
-
       _run_footer_.store("number_of_processed_events", _number_of_processed_events_);
       _run_footer_.store("number_of_saved_events", _number_of_saved_events_);
-
       DT_LOG_NOTICE(_logprio(), "Number of processed events = " << _number_of_processed_events_);
       if (_save_data_) {
         DT_LOG_NOTICE(_logprio(), "Number of saved events = " << _number_of_saved_events_);
@@ -483,7 +479,6 @@ namespace mctools {
       DT_LOG_NOTICE(_logprio(),"# Run " << a_run->GetRunID() << " is starting...");
       _number_of_processed_events_ = 0;
       _number_of_saved_events_ = 0;
-
       /*************************************************************/
       // External threaded run control :
       if (get_manager().has_simulation_ctrl()) {
@@ -492,13 +487,13 @@ namespace mctools {
           = grab_manager().grab_simulation_ctrl();
         {
           DT_LOG_TRACE(_logprio(),"Acquire the lock...");
-          boost::mutex::scoped_lock lock(*SimCtrl.event_mutex);
+          std::unique_lock<std::mutex> lock(*SimCtrl.event_mutex);
           DT_LOG_TRACE(_logprio(),
                        "Wait for the event control to be available again "
                        << "for G4 run start and G4 event loop start ...");
           while (SimCtrl.event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4) {
             DT_LOG_TRACE(_logprio(), "Not yet...");
-            SimCtrl.event_available_condition->wait(*SimCtrl.event_mutex);
+            SimCtrl.event_available_condition->wait(lock);
           }
           if (SimCtrl.event_availability_status == simulation_ctrl::ABORT) {
             DT_LOG_WARNING(_logprio(), "Detect a 'Abort' request from the external process !");
@@ -569,8 +564,8 @@ namespace mctools {
           // Bank data format:
           // Instantiate an output module:
           using_brio = false; // Let's the output module manage the file extension
-          _io_work_->out_module.reset(new dpp::output_module);
-          _io_work_->data_record.reset(new datatools::things);
+          _io_work_->out_module = std::make_unique<dpp::output_module>();
+          _io_work_->data_record = std::make_unique<datatools::things>();
           datatools::things & event_data = *(_io_work_->data_record.get());
           mctools::simulated_data & SD =
             event_data.add<mctools::simulated_data>(_output_data_bank_label_);
@@ -606,7 +601,7 @@ namespace mctools {
 
           if (using_brio) {
             // Instantiate a Brio writer:
-            _io_work_->brio_writer.reset(new brio::writer);
+            _io_work_->brio_writer = std::make_unique<brio::writer>();
             DT_LOG_NOTICE(_logprio(), "Opening brio serialization output data file '" << output_file_name << "'...");
             DT_LOG_DEBUG(_logprio(), "Brio writer is opened: '" << _io_work_->brio_writer->is_opened() << "'...");
             if (_io_work_->brio_writer->is_locked()) _io_work_->brio_writer->unlock();
@@ -632,7 +627,7 @@ namespace mctools {
             // Instantiate a basic writer:
             DT_LOG_NOTICE(_logprio(), "Opening datatools serialization output data file '"
                           << output_file_name << "'...");
-            _io_work_->writer.reset(new datatools::data_writer);
+            _io_work_->writer = std::make_unique<datatools::data_writer>();
             _io_work_->writer->init(output_file_name, datatools::using_multiple_archives);
             if (using_run_header_footer()) {
               _io_work_->writer->store(_run_header_);

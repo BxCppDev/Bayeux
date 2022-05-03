@@ -7,7 +7,9 @@
 # they #include other headers, so these also need to be present...
 #
 if(Bayeux_WITH_GEANT4_MODULE)
+
   set(${module_name}_GEANT4_HEADERS
+    ${module_include_dir}/${module_name}/g4/g4_defs.h
     ${module_include_dir}/${module_name}/g4/manager_parameters.h
     ${module_include_dir}/${module_name}/g4/manager.h
     ${module_include_dir}/${module_name}/g4/loggable_support.h
@@ -26,7 +28,7 @@ if(Bayeux_WITH_GEANT4_MODULE)
   configure_file(${module_include_dir}/${module_name}/g4/data_libraries.h.in
     mctools/g4/data_libraries.h
     @ONLY
-    )
+    ) 
 
   # Disable specific warnings because CLHEP source code makes use
   # of deprecated std::auto_ptr:
@@ -48,14 +50,12 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_include_dir}/${module_name}/g4/em_field_equation_of_motion.h
     ${module_include_dir}/${module_name}/g4/em_field_g4_utils.h
     ${module_include_dir}/${module_name}/g4/em_field_g4_stuff.h
-    ${module_include_dir}/${module_name}/g4/particles_physics_constructor.h
     ${module_include_dir}/${module_name}/g4/physics_list_utils.h
     ${module_include_dir}/${module_name}/g4/tracking_action.h
     ${module_include_dir}/${module_name}/g4/stacking_action.h
     ${module_include_dir}/${module_name}/g4/run_action.h
     ${module_include_dir}/${module_name}/g4/sensitive_detector.h
     ${module_include_dir}/${module_name}/g4/simulation_ctrl.h
-    ${module_include_dir}/${module_name}/g4/em_physics_constructor.h
     ${module_include_dir}/${module_name}/g4/sensitive_hit.h
     ${module_include_dir}/${module_name}/g4/physics_list.h
     ${module_include_dir}/${module_name}/g4/event_action.h
@@ -65,14 +65,12 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_include_dir}/${module_name}/g4/detector_construction.h
     ${module_include_dir}/${module_name}/g4/stepping_action.h
     ${module_include_dir}/${module_name}/g4/sensitive_hit_collection.h
-    ${module_include_dir}/${module_name}/g4/neutrons_physics_constructor.h
     ${module_include_dir}/${module_name}/g4/biasing_manager.h
-
+ 
     ${module_source_dir}/g4/processes/utils.cc
     ${module_source_dir}/g4/processes/em_extra_models.cc
     ${module_source_dir}/g4/processes/em_model_factory.cc
     ${module_source_dir}/g4/manager_parameters.cc
-    ${module_source_dir}/g4/particles_physics_constructor.cc
     ${module_source_dir}/g4/physics_list_utils.cc
     ${module_source_dir}/g4/tracking_action.cc
     ${module_source_dir}/g4/stacking_action.cc
@@ -80,7 +78,6 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_source_dir}/g4/run_action.cc
     ${module_source_dir}/g4/sensitive_detector.cc
     ${module_source_dir}/g4/simulation_ctrl.cc
-    ${module_source_dir}/g4/em_physics_constructor.cc
     ${module_source_dir}/g4/loggable_support.cc
     ${module_source_dir}/g4/physics_list.cc
     ${module_source_dir}/g4/sensitive_hit.cc
@@ -97,15 +94,32 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_source_dir}/g4/electromagnetic_field.cc
     ${module_source_dir}/g4/em_field_equation_of_motion.cc
     ${module_source_dir}/g4/em_field_g4_stuff.cc
-    ${module_source_dir}/g4/neutrons_physics_constructor.cc
     ${module_source_dir}/g4/biasing_manager.cc
     ${module_source_dir}/g4/manager.cc
     ${module_source_dir}/g4/simulation_module.cc
     )
 
+  if (${Geant4_VERSION} VERSION_LESS 11) 
+    list(APPEND ${module_name}_GEANT4_SOURCES
+      ${module_include_dir}/${module_name}/g4/em_physics_constructor.h
+      ${module_include_dir}/${module_name}/g4/particles_physics_constructor.h
+      ${module_include_dir}/${module_name}/g4/neutrons_physics_constructor.h
+      ${module_source_dir}/g4/particles_physics_constructor.cc
+      ${module_source_dir}/g4/neutrons_physics_constructor.cc
+      ${module_source_dir}/g4/em_physics_constructor.cc
+      )
+  endif()
+
+  if (${Geant4_VERSION} VERSION_GREATER 10) 
+    list(APPEND ${module_name}_GEANT4_SOURCES
+      ${module_include_dir}/${module_name}/g4/mt_user_action_initialization.h
+      ${module_source_dir}/g4/mt_user_action_initialization.cc
+      )
+  endif()
+  
   list(APPEND ${module_name}_MODULE_TESTS
     ${module_test_dir}/test_g4_prng.cxx
-    ${module_test_dir}/test_g4_processes_em_model_factory.cxx
+    # ${module_test_dir}/test_g4_processes_em_model_factory.cxx
     ${module_test_dir}/test_g4_detector_construction.cxx
     ${module_test_dir}/test_g4_manager.cxx
     )
@@ -115,6 +129,8 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_app_dir}/g4/g4_production.cxx
     ${module_app_dir}/g4/g4_seeds.cxx
     )
+
+  message(STATUS "Geant4 module : BAYEUX_DEFINITIONS=${BAYEUX_DEFINITIONS}")
 
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   target_compile_features(Bayeux_mctools_geant4 PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
@@ -133,22 +149,54 @@ if(Bayeux_WITH_GEANT4_MODULE)
   target_include_directories(Bayeux_mctools_geant4
     SYSTEM PUBLIC ${Geant4_INCLUDE_DIRS}
     )
+  
   # Apply compile defs and options
   # Hack - strip "-D" flag as we should only supply the def names
   #      - Turn space separated flags into list
   set(Bayeux_Geant4_DEFINITIONS)
+  message( STATUS "********** Geant4_DEFINITIONS='${Geant4_DEFINITIONS}'")
+  ### -ftls-model=model
+  ###   -ftls-model=global-dynamic, local-dynamic, initial-exec or local-exec
   foreach(_def ${Geant4_DEFINITIONS})
     string(REGEX REPLACE "^-D" "" _bxdef ${_def})
     list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxdef})
   endforeach()
+  if (Bayeux_GEANT4_MT)
+    # list(APPEND Bayeux_Geant4_DEFINITIONS "G4MULTITHREADED")    
+  endif()
+  message( STATUS "Bayeux_Geant4_DEFINITIONS='${Bayeux_Geant4_DEFINITIONS}'")
 
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
-
-  string(REPLACE " " ";" Geant4_CXX_FLAGS "${Geant4_CXX_FLAGS}")
+  # string(REPLACE " " ";" Geant4_CXX_FLAGS "${Geant4_CXX_FLAGS}")
+  # target_compile_options(Bayeux_mctools_geant4
+  #   PRIVATE ${Geant4_CXX_FLAGS}
+  #   )
+  message( STATUS "********** Geant4_CXX_FLAGS='${Geant4_CXX_FLAGS}'")
+  set(Bayeux_GEANT4_CXX_FLAGS)
+  string(REPLACE " " ";" _Geant4_CXX_FLAGS "${Geant4_CXX_FLAGS}")
+  foreach(_flag ${_Geant4_CXX_FLAGS})
+    set(_addFlag 1)
+    message(STATUS "********** Flag='${_flag}'")
+    if ("${_flag}" STREQUAL "-ftls-model=initial-exec")
+      message(STATUS "********** Found '${_flag}'")
+      string(REPLACE "=initial-exec" "=global-dynamic" _flag "${_flag}")
+      set(_addFlag 0)
+    endif()
+    if ("${_flag}" STREQUAL "-pthread")
+      message(STATUS "********** Skipping '${_flag}'")
+      set(_addFlag 0)
+    endif()
+    if (_addFlag)
+      list(APPEND Bayeux_GEANT4_CXX_FLAGS "${_flag}")
+    endif()
+  endforeach()
+  # list(APPEND Bayeux_GEANT4_CXX_FLAGS "-fpic")
+  string(REPLACE " " ";" Bayeux_GEANT4_CXX_FLAGS "${Bayeux_GEANT4_CXX_FLAGS}")
+  message( STATUS "********** Bayeux_GEANT4_CXX_FLAGS='${Bayeux_GEANT4_CXX_FLAGS}'")
   target_compile_options(Bayeux_mctools_geant4
-    PRIVATE ${Geant4_CXX_FLAGS}
+    PRIVATE ${Bayeux_GEANT4_CXX_FLAGS}
     )
 
   message(STATUS "Geant4_LIBRARIES='${Geant4_LIBRARIES}'")

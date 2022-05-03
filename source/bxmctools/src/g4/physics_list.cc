@@ -98,7 +98,7 @@ namespace mctools {
 
     bool physics_list::has_geant4_physics_list () const
     {
-      return _geant4_physics_list_.get() != 0;
+      return _geant4_physics_list_.get() != nullptr;
     }
 
     const G4VModularPhysicsList & physics_list::get_geant4_physics_list() const
@@ -195,23 +195,38 @@ namespace mctools {
         config_.tree_dump(std::cerr);
       }
       // Set G4VUserPhysicsList verbosity
-      if (_logprio() < datatools::logger::PRIO_NOTICE)     SetVerboseLevel(VERBOSITY_SILENT);
-      else if (_logprio() < datatools::logger::PRIO_DEBUG) SetVerboseLevel(VERBOSITY_WARNING);
-      else                                                 SetVerboseLevel(VERBOSITY_MORE);
+      if (_logprio() < datatools::logger::PRIO_NOTICE) {
+        SetVerboseLevel(VERBOSITY_SILENT);
+      } else if (_logprio() < datatools::logger::PRIO_DEBUG) {
+        SetVerboseLevel(VERBOSITY_WARNING);
+      } else {
+        SetVerboseLevel(VERBOSITY_MORE);
+      }
 
       // *********************** Geant4 physics list *************************** //
 
       // Try to use the Geant4 official G4PhysListFactory:
       G4PhysListFactory geant4_physics_list_factory;
       if (config_.has_key("geant4.physics_list")) {
-        _geant4_physics_list_name_ = config_.fetch_string ("geant4.physics_list");
+        _geant4_physics_list_name_ = config_.fetch_string("geant4.physics_list");
+      }
+      
+#if G4VERSION_NUMBER >= 1100
+      if (_geant4_physics_list_name_.empty()) {
+        // Default: "QGSP_BERT_HP" or "QGSP_BIC_HP"
+        _geant4_physics_list_name_ = "QGSP_BERT_HP_EMZ";
+        DT_LOG_INFORMATION(_logprio(), "Use default Geant4 physics list : '" << _geant4_physics_list_name_ << "'");
+      }
+#endif
+      if (! _geant4_physics_list_name_.empty()) {
         DT_THROW_IF (! geant4_physics_list_factory.IsReferencePhysList(_geant4_physics_list_name_),
                      std::logic_error,
                      "Geant4 physics list factory does not have any '"
                      << _geant4_physics_list_name_ << "' physics list !");
         _geant4_physics_list_.reset(geant4_physics_list_factory.GetReferencePhysList(_geant4_physics_list_name_));
       }
-
+ 
+#if G4VERSION_NUMBER < 1100
       // *********************** Physics constructors *************************** //
 
       // If we do not use a Geant4 official G4PhysListFactory, we build
@@ -222,7 +237,6 @@ namespace mctools {
         if (config_.has_key("physics_constructors.names")) {
           config_.fetch("physics_constructors.names", physics_constructors_names);
         }
-
         DT_THROW_IF(physics_constructors_names.size() == 0,
                     std::logic_error,
                     "No physics constructor is provided !");
@@ -296,6 +310,7 @@ namespace mctools {
           }
         } // for (int i = 0; i < physics_constructors_names.size(); i++) {
       } // if (! has_geant4_physics_list())
+#endif
 
 
       // *********************** Production cuts *************************** //

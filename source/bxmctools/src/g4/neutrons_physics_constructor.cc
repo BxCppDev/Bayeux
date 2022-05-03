@@ -65,15 +65,28 @@
 // From 4.10.00 :
 // - http://hypernews.slac.stanford.edu/HyperNews/geant4/get/phys-list/929.html
 // - http://hypernews.slac.stanford.edu/HyperNews/geant4/get/phys-list/828/1.html
+
+#if G4VERSION_NUMBER < 1100
 #include <G4NeutronInelasticProcess.hh>
+#else
+#include <G4HadronInelasticProcess.hh>
+#endif
 #include <G4BinaryCascade.hh>
+#if G4VERSION_NUMBER < 1100
 #include <G4HadronCaptureProcess.hh>
 #include <G4HadronFissionProcess.hh>
+#else
+#include <G4NeutronCaptureProcess.hh>
+#include <G4NeutronFissionProcess.hh>
+#endif
 #include <G4LFission.hh>
 #include <G4NucleonNuclearCrossSection.hh>
 #include <G4ExcitedStringDecay.hh>
 #include <G4LundStringFragmentation.hh>
+#if G4VERSION_NUMBER < 1100
+// ReleaseNotes/Beta4.11.0-1.txt
 #include <G4ProtonInelasticProcess.hh>
+#endif
 #include <G4NeutronHPElasticData.hh>
 #include <G4NeutronHPCapture.hh>
 #include <G4NeutronHPCaptureData.hh>
@@ -87,7 +100,9 @@
 #include <G4ElectronNuclearProcess.hh>
 #include <G4HadronElastic.hh>
 #include <G4HadronElasticProcess.hh>
+#if G4VERSION_NUMBER < 1100
 #include <G4PhotoNuclearProcess.hh>
+#endif
 
 /*
   From Geant4 version 9.6:
@@ -303,7 +318,7 @@ namespace mctools {
         = new G4HadronElastic();
       G4HadronElasticProcess * hadrons_elastic_process
         = new G4HadronElasticProcess();
-      hadrons_elastic_process->RegisterMe (hadrons_elastic_model);
+      hadrons_elastic_process->RegisterMe(hadrons_elastic_model);
 
       // High-energy model for p, n
       G4TheoFSGenerator * QGSP_model
@@ -355,10 +370,14 @@ namespace mctools {
           if (pname == "neutron") {
             // inelastic process
             if (_use_neutrons_inelastic_process_) {
+#if G4VERSION_NUMBER < 1100
               G4NeutronInelasticProcess * the_neutron_inelastic_process
                 = new G4NeutronInelasticProcess();
-
-              G4CascadeInterface * the_bertini_model = 0;
+#else
+              G4HadronInelasticProcess * the_hadron_inelastic_process
+                = new G4HadronInelasticProcess();
+#endif
+              G4CascadeInterface * the_bertini_model = nullptr;
               if (_use_HE_) {
                 the_bertini_model = new G4CascadeInterface();
                 the_bertini_model->SetMinEnergy (19.9*CLHEP::MeV);
@@ -366,32 +385,42 @@ namespace mctools {
               }
               G4NeutronHPInelastic * the_low_energy_neutron_inelastic_model
                 = new G4NeutronHPInelastic();
-              the_low_energy_neutron_inelastic_model->SetMaxEnergy (20.*CLHEP::MeV);
+              the_low_energy_neutron_inelastic_model->SetMaxEnergy(20.*CLHEP::MeV);
                   
 #if G4VERSION_NUMBER < 1000
               G4LENeutronInelastic * the_intermediate_energy_neutron_inelastic_model = nullptr;
               if (_use_HE_) {
                 the_intermediate_energy_neutron_inelastic_model = new G4LENeutronInelastic();
-                the_intermediate_energy_neutron_inelastic_model->SetMinEnergy (9.5*CLHEP::GeV);
-                the_intermediate_energy_neutron_inelastic_model->SetMaxEnergy (25.*CLHEP::GeV);
+                the_intermediate_energy_neutron_inelastic_model->SetMinEnergy(9.5*CLHEP::GeV);
+                the_intermediate_energy_neutron_inelastic_model->SetMaxEnergy(25.*CLHEP::GeV);
               }
 #endif
                   
               G4NeutronHPInelasticData * the_HP_inelastic_data
                 = new G4NeutronHPInelasticData();
+#if G4VERSION_NUMBER < 1100
               the_neutron_inelastic_process->AddDataSet(the_HP_inelastic_data);
-
               if (_use_HE_) QGSP_model->SetMinEnergy (11.9*CLHEP::GeV);
-
               if (_use_HE_) the_neutron_inelastic_process->RegisterMe (QGSP_model);
               if (_use_HE_) the_neutron_inelastic_process->RegisterMe (the_bertini_model);
               the_neutron_inelastic_process->RegisterMe(the_low_energy_neutron_inelastic_model);
+#else
+              the_hadron_inelastic_process->AddDataSet(the_HP_inelastic_data);
+              if (_use_HE_) QGSP_model->SetMinEnergy (11.9*CLHEP::GeV);
+              if (_use_HE_) the_hadron_inelastic_process->RegisterMe (QGSP_model);
+              if (_use_HE_) the_hadron_inelastic_process->RegisterMe (the_bertini_model);
+              the_hadron_inelastic_process->RegisterMe(the_low_energy_neutron_inelastic_model);
+#endif
 #if G4VERSION_NUMBER < 1000
               if (_use_HE_) the_neutron_inelastic_process->RegisterMe(the_intermediate_energy_neutron_inelastic_model);
 #endif
-              pmanager->AddDiscreteProcess (the_neutron_inelastic_process);
+#if G4VERSION_NUMBER < 1100
+              pmanager->AddDiscreteProcess(the_neutron_inelastic_process);
+#else
+              pmanager->AddDiscreteProcess(the_hadron_inelastic_process);
+#endif
             }
-            // elastic process
+            // Elastic process:
             if (_use_neutrons_elastic_process_) {
               G4HadronElasticProcess * the_neutron_elastic_process
                 = new G4HadronElasticProcess();
@@ -438,15 +467,18 @@ namespace mctools {
                 = new G4NeutronHPCaptureData();
               G4NeutronHPCapture * the_neutron_capture_model
                 = new G4NeutronHPCapture();
-              the_neutron_capture_process->AddDataSet (the_HP_capture_data);
-              the_neutron_capture_process->RegisterMe (the_neutron_capture_model);
+              the_neutron_capture_process->AddDataSet(the_HP_capture_data);
+              the_neutron_capture_process->RegisterMe(the_neutron_capture_model);
 #if G4VERSION_NUMBER < 1000
               G4LCapture * the_capture_model = new G4LCapture();
-              the_capture_model->SetMinEnergy (19.9*CLHEP::MeV);
-              the_capture_model->SetMaxEnergy (20.*CLHEP::TeV);
-              the_neutron_capture_process->RegisterMe (the_capture_model);
+              the_capture_model->SetMinEnergy(19.9*CLHEP::MeV);
+              the_capture_model->SetMaxEnergy(20.*CLHEP::TeV);
+              the_neutron_capture_process->RegisterMe(the_capture_model);
+#else
+              G4NeutronRadCapture * the_capture_model = new G4NeutronRadCapture();
+              the_neutron_capture_process->RegisterMe(the_capture_model);
 #endif
-              pmanager->AddDiscreteProcess (the_neutron_capture_process);
+              pmanager->AddDiscreteProcess(the_neutron_capture_process);
             }
             // fission
             if (_use_neutrons_fission_) {

@@ -51,7 +51,11 @@
 //#include <G4RegionStore.hh>
 // EM processes :
 #include <G4RadioactiveDecay.hh>
+#if G4VERSION_NUMBER < 1101
 #include <G4EmProcessOptions.hh>
+#else
+#include <G4EmParameters.hh>
+#endif
 #include <G4ComptonScattering.hh>
 #include <G4RayleighScattering.hh>
 #include <G4GammaConversion.hh>
@@ -121,12 +125,12 @@ namespace mctools {
     // *** em_physics_constructor::region_deexcitation_type *** //
 
     
-    em_physics_constructor::region_deexcitation_type::region_deexcitation_type()
-    {
-      fluorescence = false;
-      auger = false;
-      pixe = false;
-    }
+    // em_physics_constructor::region_deexcitation_type::region_deexcitation_type()
+    // {
+    //   fluorescence = false;
+    //   auger = false;
+    //   pixe = false;
+    // }
 
     em_physics_constructor::region_deexcitation_type::region_deexcitation_type(bool fluo_, bool auger_, bool pixe_)
     {
@@ -944,6 +948,7 @@ namespace mctools {
       G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
       G4LossTableManager::Instance()->SetAtomDeexcitation(de);
 
+#if G4VERSION_NUMBER < 1101
       // Activate deexcitation processes through the EM options:
       G4EmProcessOptions emOptions;
       int verbose = 1;
@@ -987,7 +992,43 @@ namespace mctools {
                       );
         emOptions.SetDeexcitationActiveRegion(region_name, rd.fluorescence, rd.auger, rd.pixe);
       }
+#else
+      auto emParams = G4EmParameters::Instance();
+      // Activate deexcitation processes through the EM options:
+      int verbose = 1;
+      emParams->SetVerbose(verbose);
+      emParams->SetFluo(_em_fluorescence_);
+      if (_em_fluorescence_) {
+        emParams->SetAuger(_em_auger_);
+      }
+      emParams->SetPixe(_em_pixe_);
+      if (_em_pixe_) {
+        if (! _em_pixe_cross_section_model_.empty()) {
+          emParams->SetPIXECrossSectionModel(_em_pixe_cross_section_model_);
+        }
+      }
 
+      // Activate deexcitation processes per region :
+      for (std::map<std::string, region_deexcitation_type>::const_iterator i
+             = _em_regions_deexcitation_.begin();
+           i != _em_regions_deexcitation_.end();
+           i++) {
+        const std::string & region_name = i->first;
+        const region_deexcitation_type & rd = i->second;
+        G4Region * a_region = G4RegionStore::GetInstance()->GetRegion(region_name);
+        DT_THROW_IF(a_region == 0, std::logic_error,
+                    "Cannot find region named '" << region_name
+                    << "' to apply de-excitation processes !");
+        DT_LOG_NOTICE(_logprio(), "Activating EM deexcitation for region '" << region_name << "' :"
+                      << " Fluorescence=" << rd.fluorescence
+                      << " Auger=" << rd.auger
+                      << " PIXE=" << rd.pixe
+                      << "..."
+                      );
+        emParams->SetDeexActiveRegion(region_name, rd.fluorescence, rd.auger, rd.pixe);
+      }
+
+#endif
       // de->SetFluo(true);
       //  //de->SetFluo(_em_fluorescence_);
       //  //de->SetFluo(true);
@@ -1023,23 +1064,23 @@ namespace mctools {
            ***********/
           int process_rank = 0;
 
-          G4RayleighScattering * the_rayleigh_scattering = 0;
+          G4RayleighScattering * the_rayleigh_scattering = nullptr;
           if (_em_gamma_rayleigh_scattering_) {
             the_rayleigh_scattering = new G4RayleighScattering();
           }
-          G4PhotoElectricEffect * the_photoelectric_effect = 0;
+          G4PhotoElectricEffect * the_photoelectric_effect = nullptr;
           if (_em_gamma_photo_electric_) {
             the_photoelectric_effect = new G4PhotoElectricEffect();
           }
-          G4ComptonScattering   * the_compton_scattering = 0;
+          G4ComptonScattering   * the_compton_scattering = nullptr;
           if (_em_gamma_compton_scattering_) {
             the_compton_scattering = new G4ComptonScattering();
           }
-          G4GammaConversion     * the_gamma_conversion = 0;
+          G4GammaConversion     * the_gamma_conversion = nullptr;
           if (_em_gamma_conversion_) {
             the_gamma_conversion = new G4GammaConversion();
           }
-          G4GammaConversionToMuons * the_gamma_conversion_to_muons = 0;
+          G4GammaConversionToMuons * the_gamma_conversion_to_muons = nullptr;
           if (_em_gamma_conversion_to_muons_) {
             the_gamma_conversion_to_muons = new G4GammaConversionToMuons();
           }
@@ -1150,8 +1191,14 @@ namespace mctools {
           if (_em_electron_multiple_scattering_) {
             // Multiple scattering:
             G4eMultipleScattering * the_electron_multiple_scattering = new G4eMultipleScattering();
+            
             // Setting the FacRange to 0.005 instead of default value 0.2
+#if G4VERSION_NUMBER < 1101         
             the_electron_multiple_scattering->SetRangeFactor(_em_electron_ms_range_factor_);
+#else
+            auto emParams = G4EmParameters::Instance();
+            emParams->SetMscRangeFactor(_em_electron_ms_range_factor_);
+#endif
             //??? the_electron_multiple_scattering->SetStepLimitType(fUseDistanceToBoundary);
             ++process_rank;
             DT_LOG_NOTICE(_logprio(), "Add e+/e- multiple scattering for '" << particle_name << "'");
@@ -1460,7 +1507,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(false)
       .add_example("Activate Rayleigh scattering : ::           \n"
                    "                                            \n"
-                   " em.gamma.rayleigh_scattering : boolean = 1 \n"
+                   " em.gamma.rayleigh_scattering : boolean = true\n"
                    "                                            \n"
                    )
       ;
@@ -1477,7 +1524,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Activate photoelectric effect : ::     \n"
                    "                                       \n"
-                   " em.gamma.photo_electric : boolean = 1 \n"
+                   " em.gamma.photo_electric : boolean = true\n"
                    "                                       \n"
                    )
       ;
@@ -1494,7 +1541,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Activate Compton scattering : ::           \n"
                    "                                           \n"
-                   " em.gamma.compton_scattering : boolean = 1 \n"
+                   " em.gamma.compton_scattering : boolean = true\n"
                    "                                           \n"
                    )
       ;
@@ -1511,7 +1558,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Activate gamma conversion : ::     \n"
                    "                                   \n"
-                   " em.gamma.conversion : boolean = 1 \n"
+                   " em.gamma.conversion : boolean = true\n"
                    "                                   \n"
                    )
       ;
@@ -1528,8 +1575,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(false)
       .add_example("Activate gamma conversion to muons : ::     \n"
                    "                                            \n"
-                   " em.gamma.conversion_to_muons : boolean = 1 \n"
-                   "                                            \n"
+                   " em.gamma.conversion_to_muons : boolean = true \n"
+                   "                                             \n"
                    )
       ;
   }
@@ -1546,7 +1593,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Activate electron/positron ionization : :: \n"
                    "                                           \n"
-                   " em.electron.ionization : boolean = 1      \n"
+                   " em.electron.ionization : boolean = true   \n"
                    "                                           \n"
                    )
       ;
@@ -1563,7 +1610,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Activate electron/positron bremsstrahlung : :: \n"
                    "                                               \n"
-                   " em.electron.bremsstrahlung : boolean = 1      \n"
+                   " em.electron.bremsstrahlung : boolean = true   \n"
                    "                                               \n"
                    )
       ;
@@ -1580,7 +1627,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Activate electron/positron multiple scattering : :: \n"
                    "                                                    \n"
-                   " em.electron.multiple_scattering : boolean = 1      \n"
+                   " em.electron.multiple_scattering : boolean = true   \n"
                    "                                                    \n"
                    )
       ;
@@ -1597,7 +1644,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Use the distance to boundary algorithm for electron/positron multiple scattering : :: \n"
                    "                                                                         \n"
-                   " em.electron.multiple_scattering.use_distance_to_boundary : boolean = 1  \n"
+                   " em.electron.multiple_scattering.use_distance_to_boundary : boolean = true\n"
                    "                                                                         \n"
                    )
       ;
@@ -1631,7 +1678,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Set the electron/positron step limiter technique : ::  \n"
                    "                                                       \n"
-                   " em.electron.step_limiter : boolean = 1                \n"
+                   " em.electron.step_limiter : boolean = true             \n"
                    "                                                       \n"
                    )
       ;
@@ -1648,7 +1695,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(true)
       .add_example("Activate positron annihilation : ::     \n"
                    "                                        \n"
-                   " em.positron.annihilation : boolean = 1 \n"
+                   " em.positron.annihilation : boolean = true\n"
                    "                                        \n"
                    )
       ;
@@ -1665,7 +1712,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(false)
       .add_example("Activate deexcitation by fluorescence : ::  \n"
                    "                                            \n"
-                   " em.deexcitation.fluorescence : boolean = 1 \n"
+                   " em.deexcitation.fluorescence : boolean = true\n"
                    "                                            \n"
                    )
       ;
@@ -1686,7 +1733,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
                             )
       .add_example("Activate deexcitation by Auger effect : :: \n"
                    "                                           \n"
-                   " em.deexcitation.auger : boolean = 1       \n"
+                   " em.deexcitation.auger : boolean = true    \n"
                    "                                           \n"
                    )
       ;
@@ -1703,7 +1750,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .set_default_value_boolean(false)
       .add_example("Activate deexcitation by PIXE process : :: \n"
                    "                                           \n"
-                   " em.deexcitation.pixe : boolean = 1        \n"
+                   " em.deexcitation.pixe : boolean = true     \n"
                    "                                           \n"
                    )
       ;
@@ -1785,8 +1832,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .add_example("Activate fluorescence in two *deexcitation* regions: :: \n"
                    "                                                        \n"
                    " em.deexcitation.regions : string[2] = \"A\" \"B\"      \n"
-                   " em.deexcitation.regions.A.fluorescence : boolean = 1   \n"
-                   " em.deexcitation.regions.B.fluorescence : boolean = 1   \n"
+                   " em.deexcitation.regions.A.fluorescence : boolean = true\n"
+                   " em.deexcitation.regions.B.fluorescence : boolean = true\n"
                    "                                                        \n"
                    )
       ;
@@ -1804,8 +1851,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .add_example("Activate Auger effect in two *deexcitation* regions: :: \n"
                    "                                                        \n"
                    " em.deexcitation.regions : string[2] = \"A\" \"B\"      \n"
-                   " em.deexcitation.regions.A.auger : boolean = 1          \n"
-                   " em.deexcitation.regions.B.auger : boolean = 1          \n"
+                   " em.deexcitation.regions.A.auger : boolean = true       \n"
+                   " em.deexcitation.regions.B.auger : boolean = true       \n"
                    "                                                        \n"
                    )
       ;
@@ -1823,8 +1870,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
       .add_example("Activate PIXE effect in two *deexcitation* regions: :: \n"
                    "                                                       \n"
                    " em.deexcitation.regions : string[2] = \"A\" \"B\"     \n"
-                   " em.deexcitation.regions.A.pixe : boolean = 1          \n"
-                   " em.deexcitation.regions.B.pixe : boolean = 1          \n"
+                   " em.deexcitation.regions.A.pixe : boolean = true       \n"
+                   " em.deexcitation.regions.B.pixe : boolean = true       \n"
                    "                                                       \n"
                    )
       ;

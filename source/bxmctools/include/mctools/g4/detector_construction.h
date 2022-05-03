@@ -1,16 +1,13 @@
 /// \file mctools/g4/detector_construction.h
-/* Author(s) :  Benoit Guillon <guillon@lpccaen.in2p3.fr>
- *              François Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :  François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-04
  * Last modified: 2015-09-06
  *
- * License:
+ * License: GPL 3.0
  *
  * Description:
  *
  *   GEANT 4 detector construction interface
- *
- * History:
  *
  */
 
@@ -30,13 +27,15 @@
 #include <datatools/multi_properties.h>
 // - Bayeux/mygsl :
 #include <mygsl/rng.h>
-// G4 stuff:
-#include <G4VUserDetectorConstruction.hh>
 
 // This project:
 #include <mctools/step_hit_processor_factory.h>
 #include <mctools/g4/loggable_support.h>
 #include <mctools/g4/region_tools.h>
+#include <mctools/g4/g4_defs.h>
+
+// G4 stuff:
+#include <G4VUserDetectorConstruction.hh>
 
 class G4UserLimits;
 class G4VisAttributes;
@@ -65,13 +64,14 @@ namespace mctools {
     class em_field_g4_stuff;
 
     /// \brief The detector construction Geant4 interface class
-    class detector_construction : public G4VUserDetectorConstruction,
-                                  public loggable_support
+    class detector_construction
+      : public G4VUserDetectorConstruction
+      , public loggable_support
     {
     public:
 
-      typedef std::map<std::string, sensitive_detector *>      sensitive_detector_dict_type;
-      typedef mctools::step_hit_processor_factory              SHPF_type;
+      typedef std::map<std::string, sensitive_detector *> sensitive_detector_dict_type;
+      typedef mctools::step_hit_processor_factory SHPF_type;
 
       /// Default control distance for particle tracking in magnetic field
       static const double DEFAULT_MISS_DISTANCE;
@@ -138,8 +138,14 @@ namespace mctools {
       void set_emfield_geom_plugin_name(const std::string & fpn_);
 
       /// G4 interface
-      G4VPhysicalVolume * Construct() override;
+      virtual G4VPhysicalVolume * Construct() override;
 
+#if G4VERSION_NUMBER >= 1000
+      // #ifdef G4MULTITHREADED 
+      virtual void ConstructSDandField() override;     
+      // #endif // G4MULTITHREADED
+#endif // G4VERSION_NUMBER >= 1000
+    
       /** Generate the GDML file from the geometry manager */
       void write_tmp_gdml_file();
 

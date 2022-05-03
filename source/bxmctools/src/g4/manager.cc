@@ -1,6 +1,6 @@
 /// \file mctools/g4/manager.cc
 /*
- * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
+ * 
  */
 
 // Ourselves:
@@ -52,16 +52,19 @@
 #include <genbb_help/i_genbb.h>
 
 // This project:
-#include <mctools/g4/run_action.h>
-#include <mctools/g4/event_action.h>
 #include <mctools/g4/detector_construction.h>
 #include <mctools/g4/primary_generator.h>
 #include <mctools/g4/physics_list.h>
+#include <mctools/g4/run_action.h>
+#include <mctools/g4/event_action.h>
 #include <mctools/g4/tracking_action.h>
 #include <mctools/g4/stepping_action.h>
 #include <mctools/g4/stacking_action.h>
 #include <mctools/g4/simulation_ctrl.h>
 #include <mctools/g4/data_libraries.h>
+#ifdef BXGEANT4MT 
+#include <mctools/g4/mt_user_action_initialization.h>
+#endif // BXGEANT4MT
 
 // G4 stuff:
 #include <globals.hh>
@@ -70,9 +73,9 @@
 #include <G4UImanager.hh>
 
 // In C++11, no register keyword, remove once updated to G4 10.2
-#ifdef G4MULTITHREADED
+#ifdef BXGEANT4MT
 #include <G4MTRunManager.hh>
-#else
+#else // BXGEANT4MT
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-register"
@@ -81,7 +84,7 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-#endif
+#endif // BXGEANT4MT
 
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh" // For terminal tcsh use
@@ -152,7 +155,8 @@ namespace mctools {
     //----------------------------------------------------------------------
     // PUBLIC INTERFACE
     //----------------------------------------------------------------------
-    manager::manager() {
+    manager::manager()
+    {
       _initialized_           = false;
       _simulation_ctrl_label_ = "";
       _simulation_ctrl_       = nullptr;
@@ -163,70 +167,82 @@ namespace mctools {
       _init_defaults();
     }
 
-    manager::~manager() {
+    manager::~manager()
+    {
       if (_initialized_) {
         reset();
       }
     }
 
-    void manager::initialize(const datatools::multi_properties & multi_config_) {
+    void manager::initialize(const datatools::multi_properties & multi_config_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Manager is already initialized !");
       _multi_config_ = &multi_config_;
       this->initialize_impl();
       _initialized_ = true;
     }
 
-    void manager::reset() {
+    void manager::reset()
+    {
       DT_THROW_IF(!_initialized_, std::logic_error, "Manager is not initialized !");
       _initialized_ = false;
       this->reset_impl();
       _init_defaults();
     }
 
-    void manager::run_simulation() {
+    void manager::run_simulation()
+    {
       DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
       DT_LOG_NOTICE(_logprio(),"Starting the simulation...");
       this->run_simulation_impl();
       DT_LOG_NOTICE(_logprio(),"Simulation stops !");
     }
 
-    bool manager::is_initialized() const {
+    bool manager::is_initialized() const
+    {
       return _initialized_;
     }
 
-    bool manager::is_automatic() const {
+    bool manager::is_automatic() const
+    {
       return is_batch() && _g4_macro_.empty();
     }
 
     //----------------------------------------------------------------------
     // Simulation Initializations (Geometry/Physics, possibly via services)
     //----------------------------------------------------------------------
-    bool manager::has_service_manager() const {
+    bool manager::has_service_manager() const
+    {
       return _service_manager_ != nullptr;
     }
 
-    void manager::set_service_manager(datatools::service_manager& sm) {
+    void manager::set_service_manager(datatools::service_manager& sm)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _service_manager_ = &sm;
     }
 
-    datatools::service_manager & manager::grab_service_manager() {
+    datatools::service_manager & manager::grab_service_manager()
+    {
       DT_THROW_IF(_service_manager_ == nullptr, std::logic_error,
                   "No service manager is available !");
       return *_service_manager_;
     }
 
-    const datatools::service_manager & manager::get_service_manager() const {
+    const datatools::service_manager & manager::get_service_manager() const
+    {
       DT_THROW_IF(_service_manager_ == nullptr, std::logic_error,
                   "No service manager is available !");
       return *_service_manager_;
     }
 
-    bool manager::has_external_geom_manager() const {
+    bool manager::has_external_geom_manager() const
+    {
       return _external_geom_manager_ != nullptr;
     }
 
-    void manager::set_external_geom_manager(const geomtools::manager& gm) {
+    void manager::set_external_geom_manager(const geomtools::manager& gm)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       DT_THROW_IF(_geom_manager_.is_initialized(),
                   std::logic_error,
@@ -238,7 +254,8 @@ namespace mctools {
       _external_geom_manager_ = &gm;
     }
 
-    const geomtools::manager & manager::get_geom_manager() const {
+    const geomtools::manager & manager::get_geom_manager() const
+    {
       if (has_external_geom_manager()) {
         DT_THROW_IF(! _external_geom_manager_->is_initialized(),
                     std::logic_error,
@@ -253,79 +270,111 @@ namespace mctools {
     //----------------------------------------------------------------------
     // Simulation User Actions (EvtGen, Run, Event etc)
     //----------------------------------------------------------------------
-    void manager::set_event_generator_name(const std::string & eg_name_) {
+    void manager::set_event_generator_name(const std::string & eg_name_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _eg_name_ = eg_name_;
     }
 
-    void manager::set_event_generator_seed(int seed_) {
+    void manager::set_event_generator_seed(int seed_)
+    {
       if (_eg_prng_.is_initialized()) {
         DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       }
       _eg_prng_seed_ = seed_;
     }
 
-    const genbb::manager& manager::get_eg_manager() const {
+    const genbb::manager& manager::get_eg_manager() const
+    {
       return _eg_manager_;
     }
 
-    genbb::manager& manager::grab_eg_manager() {
+    genbb::manager& manager::grab_eg_manager()
+    {
       return _eg_manager_;
     }
 
-    bool manager::has_event_generator() const {
-      return _event_generator_ != 0;
+    bool manager::has_event_generator() const
+    {
+      return _event_generator_ != nullptr;
     }
 
-    const genbb::i_genbb& manager::get_event_generator() const {
+    const genbb::i_genbb& manager::get_event_generator() const
+    {
       DT_THROW_IF(!this->has_event_generator(),
                   std::logic_error,
                   "No event generator is available !");
       return *_event_generator_;
     }
 
-    void manager::set_vertex_generator_name(const std::string & vg_name_) {
+    genbb::i_genbb& manager::grab_event_generator()
+    {
+      DT_THROW_IF(!this->has_event_generator(),
+                  std::logic_error,
+                  "No event generator is available !");
+      return *_event_generator_;
+    }
+
+    void manager::set_vertex_generator_name(const std::string & vg_name_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _vg_name_ = vg_name_;
     }
 
-    void manager::set_vertex_generator_seed(int seed_) {
+    void manager::set_vertex_generator_seed(int seed_)
+    {
       if (_vg_prng_.is_initialized()) {
         DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       }
       _vg_prng_seed_ = seed_;
     }
 
-    const genvtx::manager& manager::get_vg_manager() const {
+    const genvtx::manager& manager::get_vg_manager() const
+    {
       return _vg_manager_;
     }
 
-    genvtx::manager& manager::grab_vg_manager() {
+    genvtx::manager& manager::grab_vg_manager()
+    {
       return _vg_manager_;
     }
 
-    bool manager::has_vertex_generator() const {
-      return _vertex_generator_ != 0;
+    bool manager::has_vertex_generator() const
+    {
+      return _vertex_generator_ != nullptr;
     }
 
-    const genvtx::i_vertex_generator& manager::get_vertex_generator() const {
+    genvtx::i_vertex_generator& manager::grab_vertex_generator()
+    {
       DT_THROW_IF(!this->has_vertex_generator(),
                   std::logic_error,
                   "No vertex generator is available !");
       return *_vertex_generator_;
     }
 
-    event_action& manager::grab_user_event_action() {
+    const genvtx::i_vertex_generator& manager::get_vertex_generator() const
+    {
+      DT_THROW_IF(!this->has_vertex_generator(),
+                  std::logic_error,
+                  "No vertex generator is available !");
+      return *_vertex_generator_;
+    }
+
+#ifndef BXGEANT4MT 
+    event_action & manager::grab_user_event_action()
+    {
       DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
       return *_user_event_action_;
     }
+#endif
 
-
-    uint32_t manager::get_number_of_events() const {
+    uint32_t manager::get_number_of_events() const
+    {
       return _number_of_events_;
     }
 
-    void manager::set_number_of_events(uint32_t n) {
+    void manager::set_number_of_events(uint32_t n)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       DT_THROW_IF(n < NUMBER_OF_EVENTS_LOWER_LIMIT,
                   std::domain_error,
@@ -340,16 +389,18 @@ namespace mctools {
       DT_LOG_DEBUG(_logprio(), "Number of events = " << _number_of_events_);
     }
 
-
-    bool manager::has_number_of_events_modulo() const {
+    bool manager::has_number_of_events_modulo() const
+    {
       return _number_of_events_modulo_ > run_action::NUMBER_OF_EVENTS_MODULO_NONE;
     }
 
-    int manager::get_number_of_events_modulo() const {
+    int manager::get_number_of_events_modulo() const
+    {
       return _number_of_events_modulo_;
     }
 
-    void manager::set_number_of_events_modulo(int a_m) {
+    void manager::set_number_of_events_modulo(int a_m)
+    {
       if (a_m <= run_action::NUMBER_OF_EVENTS_MODULO_NONE) {
         _number_of_events_modulo_ = run_action::NUMBER_OF_EVENTS_MODULO_NONE;
       } else {
@@ -358,29 +409,35 @@ namespace mctools {
       DT_LOG_DEBUG(_logprio(), "Number of events modulo = " << _number_of_events_modulo_);
     }
 
-    void manager::set_use_run_header_footer(bool a_use_run_header_footer) {
+    void manager::set_use_run_header_footer(bool a_use_run_header_footer)
+    {
       _use_run_header_footer_ = a_use_run_header_footer;
     }
 
-    bool manager::using_run_header_footer() const {
+    bool manager::using_run_header_footer() const
+    {
       return _use_run_header_footer_;
     }
 
-    bool manager::is_batch() const {
+    bool manager::is_batch() const
+    {
       return ! is_interactive();
     }
 
-    bool manager::is_interactive() const {
+    bool manager::is_interactive() const
+    {
       return _interactive_;
     }
 
-    void manager::set_interactive(bool new_value_) {
+    void manager::set_interactive(bool new_value_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _interactive_ = new_value_;
       if (! _interactive_) _g4_visualization_ = false;
     }
 
-    void manager::set_g4_visualization(bool new_value_) {
+    void manager::set_g4_visualization(bool new_value_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
 #ifdef G4VIS_USE
       _g4_visualization_ = new_value_;
@@ -393,66 +450,80 @@ namespace mctools {
 #endif // G4VIS_USE
     }
 
-    bool manager::has_g4_visualization() const {
+    bool manager::has_g4_visualization() const
+    {
       return is_interactive() && _g4_visualization_;
     }
 
 
-    bool manager::has_g4_macro() const {
+    bool manager::has_g4_macro() const
+    {
       return ! _g4_macro_.empty();
     }
 
-    const std::string& manager::get_g4_macro() const {
+    const std::string& manager::get_g4_macro() const
+    {
       return _g4_macro_;
     }
 
-    void manager::set_g4_macro(const std::string& g4_macro_) {
+    void manager::set_g4_macro(const std::string& g4_macro_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _g4_macro_ = g4_macro_;
     }
 
-    void manager::set_use_track_history(const bool use) {
+    void manager::set_use_track_history(const bool use)
+    {
       _use_track_history_ = use;
     }
 
-    bool manager::has_track_history() const {
+    bool manager::has_track_history() const
+    {
       return _use_track_history_;
     }
 
-    const track_history& manager::get_track_history() const {
+    const track_history& manager::get_track_history() const
+    {
       return _track_history_;
     }
 
-    track_history& manager::grab_track_history() {
+    track_history& manager::grab_track_history()
+    {
       return _track_history_;
     }
 
-    bool manager::forbids_private_hits() const {
+    bool manager::forbids_private_hits() const
+    {
       return _forbid_private_hits_;
     }
 
-    void manager::set_forbid_private_hits(bool a_forbid) {
+    void manager::set_forbid_private_hits(bool a_forbid)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _forbid_private_hits_ = a_forbid;
     }
 
-    void manager::set_dont_save_no_sensitive_hit_events(bool a_dont_save) {
+    void manager::set_dont_save_no_sensitive_hit_events(bool a_dont_save)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _dont_save_no_sensitive_hit_events_ = a_dont_save;
     }
 
-    bool manager::dont_save_no_sensitive_hit_events() const {
+    bool manager::dont_save_no_sensitive_hit_events() const
+    {
       return _dont_save_no_sensitive_hit_events_;
     }
 
     //----------------------------------------------------------------------
     // Multithreaded Control
     //----------------------------------------------------------------------
-    bool manager::has_simulation_ctrl() const {
-      return _simulation_ctrl_ != 0;
+    bool manager::has_simulation_ctrl() const
+    {
+      return _simulation_ctrl_ != nullptr;
     }
 
-    void manager::set_simulation_ctrl(simulation_ctrl& a_simulation_ctrl) {
+    void manager::set_simulation_ctrl(simulation_ctrl& a_simulation_ctrl)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       DT_THROW_IF(has_simulation_ctrl(),
                   std::logic_error,
@@ -460,19 +531,22 @@ namespace mctools {
       _simulation_ctrl_ = &a_simulation_ctrl;
     }
 
-    void manager::reset_simulation_ctrl() {
+    void manager::reset_simulation_ctrl()
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-      _simulation_ctrl_ = 0;
+      _simulation_ctrl_ = nullptr;
     }
 
-    const simulation_ctrl& manager::get_simulation_ctrl() const {
+    const simulation_ctrl& manager::get_simulation_ctrl() const
+    {
       DT_THROW_IF(! has_simulation_ctrl(),
                   std::logic_error,
                   "Manager has no 'simulation ctrl' object !");
       return *_simulation_ctrl_;
     }
 
-    simulation_ctrl& manager::grab_simulation_ctrl() {
+    simulation_ctrl& manager::grab_simulation_ctrl()
+    {
       DT_THROW_IF(! has_simulation_ctrl(),
                   std::logic_error,
                   "Manager has no 'simulation ctrl' object !");
@@ -482,53 +556,65 @@ namespace mctools {
     //----------------------------------------------------------------------
     // Random number (over)control
     //----------------------------------------------------------------------
-    mygsl::rng& manager::grab_vg_prng() {
+    mygsl::rng& manager::grab_vg_prng()
+    {
       return _vg_prng_;
     }
 
-    mygsl::rng& manager::grab_eg_prng() {
+    mygsl::rng& manager::grab_eg_prng()
+    {
       return _eg_prng_;
     }
 
-    mygsl::rng& manager::grab_shpf_prng() {
+    mygsl::rng& manager::grab_shpf_prng()
+    {
       return _shpf_prng_;
     }
 
-    const mygsl::rng& manager::get_mgr_prng() const {
+    const mygsl::rng& manager::get_mgr_prng() const
+    {
       return _mgr_prng_;
     }
 
-    mygsl::rng& manager::grab_mgr_prng() {
+    mygsl::rng& manager::grab_mgr_prng()
+    {
       return _mgr_prng_;
     }
 
-    const g4_prng& manager::get_g4_prng() const {
+    const g4_prng& manager::get_g4_prng() const
+    {
       return _g4_prng_;
     }
 
-    g4_prng& manager::grab_g4_prng() {
+    g4_prng& manager::grab_g4_prng()
+    {
       return _g4_prng_;
     }
 
 
-    const mygsl::seed_manager& manager::get_seed_manager() const {
+    const mygsl::seed_manager& manager::get_seed_manager() const
+    {
       return _seed_manager_;
     }
 
-    mygsl::seed_manager& manager::grab_seed_manager() {
+    mygsl::seed_manager& manager::grab_seed_manager()
+    {
       return _seed_manager_;
     }
 
-    const mygsl::prng_state_manager& manager::get_state_manager() const {
+    const mygsl::prng_state_manager& manager::get_state_manager() const
+    {
       return _prng_state_manager_;
     }
 
-    mygsl::prng_state_manager& manager::grab_state_manager() {
+    mygsl::prng_state_manager& manager::grab_state_manager()
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       return _prng_state_manager_;
     }
 
-    void manager::record_current_prng_states() {
+    void manager::record_current_prng_states()
+    {
       // G4 PRNG :
       _mgr_prng_.to_buffer(_prng_state_manager_.get_state(g4_manager_label()).state_buffer);
 
@@ -546,7 +632,8 @@ namespace mctools {
       _prng_state_manager_.store();
     }
 
-    void manager::set_prng_state_save_modulo(int a_modulo) {
+    void manager::set_prng_state_save_modulo(int a_modulo)
+    {
       if (a_modulo < 1) {
         _prng_state_save_modulo_ = 0;
         return;
@@ -554,85 +641,105 @@ namespace mctools {
       _prng_state_save_modulo_ = a_modulo;
     }
 
-    int manager::get_prng_state_save_modulo() const {
+    int manager::get_prng_state_save_modulo() const
+    {
       return _prng_state_save_modulo_;
     }
 
-    bool manager::has_prng_state_save_modulo() const {
+    bool manager::has_prng_state_save_modulo() const
+    {
       return _prng_state_save_modulo_ > 0;
     }
 
 
-    void manager::reset_output_prng_seeds_file() {
+    void manager::reset_output_prng_seeds_file()
+    {
       _output_prng_seeds_file_ = "";
     }
 
-    void manager::reset_input_prng_seeds_file() {
+    void manager::reset_input_prng_seeds_file()
+    {
       _input_prng_seeds_file_ = "";
     }
 
-    bool manager::has_input_prng_seeds_file() const {
+    bool manager::has_input_prng_seeds_file() const
+    {
       return ! _input_prng_seeds_file_.empty();
     }
 
-    const std::string& manager::get_input_prng_seeds_file() const {
+    const std::string& manager::get_input_prng_seeds_file() const
+    {
       return _input_prng_seeds_file_;
     }
 
-    void manager::set_input_prng_seeds_file(const std::string & fn_) {
+    void manager::set_input_prng_seeds_file(const std::string & fn_)
+    {
       _input_prng_seeds_file_ = fn_;
     }
 
-    bool manager::has_output_prng_seeds_file() const {
+    bool manager::has_output_prng_seeds_file() const
+    {
       return ! _output_prng_seeds_file_.empty();
     }
 
-    const std::string& manager::get_output_prng_seeds_file() const {
+    const std::string& manager::get_output_prng_seeds_file() const
+    {
       return _output_prng_seeds_file_;
     }
 
-    void manager::set_output_prng_seeds_file(const std::string & fn_) {
+    void manager::set_output_prng_seeds_file(const std::string & fn_)
+    {
       _output_prng_seeds_file_ = fn_;
     }
 
-    void manager::reset_output_prng_states_file() {
+    void manager::reset_output_prng_states_file()
+    {
       _output_prng_states_file_ = "";
     }
 
-    const std::string & manager::get_output_prng_states_file() const {
+    const std::string & manager::get_output_prng_states_file() const
+    {
       return _output_prng_states_file_;
     }
 
-    bool manager::has_output_prng_states_file() const {
+    bool manager::has_output_prng_states_file() const
+    {
       return ! _output_prng_states_file_.empty();
     }
 
-    void manager::set_output_prng_states_file(const std::string & fn_) {
+    void manager::set_output_prng_states_file(const std::string & fn_)
+    {
       _output_prng_states_file_ = fn_;
     }
 
-    void manager::reset_input_prng_states_file() {
+    void manager::reset_input_prng_states_file()
+    {
       _input_prng_states_file_ = "";
     }
 
-    const std::string & manager::get_input_prng_states_file() const {
+    const std::string & manager::get_input_prng_states_file() const
+    {
       return _input_prng_states_file_;
     }
 
-    bool manager::has_input_prng_states_file() const {
+    bool manager::has_input_prng_states_file() const
+    {
       return ! _input_prng_states_file_.empty();
     }
 
-    void manager::set_input_prng_states_file(const std::string & fn_) {
+    void manager::set_input_prng_states_file(const std::string & fn_)
+    {
       _input_prng_states_file_ = fn_;
     }
 
-    void manager::set_shpf_prng_seed(int seed_) {
+    void manager::set_shpf_prng_seed(int seed_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _shpf_prng_seed_ = seed_;
     }
 
-    void manager::set_mgr_prng_seed(int rseed_) {
+    void manager::set_mgr_prng_seed(int rseed_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       if (rseed_ < 0) {
         _mgr_prng_seed_ = mygsl::random_utils::SEED_INVALID;
@@ -641,40 +748,48 @@ namespace mctools {
       }
     }
 
-    bool manager::has_mgr_prng_seed() const {
+    bool manager::has_mgr_prng_seed() const
+    {
       return _mgr_prng_seed_ != mygsl::random_utils::SEED_INVALID;
     }
 
-    int manager::get_mgr_prng_seed() const {
+    int manager::get_mgr_prng_seed() const
+    {
       return _mgr_prng_seed_;
     }
 
-    bool manager::has_init_seed_method() const {
+    bool manager::has_init_seed_method() const
+    {
       return !_init_seed_method_.empty();
     }
 
-    void manager::set_init_seed_method(const std::string & method_) {
+    void manager::set_init_seed_method(const std::string & method_)
+    {
       _init_seed_method_ = method_;
     }
 
-    const std::string & manager::get_init_seed_method() const {
+    const std::string & manager::get_init_seed_method() const
+    {
       return _init_seed_method_;
     }
 
     //----------------------------------------------------------------------
     // I/O (over)control
     //----------------------------------------------------------------------
-    void manager::set_output_data_format_by_label(const std::string & ff_) {
+    void manager::set_output_data_format_by_label(const std::string & ff_)
+    {
       io_utils::data_format_type df = io_utils::label_to_data_format(ff_);
       DT_THROW_IF(df == io_utils::DATA_FORMAT_INVALID, std::logic_error, "Invalid output data format '" << ff_ << "'!");
       set_output_data_format(df);
     }
 
-    void manager::reset_output_data_format() {
+    void manager::reset_output_data_format()
+    {
       _output_data_format_ = io_utils::DATA_FORMAT_INVALID;
     }
 
-    void manager::set_output_data_format(io_utils::data_format_type of_) {
+    void manager::set_output_data_format(io_utils::data_format_type of_)
+    {
       _output_data_format_ = of_;
       if (_output_data_format_ == io_utils::DATA_FORMAT_BANK) {
         if (_output_data_bank_label_.empty()) {
@@ -682,8 +797,14 @@ namespace mctools {
         }
       }
     }
+    
+    const std::string & manager::get_output_data_bank_label() const
+    {
+      return _output_data_bank_label_;
+    }
 
-    void manager::set_output_data_bank_label(const std::string & bl_) {
+    void manager::set_output_data_bank_label(const std::string & bl_)
+    {
       _output_data_bank_label_ = bl_;
       if (_output_data_format_ != io_utils::DATA_FORMAT_INVALID) {
         set_output_data_format(io_utils::DATA_FORMAT_BANK);
@@ -692,40 +813,53 @@ namespace mctools {
                   "Cannot set output data bank label with the plain output data format!");
     }
 
-    io_utils::data_format_type manager::get_output_data_format() const {
+    io_utils::data_format_type manager::get_output_data_format() const
+    {
       return _output_data_format_;
     }
 
-    void manager::set_output_data_file(const std::string & fn_) {
+    void manager::set_output_data_file(const std::string & fn_)
+    {
       _output_data_file_ = fn_;
     }
+    
+    const std::string & manager::get_output_data_file() const
+    {
+      return _output_data_file_;
+    }
 
-    bool manager::using_time_stat() const {
+    bool manager::using_time_stat() const
+    {
       return _use_time_stat_;
     }
 
-    void manager::set_using_time_stat(bool new_value_) {
+    void manager::set_using_time_stat(bool new_value_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _use_time_stat_ = new_value_;
     }
 
-    const manager::CT_map & manager::get_CT_map() const {
+    const manager::CT_map & manager::get_CT_map() const
+    {
       return _CTs_;
     }
 
-    manager::CT_map& manager::grab_CT_map() {
+    manager::CT_map& manager::grab_CT_map()
+    {
       return _CTs_;
     }
 
     //----------------------------------------------------------------------
     // Output Profiles
     //----------------------------------------------------------------------
-    bool manager::has_supported_output_profile(const std::string & profile_id_) const {
+    bool manager::has_supported_output_profile(const std::string & profile_id_) const
+    {
       return _supported_output_profile_ids_.find(profile_id_) != _supported_output_profile_ids_.end();
     }
 
     void manager::add_supported_output_profile(const std::string& profile_id_,
-                                               const std::string& description_) {
+                                               const std::string& description_)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       std::string profile_id = profile_id_;
       boost::trim(profile_id);
@@ -744,19 +878,23 @@ namespace mctools {
       DT_LOG_NOTICE(_logprio(), "Output profile '" << profile_id << "' is supported.");
     }
 
-    const std::map<std::string, std::string>& manager::get_supported_output_profiles() const {
+    const std::map<std::string, std::string>& manager::get_supported_output_profiles() const
+    {
       return _supported_output_profile_ids_;
     }
 
-    bool manager::has_activated_output_profiles() const {
+    bool manager::has_activated_output_profiles() const
+    {
       return _activated_output_profile_ids_.size() > 0;
     }
 
-    bool manager::has_activated_output_profile(const std::string& id) const {
+    bool manager::has_activated_output_profile(const std::string& id) const
+    {
       return _activated_output_profile_ids_.count(id) == 1;
     }
 
-    void manager::activate_output_profile(const std::string& id) {
+    void manager::activate_output_profile(const std::string& id)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       DT_THROW_IF(! has_supported_output_profile(id),
                   std::logic_error,
@@ -765,14 +903,17 @@ namespace mctools {
       DT_LOG_NOTICE(_logprio(), "Activate the output profile '" << id << "'");
     }
 
-    void manager::deactivate_output_profile(const std::string& id) {
+    void manager::deactivate_output_profile(const std::string& id)
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       if (has_activated_output_profile(id)) {
         _activated_output_profile_ids_.erase(id);
       }
     }
 
-    void manager::set_output_profiles_activation_rule(const std::string& rule_) {
+    void manager::set_output_profiles_activation_rule(const std::string& rule_) 
+    
+    {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
       _output_profiles_activation_rule_ = rule_;
     }
@@ -789,26 +930,30 @@ namespace mctools {
       }
     }
 
-    void manager::fetch_activated_output_profile_ids(std::vector<std::string>& ids) const {
+    void manager::fetch_activated_output_profile_ids(std::vector<std::string>& ids) const
+    {
       for (const auto& i : _activated_output_profile_ids_) {
         ids.push_back(i);
       }
     }
 
-    const std::set<std::string>& manager::get_activated_output_profile_ids() const {
+    const std::set<std::string>& manager::get_activated_output_profile_ids() const
+    {
       return _activated_output_profile_ids_;
     }
 
     //----------------------------------------------------------------------
     // Dump-To-Stream
     //----------------------------------------------------------------------
-    void manager::dump(std::ostream& os) const {
+    void manager::dump(std::ostream& os) const
+    {
       dump_base(os, "mctools::g4::manager: ", "");
     }
 
     void manager::dump_base(std::ostream& os,
                             const std::string& title,
-                            const std::string& iIndent) const {
+                            const std::string& iIndent) const
+    {
       std::string indent;
       if (!iIndent.empty()) indent = iIndent;
       if (!title.empty()) {
@@ -881,7 +1026,8 @@ namespace mctools {
     //----------------------------------------------------------------------
     // Private implementation details
     //----------------------------------------------------------------------
-    void manager::initialize_impl() {
+    void manager::initialize_impl()
+    {
       /****************
        * MAIN MANAGER *
        ****************/
@@ -906,29 +1052,23 @@ namespace mctools {
        * USER ACTIONS FOR GEANT 4 *
        ****************************/
       // Run manager:
-#ifdef G4MULTITHREADED
+#ifdef BXGEANT4MT
       _g4_run_manager_ = new G4MTRunManager;
-      _g4_run_manager_->SetNumberOfThreads(2);
+      _g4_run_manager_->SetNumberOfThreads(1);
 #else
       _g4_run_manager_ = new G4RunManager;
 #endif
       /*** User initializations ***/
       // Detector construction:
-      _init_detector_construction ();
+      _init_detector_construction();
 
       // Physics list:
-      _init_physics_list ();
-
-#ifdef G4VIS_USE
-      // G4 visualization:
-      _g4_vis_manager_ = nullptr;
-      if (has_g4_visualization()) {
-        std::cerr << "DEVEL: manager::initialize_impl: new G4VisExecutive !!!" << std::endl;
-        _g4_vis_manager_ = new G4VisExecutive;
-        _g4_vis_manager_->Initialize();
-      }
-#endif
-
+      _init_physics_list();
+     
+#ifdef BXGEANT4MT
+      //std::cerr << "******** BOOH" << std::endl;
+      _init_user_action_();
+#else // BXGEANT4MT
       // User actions:
       // Run action:
       _init_run_action ();
@@ -947,7 +1087,18 @@ namespace mctools {
 
       // Stacking action:
       _init_stacking_action ();
+#endif // BXGEANT4MT
 
+#ifdef G4VIS_USE
+      // G4 visualization:
+      _g4_vis_manager_ = nullptr;
+      if (has_g4_visualization()) {
+        std::cerr << "DEVEL: manager::initialize_impl: new G4VisExecutive !!!" << std::endl;
+        _g4_vis_manager_ = new G4VisExecutive;
+        _g4_vis_manager_->Initialize();
+      }
+#endif
+ 
       // G4 kernel initialization:
       DT_LOG_NOTICE(_logprio(), "G4 kernel initialization...");
       _g4_run_manager_->Initialize();
@@ -961,7 +1112,8 @@ namespace mctools {
       _init_prngs_states();
     } // end of manager::_at_init()
 
-    void manager::reset_impl() {
+    void manager::reset_impl()
+    {
       if (_use_time_stat_) {
         for (CT_map::iterator i = _CTs_.begin();
              i != _CTs_.end();
@@ -1005,7 +1157,13 @@ namespace mctools {
       _track_history_.reset();
     }
 
-    void manager::run_simulation_impl() {
+    const datatools::multi_properties & manager::get_multi_config() const
+    {
+      return *_multi_config_;
+    }
+
+    void manager::run_simulation_impl()
+    {
       std::string g4_macro;
       if (has_g4_macro()) {
         g4_macro = _g4_macro_;
@@ -1115,19 +1273,31 @@ namespace mctools {
       }
     } // end of manager::_at_run_simulation()
 
-    void manager::_init_defaults() {
+    const mctools::g4::detector_construction &
+    manager::get_user_detector_construction() const
+    {
+      return *_user_detector_construction_;
+    }
+ 
+    void manager::_init_defaults()
+    {
       // Pointers:
       _multi_config_            = nullptr;
       _g4_stepping_verbosity_   = nullptr;
       _g4_run_manager_          = nullptr;
       _g4_UI_                   = nullptr;
+      _user_detector_construction_ = nullptr;
       _user_physics_list_       = nullptr;
-      _user_primary_generator_  = nullptr;
+#ifdef BXGEANT4MT
+      _user_action_initialization_ = nullptr;
+#else // BXGEANT4MT
       _user_run_action_         = nullptr;
       _user_event_action_       = nullptr;
+      _user_primary_generator_  = nullptr;
       _user_tracking_action_    = nullptr;
       _user_stepping_action_    = nullptr;
       _user_stacking_action_    = nullptr;
+#endif // BXGEANT4MT
 #ifdef G4VIS_USE
       _g4_vis_manager_          = nullptr;
 #endif // G4VIS_USE
@@ -1171,7 +1341,8 @@ namespace mctools {
       dl.configure_data();
     }
 
-    void manager::_init_core() {
+    void manager::_init_core()
+    {
       // Main manager:
       const datatools::properties & manager_config
         = _multi_config_->get("manager").get_properties();
@@ -1351,7 +1522,8 @@ namespace mctools {
       }
     }
 
-    void manager::_init_geometry() {
+    void manager::_init_geometry()
+    {
       // Geometry manager:
       DT_LOG_NOTICE(_logprio(), "Geometry manager settings...");
       if (has_external_geom_manager()) {
@@ -1384,7 +1556,8 @@ namespace mctools {
       }
     }
 
-    void manager::_init_vertex_generator() {
+    void manager::_init_vertex_generator()
+    {
       // Vertex generator:
       DT_LOG_NOTICE(_logprio(),"Vertex generator settings...");
       if (_multi_config_->has_section("vertex_generator")) {
@@ -1433,7 +1606,8 @@ namespace mctools {
       }
     }
 
-    void manager::_init_event_generator() {
+    void manager::_init_event_generator()
+    {
       // Event generator:
       DT_LOG_NOTICE(_logprio(), "Primary event generator settings...");
       datatools::properties primary_generator_config;
@@ -1473,7 +1647,8 @@ namespace mctools {
       _event_generator_ = &_eg_manager_.grab(eg_name);
     }
 
-    void manager::_init_detector_construction() {
+    void manager::_init_detector_construction()
+    {
       // Detector construction:
       DT_LOG_NOTICE(_logprio(), "Detector construction...");
       DT_THROW_IF(! _multi_config_->has_section("detector_construction"),
@@ -1488,7 +1663,8 @@ namespace mctools {
       _g4_run_manager_->SetUserInitialization(_user_detector_construction_);
     }
 
-    void manager::_init_physics_list() {
+    void manager::_init_physics_list()
+    {
       DT_LOG_NOTICE(_logprio(), "Physics list initialization...");
       DT_THROW_IF(! _multi_config_->has_section("physics_list"),
                   std::logic_error,
@@ -1502,7 +1678,20 @@ namespace mctools {
       if (is_debug()) _user_physics_list_->tree_dump(std::clog);
     }
 
-    void manager::_init_run_action() {
+   
+#ifdef BXGEANT4MT 
+    // virtual
+    void manager::_init_user_action_()
+    {
+      _user_action_initialization_ = new mt_user_action_initialization(*this);
+      _g4_run_manager_->SetUserInitialization(_user_action_initialization_);
+      DT_LOG_DEBUG(_logprio(), "User action initialization: ");
+      return;
+    }
+    
+#else // BXGEANT4MT 
+    void manager::_init_run_action()
+    {
       DT_LOG_NOTICE(_logprio(), "Run action initialization...");
       DT_THROW_IF(! _multi_config_->has_section("run_action"),
                   std::logic_error,
@@ -1528,7 +1717,8 @@ namespace mctools {
       _g4_run_manager_->SetUserAction(_user_run_action_);
     }
 
-    void manager::_init_event_action() {
+    void manager::_init_event_action()
+    {
       DT_LOG_NOTICE(_logprio(), "Event action initialization...");
       DT_THROW_IF(! _multi_config_->has_section("event_action"),
                   std::logic_error,
@@ -1536,12 +1726,13 @@ namespace mctools {
       const datatools::properties & event_action_config
         = _multi_config_->get("event_action").get_properties();
       _user_event_action_ = new event_action(*_user_run_action_,
-                                             *_user_detector_construction_);
+                                             get_user_detector_construction());
       _user_event_action_->initialize(event_action_config);
       _g4_run_manager_->SetUserAction(_user_event_action_);
     }
 
-    void manager::_init_primary_generator_action() {
+    void manager::_init_primary_generator_action()
+    {
       DT_LOG_NOTICE(_logprio(), "Primary generator action initialization...");
       DT_THROW_IF(!_multi_config_->has_section("primary_generator_action"),
                   std::logic_error,
@@ -1560,7 +1751,8 @@ namespace mctools {
       _g4_run_manager_->SetUserAction(_user_primary_generator_);
     }
 
-    void manager::_init_tracking_action() {
+    void manager::_init_tracking_action()
+    {
       DT_LOG_NOTICE(_logprio(), "Tracking action initialization...");
       if (_multi_config_->has_section("tracking_action")) {
         const datatools::properties &  tracking_action_config  = _multi_config_->get("tracking_action").get_properties();
@@ -1570,7 +1762,8 @@ namespace mctools {
       }
     }
 
-    void manager::_init_stepping_action() {
+    void manager::_init_stepping_action()
+    {
       DT_LOG_NOTICE(_logprio(), "Stepping action initialization...");
       if (_multi_config_->has_section("stepping_action")) {
         const datatools::properties & stepping_action_config = _multi_config_->get("stepping_action").get_properties();
@@ -1580,7 +1773,8 @@ namespace mctools {
       }
     }
 
-    void manager::_init_stacking_action() {
+    void manager::_init_stacking_action()
+    {
       DT_LOG_NOTICE(_logprio(), "Stacking action initialization...");
       if (_multi_config_->has_section("stacking_action")) {
         const datatools::properties & stacking_action_config = _multi_config_->get("stacking_action").get_properties();
@@ -1589,8 +1783,11 @@ namespace mctools {
         _g4_run_manager_->SetUserAction(_user_stacking_action_);
       }
     }
+    
+#endif // BXGEANT4MT 
 
-    void manager::_init_seeds() {
+    void manager::_init_seeds()
+    {
       // All seeds being 'SEED_AUTO' (see mygsl::seed_manager)
       // are initialized with some source of entropy :
       // 2012-06-08 FM : fix to make all seeds different (and
@@ -1677,7 +1874,8 @@ namespace mctools {
       }
     }
 
-    void manager::_init_prngs_states() {
+    void manager::_init_prngs_states()
+    {
       // Load the PRNG internal states buffers :
       if (has_input_prng_states_file()) {
         DT_LOG_NOTICE(_logprio(),  "Loading PRNG internal states from file '"
@@ -1731,7 +1929,8 @@ namespace mctools {
       }
     }
 
-    void manager::_init_prngs() {
+    void manager::_init_prngs()
+    {
       /****************************
        * RANDOM NUMBER GENERATORS *
        ****************************/
@@ -2216,7 +2415,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_) {
   // Lock the description:
   ocd_.lock();
 
-  // ... and we are done.
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation

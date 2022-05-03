@@ -3,13 +3,11 @@
  * Creation date: 2010-04-10
  * Last modified: 2015-09-14
  *
- * License:
+ * License: GPL 3.0
  *
  * Description:
  *
  *   G4 user event action class
- *
- * History:
  *
  */
 
@@ -39,8 +37,9 @@ namespace mctools {
     class detector_construction;
 
     /// \brief Geant4 event action interface class
-    class event_action : public G4UserEventAction,
-                         public loggable_support
+    class event_action
+      : public G4UserEventAction
+      , public loggable_support
     {
     public:
 
@@ -120,18 +119,18 @@ namespace mctools {
     private:
 
       // Management:
-      bool                          _initialized_; //!< Initialization flag
+      bool                          _initialized_ = false; //!< Initialization flag
 
       // Configuration:
-      bool _save_only_tracked_events_; //!< Flag to save only tracked/unkilled event
+      bool _save_only_tracked_events_ = false; //!< Flag to save only tracked/unkilled event
 
       // Working data:
-      const detector_construction * _detector_construction_; //!< Handle to the G4 detector construction
-      run_action *                  _run_action_; //!< Handle to the G4 run action
+      const detector_construction * _detector_construction_ = nullptr; //!< Handle to the G4 detector construction
+      run_action *                  _run_action_ = nullptr; //!< Handle to the G4 run action
       ::mctools::simulated_data     _event_data_; //!< Embedded simulated event model
-      ::mctools::simulated_data   * _external_event_data_; //!< Handle to an external simulated event model
-      bool                          _aborted_event_; //!< Flag to abort the current event
-      bool                          _killed_event_; //!< Flag to kill the current event
+      ::mctools::simulated_data   * _external_event_data_= nullptr; //!< Handle to an external simulated event model
+      bool                          _aborted_event_ = false; //!< Flag to abort the current event
+      bool                          _killed_event_ = false; //!< Flag to kill the current event
       ::mctools::base_step_hit_processor::step_hit_ptr_collection_type _phits_; //!< Collection of step hit processors
 
     };

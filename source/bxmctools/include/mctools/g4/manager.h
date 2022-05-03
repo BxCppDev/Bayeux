@@ -5,7 +5,7 @@
  *
  * License:
  *
- * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,6 @@
  * Description:
  *
  *   G4 simulation manager
- *
- * History:
  *
  */
 
@@ -58,7 +56,10 @@
 // This project:
 #include <mctools/mctools_config.h>
 #include <mctools/utils.h>
+#include <mctools/g4/g4_defs.h>
 #include <mctools/g4/loggable_support.h>
+#include <mctools/g4/g4_prng.h>
+#include <mctools/g4/track_history.h>
 
 namespace genvtx {
   class manager;
@@ -69,25 +70,29 @@ namespace genbb {
   class i_genbb;
 }
 
-#include <mctools/g4/g4_prng.h>
-#include <mctools/g4/track_history.h>
-
-#ifdef G4VIS_USE
-// #pragma message("NOTE: G4VIS_USE is set: declaring class 'G4VisManager'...")
-class G4VisManager;
-// #else
-// #pragma message("NOTE: G4VIS_USE is NOT set.")
-#endif // G4VIS_USE
-
 class G4VSteppingVerbose;
 
-#ifdef G4MULTITHREADED
+// #if G4VERSION_NUMBER < 1000
+// #undef BXGEANT4MT;
+// #else
+// #ifdef G4MULTITHREADED
+// class G4MTRunManager;
+// #else
+// class G4RunManager;
+// #endif // G4MULTITHREADED
+// #endif
+
+#ifdef BXGEANT4MT
 class G4MTRunManager;
 #else
 class G4RunManager;
 #endif
 
 class G4UImanager;
+
+#ifdef G4VIS_USE
+class G4VisManager;
+#endif // G4VIS_USE
 
 namespace datatools {
   class multi_properties;
@@ -97,22 +102,30 @@ namespace datatools {
 namespace mctools {
   namespace g4 {
     // Forward declarations
+    class detector_construction;
+    class physics_list;
+    class simulation_ctrl;
+#ifdef BXGEANT4MT
+    class mt_user_action_initialization;
+#else
     class run_action;
     class event_action;
-    class detector_construction;
     class primary_generator;
-    class physics_list;
     class tracking_action;
     class stepping_action;
     class stacking_action;
-    class simulation_ctrl;
-
+#endif // BXGEANT4MT
+    
     /// \brief The Geant4 simulation manager
-    class manager : public loggable_support {
+    class manager
+      : public loggable_support
+    {
     public:
       typedef datatools::computing_time      CT_type;
       typedef std::map<std::string, CT_type> CT_map;
-
+#ifdef BXGEANT4MT
+      friend class mt_user_action_initialization;
+#endif
       // 2012-04-24 : limit the maximum allowed number of events:
       // http://hypernews.slac.stanford.edu/HyperNews/geant4/get/particles/528/1.html
       static const uint32_t NUMBER_OF_EVENTS_UPPER_LIMIT   = 1000000000; //!< Maximum number of events to be processed
@@ -138,7 +151,7 @@ namespace mctools {
       virtual ~manager();
 
       /// Initialize the Geant4 manager
-      void initialize(const datatools::multi_properties& mp_);
+      void initialize(const datatools::multi_properties & mp_);
 
       /// Reset the Geant4 manager
       void reset();
@@ -186,7 +199,7 @@ namespace mctools {
       void set_event_generator_seed(int);
 
       /// Get a non-mutable reference to the embedded event generator
-      const genbb::manager& get_eg_manager() const;
+      const genbb::manager & get_eg_manager() const;
 
       /// Get a mutable reference to the embedded event generator
       genbb::manager& grab_eg_manager();
@@ -195,7 +208,10 @@ namespace mctools {
       bool has_event_generator() const;
 
       /// Return a non-mutable reference to a embedded event generator
-      const genbb::i_genbb& get_event_generator() const;
+      const genbb::i_genbb & get_event_generator() const;
+
+      /// Return a mutable reference to a embedded event generator
+      genbb::i_genbb & grab_event_generator();
 
       /// Set the name of the active vertex generator
       void set_vertex_generator_name(const std::string&);
@@ -204,20 +220,25 @@ namespace mctools {
       void set_vertex_generator_seed(int);
 
       /// Get a non-mutable reference to the vertex generator manager
-      const genvtx::manager& get_vg_manager() const;
+      const genvtx::manager & get_vg_manager() const;
 
       /// Get a mutable reference to the vertex generator manager
-      genvtx::manager& grab_vg_manager();
+      genvtx::manager & grab_vg_manager();
 
       /// Check if a vertex generator is available
       bool has_vertex_generator() const;
 
       /// Return a non-mutable reference to a embedded vertex generator
-      const genvtx::i_vertex_generator& get_vertex_generator() const;
+      const genvtx::i_vertex_generator & get_vertex_generator() const;
 
+      /// Return a mutable reference to a embedded vertex generator
+      genvtx::i_vertex_generator & grab_vertex_generator();
+
+#ifndef BXGEANT4MT
       /// Return a mutable event_action reference
-      event_action& grab_user_event_action();
-
+      event_action & grab_user_event_action();
+#endif
+      
       // Run
       /// Return the number of events to be generated
       uint32_t get_number_of_events() const;
@@ -417,15 +438,21 @@ namespace mctools {
       /// Set the output data file format
       void set_output_data_format(io_utils::data_format_type);
 
-      /// Set the output data bank label(for "bank" output format only)
-      void set_output_data_bank_label(const std::string &);
-
       /// Return the output data file format
       io_utils::data_format_type get_output_data_format() const;
 
       /// Set the output data file name
       void set_output_data_file(const std::string &);
 
+      /// Return the output data file
+      const std::string & get_output_data_file() const;
+
+      /// Set the output data bank label (for "bank" output format only)
+      void set_output_data_bank_label(const std::string &);
+
+      /// Return the output data bank label
+      const std::string & get_output_data_bank_label() const;
+      
       // CPU/Wall Time Statistics
       bool using_time_stat() const;
 
@@ -483,6 +510,10 @@ namespace mctools {
                      const std::string & title_ = "",
                      const std::string & indent_ = "") const;
 
+      const datatools::multi_properties & get_multi_config() const;
+
+      const mctools::g4::detector_construction & get_user_detector_construction() const;
+      
     protected:
       /// Initialization actions
       virtual void initialize_impl();
@@ -514,6 +545,11 @@ namespace mctools {
       /// Initialize the physics list
       virtual void _init_physics_list();
 
+#ifdef BXGEANT4MT
+      /// User actions initialization
+      virtual void _init_user_action_();
+      
+#else // BXGEANT4MT
       /// Initialize the run action
       virtual void _init_run_action();
 
@@ -531,6 +567,8 @@ namespace mctools {
 
       /// Initialize the stacking action
       virtual void _init_stacking_action();
+      
+#endif // BXGEANT4MT
 
       /// Initialize the seeds for embedded PRNGs
       void _init_seeds();
@@ -549,28 +587,28 @@ namespace mctools {
       bool _initialized_ = false; //!< Initializion flag
 
       // Configuration:
-      const datatools::multi_properties* _multi_config_ = nullptr; //!< Setup parameters
+      const datatools::multi_properties * _multi_config_ = nullptr; //!< Setup parameters
 
       // User interface mode:
-      bool _interactive_ = false;              //!< Flag for interactive session
-      bool _g4_visualization_ = false;         //!< Flag to activate Geant4 visualization
+      bool _interactive_      = false; //!< Flag for interactive session
+      bool _g4_visualization_ = false; //!< Flag to activate Geant4 visualization
 
       std::string      _simulation_ctrl_label_; //!< Label for simulation thread control
-      simulation_ctrl* _simulation_ctrl_ = nullptr;       //!< Simulation thread control instance
+      simulation_ctrl * _simulation_ctrl_ = nullptr; //!< Simulation thread control instance
 
       std::map<std::string,std::string> _supported_output_profile_ids_; //!< Supported simulation output profiles
       std::string           _output_profiles_activation_rule_; //!< Activation rule for output profiles
-      std::set<std::string> _activated_output_profile_ids_;    //!< Activated simulation output profile Ids
+      std::set<std::string> _activated_output_profile_ids_; //!< Activated simulation output profile Ids
 
       // Service manager :
-      datatools::service_manager* _service_manager_ = nullptr; //!< Service manager
+      datatools::service_manager * _service_manager_ = nullptr; //!< Service manager
 
       // Geometry manager :
       const geomtools::manager*  _external_geom_manager_ = nullptr; //!< External geometry manager
-      geomtools::manager         _geom_manager_;          //!< Embedded geometry manager
+      geomtools::manager         _geom_manager_; //!< Embedded geometry manager
 
       // Vertex generation manager :
-      int                         _vg_prng_seed_;     //!< Seed for the embedded PRNG for vertex generation
+      int                         _vg_prng_seed_; //!< Seed for the embedded PRNG for vertex generation
       mygsl::rng                  _vg_prng_;          //!< Embedded PRNG for vertex generation
       genvtx::manager             _vg_manager_;       //!< Vertex generator manager
       std::string                 _vg_name_;          //!< Name of the active vertex generator
@@ -581,7 +619,7 @@ namespace mctools {
       mygsl::rng       _eg_prng_;         //!< Embedded PRNG for event generation
       genbb::manager   _eg_manager_;      //!< Event generator manager
       std::string      _eg_name_;         //!< Name of the active event generator
-      genbb::i_genbb*  _event_generator_ = nullptr; //!< Active event generator
+      genbb::i_genbb * _event_generator_ = nullptr; //!< Active event generator
 
       // Step hit processor factory PRNG :
       int              _shpf_prng_seed_;  //!< Seed for the embedded PRNG for step hit processor factories
@@ -593,29 +631,33 @@ namespace mctools {
       g4_prng     _g4_prng_;       //!< PRNG using the Geant4 interface
 
       // G4 objects:
-      G4VSteppingVerbose* _g4_stepping_verbosity_ = nullptr; //!< Geant4 stepping verbosity instance
-#ifdef G4MULTITHREADED
-      G4MTRunManager*     _g4_run_manager_ = nullptr;        //!< Geant4 MT run manager
+      G4VSteppingVerbose * _g4_stepping_verbosity_ = nullptr; //!< Geant4 stepping verbosity instance
+#ifdef BXGEANT4MT
+      G4MTRunManager *    _g4_run_manager_ = nullptr;        //!< Geant4 MT run manager
 #else     
-      G4RunManager*       _g4_run_manager_ = nullptr;        //!< Geant4 run manager
+      G4RunManager *      _g4_run_manager_ = nullptr;        //!< Geant4 run manager
 #endif
-      G4UImanager*        _g4_UI_ = nullptr;                 //!< Geant4 UI manager
+      G4UImanager *       _g4_UI_ = nullptr;                 //!< Geant4 UI manager
 
       // User specified G4 interfaces :
       mctools::g4::detector_construction* _user_detector_construction_ = nullptr;
       mctools::g4::physics_list*          _user_physics_list_ = nullptr;
-      mctools::g4::primary_generator*     _user_primary_generator_ = nullptr;
+      
+#ifdef BXGEANT4MT
+      mctools::g4::mt_user_action_initialization *_user_action_initialization_ = nullptr;
+#else
       mctools::g4::run_action*            _user_run_action_ = nullptr;
       mctools::g4::event_action*          _user_event_action_ = nullptr;
+      mctools::g4::primary_generator*     _user_primary_generator_ = nullptr;
       mctools::g4::tracking_action*       _user_tracking_action_ = nullptr;
       mctools::g4::stepping_action*       _user_stepping_action_ = nullptr;
       mctools::g4::stacking_action*       _user_stacking_action_ = nullptr;
-
+#endif
+      
 #ifdef G4VIS_USE
       // G4 visualization, if you choose to have it!
       G4VisManager * _g4_vis_manager_ = nullptr; //!< Geant4 visualization manager
 #endif // G4VIS_USE
-
 
       // A PRNG seed manager :
       std::string               _init_seed_method_; //!< Initialization method of the seed manager
@@ -626,7 +668,7 @@ namespace mctools {
       int                       _prng_state_save_modulo_; //!< Event number modulo to backup PRNGs' internal states
 
       // Track historical infos :
-      bool          _use_track_history_; //!< Flag to activate track history
+      bool          _use_track_history_ = false; //!< Flag to activate track history
       track_history _track_history_;     //!< Track history data structure
 
       // User:
@@ -641,10 +683,10 @@ namespace mctools {
       int         _number_of_events_modulo_; //!< Event number modulo for progression print
       std::string _g4_macro_;                //!< Geant4 macro to be processed
       int         _g4_tracking_verbosity_;   //!< Geant 4 tracking verbosity
-      bool        _forbid_private_hits_;     //!< Flag to disable the storage of MC true hits from 'private' collection of hits
-      bool        _dont_save_no_sensitive_hit_events_; //!< Flag to store MC true hits from 'non-sensitive' volumes
-      bool        _use_run_header_footer_; //!< Store run header/footer in output file
-      bool        _use_time_stat_;         //!< Flag to activate CPU time statistics
+      bool        _forbid_private_hits_ = false;     //!< Flag to disable the storage of MC true hits from 'private' collection of hits
+      bool        _dont_save_no_sensitive_hit_events_ = false; //!< Flag to store MC true hits from 'non-sensitive' volumes
+      bool        _use_run_header_footer_ = false; //!< Store run header/footer in output file
+      bool        _use_time_stat_ = false;         //!< Flag to activate CPU time statistics
       CT_map      _CTs_;                   //!< CPU time statistics
     };
     

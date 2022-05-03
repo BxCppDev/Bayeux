@@ -7,9 +7,10 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <memory>
 
 // Third Party:
-#include <boost/scoped_ptr.hpp>
+// #include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/logger.h>
@@ -24,7 +25,7 @@ namespace datatools {
   {
   public:
     /// Constructor
-    ocd_driver_params();
+    ocd_driver_params() = default;
 
     /// Reset
     void reset();
@@ -34,8 +35,8 @@ namespace datatools {
 
   public:
 
-    datatools::logger::priority logging; //!< Logging priority
-    bool interactive; //!< Interactive flag
+    datatools::logger::priority logging = datatools::logger::PRIO_NOTICE; //!< Logging priority
+    bool interactive = false; //!< Interactive flag
     std::vector<std::string> dlls; //!< List of DLLs to be loaded
     std::string dll_loader_config; //!< Configuration file of the DLL loader
     std::string action; //!< The name of the action to invoke
@@ -96,7 +97,7 @@ namespace datatools {
 
     bool _initialized_;         //!< Initialization flag
     ocd_driver_params _params_; //!< Configuration parameters
-    boost::scoped_ptr<library_loader> _dll_loader_; //!< Handle to the library loader
+    std::unique_ptr<library_loader> _dll_loader_; //!< Handle to the library loader
 
   };
 

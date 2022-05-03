@@ -18,6 +18,9 @@
 /***  mctools embedded G4 visualization interface ***/
 #cmakedefine01 MCTOOLS_WITH_G4_G4VIS_USE
 
+/***  mctools embedded G4 multithreaded support ***/
+#cmakedefine01 MCTOOLS_WITH_G4_MT
+
 #if MCTOOLS_WITH_G4_G4VIS_USE == 1
 #ifndef G4VIS_USE
 #cmakedefine G4VIS_USE

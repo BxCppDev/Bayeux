@@ -112,17 +112,29 @@ namespace mctools {
                                                             G4double particle_mass_)
     {
       DT_LOG_TRACE_ENTERING(_logprio());
-      SetChargeMomentumMass(particle_charge_state_.GetCharge(),
-                            particle_momentum_,
-                            particle_mass_);
+      _SetChargeMomentumMass(particle_charge_state_.GetCharge(),
+                             particle_momentum_,
+                             particle_mass_);
+      DT_LOG_TRACE_EXITING(_logprio());
+      return;
+    }
+#else
+    void em_field_equation_of_motion::SetChargeMomentumMass(G4double particle_charge_, 
+                                                            G4double particle_momentum_,
+                                                            G4double particle_mass_)
+    {
+      DT_LOG_TRACE_ENTERING(_logprio());
+      _SetChargeMomentumMass(particle_charge_,
+                             particle_momentum_,
+                             particle_mass_);
       DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 #endif
-
-    void em_field_equation_of_motion::SetChargeMomentumMass(G4double particle_charge_, // in e+ units
-                                                            G4double particle_momentum_,
-                                                            G4double particle_mass_)
+    
+    void em_field_equation_of_motion::_SetChargeMomentumMass(G4double particle_charge_, // in e+ units
+                                                             G4double particle_momentum_,
+                                                             G4double particle_mass_)
     {
       DT_LOG_TRACE_ENTERING(_logprio());
 

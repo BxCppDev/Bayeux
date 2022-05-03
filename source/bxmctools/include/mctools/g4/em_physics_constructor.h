@@ -11,8 +11,6 @@
  *
  *   http://geant4.in2p3.fr/IMG/pdf_Lecture-LowEnergyEMPhysics.pdf
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_G4_EM_PHYSICS_CONSTRUCTOR_H
@@ -49,7 +47,7 @@ namespace mctools {
       /// \brief Atomic deexcitation configuration for a given region
       struct region_deexcitation_type {
         /// Default constructor
-        region_deexcitation_type();
+        region_deexcitation_type() = default;
         /// Constructor
         region_deexcitation_type(bool,bool,bool);
         /// Check if deexcitation is activated
@@ -61,9 +59,9 @@ namespace mctools {
         /// Check if PIXE is activated
         bool is_pixe() const;
 
-        bool fluorescence; ///< Activation flag for fluorescence
-        bool auger;        ///< Activation flag for Auger effect
-        bool pixe;         ///< Activation flag for PIXE model
+        bool fluorescence = false; ///< Activation flag for fluorescence
+        bool auger = false;        ///< Activation flag for Auger effect
+        bool pixe = false;         ///< Activation flag for PIXE model
       };
 
       /// Check the standard EM processes

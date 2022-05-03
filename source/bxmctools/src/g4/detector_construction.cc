@@ -43,6 +43,7 @@
 #endif
 #include <globals.hh>
 #include <G4FieldManager.hh>
+// #include <G4Version.hh>
 #include <G4ChordFinder.hh>
 #include <G4TransportationManager.hh>
 
@@ -489,24 +490,43 @@ namespace mctools {
       return;
     }
 
+#if G4VERSION_NUMBER >= 1000
+    // #ifdef G4MULTITHREADED 
+    void detector_construction::ConstructSDandField()
+    {
+      // Automatically construct sensitive detectors:
+      if (_using_sensitive_detectors_) {
+        DT_LOG_DEBUG(_logprio(), "Constructing sensitive detectors...");
+        _construct_sensitive_detectors();
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not construct any sensitive detectors.");
+      }
+
+      // Automatically construct the electromagnetic field:
+      if (_using_em_field_) {
+        DT_LOG_DEBUG(_logprio(), "Constructing the electromagnetic field(s)...");
+        _construct_electromagnetic_field();
+        DT_LOG_DEBUG(_logprio(), "Electromagnetic fields are constructed.");
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not construct any electromagnetic field(s).");
+      }
+      return;
+    }
+    //#endif // G4MULTITHREADED
+#endif // G4VERSION_NUMBER >= 1000
 
     G4VPhysicalVolume * detector_construction::Construct()
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
-
       DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
-
-      G4VPhysicalVolume * world_physical_volume = 0;
-
+      G4VPhysicalVolume * world_physical_volume = nullptr;
       world_physical_volume = _g4_construct();
-
-      if (world_physical_volume == 0) {
+      if (world_physical_volume == nullptr) {
         G4Exception("mctools::g4::detector_construction::Construct",
                     "GeometryError",
                     FatalException,
                     "Missing world physical volume !");
       }
-
       DT_LOG_TRACE(_logprio(), "Exiting.");
       return world_physical_volume;
     }
@@ -514,9 +534,8 @@ namespace mctools {
     G4VPhysicalVolume * detector_construction::_g4_construct()
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
-
       // Automaticaly construct the geometry tree:
-      G4VPhysicalVolume * world_physical_volume = 0;
+      G4VPhysicalVolume * world_physical_volume = nullptr;
       // try {
       std::setlocale(LC_NUMERIC, "C");
       G4GDMLParser parser;
@@ -546,23 +565,26 @@ namespace mctools {
         }
       }
 
-      // Automaticaly construct regions:
+      // Automatically construct regions:
       if (_using_regions_) {
         DT_LOG_DEBUG(_logprio(), "Constructing regions...");
         _construct_regions();
       } else {
         DT_LOG_DEBUG(_logprio(), "Do not construct any regions.");
       }
-
-      // Automaticaly construct sensitive detectors:
+// #ifndef G4MULTITHREADED 
+#if G4VERSION_NUMBER < 1000
+      // Automatically construct sensitive detectors:
       if (_using_sensitive_detectors_) {
         DT_LOG_DEBUG(_logprio(), "Constructing sensitive detectors...");
         _construct_sensitive_detectors();
       } else {
         DT_LOG_DEBUG(_logprio(), "Do not construct any sensitive detectors.");
       }
-
-      // Automaticaly construct the electromagnetic field :
+#endif // G4MULTITHREADED
+      
+#if G4VERSION_NUMBER < 1000
+      // Automatically construct the electromagnetic field :
       if (_using_em_field_) {
         DT_LOG_DEBUG(_logprio(), "Constructing the electromagnetic field(s)...");
         _construct_electromagnetic_field();
@@ -570,7 +592,8 @@ namespace mctools {
       } else {
         DT_LOG_DEBUG(_logprio(), "Do not construct any electromagnetic field(s).");
       }
-
+#endif // G4MULTITHREADED
+ 
       // Automaticaly set the visibility attributes:
       if (_using_vis_attributes_) {
         DT_LOG_DEBUG(_logprio(), "Set the visualization attributes.");
@@ -602,7 +625,7 @@ namespace mctools {
 
     bool detector_construction::has_em_field_manager() const
     {
-      return _em_field_manager_ != 0;
+      return _em_field_manager_ != nullptr;
     }
 
 
@@ -633,7 +656,7 @@ namespace mctools {
     const emfield::electromagnetic_field_manager &
     detector_construction::get_em_field_manager() const
     {
-      DT_THROW_IF (_em_field_manager_ == 0, std::logic_error, "No electromagnetic field manager is defined !");
+      DT_THROW_IF (_em_field_manager_ == nullptr, std::logic_error, "No electromagnetic field manager is defined !");
       return *_em_field_manager_;
     }
 
@@ -697,7 +720,7 @@ namespace mctools {
           }
           G4String g4_log_name = gefa.get_logical_volume_name().c_str();
           G4LogicalVolume * g4_module_log = g4_LV_store->GetVolume(g4_log_name, false);
-          if (g4_module_log == 0) {
+          if (g4_module_log == nullptr) {
             std::ostringstream message;
             message << "Missing G4 logical volume with name '" << g4_log_name << "' !";
             if (_abort_on_error_) {
@@ -918,10 +941,11 @@ namespace mctools {
             DT_LOG_FATAL(_logprio(), "Missing G4 manager for sensitive detectors!");
           }
           SDman->AddNewDetector(SD);
+          SetSensitiveDetector(g4_log, SD);
           _sensitive_detectors_[sensitive_category] = SD;
         } else {
           already_present = true;
-          DT_LOG_NOTICE(_logprio(), "Use the sensitive detector with category '"
+          DT_LOG_NOTICE(_logprio(), "Use the already existing sensitive detector with category '"
                         << sensitive_category << "'");
           SD = found->second;
         }
@@ -946,11 +970,15 @@ namespace mctools {
         }
 
         // Associate this sensitive detector to the G4 logical volume:
+#ifndef G4MULTITHREADED 
+        SetSensitiveDetector(g4_log, SD);
+#else
         g4_log->SetSensitiveDetector(_sensitive_detectors_[sensitive_category]);
+#endif
 
       } // for (logical_volumes)
 
-      DT_LOG_DEBUG(_logprio(),"Logical volumes with explicit SD are done.");
+      DT_LOG_DEBUG(_logprio(), "Logical volumes with explicit SD are done.");
 
       /****************************************
        * Setup the step hit processor factory *
@@ -1156,8 +1184,12 @@ namespace mctools {
                     << from_processor_sensitive_category << "'";
             DT_LOG_NOTICE(_logprio(), message.str());
             _sensitive_detectors_[from_processor_sensitive_category]->attach_logical_volume(log.get_name());
-
+#if G4VERSION_NUMBER <= 1000
             g4_log->SetSensitiveDetector(_sensitive_detectors_[from_processor_sensitive_category]);
+#else
+            // G4MULTITHREADED
+            SetSensitiveDetector(g4_log, _sensitive_detectors_[from_processor_sensitive_category]);
+#endif
           }
         }
       } // for (hit processors)

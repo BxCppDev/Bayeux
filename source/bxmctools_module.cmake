@@ -37,6 +37,7 @@ set(MCTOOLS_WITH_G4 0)
 if(Bayeux_WITH_GEANT4_MODULE)
   set(MCTOOLS_WITH_G4 1)
   option(MCTOOLS_WITH_G4_G4VIS_USE "Build the Geant4 visualization interface" ON)
+  option(MCTOOLS_WITH_G4_MT "Build the Geant4 MT support" ON)
 endif()
 
 if(MCTOOLS_WITH_G4)

@@ -9,8 +9,6 @@
  *
  *   GEANT4 sensitive detector implementation
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_G4_SENSITIVE_DETECTOR_H
@@ -55,8 +53,9 @@ namespace mctools {
     class manager;
 
     /// \brief The generic sensitive detector (Geant4 interface)
-    class sensitive_detector : public G4VSensitiveDetector,
-                               public loggable_support
+    class sensitive_detector
+      : public G4VSensitiveDetector
+      , public loggable_support
     {
     public:
 
