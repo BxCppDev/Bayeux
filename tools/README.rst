@@ -50,8 +50,7 @@ Special build
 	    --build-base-dir /scratch/sw/Bayeux/build-test \
 	    --install-base-dir /scratch/sw/Bayeux/install-test \
 	    --with-geant4 \
-	    --with-qt 
-	    
+	    --with-qt 	    
   ..
   
 * Select a specific Boost prefix:
