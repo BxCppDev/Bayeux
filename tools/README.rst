@@ -28,11 +28,13 @@ Build and install
      [info] bxdecay0_1_1_0_setup: BxDecay0 version 1.1.0 is now setup !
      [info] root_6_16_00_setup: ROOT version 6.16.00 is now setup !
      $ ./tools/build.sh --help
-     $ rm -fr /scratch/sw/Bayeux/build-develop
+     $ bxsuffix="-352"
+     $ rm -fr /scratch/sw/Bayeux/build-develop${bxsuffix}
+     $ rm -fr /scratch/sw/Bayeux/install-develop${bxsuffix}
      $ ./tools/build.sh \
 	    --nprocs 6 \
-	    --build-base-dir /scratch/sw/Bayeux/build-develop \
-	    --install-base-dir /scratch/sw/Bayeux/install-develop 
+	    --build-base-dir /scratch/sw/Bayeux/build-develop${bxsuffix} \
+	    --install-base-dir /scratch/sw/Bayeux/install-develop${bxsuffix} 
   ..
 
 Special build
@@ -47,8 +49,8 @@ Special build
 	    --nprocs 6 \
 	    --build-base-dir /scratch/sw/Bayeux/build-test \
 	    --install-base-dir /scratch/sw/Bayeux/install-test \
-	    -with-geant4 \
-	    -with-qt 
+	    --with-geant4 \
+	    --with-qt 
 	    
   ..
   
@@ -82,9 +84,6 @@ Special build
 	    --build-base-dir /scratch/sw/Bayeux/build-minimal \
 	    --install-base-dir /scratch/sw/Bayeux/install-minimal \
 	    --minimal-build
-
-
-
 
 
 .. end
