@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2021-12-18
+:Date:    2022-05-03
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -169,9 +169,9 @@ Spack_ package manager to satisfy Bayeux's software dependencies.
 Releases
 --------
 
-* Latest release: `Bayeux-3.5.0`_
+* Latest release: `Bayeux-3.5.1`_
 
-.. _`Bayeux-3.5.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.0
+.. _`Bayeux-3.5.1`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.1
 
 .. raw:: pdf
 
@@ -193,7 +193,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.5.0, you may use, assuming a
+For example, to download Bayeux version 3.5.1, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -201,17 +201,17 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.0.tar.gz
-   $ mkdir Bayeux-3.5.0 && \
-       tar xvzf Bayeux-3.5.0.tar.gz -C Bayeux-3.5.0 --strip-components=1
-   $ cd Bayeux-3.5.0/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.1.tar.gz
+   $ mkdir Bayeux-3.5.1 && \
+       tar xvzf Bayeux-3.5.1.tar.gz -C Bayeux-3.5.1 --strip-components=1
+   $ cd Bayeux-3.5.1/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.5.0/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.5.1/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.0
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.1
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -309,7 +309,7 @@ managers  (Linuxbrew,  Spack) may  help  too.
 
 .. https://github.com/BxCppDev/BxInstallers
 
-.. _`Bayeux-3.5.0`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.0
+.. _`Bayeux-3.5.1`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.1
 
 We list below the third party softwares required by Bayeux. If some of
 them are not available from the  system package manager, you will have
@@ -350,7 +350,7 @@ to install them manually.
 * Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
 
-  **Warning:** Geant4 version 10.5 support is not ready (issue #43).
+  **Warning:** Geant4 version 11 support is in preparation (issue #43).
 
   You must  install Geant4  and its  associated datasets  by yourself.
   Please do not build Geant4 with  internal CLHEP but the CLHEP system
@@ -384,7 +384,7 @@ to install them manually.
   * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5,
     qt5-default, qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev)
 
-* BxDecay0 (>=1.0.9, 1.0.12 recommended) : https://github.com/BxCppDev/bxdecay0
+* BxDecay0 (>=1.1.0) : https://github.com/BxCppDev/bxdecay0
 
   You must  install BxDecay0 by  yourself. BxDecay0 depends on  GSL so
   you should  synchronize this dependency from  the Bayeux's dependency on

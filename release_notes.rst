@@ -1,8 +1,8 @@
 =============================
-Bayeux 3.5.1 Release Notes
+Bayeux 3.5.2 Release Notes
 =============================
 
-Bayeux 3.5.1 adds some new features as well as fixes for reported issues.
+Bayeux 3.5.2 adds some new features as well as fixes for reported issues.
 
 For information on changes made in previous versions, please see
 the `release notes archive`_.
@@ -14,9 +14,9 @@ the `release notes archive`_.
 Requirements
 ============
 
-* Bayeux  3.5.1 requires  Linux (recommended  Ubuntu >=18.04  (preferred
-  20.04), CentOS >=7.5), or macOS 10.
-* Bayeux 3.5.1 depends on BxDecay >=1.1.0.
+* Bayeux  3.5.2 requires  Linux (recommended  Ubuntu >=18.04, preferred
+  20.04, CentOS >=7.5), or macOS 10.
+* Bayeux 3.5.2 depends on BxDecay >=1.1.0.
 
 Additions
 =========
@@ -28,12 +28,13 @@ Removals
 
 Changes
 =======
- 
+
+
 Fixes
 =====
 
-* Fix the  ``genbb::time_slicer_generator`` class with respect to the
-  determination of particles' time (issue #58).
+* Refactor the ``geomtools::shape_factory`` class.
+  
     
 Bugs
 ====
