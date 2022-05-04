@@ -159,7 +159,7 @@ namespace geomtools {
                                            models_col_type * models_)
   {
     datatools::logger::priority logging = get_logging_priority();
-    logging = datatools::logger::PRIO_DEBUG;
+    // logging = datatools::logger::PRIO_DEBUG;
     DT_LOG_TRACE(logging, "Entering...");
 
     // Initialization:
