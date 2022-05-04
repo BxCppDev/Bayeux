@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2013-2020 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013-2020 by Université de Caen
+// Copyright (c) 2013-2022 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2022 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -27,6 +27,9 @@
 
 //! The version of Boost used by Bayeux
 #define BAYEUX_BOOST_VERSION @Boost_VERSION@
+
+//! Evaluates to true if Bayeux was built with the EPA Boost portable binary archive support
+#define BAYEUX_WITH_EPA @Bayeux_USE_EPA_ARCHIVES@
 
 //! The version of CLHEP used by Bayeux
 #define BAYEUX_CLHEP_VERSION "@CLHEP_VERSION@"

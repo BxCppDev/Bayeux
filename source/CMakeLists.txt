@@ -85,6 +85,10 @@ endif()
 
 if(Bayeux_WITH_MCTOOLS)
   list(APPEND BAYEUX_SUBMODULES mctools)
+  # if(Bayeux_WITH_GEANT4_MODULE)
+  #   message(STATUS "***************** Add mctools in BAYEUX_SUBMODULES")
+  #   list(APPEND BAYEUX_SUBMODULES "mctools_geant4")
+  # endif()
 endif()
 
 if(Bayeux_WITH_LAHAGUE)

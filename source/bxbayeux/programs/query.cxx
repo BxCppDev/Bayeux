@@ -242,9 +242,9 @@ int main(int argc_, char * argv_[])
         if (lib_info_reg.has(module_name)) {
           const datatools::properties & module_lib_infos = lib_info_reg.get(module_name);
           std::cout << "module=" << module_name<< "" << std::endl;
-          if (module_lib_infos.has_key(datatools::library_info::keys::version())) {
-            std::cout << "version=" << module_lib_infos.fetch_string(datatools::library_info::keys::version()) << std::endl;
-          }
+          // if (module_lib_infos.has_key(datatools::library_info::keys::version())) {
+          //   std::cout << "version=" << module_lib_infos.fetch_string(datatools::library_info::keys::version()) << std::endl;
+          // }
           if (module_lib_infos.has_key(datatools::library_info::keys::description())) {
             std::cout << "description=" << module_lib_infos.fetch_string(datatools::library_info::keys::description()) << std::endl;
           }
