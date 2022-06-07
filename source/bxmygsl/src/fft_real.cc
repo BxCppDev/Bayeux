@@ -153,7 +153,7 @@ namespace mygsl {
     out_ << std::endl;
     out_ << std::endl;
 
-    double freq  =0.0;
+    double freq = 0.0;
     for (size_t i = 0; i < _n_; i++) {
       out_ << freq << ' ' << _freq_[i] << std::endl;
       freq += _F0_ / _n_;
