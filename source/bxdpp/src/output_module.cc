@@ -1,6 +1,6 @@
 /* output_module.cc
  *
- * Copyright (C) 2013-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,13 +141,14 @@ namespace dpp {
   {
     if (! _common_) {
       _common_.reset(new io_common(_logging, get_name()));
+      _common_->set_io(io_common::IO_OUTPUT);
     }
     return *_common_.get();
   }
 
   bool output_module::has_metadata_store() const
   {
-    return (_common_.get() != 0);
+    return (_common_.get() != nullptr);
   }
 
   const datatools::multi_properties & output_module::get_metadata_store() const
@@ -395,7 +396,7 @@ namespace dpp {
   base_module::process_status output_module::_store(const datatools::things & a_event_record)
   {
     process_status store_status = PROCESS_OK;
-    if (_sink_ == 0) {
+    if (_sink_ == nullptr) {
       // attempt to open a sink of event records :
       store_status = _open_sink_();
       if (store_status != PROCESS_OK) {
@@ -403,7 +404,7 @@ namespace dpp {
       }
     }
     /*
-      if (_sink_ == 0) {
+      if (_sink_ == nullptr) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
       if (get_common().get_file_index() >= (int)get_common().get_filenames().size()) {
       store_status = PROCESS_FATAL;
@@ -431,7 +432,7 @@ namespace dpp {
     bool store_it = true;
     // store action :
     if (store_it) {
-      if (_sink_ != 0) {
+      if (_sink_ != nullptr) {
         bool ok = _sink_->store_next_record(a_event_record);
         if (! ok) {
           DT_LOG_ERROR(_logging, "Cannot store the data record ! This is a bug !");
@@ -465,10 +466,10 @@ namespace dpp {
       }
     }
     if (stop_file) {
-      if (_sink_ != 0) {
+      if (_sink_ != nullptr) {
         _sink_->reset();
         delete _sink_;
-        _sink_ = 0;
+        _sink_ = nullptr;
       }
       _grab_common().set_file_record_counter(0);
       if (get_common().get_max_files() > 0) {

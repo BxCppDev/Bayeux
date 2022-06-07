@@ -1,6 +1,6 @@
 /* input_module.cc
  *
- * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,7 +188,6 @@ namespace dpp {
     return _clear_record_;
   }
 
-
   void input_module::_set_defaults()
   {
     _clear_record_ = false;
@@ -209,6 +208,7 @@ namespace dpp {
   {
     if (! _common_) {
       _common_.reset(new io_common(_logging, get_name()));
+      _common_->set_io(io_common::IO_INPUT);
     }
     return *_common_.get();
   }
@@ -217,7 +217,7 @@ namespace dpp {
   input_module::input_module(datatools::logger::priority logging_priority_)
     : base_module(logging_priority_)
   {
-    _set_defaults ();
+    _set_defaults();
     return;
   }
 
@@ -232,7 +232,7 @@ namespace dpp {
                                 datatools::service_manager & a_service_manager,
                                 dpp::module_handle_dict_type & /*a_module_dict*/)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
                 "Input module '" << get_name () << "' is already initialized ! ");
 
@@ -240,15 +240,21 @@ namespace dpp {
       set_clear_record(a_config.fetch_boolean("clear_record"));
     }
 
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "common initialize...");
     _common_initialize(a_config);
-
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "common initialize done.");
 
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/
     if (! _common_) {
+      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "I/O common does not exist. Create it!");
       _grab_common();
+    } else {
+      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "I/O common exists");
     }
+
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Initializing I/O common...");
     _common_.get()->initialize(a_config, a_service_manager);
 
     /*
@@ -262,14 +268,16 @@ namespace dpp {
       base_module::process_status status = _open_source();
     }
     */
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "About to open the source");
     this->_open_source();
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Source open");
 
     /*************************************
      *  end of the initialization step   *
      *************************************/
 
     // Tag the module as initialized :
-    _set_initialized (true);
+    _set_initialized(true);
     return;
   }
 
@@ -281,23 +289,23 @@ namespace dpp {
                 "Input module '" << get_name () << "' is not initialized !");
 
     // Tag the module as un-initialized :
-    _set_initialized (false);
+    _set_initialized(false);
 
     /****************************
      *  revert to some defaults *
      ****************************/
 
-    if (_source_ != 0) {
-      if (_source_->is_open ()) {
-        _source_->close ();
+    if (_source_ != nullptr) {
+      if (_source_->is_open()) {
+        _source_->close();
       }
       delete _source_;
-      _source_ = 0;
+      _source_ = nullptr;
     }
     _grab_common().clear_metadata_store();
     _common_.get()->reset();
-    _common_.reset(0);
-    _set_defaults ();
+    _common_.reset();
+    _set_defaults();
 
     /****************************
      *  end of the reset step   *
@@ -352,7 +360,9 @@ namespace dpp {
         _source_->open();
       }
       DT_LOG_TRACE(_logging, "Source is open.");
+      DT_LOG_DEBUG(_logging, "Load metadata");
       _load_metadata_();
+      DT_LOG_DEBUG(_logging, "Done");
       // Check if we have some records in it :
       if (! _source_->has_next_record()) {
         DT_LOG_TRACE(_logging, "NO NEXT RECORD.");
@@ -482,7 +492,7 @@ namespace dpp {
 
   bool input_module::has_metadata_store() const
   {
-    return (_common_.get() != 0);
+    return (_common_.get() != nullptr);
   }
 
   const datatools::multi_properties & input_module::get_metadata_store() const

@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2022-05-03
+:Date:    2022-06-07
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -169,9 +169,9 @@ Spack_ package manager to satisfy Bayeux's software dependencies.
 Releases
 --------
 
-* Latest release: `Bayeux-3.5.1`_
+* Latest release: `Bayeux-3.5.3`_
 
-.. _`Bayeux-3.5.1`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.1
+.. _`Bayeux-3.5.3`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.3
 
 .. raw:: pdf
 
@@ -193,7 +193,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.5.1, you may use, assuming a
+For example, to download Bayeux version 3.5.3, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -201,17 +201,17 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.1.tar.gz
-   $ mkdir Bayeux-3.5.1 && \
-       tar xvzf Bayeux-3.5.1.tar.gz -C Bayeux-3.5.1 --strip-components=1
-   $ cd Bayeux-3.5.1/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.3.tar.gz
+   $ mkdir Bayeux-3.5.3 && \
+       tar xvzf Bayeux-3.5.3.tar.gz -C Bayeux-3.5.3 --strip-components=1
+   $ cd Bayeux-3.5.3/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.5.1/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.5.3/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.1
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.3
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -309,7 +309,7 @@ managers  (Linuxbrew,  Spack) may  help  too.
 
 .. https://github.com/BxCppDev/BxInstallers
 
-.. _`Bayeux-3.5.1`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.1
+.. _`Bayeux-3.5.3`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.3
 
 We list below the third party softwares required by Bayeux. If some of
 them are not available from the  system package manager, you will have

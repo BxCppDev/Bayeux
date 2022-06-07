@@ -202,9 +202,9 @@ namespace dpp {
 
     std::string _name;           //!< The name of the module
     std::string _description;    //!< The description of the module
-    datatools::logger::priority _logging; //!< The logging priority threshold
+    datatools::logger::priority _logging = datatools::logger::PRIO_FATAL; //!< The logging priority threshold
 
-    bool        _initialized;        //!< The initialization flag
+    bool        _initialized = false;        //!< The initialization flag
     std::string _last_error_message; //!< Last error message (questionable)
 
     // Factory stuff :

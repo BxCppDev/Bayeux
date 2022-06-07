@@ -39,7 +39,7 @@ void test_io_1(bool debug, int max_events)
   int error_code = 0;
   // Example of usage of the 'input_module' class (reader):
   std::clog << datatools::io::notice
-            << "test_input_output_modules: 'input_module/output_module' class example: " << std::endl;
+            << "test_io_1: 'input_module/output_module' class example: " << std::endl;
 
   // Instantiate a reader module :
   dpp::input_module input;
@@ -67,10 +67,12 @@ void test_io_1(bool debug, int max_events)
   input_config.store ("files.incremental.start", 0);
   input_config.store ("files.incremental.increment", 1);
   input_config.store ("files.incremental.stop", 3);
+  std::clog << datatools::io::notice << "test_io_1: TEST 1" << std::endl;
 
   // Initialize the 'input' module (without the help of a 'service manager'):
-  input.initialize_standalone (input_config);
-  input.tree_dump (std::clog, "Input module");
+  input.initialize_standalone(input_config);
+  std::clog << datatools::io::notice << "test_io_1: TEST 2" << std::endl;
+  input.tree_dump(std::clog, "Input module");
 
   // Instantiate an I/O writer module :
   dpp::output_module output;
@@ -109,15 +111,15 @@ void test_io_1(bool debug, int max_events)
     dpp::base_module::process_status status = input.process (ER);
     if (debug) {
       std::clog << datatools::io::debug
-                << "test_input_output_modules: Input module processing status = " << status << std::endl;
+                << "test_io_1: Input module processing status = " << status << std::endl;
     }
     if (status == dpp::base_module::PROCESS_FATAL) {
       std::clog << datatools::io::error
-                << "test_input_output_modules: Reader had a fatal error !" << std::endl;
+                << "test_io_1: Reader had a fatal error !" << std::endl;
       break;
     } else if (status == dpp::base_module::PROCESS_ERROR) {
       std::clog << datatools::io::error
-                << "test_input_output_modules: Reader had an error !" << std::endl;
+                << "test_io_1: Reader had an error !" << std::endl;
       break;
     }
 
@@ -144,11 +146,11 @@ void test_io_1(bool debug, int max_events)
       status = output.process (ER);
       if (status == dpp::base_module::PROCESS_FATAL) {
         std::clog << datatools::io::error
-                  << "test_input_output_modules: Writer had a fatal error !" << std::endl;
+                  << "test_io_1: Writer had a fatal error !" << std::endl;
         break;
       } else if (status == dpp::base_module::PROCESS_ERROR) {
         std::clog << datatools::io::error
-                  << "test_input_output_modules: Writer had an error !" << std::endl;
+                  << "test_io_1: Writer had an error !" << std::endl;
         break;
       }
       output_count++;
@@ -164,14 +166,14 @@ void test_io_1(bool debug, int max_events)
   output.reset ();
   input.reset ();
   std::clog << datatools::io::notice
-            << "test_input_output_modules: I/O modules terminated." << std::endl;
+            << "test_io_1: I/O modules terminated." << std::endl;
 
   std::clog << datatools::io::notice
-            << "test_input_output_modules: Input event records  : " << input_count << std::endl;
+            << "test_io_1: Input event records  : " << input_count << std::endl;
   std::clog << datatools::io::notice
-            << "test_input_output_modules: Output event records : " << output_count << std::endl;
+            << "test_io_1: Output event records : " << output_count << std::endl;
   std::clog << datatools::io::notice
-            << "test_input_output_modules: Error status         : " << error_code << std::endl;
+            << "test_io_1: Error status         : " << error_code << std::endl;
 
   return;
 }
@@ -182,7 +184,7 @@ void test_io_2(bool debug, int max_events)
   int error_code = 0;
   // Example of usage of the 'input_module' class (reader):
   std::clog << datatools::io::notice
-            << "test_input_output_modules: 'input_module/output_module' class example: " << std::endl;
+            << "test_io_2: 'input_module/output_module' class example: " << std::endl;
 
   // Instantiate a reader module :
   dpp::input_module input;
@@ -221,15 +223,15 @@ void test_io_2(bool debug, int max_events)
     int status = input.process (ER);
     if (debug) {
       std::clog << datatools::io::debug
-                << "test_input_output_modules: Input module processing status = " << status << std::endl;
+                << "test_io_2: Input module processing status = " << status << std::endl;
     }
     if (status == dpp::base_module::PROCESS_FATAL) {
       std::clog << datatools::io::error
-                << "test_input_output_modules: Reader had a fatal error !" << std::endl;
+                << "test_io_2: Reader had a fatal error !" << std::endl;
       break;
     } else if (status == dpp::base_module::PROCESS_ERROR) {
       std::clog << datatools::io::error
-                << "test_input_output_modules: Reader had an error !" << std::endl;
+                << "test_io_2: Reader had an error !" << std::endl;
       break;
     }
 
@@ -256,11 +258,11 @@ void test_io_2(bool debug, int max_events)
       status = output.process (ER);
       if (status == dpp::base_module::PROCESS_FATAL) {
         std::clog << datatools::io::error
-                  << "test_input_output_modules: Writer had a fatal error !" << std::endl;
+                  << "test_io_2: Writer had a fatal error !" << std::endl;
         break;
       } else if (status == dpp::base_module::PROCESS_ERROR) {
         std::clog << datatools::io::error
-                  << "test_input_output_modules: Writer had an error !" << std::endl;
+                  << "test_io_2: Writer had an error !" << std::endl;
         break;
       }
       output_count++;
@@ -276,14 +278,14 @@ void test_io_2(bool debug, int max_events)
   output.reset ();
   input.reset ();
   std::clog << datatools::io::notice
-            << "test_input_output_modules: I/O modules terminated." << std::endl;
+            << "test_io_2: I/O modules terminated." << std::endl;
 
   std::clog << datatools::io::notice
-            << "test_input_output_modules: Input event records  : " << input_count << std::endl;
+            << "test_io_2: Input event records  : " << input_count << std::endl;
   std::clog << datatools::io::notice
-            << "test_input_output_modules: Output event records : " << output_count << std::endl;
+            << "test_io_2: Output event records : " << output_count << std::endl;
   std::clog << datatools::io::notice
-            << "test_input_output_modules: Error status         : " << error_code << std::endl;
+            << "test_io_2: Error status         : " << error_code << std::endl;
 
   return;
 }
@@ -293,7 +295,7 @@ void test_brio_1(bool /*debug*/)
   int error_code = 0;
   // Example of usage of the 'simple_brio_data_source' class (reader):
   std::clog << datatools::io::notice
-            << "test_input_output_modules: 'simple_brio_data_source' class example: " << std::endl;
+            << "test_brio_1: 'simple_brio_data_source' class example: " << std::endl;
 #if DPP_DATATOOLS_LEGACY == 1
   dpp::simple_brio_data_source sbds ("${DPP_TESTING_DIR}/data/data_0.brio");
 #else
@@ -328,7 +330,7 @@ void test_brio_1(bool /*debug*/)
         ++count;
       } else {
         std::cerr << datatools::io::error
-                  << "test_input_output_modules: "
+                  << "test_brio_1: "
                   << "Couldn't load another entry."
                   << std::endl;
         error_code = EXIT_FAILURE;
@@ -337,14 +339,14 @@ void test_brio_1(bool /*debug*/)
   }
   if (source.is_random ()) {
     std::clog << datatools::io::notice
-              << "test_input_output_modules: "
+              << "test_brio_1: "
               << "This source supports random access."
               << std::endl;
   }
   int64_t entry = 8;
   if (source.can_load_record (entry)) {
     std::clog << datatools::io::notice
-              << "test_input_output_modules: "
+              << "test_brio_1: "
               << "This source can load entry #" << entry << "."
               << std::endl;
     datatools::things ER;
@@ -352,7 +354,7 @@ void test_brio_1(bool /*debug*/)
     std::ostringstream title;
     title << "Entry #" << entry;
     std::ostringstream indent;
-    indent << datatools::io::notice << "test_input_output_modules: " ;
+    indent << datatools::io::notice << "test_brio_1: " ;
     ER.tree_dump (std::clog, title.str (), indent.str ());
   }
   std::clog << datatools::io::notice

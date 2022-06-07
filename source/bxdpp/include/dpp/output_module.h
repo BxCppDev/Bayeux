@@ -1,9 +1,9 @@
 /// \file dpp/output_module.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-08-16
- * Last modified : 2014-01-15
+ * Last modified : 2022-06-06
  *
- * Copyright (C) 2013-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,10 @@
 #ifndef DPP_OUTPUT_MODULE_H
 #define DPP_OUTPUT_MODULE_H 1
 
+// Standard library:
+#include <memory>
+
 // Third party:
-// - Boost:
-#include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools:
 #include <datatools/smart_filename.h>
 
@@ -145,9 +146,9 @@ namespace dpp {
 
   private:
 
-    bool                         _preserve_existing_output_; //!< Flag to preserve existing output files
-    boost::scoped_ptr<io_common> _common_; //!< Common data structure
-    i_data_sink                * _sink_ = nullptr; //!< Abstract data writer
+    bool _preserve_existing_output_ = false; //!< Flag to preserve existing output files
+    std::unique_ptr<io_common> _common_; //!< Common data structure
+    i_data_sink * _sink_ = nullptr; //!< Abstract data writer
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(output_module)

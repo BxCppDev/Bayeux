@@ -192,28 +192,28 @@ namespace dpp {
 
     // Configuration attributes:
     std::string _module_name_;               //!< Name of the associated module
-    io_type     _io_;                        //!< I/O flag
-    format_type _format_;                    //!< Format flag
-    datatools::logger::priority * _logging_; //!< Handle to the logging priority of the associated module
-    int _max_record_per_file_;               //!< Maximum number of event records per file
-    int _max_record_total_;                  //!< Maximum number of event records to be processed
-    int _max_files_;                         //!< Maximum number of data files to be processed
+    io_type     _io_ = IO_INVALID;           //!< I/O flag
+    format_type _format_ = FORMAT_INVALID;   //!< Format flag
+    datatools::logger::priority * _logging_ = nullptr; //!< Handle to the logging priority of the associated module
+    int _max_record_per_file_ = 0;               //!< Maximum number of event records per file
+    int _max_record_total_ = 0;                  //!< Maximum number of event records to be processed
+    int _max_files_ = -1;                         //!< Maximum number of data files to be processed
     datatools::smart_filename _filenames_;   //!< Smart list of data filenames
 
     // Running/dynamic attributes:
-    bool _terminated_;            //!< Termination flag
-    int _file_record_counter_;    //!< Event record counter in the current file
-    int _record_counter_;         //!< Total event record counter
-    int _file_index_;             //!< Index of the current datafile index
+    bool _terminated_ = false;            //!< Termination flag
+    int _file_record_counter_ = 0;    //!< Event record counter in the current file
+    int _record_counter_ = 0;         //!< Total event record counter
+    int _file_index_ = -1;             //!< Index of the current datafile index
 
     // Metadata support:
     datatools::multi_properties _metadata_store_; //!< Embedded metadata container
 
     // Context service (external metadata container):
     std::string              _Ctx_label_;        //!< The label/name of the context service
-    dpp::context_service *   _Ctx_service_;      //!< The handle to the context service
+    dpp::context_service *   _Ctx_service_ = nullptr;      //!< The handle to the context service
     std::vector<std::string> _Ctx_metadata_;     //!< The list of labels of the metadata to be taken into account
-    bool                     _Ctx_metadata_all_; //!< Flag to accept all metadata
+    bool                     _Ctx_metadata_all_ = false; //!< Flag to accept all metadata
 
   };
 

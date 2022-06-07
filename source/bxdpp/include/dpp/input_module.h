@@ -1,9 +1,9 @@
 /// \file dpp/input_module.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-08-16
- * Last modified : 2013-12-13
+ * Last modified : 2022-06-06
  *
- * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,10 +161,10 @@ namespace dpp {
 
   private:
 
-    bool                         _clear_record_; //!< A flag to automatically clear the data record before processing
-    boost::scoped_ptr<io_common> _common_; //!< Common data structure
-    i_data_source              * _source_ = nullptr; //!< Abstract data reader
-    bool                         _metadata_updated_ = false; //!< Flag for possible metadata update
+    bool _clear_record_ = false; //!< A flag to automatically clear the data record before processing
+    std::unique_ptr<io_common> _common_; //!< Common data structure
+    i_data_source * _source_ = nullptr; //!< Abstract data reader
+    bool _metadata_updated_ = false; //!< Flag for possible metadata update
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(input_module)

@@ -386,8 +386,10 @@ namespace dpp {
 
   void io_common::_set_defaults()
   {
-    _logging_ = 0;
+    _logging_ = nullptr;
     _module_name_.clear();
+    _io_ = IO_INVALID;           //!< I/O flag
+    _format_ = FORMAT_INVALID;   //!< Format flag
     _max_record_per_file_ = 0;
     _max_record_total_ = 0;
     _max_files_ = -1;
@@ -424,6 +426,7 @@ namespace dpp {
   void io_common::initialize(const datatools::properties & a_config,
                              datatools::service_manager & a_service_manager)
   {
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Entering...");
 
     // a_config.tree_dump(std::cerr, "I/O common initialize: ", "[DEVEL] ");
     /**************************************************************
@@ -432,6 +435,7 @@ namespace dpp {
     if (! _filenames_.is_valid()) {
       init_filenames(a_config);
     }
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Filenames init...");
 
     if (_max_files_ < 0) {
       if (a_config.has_key("max_files")) {
@@ -460,12 +464,11 @@ namespace dpp {
       }
     }
 
-    if (_Ctx_service_ == 0) {
+    if (_Ctx_service_ == nullptr) {
       if (a_config.has_key("Ctx_label")) {
         _Ctx_label_ = a_config.fetch_string("Ctx_label");
       }
       if (! _Ctx_label_.empty()) {
-
         if (a_service_manager.has(_Ctx_label_)
             && a_service_manager.is_a<dpp::context_service>(_Ctx_label_)) {
           dpp::context_service & Ctx
@@ -486,6 +489,7 @@ namespace dpp {
     /*************************************
      *  end of the initialization step   *
      *************************************/
+    // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Exiting.");
     return;
   }
 
@@ -514,9 +518,10 @@ namespace dpp {
 
   datatools::multi_properties & io_common::grab_metadata_store()
   {
-    DT_THROW_IF(_io_ == IO_INPUT,
-                std::logic_error,
-                "Cannot obtain write access on the metadata store in 'input' mode !");
+    // 2022-06-06 FM: remove this test
+    // DT_THROW_IF(_io_ == IO_INPUT,
+    //             std::logic_error,
+    //             "Cannot obtain write access on the metadata store in 'input' mode !");
     return _metadata_store_;
   }
 
