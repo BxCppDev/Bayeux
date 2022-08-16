@@ -170,8 +170,9 @@ namespace geomtools {
     {
       models_col_type::const_iterator found = models_->find (boxed_model_name);
       i_model * the_model = nullptr;
-      DT_THROW_IF (found == models_->end (), std::logic_error,
-                   "The rotating model '" << the_model->get_name() << "' is not stackable in model '" << get_name() << "'!");
+      // 2022-08-16 FM: fix crappy test on ptr
+      DT_THROW_IF (found == models_->end(), std::logic_error,
+                   "No model named '" << boxed_model_name() << "' has been found!");
       the_model = found->second;
       // check if the model is stackable:
       DT_THROW_IF (! i_shape_3d::check_stackability(the_model->get_logical().get_shape(),

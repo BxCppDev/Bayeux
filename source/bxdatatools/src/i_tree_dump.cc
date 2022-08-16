@@ -11,7 +11,12 @@
 // Third party:
 // - Boost:
 #include <boost/core/demangle.hpp>
+// Workaround for Boost pragma:
+#ifndef BOOST_BIND_GLOBAL_PLACEHOLDERS
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
+#endif
 #include <boost/property_tree/json_parser.hpp>
+#undef BOOST_BIND_GLOBAL_PLACEHOLDERS
 
 namespace datatools {
 

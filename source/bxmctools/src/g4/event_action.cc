@@ -40,6 +40,10 @@
 #include <G4ios.hh>
 // - Bayeux/datatools:
 #include <datatools/ioutils.h>
+// 2022-08-16 FM:
+// Boost 1.74 : fix missing header in 'boost/serialization/list.hpp'
+// This is fixed in recent official Boost versions.
+#include <boost/serialization/library_version_type.hpp>
 #include <datatools/properties.ipp>
 
 // This project:
