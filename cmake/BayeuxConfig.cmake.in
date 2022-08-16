@@ -50,7 +50,6 @@ set(Bayeux_root_FOUND      @Bayeux_WITH_ROOT@)
 set(Bayeux_lahague_FOUND   @Bayeux_WITH_LAHAGUE@)
 set(Bayeux_developer_tools_FOUND @Bayeux_WITH_DEVELOPER_TOOLS@)
 set(Bayeux_docs_FOUND      @Bayeux_WITH_DOCS@)
-set(Bayeux_ocd_FOUND       @Bayeux_WITH_DOCS_OCD@)
 
 # Bayeux modules:
 set(Bayeux_WITH_CUTS      @Bayeux_WITH_CUTS@)
@@ -64,6 +63,21 @@ set(Bayeux_WITH_GENBB     @Bayeux_WITH_GENBB@)
 set(Bayeux_WITH_GENVTX    @Bayeux_WITH_GENVTX@)
 set(Bayeux_WITH_MCTOOLS   @Bayeux_WITH_MCTOOLS@)
 set(Bayeux_WITH_GEANT4_MODULE @Bayeux_WITH_GEANT4_MODULE@)
+set(Bayeux_USE_EOS_ARCHIVES @Bayeux_USE_EOS_ARCHIVES@)
+set(Bayeux_USE_EPA_ARCHIVES @Bayeux_USE_EPA_ARCHIVES@)
+set(CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
+
+# Bayeux definitions:
+set(Bayeux_DEFINITIONS)
+if (Boost_VERSION VERSION_GREATER_EQUAL 106900)
+  # - Use explicitely the Boost/Math fp utilities for 
+  append(LIST Bayeux_DEFINITIONS "-DBOOST_MATH_DISABLE_STD_FPCLASSIFY")
+endif()
+if (Boost_VERSION VERSION_GREATER_EQUAL 107400)
+  append(LIST Bayeux_DEFINITIONS "-DBOOST_BIND_GLOBAL_PLACEHOLDERS")
+endif()
+add_definitions(${Bayeux_DEFINITIONS})
+message(STATUS "Bayeux_DEFINITIONS=${Bayeux_DEFINITIONS}")
 
 #-----------------------------------------------------------------------
 # Start of CMake Generated
@@ -93,11 +107,6 @@ message( STATUS "Searching Boost ${BAYEUX_BOOST_VERSION} from ${BOOST_ROOT} ..."
 find_package(Boost ${BAYEUX_BOOST_VERSION} EXACT REQUIRED
   COMPONENTS ${BAYEUX_BOOST_COMPONENTS}
   )
-
-if (Boost_VERSION VERSION_GREATER 106800)
-  # - Use explicitely the Boost/Math fp utilities for 
-  add_definitions("-DBOOST_MATH_DISABLE_STD_FPCLASSIFY")
-endif()
 
 if (Bayeux_WITH_GENBB)
   # BxDecay0

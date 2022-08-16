@@ -172,7 +172,7 @@ namespace geomtools {
       i_model * the_model = nullptr;
       // 2022-08-16 FM: fix crappy test on ptr
       DT_THROW_IF (found == models_->end(), std::logic_error,
-                   "No model named '" << boxed_model_name() << "' has been found!");
+                   "No model named '" << boxed_model_name << "' has been found!");
       the_model = found->second;
       // check if the model is stackable:
       DT_THROW_IF (! i_shape_3d::check_stackability(the_model->get_logical().get_shape(),

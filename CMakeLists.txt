@@ -74,14 +74,18 @@ set(Bayeux_VERSION_REVISION 0)
 # - Write compiler workaround header for features:
 #    cxx_thread_local           - OS X doesn't currently provide this
 #    cxx_attribute_deprecated   - C++14, but easy workaround for lesser standards
-include(WriteCompilerDetectionHeader)
-write_compiler_detection_header(
-  FILE "${BAYEUX_BUILD_INCLUDEDIR}/bayeux/datatools/compiler_detection.h"
-  PREFIX "DT"
-  EPILOG "#include \"datatools/compiler_macros.h\""
-  COMPILERS GNU Clang AppleClang MSVC
-  FEATURES cxx_thread_local cxx_attribute_deprecated
-  )
+set(bayeux_uses_compiler_detection FALSE)
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.1 AND CMAKE_VERSION VERSION_LESS_EQUAL 3.19)
+  set(bayeux_uses_compiler_detection TRUE)
+  include(WriteCompilerDetectionHeader)
+  write_compiler_detection_header(
+    FILE "${BAYEUX_BUILD_INCLUDEDIR}/bayeux/datatools/compiler_detection.h"
+    PREFIX "DT"
+    EPILOG "#include \"datatools/compiler_macros.h\""
+    COMPILERS GNU Clang AppleClang MSVC
+    FEATURES cxx_thread_local cxx_attribute_deprecated
+    )
+endif()
 
 #-----------------------------------------------------------------------
 # Optional IWYU support

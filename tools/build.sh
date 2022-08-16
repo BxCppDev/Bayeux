@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04) or CentOS (7.5/7.7/7.8).
+# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04/22.04) or CentOS (7.5/7.7/7.8).
 
 # bayeux_build_env
 # 
@@ -93,6 +93,7 @@ boost_versions_added=
 minimal_build=false
 gcc_version=
 use_ninja=false
+bayeux_cxx_std=11
 
 function cl_parse()
 {
@@ -175,6 +176,12 @@ function cl_parse()
 	elif [ "${arg}" = "--gcc-version" ]; then
 	    shift 1
 	    gcc_version="$1"
+	elif [ "${arg}" = "--cxx-11" ]; then
+	    bayeux_cxx_std="11"
+	elif [ "${arg}" = "--cxx-14" ]; then
+	    bayeux_cxx_std="14"
+	elif [ "${arg}" = "--cxx-17" ]; then
+	    bayeux_cxx_std="17"
 	fi
 	shift 1
     done
@@ -226,8 +233,8 @@ if [ -f /etc/lsb-release ]; then
 	my_exit 1
     fi
     
-    if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" -a "${distrib_release}" != "20.04" ]; then
-	echo >&2 "[error] Not an Ubuntu Linux version 16.04, 18.04 or 20.04! Abort!"
+    if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" -a "${distrib_release}" != "20.04"  -a "${distrib_release}" != "22.04" ]; then
+	echo >&2 "[error] Not an Ubuntu Linux version 16.04, 18.04, 20.04 or 22.04! Abort!"
 	my_exit 1
     else
 	echo >&2 "[info] Found Ubuntu Linux ${distrib_release}"
@@ -383,6 +390,9 @@ if [ "x${camp_prefix}" = "x" ]; then
 fi
 echo >&2 "[info] CAMP prefix : ${camp_prefix}"
 camp_dir="${camp_prefix}/lib/camp/cmake"
+if [ -d "${camp_prefix}/lib/x86_64-linux-gnu/cmake/camp" ]; then
+    camp_dir="${camp_prefix}/lib/x86_64-linux-gnu/cmake/camp"
+fi
 if [ ! -d ${camp_dir} ]; then
     my_exit 1 "CAMP dir '${camp_dir}' does not exist!"
 fi
@@ -528,6 +538,13 @@ else
 fi
 
 root_prefix="$(root-config --prefix)"
+root_version="$(root-config --version | tr '/' '.')"
+if [ "${root_version}" \> "6.26" ]; then
+    if [ "14" \> "${bayeux_cxx_std}" ]; then
+	echo >&2 "[info] Forcing C++ standard 14 for recent ROOT..."
+	bayeux_cxx_std=14
+    fi
+fi
 root_dir="${root_prefix}/share/root/cmake"
 root_option="-DROOT_DIR=${root_dir}"
 
@@ -615,12 +632,16 @@ if [ ${system_find_boost} = true ]; then
     fi
 fi
 
+echo >&2 "[info] Bayeux C++ standard=${bayeux_cxx_std}"
+cxx_std_option="-DCMAKE_CXX_STANDARD=${bayeux_cxx_std}"
+
 cd ${build_dir}
 echo >&2 ""
 echo >&2 "[info] Configuring..."
 cmake \
     -DCMAKE_BUILD_TYPE:STRING="Release" \
     -DCMAKE_INSTALL_PREFIX:PATH="${install_dir}" \
+    ${cxx_std_option} \
     ${cmake_prefix_path_option} \
     ${compiler_options} \
     ${boost_option} \
