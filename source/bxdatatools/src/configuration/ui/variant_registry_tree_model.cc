@@ -603,7 +603,9 @@ namespace datatools {
           return Qt::ItemIsEnabled;
         }
         tree_item * a_node = _node_from_index_(index_);
-        Qt::ItemFlags f = 0;
+        
+        // Qt::ItemFlags f = Qt::NoItemFlags;
+        Qt::ItemFlags f;
         if (a_node->get_record().is_active()) {
           f |= Qt::ItemIsEnabled;
           // f |= Qt::ItemIsSelectable;
