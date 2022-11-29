@@ -12,10 +12,45 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build-minimal-and-test:
+  
+  # This workflow contains 2 jobs:
+
+  build-minimal-and-test-ubuntu2004:
     # The type of runner that the job will run on
     runs-on: ubuntu-20.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Some checks:
+      - name: Check system 
+        run: |
+          uname -a
+          cat /etc/lsb-release
+
+      # Runs a single command using the runners shell
+      - name: Install minimal dependencies
+        run: |
+          sudo apt-get install libboost-all-dev 	 
+          sudo apt-get install ninja-build cmake 	 
+          sudo apt-get install libcamp-dev libclhep-dev libgsl-dev libreadline-dev   
+          sudo apt-get install gnuplot-qt	  
+          sudo apt-get install libqt5core5a libqt5gui5 libqt5widgets5 libqt5svg5 libqt5svg5-dev libqt5widgets5 qt5-default
+          sudo apt-get install doxygen
+ 
+      # Runs a set of commands using the runners shell
+      - name: Configure, build, and test
+        run: |
+          echo "Running CI-minimal script..."
+          ls -l $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
+          bash $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
+        shell: bash
+
+  build-minimal-and-test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
