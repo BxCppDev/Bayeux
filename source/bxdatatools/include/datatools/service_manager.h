@@ -253,9 +253,9 @@ namespace datatools {
 
     //! Smart print
     void tree_dump(std::ostream& out_         = std::clog,
-                           const std::string& title_  = "",
-                           const std::string& indent_ = "",
-                           bool inherit_              = false) const override;
+                   const std::string& title_  = "",
+                   const std::string& indent_ = "",
+                   bool inherit_              = false) const override;
 
     //! Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
