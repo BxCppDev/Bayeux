@@ -69,15 +69,6 @@ set(CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
 
 # Bayeux definitions:
 set(Bayeux_DEFINITIONS)
-if (Boost_VERSION VERSION_GREATER_EQUAL 106900)
-  # - Use explicitely the Boost/Math fp utilities for 
-  list(APPEND Bayeux_DEFINITIONS "-DBOOST_MATH_DISABLE_STD_FPCLASSIFY")
-endif()
-if (Boost_VERSION VERSION_GREATER_EQUAL 107400)
-  list(APPEND Bayeux_DEFINITIONS "-DBOOST_BIND_GLOBAL_PLACEHOLDERS")
-endif()
-add_definitions(${Bayeux_DEFINITIONS})
-message(STATUS "Bayeux_DEFINITIONS=${Bayeux_DEFINITIONS}")
 
 #-----------------------------------------------------------------------
 # Start of CMake Generated
@@ -107,6 +98,13 @@ message( STATUS "Searching Boost ${BAYEUX_BOOST_VERSION} from ${BOOST_ROOT} ..."
 find_package(Boost ${BAYEUX_BOOST_VERSION} EXACT REQUIRED
   COMPONENTS ${BAYEUX_BOOST_COMPONENTS}
   )
+if (Boost_VERSION VERSION_GREATER_EQUAL 106900)
+  # - Use explicitely the Boost/Math fp utilities for 
+  list(APPEND Bayeux_DEFINITIONS "-DBOOST_MATH_DISABLE_STD_FPCLASSIFY")
+endif()
+if (Boost_VERSION VERSION_GREATER_EQUAL 107400)
+  list(APPEND Bayeux_DEFINITIONS "-DBOOST_BIND_GLOBAL_PLACEHOLDERS")
+endif()
 
 if (Bayeux_WITH_GENBB)
   # BxDecay0
@@ -161,6 +159,9 @@ if(Bayeux_qt_FOUND)
   find_package(Qt5Gui     @Qt5Gui_VERSION@     EXACT REQUIRED)
   find_package(Qt5Svg     @Qt5Svg_VERSION@     EXACT REQUIRED)
 endif()
+
+add_definitions(${Bayeux_DEFINITIONS})
+message(STATUS "Bayeux_DEFINITIONS=${Bayeux_DEFINITIONS}")
 
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets.
