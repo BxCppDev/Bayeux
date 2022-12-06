@@ -751,7 +751,7 @@ namespace datatools {
     DT_LOG_INFORMATION(_logging_, "Initializing kernel's configuration variant repository...");
     // Instantiate the kernel variant repository:
     if (this->_activate_variant_repository_) {
-      _variant_repository_.reset(new configuration::variant_repository);
+      _variant_repository_ = std::make_unique<configuration::variant_repository>();
       _variant_repository_->set_name("bxDtKernVariantRep");
       _variant_repository_->set_display_name("System Repository");
       _variant_repository_->set_terse_description("The Bayeux/datatools' kernel configuration variant repository");
@@ -883,7 +883,7 @@ namespace datatools {
       // DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
       return;
     }
-    ::datatools::configuration::variant_repository * _vrep_; //!< Handle to the variant repository
+    ::datatools::configuration::variant_repository * _vrep_ = nullptr; //!< Handle to the variant repository
     std::string _gui_style_;
   };
 #endif // DATATOOLS_WITH_QT_GUI == 1
