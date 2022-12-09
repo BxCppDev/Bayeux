@@ -163,19 +163,19 @@ namespace geomtools {
     void compute_deflated(box & deflated_,
                           double by_x_,
                           double by_y_,
-                          double by_z_);
+                          double by_z_) const;
 
     /// Compute an inflated version of the box
     void compute_inflated(box & deflated_,
                           double by_x_,
                           double by_y_,
-                          double by_z_);
+                          double by_z_) const;
 
     /// Compute an envelope box at user tolerance
     void compute_envelope(box & envelope_,
                           double tolerance_x_,
                           double tolerance_y_,
-                          double tolerance_z_);
+                          double tolerance_z_) const;
 
     /// Check if a point is inside the box
     bool is_inside(const vector_3d &,

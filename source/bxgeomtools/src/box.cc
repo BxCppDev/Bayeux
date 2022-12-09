@@ -411,7 +411,7 @@ namespace geomtools {
   void box::compute_deflated(box & deflated_,
                              double by_x_,
                              double by_y_,
-                             double by_z_)
+                             double by_z_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
     deflated_.reset();
@@ -435,7 +435,7 @@ namespace geomtools {
   void box::compute_inflated(box & inflated_,
                              double by_x_,
                              double by_y_,
-                             double by_z_)
+                             double by_z_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
     double x_eps = 0.0;
@@ -459,7 +459,7 @@ namespace geomtools {
   void box::compute_envelope(box & envelope_,
                              double tolerance_x_,
                              double tolerance_y_,
-                             double tolerance_z_)
+                             double tolerance_z_) const
   {
     compute_inflated(envelope_, tolerance_x_, tolerance_y_, tolerance_z_);
   }
