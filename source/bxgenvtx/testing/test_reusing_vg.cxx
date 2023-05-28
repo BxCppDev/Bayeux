@@ -58,13 +58,10 @@ int main (int argc_, char ** argv_)
     vg.set_debug(true);
     vg.set_box(b);
     vg.set_mode(genvtx::box_vg::MODE_SURFACE);
-    int surface_mask = 0;
-    // surface_mask |= geomtools::box::FACE_FRONT;
-    // surface_mask |= geomtools::box::FACE_RIGHT;
-    surface_mask |= geomtools::box::FACE_TOP;
+    int surface_mask = geomtools::box::FACE_TOP;
     vg.set_surface_mask(surface_mask);
-    vg.set_skin_skip(0.10);
-    vg.set_skin_thickness(0.20);
+    vg.set_skin_skip(0.0);
+    vg.set_skin_thickness(0.0);
     vg.initialize_simple();
     vg.tree_dump(clog, "Box vertex generator");
 
@@ -74,7 +71,7 @@ int main (int argc_, char ** argv_)
     pvg.set_reusing_count(3);
 
     // Shoot vertices:
-    size_t nshoots = 9;
+    size_t nshoots = 10;
     geomtools::vector_3d vertex;
     for (int i = 0; i < (int) nshoots; i++) {
       pvg.shoot_vertex(random, vertex);
