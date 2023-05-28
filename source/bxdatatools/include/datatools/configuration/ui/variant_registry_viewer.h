@@ -75,7 +75,7 @@ namespace datatools {
       public:
 
         /// Default constructor
-        variant_registry_viewer(QWidget * parent_ = 0);
+        variant_registry_viewer(QWidget * parent_ = nullptr);
 
         /// Destructor
         virtual ~variant_registry_viewer();
@@ -191,24 +191,24 @@ namespace datatools {
 
       private:
 
-        bool _devel_mode_; //!< Development mode flag
+        bool _devel_mode_ = false; //!< Development mode flag
         bool _inhibit_secondary_choices_ = false;
-        datatools::logger::priority   _logging_;             //!< Logging priority
-        variant_registry_tree_model * _registry_tree_model_; //!< The variant registry tree model
-        QLabel *      _registry_name_title_label_;   //!< Label for the title of the registry name
-        QLabel *      _registry_name_display_label_; //!< Display the registry name
-        QLabel *      _accomplished_label_;          //!< Label for accomplished status
-        datatools::qt::led * _accomplished_led_;     //!< LED for accomplished status
-        QCheckBox *   _read_only_cb_;                //!< Check box for the read-only lock
-        QCheckBox *   _inhibit_secondary_choices_cb_;  //!< Check box for combo secondaries inhibition
-        QTreeView *   _tree_view_;                   //!< Tree view
-        parameter_item_delegate * _value_delegate_;  //!< Item delegate for parameters' values
-        QPushButton * _expand_all_button_;           //!< Button for expand all items
-        QPushButton * _expand_only_active_button_;   //!< Button for expand only all active items
-        QPushButton * _collapse_all_button_;         //!< Button for expand all items
-        QPushButton * _dump_button_;                 //!< Button for dumping the registry
-        QLabel *      _logging_label_;  //!< Label for logging
-        QComboBox *   _logging_combo_;  //!< Combo to select the logging prority
+        datatools::logger::priority   _logging_ = datatools::logger::PRIO_FATAL;     //!< Logging priority
+        variant_registry_tree_model * _registry_tree_model_ = nullptr; //!< The variant registry tree model
+        QLabel *      _registry_name_title_label_ = nullptr;   //!< Label for the title of the registry name
+        QLabel *      _registry_name_display_label_ = nullptr; //!< Display the registry name
+        QLabel *      _accomplished_label_ = nullptr;          //!< Label for accomplished status
+        datatools::qt::led * _accomplished_led_ = nullptr;     //!< LED for accomplished status
+        QCheckBox *   _read_only_cb_ = nullptr;                //!< Check box for the read-only lock
+        QCheckBox *   _inhibit_secondary_choices_cb_ = nullptr;  //!< Check box for combo secondaries inhibition
+        QTreeView *   _tree_view_ = nullptr;                   //!< Tree view
+        parameter_item_delegate * _value_delegate_ = nullptr;  //!< Item delegate for parameters' values
+        QPushButton * _expand_all_button_ = nullptr;           //!< Button for expand all items
+        QPushButton * _expand_only_active_button_ = nullptr;   //!< Button for expand only all active items
+        QPushButton * _collapse_all_button_ = nullptr;         //!< Button for expand all items
+        QPushButton * _dump_button_ = nullptr;                 //!< Button for dumping the registry
+        QLabel *      _logging_label_ = nullptr;  //!< Label for logging
+        QComboBox *   _logging_combo_ = nullptr;  //!< Combo to select the logging prority
 
       };
 

@@ -1,6 +1,6 @@
 // datatools/configuration/ui/variant_registry_tree_model.cc
 /*
- * Copyright (C) 2014-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -454,8 +454,8 @@ namespace datatools {
       {
         _logging_ = datatools::logger::PRIO_FATAL;
         _read_only_ = true;
-        _registry_ = 0;
-        _root_ = 0;
+        _registry_ = nullptr;
+        _root_ = nullptr;
         return;
       }
 
@@ -479,13 +479,25 @@ namespace datatools {
         return _registry_name_;
       }
 
+      void variant_registry_tree_model::set_sealed(bool sealed_)
+      {
+        _sealed_ = sealed_;
+        return;
+      }
+
+      bool variant_registry_tree_model::is_sealed() const
+      {
+        return _sealed_;
+      }
+
       bool variant_registry_tree_model::is_read_only() const
       {
-        return _read_only_;
+        return _read_only_ or is_sealed();
       }
 
       void variant_registry_tree_model::set_read_only(bool ro_)
       {
+        if (is_sealed()) return;
         if (_read_only_ != ro_) {
           _read_only_ = ro_;
           emit sig_read_only_changed(_read_only_);
@@ -514,7 +526,7 @@ namespace datatools {
 
       bool variant_registry_tree_model::has_root() const
       {
-        return _root_ != 0;
+        return _root_ != nullptr;
       }
 
       void variant_registry_tree_model::set_root(tree_item * node_)
@@ -547,7 +559,7 @@ namespace datatools {
 
       tree_item * variant_registry_tree_model::_node_from_index_(const QModelIndex & index_) const
       {
-        tree_item * found_node = 0;
+        tree_item * found_node = nullptr;
         if (! index_.isValid()) {
           found_node = _root_;
         } else {

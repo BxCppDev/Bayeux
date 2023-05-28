@@ -71,7 +71,6 @@ namespace datatools {
         _registry_name_display_label_ = new QLabel(this);
         _accomplished_label_ = new QLabel(this);
         _accomplished_led_ = new datatools::qt::led(this);
-        _read_only_cb_ = new QCheckBox("Read-only", this);
         
         _inhibit_secondary_choices_cb_ = new QCheckBox("Inhibit secondaries", this);
         QObject::connect(this, SIGNAL(sig_inhibit_secondary_choices_changed(bool)),
@@ -168,7 +167,7 @@ namespace datatools {
       {
         _devel_mode_ = devel_mode_;
         _registry_tree_model_ = &rtm_;
-         _construct();
+        _construct();
         return;
       }
 
@@ -247,11 +246,14 @@ namespace datatools {
         QObject::connect(_registry_tree_model_, SIGNAL(dataChanged(const QModelIndex &,const QModelIndex &)),
                          this,                  SLOT(slot_expand_only_active()));
 
-        QObject::connect(_read_only_cb_, SIGNAL(stateChanged(int)),
-                         this,           SLOT(slot_update_model_read_only_from_check_state(int)));
-
-        QObject::connect(_registry_tree_model_, SIGNAL(sig_read_only_changed(bool)),
-                         this,                  SLOT(slot_update_read_only_cb(bool)));
+        if (! _registry_tree_model_->is_sealed()) {
+          _read_only_cb_ = new QCheckBox("Read-only", this);
+          QObject::connect(_read_only_cb_, SIGNAL(stateChanged(int)),
+                           this,           SLOT(slot_update_model_read_only_from_check_state(int)));
+         
+          QObject::connect(_registry_tree_model_, SIGNAL(sig_read_only_changed(bool)),
+                           this,                  SLOT(slot_update_read_only_cb(bool)));
+        }
 
         _accomplished_label_->setText("Accomplished:");
         _accomplished_led_->set_shape(datatools::qt::led::Square);
@@ -270,8 +272,10 @@ namespace datatools {
         top_layout->addWidget(_inhibit_secondary_choices_cb_);
         top_layout->addWidget(_accomplished_label_);
         top_layout->addWidget(_accomplished_led_);
-        top_layout->addWidget(_read_only_cb_);
-
+        if (_read_only_cb_ != nullptr) {
+          top_layout->addWidget(_read_only_cb_);
+        }
+        
         // Bottom:
         QHBoxLayout * bottom_layout = new QHBoxLayout;
         bottom_layout->addStretch();
@@ -298,7 +302,9 @@ namespace datatools {
           _value_delegate_->set_parent_repository(get_registry().get_parent_repository());
           set_inhibit_secondary_choices(get_registry().get_parent_repository().get_ui_config().inhibit_secondary_choices);
         }
-        slot_update_read_only_cb(_registry_tree_model_->is_read_only());
+        if (_read_only_cb_ != nullptr) {
+          slot_update_read_only_cb(_registry_tree_model_->is_read_only());
+        }
         // slot_update_isc_cb(_inhibit_secondary_choices_);
         slot_update_leds();
         slot_expand_only_active();
@@ -395,7 +401,7 @@ namespace datatools {
       void variant_registry_viewer::slot_update_model_read_only_from_check_state(int check_state_)
       {
         DT_LOG_TRACE(_logging_, "Entering...");
-        if (_registry_tree_model_) {
+        if (_registry_tree_model_ and _read_only_cb_ != nullptr) {
           if (check_state_ == Qt::Checked ) {
             DT_LOG_TRACE(_logging_, "Model read-only ON");
             _registry_tree_model_->set_read_only(true);
@@ -403,8 +409,8 @@ namespace datatools {
             DT_LOG_TRACE(_logging_, "Model read-only OFF");
             _registry_tree_model_->set_read_only(false);
           }
+          DT_LOG_TRACE(_logging_, "Model read-only = " << _registry_tree_model_->is_read_only());
         }
-        DT_LOG_TRACE(_logging_, "Model read-only = " << _registry_tree_model_->is_read_only());
         DT_LOG_TRACE(_logging_, "Exiting.");
         return;
       }

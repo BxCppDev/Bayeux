@@ -215,6 +215,14 @@ namespace datatools {
       return found != _registries_.end();
     }
 
+    bool variant_repository::is_sealed_registry(const std::string & registry_name_) const
+    {
+      registry_dict_type::const_iterator found = _registries_.find(registry_name_);
+      DT_THROW_IF(found == _registries_.end(), std::logic_error,
+                  "Repository does not have a registry named '" << registry_name_ << "' !");
+      return found->second.is_sealed();
+    }
+
     unsigned int variant_repository::get_number_of_registries() const
     {
       return _registries_.size();
@@ -849,7 +857,8 @@ namespace datatools {
       std::map<std::string, int> registry_ranks;
       std::map<std::string, std::set<std::string> > registry_dependencies;
       std::map<std::string, datatools::logger::priority> registry_loggings;
-
+      std::set<std::string> registry_seals;
+      
       // Parsing:
       {
         std::map<int, std::string> parsed_ranks; // ensure ranks are unique
@@ -872,6 +881,15 @@ namespace datatools {
             }
             if (!reg_config.empty()) {
               registry_configs[reg_name] = reg_config;
+            }
+          }
+          
+          {
+            // Parse variant registry config:
+            std::ostringstream reg_seal_oss;
+            reg_seal_oss << "registries." << reg_name << ".sealed";
+            if (config_.has_flag(reg_seal_oss.str())) {
+              registry_seals.insert(reg_name);
             }
           }
 

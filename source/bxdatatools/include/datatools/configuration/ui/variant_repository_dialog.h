@@ -29,9 +29,10 @@
 #ifndef DATATOOLS_CONFIGURATION_UI_VARIANT_REPOSITORY_DIALOG_H
 #define DATATOOLS_CONFIGURATION_UI_VARIANT_REPOSITORY_DIALOG_H
 
+// Standard library:
+#include <memory>
+
 // Third party:
-// - Boost:
-#include <boost/scoped_ptr.hpp>
 // - Qt:
 #include <QDialog>
 #include <QObject>
@@ -70,15 +71,15 @@ namespace datatools {
           };
 
         /// Default Constructor
-        variant_repository_dialog(QWidget * parent_ = 0);
+        variant_repository_dialog(QWidget * parent_ = nullptr);
 
         /// Constructor
         variant_repository_dialog(variant_repository & repository_,
-                                  QWidget * parent_ = 0);
+                                  QWidget * parent_ = nullptr);
         /// Constructor
         variant_repository_dialog(variant_repository & repository_,
                                   uint32_t flags_,
-                                  QWidget * parent_ = 0);
+                                  QWidget * parent_ = nullptr);
 
         /// Destructor
         virtual ~variant_repository_dialog();
@@ -121,22 +122,22 @@ namespace datatools {
 
       private:
 
-        variant_repository * _repository_; //!< Handle to a repository
+        variant_repository * _repository_ = nullptr; //!< Handle to a repository
         bool _hide_disabled_ = false;
 
         // Widgets:
-        variant_repository_viewer * _viewer_; //!< The embedded viewer widget
-        QHBoxLayout  * _bottom_buttons_bar_;  //!< Bottom bar for buttons
-        QPushButton  * _restore_button_;      //!< The reset button
-        QPushButton  * _snapshot_button_;     //!< The snapshot button
-        QPushButton  * _load_button_;         //!< The load button
-        QPushButton  * _store_button_;        //!< The store button
-        QPushButton  * _cancel_button_;       //!< The cancel button
-        QPushButton  * _ok_button_;           //!< The ok button
-        QVBoxLayout  * _main_layout_;         //!< The main layout
+        variant_repository_viewer * _viewer_ = nullptr; //!< The embedded viewer widget
+        QHBoxLayout  * _bottom_buttons_bar_ = nullptr;  //!< Bottom bar for buttons
+        QPushButton  * _restore_button_ = nullptr;      //!< The reset button
+        QPushButton  * _snapshot_button_ = nullptr;     //!< The snapshot button
+        QPushButton  * _load_button_ = nullptr;         //!< The load button
+        QPushButton  * _store_button_ = nullptr;        //!< The store button
+        QPushButton  * _cancel_button_ = nullptr;       //!< The cancel button
+        QPushButton  * _ok_button_ = nullptr;           //!< The ok button
+        QVBoxLayout  * _main_layout_ = nullptr;         //!< The main layout
 
         // Restore buffer;
-        boost::scoped_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
+        std::unique_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
 
       };
 

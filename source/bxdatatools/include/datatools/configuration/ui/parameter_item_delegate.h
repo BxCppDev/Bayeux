@@ -71,7 +71,7 @@ namespace datatools {
         /// Constructor
         RealDialogLauncherButton(const QModelIndex & index_,
                                  const QString & button_text_ = "Set value",
-                                 QWidget * parent_ = 0 );
+                                 QWidget * parent_ = nullptr);
          /// Destructor
         virtual ~RealDialogLauncherButton();
 
@@ -121,7 +121,7 @@ namespace datatools {
         /// Constructor
         FileDialogLauncherButton(const QModelIndex & index_,
                                  const QString & button_text_ = "Choose file path",
-                                 QWidget * parent_ = 0 );
+                                 QWidget * parent_ = nullptr);
         /// Destructor
         virtual ~FileDialogLauncherButton();
 
@@ -165,7 +165,7 @@ namespace datatools {
       public:
 
         /// Default constructor
-        parameter_item_delegate(QObject * parent_ = 0);
+        parameter_item_delegate(QObject * parent_ = nullptr);
 
         /// Desstructor
         virtual ~parameter_item_delegate();
@@ -275,8 +275,6 @@ namespace datatools {
 
         datatools::logger::priority _logging_ = datatools::logger::PRIO_FATAL; //!< Logging priority
         const variant_repository *  _parent_repository_ = nullptr; //!< Handle to the parent repository
-        // bool _hide_disabled_groups_ = false;
-        // bool _hide_disabled_values_ = false;
         bool _hide_disabled_groups_ = true;
         bool _hide_disabled_values_ = true;
         int  _max_combo_rank_ = -1;

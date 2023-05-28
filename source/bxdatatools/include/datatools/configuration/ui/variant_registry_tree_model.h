@@ -1,9 +1,9 @@
 /// \file datatools/configuration/ui/variant_registry_tree_model.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-10-06
- * Last modified : 2016-11-16
+ * Last modified : 2022-11-30
  *
- * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2022 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@
 #ifndef DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_TREE_MODEL_H
 #define DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_TREE_MODEL_H
 
+// Standard library:
+#include <memory>
+
 // Third party:
 // - Qt:
 #include <QObject>
@@ -36,8 +39,6 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
-// - Boost:
-#include <boost/scoped_ptr.hpp>
 
 // This project
 #include <datatools/logger.h>
@@ -145,9 +146,9 @@ namespace datatools {
 
       private:
 
-        datatools::logger::priority _logging_;  //!< Logging priority
-        variant_record *            _record_;   //!< Handled variant record
-        tree_item *                 _parent_;   //!< Parent node/item
+        logger::priority _logging_ = logger::priority::PRIO_ERROR;  //!< Logging priority
+        variant_record *            _record_ = nullptr;   //!< Handled variant record
+        tree_item *                 _parent_ = nullptr;   //!< Parent node/item
         QList<tree_item *>          _children_; //!< Collection of children nodes/items
 
         friend class variant_registry_tree_model;
@@ -166,7 +167,7 @@ namespace datatools {
         static const std::string & default_top_label();
 
         /// Constructor
-        variant_registry_tree_model(QObject * parent_ = 0);
+        variant_registry_tree_model(QObject * parent_ = nullptr);
 
         /// Destructor
         virtual ~variant_registry_tree_model();
@@ -233,6 +234,12 @@ namespace datatools {
 
         /// Return the logging priority
         datatools::logger::priority get_logging() const;
+
+        /// set the seal flag
+        void set_sealed(bool);
+        
+        /// Check the sealed flag
+        bool is_sealed() const;
 
         /// Check the read-only flag
         bool is_read_only() const;
@@ -303,12 +310,13 @@ namespace datatools {
 
       private:
 
-        logger::priority   _logging_;       //!< Logging priority
-        bool               _read_only_;     //!< Read-only flag
+        logger::priority   _logging_ = logger::priority::PRIO_ERROR; //!< Logging priority
+        bool               _sealed_ = false;     //!< Sealed flag
+        bool               _read_only_ = true;     //!< Read-only flag
         std::string        _registry_name_; //!< Registry name
-        variant_registry * _registry_;      //!< Handle to the registry of configuration variant
-        tree_item *        _root_;          //!< Root node/item of the tree model
-        boost::scoped_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
+        variant_registry * _registry_ = nullptr;      //!< Handle to the registry of configuration variant
+        tree_item *        _root_ = nullptr;          //!< Root node/item of the tree model
+        std::unique_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
 
       };
 

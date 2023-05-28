@@ -25,7 +25,8 @@ namespace geomtools {
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(placement, "geomtools::placement")
 
   // static
-  placement::builder::child_to_mother_gap_mode placement::builder::get_gap_mode(const std::string & label_)
+  placement::builder::child_to_mother_gap_mode
+  placement::builder::get_gap_mode(const std::string & label_)
   {
     if (label_ == "center_to_min") return gap_center_to_min;
     if (label_ == "center_to_max") return gap_center_to_max;
@@ -959,8 +960,13 @@ namespace geomtools {
     out_ << indent << datatools::i_tree_dumpable::tag << "Valid : "
          << is_valid ()  << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag << "Translation : "
-         << _translation_  << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Translation : ";
+    if (_translation_.mag2() > 0.0) {
+      out_ << _translation_;
+    } else {
+      out_ << "<none>";
+    }
+    out_ << endl;
 
     if (is_zyz_rotation ())
       {
@@ -987,26 +993,45 @@ namespace geomtools {
              << _rotation_angle_ / CLHEP::degree << " degree" << endl;
       }
 
+    bool rotationIdentity = true;
+    if (_rotation_axis_ != ROTATION_AXIS_INVALID) {
+      if (_rotation_angle_ != 0.0) {
+        rotationIdentity = false;
+      }
+    } else {
+      if (_phi_ != 0.0) rotationIdentity = false;
+      if (_theta_ != 0.0) rotationIdentity = false;
+      if (_delta_ != 0.0) rotationIdentity = false;
+    }
+    
     {
       ostringstream oss_title;
       oss_title << indent << datatools::i_tree_dumpable::tag << "Rotation :";
-      ostringstream oss_indent;
-      oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
-      geomtools::tree_dump (_rotation_,
-                            out_,
-                            oss_title.str (),
-                            oss_indent.str ());
+      if (rotationIdentity) {
+        oss_title << " identity" << '\n';
+      } else {
+        ostringstream oss_indent;
+        oss_indent << indent << datatools::i_tree_dumpable::skip_tag;
+        geomtools::tree_dump (_rotation_,
+                              out_,
+                              oss_title.str (),
+                              oss_indent.str ());
+      }
     }
 
     {
       ostringstream oss_title;
       oss_title << indent << datatools::i_tree_dumpable::inherit_tag (inherit_) << "Inverse rotation :";
-      ostringstream oss_indent;
-      oss_indent << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-      geomtools::tree_dump (_inverse_rotation_,
-                            out_,
-                            oss_title.str (),
-                            oss_indent.str ());
+      if (rotationIdentity) {
+        oss_title << " identity" << '\n';
+      } else {
+        ostringstream oss_indent;
+        oss_indent << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
+        geomtools::tree_dump (_inverse_rotation_,
+                              out_,
+                              oss_title.str (),
+                              oss_indent.str ());
+      }
     }
 
     return;

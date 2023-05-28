@@ -123,9 +123,10 @@ namespace datatools {
       }
 
       variant_registry_viewer *
-      registry_model_wrapper::construct_registry_viewer(variant_registry & registry_)
+      registry_model_wrapper::construct_registry_viewer(variant_registry & registry_, bool sealed_)
       {
         _model_ = new variant_registry_tree_model;
+        _model_->set_sealed(sealed_);
         _model_->construct(registry_);
         _viewer_ = new variant_registry_viewer(_parent_);
         _viewer_->set_registry_tree_model(*_model_);
@@ -166,7 +167,7 @@ namespace datatools {
       {
         _devel_mode_ = false;
         _logging_ = datatools::logger::PRIO_FATAL;
-        _repository_ = 0;
+        _repository_ = nullptr;
         _read_only_ = true;
 
         _repository_name_title_label_ = new QLabel(this);
@@ -201,7 +202,7 @@ namespace datatools {
 
       bool variant_repository_viewer::has_repository() const
       {
-        return _repository_ != 0;
+        return _repository_ != nullptr;
       }
 
       void variant_repository_viewer::set_repository(variant_repository & repository_)
@@ -219,13 +220,13 @@ namespace datatools {
 
       variant_repository & variant_repository_viewer::grab_repository()
       {
-        DT_THROW_IF(_repository_== 0, std::logic_error, "No repository!");
+        DT_THROW_IF(_repository_ == nullptr, std::logic_error, "No repository!");
         return *_repository_;
       }
 
       const variant_repository & variant_repository_viewer::get_repository() const
       {
-        DT_THROW_IF(_repository_== 0, std::logic_error, "No repository!");
+        DT_THROW_IF(_repository_ == nullptr, std::logic_error, "No repository!");
         return *_repository_;
       }
 
@@ -320,6 +321,7 @@ namespace datatools {
         // For each registry in the repository:
         for (unsigned int ikey = 0; ikey < registry_keys.size(); ikey++) {
           const std::string & reg_name = registry_keys[ikey];
+          bool sealedRegistry = _repository_->is_sealed_registry(reg_name);
           variant_registry & var_reg = _repository_->grab_registry(reg_name);
           // Add a new registry UI wrapper in the viewer:
           {
@@ -327,7 +329,7 @@ namespace datatools {
             _models_[reg_name] = dummy;
           }
           registry_model_wrapper & reg_model_wrap = _models_.find(reg_name)->second;
-          variant_registry_viewer * reg_viewer = reg_model_wrap.construct_registry_viewer(var_reg);
+          variant_registry_viewer * reg_viewer = reg_model_wrap.construct_registry_viewer(var_reg, sealedRegistry);
           QString tab_title;
           if (var_reg.has_display_name()) {
             tab_title = QString::fromStdString(var_reg.get_display_name());

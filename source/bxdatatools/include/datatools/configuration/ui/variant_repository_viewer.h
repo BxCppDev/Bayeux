@@ -76,7 +76,7 @@ namespace datatools {
       public:
 
         /// Default constructor
-        registry_model_wrapper(QWidget * parent_ = 0);
+        registry_model_wrapper(QWidget * parent_ = nullptr);
 
         /// Destructor
         ~registry_model_wrapper();
@@ -103,14 +103,15 @@ namespace datatools {
         variant_registry_viewer & grab_viewer();
 
         /// Construct
-        variant_registry_viewer * construct_registry_viewer(variant_registry & registry_);
+        variant_registry_viewer * construct_registry_viewer(variant_registry & registry_,
+                                                            bool sealed_registry_);
 
       private:
 
-        uint32_t                      _flags_;  //!< Flags
-        QWidget *                     _parent_; //!< Parent widget
-        variant_registry_tree_model * _model_;  //!< Handle to the embedded registry model
-        variant_registry_viewer     * _viewer_; //!< Handle to the embedded registry viewer
+        uint32_t                      _flags_ = 0;  //!< Flags
+        QWidget *                     _parent_ = nullptr; //!< Parent widget
+        variant_registry_tree_model * _model_ = nullptr;  //!< Handle to the embedded registry model
+        variant_registry_viewer     * _viewer_ = nullptr; //!< Handle to the embedded registry viewer
 
       };
 
@@ -125,7 +126,7 @@ namespace datatools {
         typedef std::map<std::string, registry_model_wrapper> model_dict_type;
 
         /// Default constructor
-        variant_repository_viewer(QWidget * parent_ = 0);
+        variant_repository_viewer(QWidget * parent_ = nullptr);
 
         /// Destructor
         virtual ~variant_repository_viewer();
@@ -190,10 +191,10 @@ namespace datatools {
         void slot_update_logging(const QString &);
 
         /// Slot: store the current status to a buffer
-        void slot_restore(std::string * buffer_ = 0);
+        void slot_restore(std::string * buffer_ = nullptr);
 
         /// Slot: load the current status from a buffer
-        void slot_snapshot(std::string * buffer_ = 0);
+        void slot_snapshot(std::string * buffer_ = nullptr);
 
         /// Slot: load the repository from a file
         void slot_load_from_file();
@@ -220,27 +221,27 @@ namespace datatools {
 
       private:
 
-        bool _devel_mode_;                             //!< Development mode flag
-        datatools::logger::priority _logging_;         //!< Logging priority
-        variant_repository * _repository_;             //!< Handle to a variant repository
+        bool _devel_mode_ = false;                             //!< Development mode flag
+        datatools::logger::priority _logging_ = datatools::logger::PRIO_FATAL;         //!< Logging priority
+        variant_repository * _repository_ = nullptr;             //!< Handle to a variant repository
         bool                 _read_only_ = true;       //!< Read-only flag (default to true)
         model_dict_type _models_;                      //!< Dictionary of registry tree models
-        QLabel *      _repository_name_title_label_;   //!< Label for the title of the repository name
-        QLabel *      _repository_name_display_label_; //!< Display the repository name
-        QLabel *      _repository_org_title_label_;    //!< Label for the title of the organization name
-        QLabel *      _repository_org_display_label_;  //!< Display the organization name
-        QLabel *      _repository_app_title_label_;    //!< Label for the title of the application name
-        QLabel *      _repository_app_display_label_;  //!< Display the application name
-        QLabel *      _accomplished_label_;       //!< Label for accomplished status
-        datatools::qt::led * _accomplished_led_;  //!< LED for accomplished status
-        QCheckBox *   _read_only_cb_;             //!< Check box for the read-only lock
-        QTabWidget *  _registry_tabs_;            //!< Tabs for registry
+        QLabel *      _repository_name_title_label_ = nullptr;   //!< Label for the title of the repository name
+        QLabel *      _repository_name_display_label_ = nullptr; //!< Display the repository name
+        QLabel *      _repository_org_title_label_ = nullptr;    //!< Label for the title of the organization name
+        QLabel *      _repository_org_display_label_ = nullptr;  //!< Display the organization name
+        QLabel *      _repository_app_title_label_ = nullptr;    //!< Label for the title of the application name
+        QLabel *      _repository_app_display_label_ = nullptr;  //!< Display the application name
+        QLabel *      _accomplished_label_ = nullptr;       //!< Label for accomplished status
+        datatools::qt::led * _accomplished_led_ = nullptr;  //!< LED for accomplished status
+        QCheckBox *   _read_only_cb_ = nullptr;             //!< Check box for the read-only lock
+        QTabWidget *  _registry_tabs_ = nullptr;            //!< Tabs for registry
         std::map<std::string, int> _tab_indexes_; //!< Tab indexes
-        QPushButton * _dump_button_;              //!< Button for dump
-        QLabel *      _logging_label_;            //!< Label for logging
-        QComboBox *   _logging_combo_;            //!< Combo to select the logging prority
-        QIcon *       _unaccomplished_icon_;      //!< Unaccomplished icon
-        QIcon *       _null_icon_;                //!< Null icon
+        QPushButton * _dump_button_ = nullptr;              //!< Button for dump
+        QLabel *      _logging_label_ = nullptr;            //!< Label for logging
+        QComboBox *   _logging_combo_ = nullptr;            //!< Combo to select the logging prority
+        QIcon *       _unaccomplished_icon_ = nullptr;      //!< Unaccomplished icon
+        QIcon *       _null_icon_ = nullptr;                //!< Null icon
         std::unique_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
 
       };

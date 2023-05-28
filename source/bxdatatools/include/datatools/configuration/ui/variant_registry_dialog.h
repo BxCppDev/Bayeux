@@ -29,9 +29,10 @@
 #ifndef DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_DIALOG_H
 #define DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_DIALOG_H
 
+// Standard library:
+#include <memory>
+
 // Third party:
-// - Boost:
-#include <boost/scoped_ptr.hpp>
 // - Qt:
 #include <QDialog>
 #include <QObject>
@@ -118,7 +119,7 @@ namespace datatools {
         QVBoxLayout  * _main_layout_;        //!< The main layout
 
         // Restore buffer:
-        boost::scoped_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
+       std::unique_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
 
       };
 

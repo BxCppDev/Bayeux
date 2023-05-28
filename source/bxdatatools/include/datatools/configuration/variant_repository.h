@@ -225,6 +225,9 @@ namespace datatools {
       /// Check if a registry exists
       bool has_registry(const std::string & registry_name_) const;
 
+      /// Check if an existing registry is sealed
+      bool is_sealed_registry(const std::string & registry_name_) const;
+
       /// Return a reference to a non mutable registry
       const variant_registry & get_registry(const std::string & registry_name_) const;
 
