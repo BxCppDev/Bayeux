@@ -200,11 +200,19 @@ namespace genvtx {
     return;
   }
 
-  placement_vg::placement_vg() : genvtx::i_vertex_generator()
+  placement_vg::placement_vg()
+    : genvtx::i_vertex_generator()
   {
-    _placement_.invalidate ();
-    _owned_ = false;
-    _vg_ = 0;
+    _placement_.invalidate();
+    return;
+  }
+
+  placement_vg::placement_vg(i_vertex_generator & vg_,
+			     const geomtools::placement & p_)
+    : genvtx::i_vertex_generator()
+  {
+    set_vg(vg_);
+    _placement_ = p_;
     return;
   }
 

@@ -38,6 +38,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_vertex_generator.h
   ${module_include_dir}/${module_name}/i_from_model_vg.h
   ${module_include_dir}/${module_name}/placement_vg.h
+  ${module_include_dir}/${module_name}/reusing_vg.h
   ${module_include_dir}/${module_name}/quadrangle_random_tools.h
   ${module_include_dir}/${module_name}/spot_vertex_generator.h
   ${module_include_dir}/${module_name}/triangle_random_tools.h
@@ -69,6 +70,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/spot_vertex_generator.cc
   ${module_source_dir}/from_file_vg.cc
   ${module_source_dir}/placement_vg.cc
+  ${module_source_dir}/reusing_vg.cc
   ${module_source_dir}/box_vg.cc
   ${module_source_dir}/sphere_vg.cc
   ${module_source_dir}/cylinder_vg.cc
@@ -113,6 +115,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_tube_vg.cxx
   ${module_test_dir}/test_sphere_vg.cxx
   ${module_test_dir}/test_placement_vg.cxx
+  ${module_test_dir}/test_reusing_vg.cxx
   ${module_test_dir}/test_from_file_vg.cxx
   ${module_test_dir}/test_polycone_vg.cxx
   ${module_test_dir}/test_polycone_vg_2.cxx

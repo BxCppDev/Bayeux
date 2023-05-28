@@ -1,26 +1,19 @@
 /// \file genvtx/placement_vg.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-13
- * Last modified: 2014-04-09
- *
- * License:
+ * Last modified: 2023-05-29
  *
  * Description:
  *
  *   Vertex generator with placement.
- *
- * History:
  *
  */
 
 #ifndef GENVTX_PLACEMENT_VG_H
 #define GENVTX_PLACEMENT_VG_H 1
 
-// Third party:
-// - Bayeux/geomtools:
-#include <geomtools/placement.h>
-
 // This project:
+#include <geomtools/placement.h>
 #include <genvtx/i_vertex_generator.h>
 
 namespace genvtx {
@@ -54,7 +47,7 @@ namespace genvtx {
     placement_vg();
 
     /// Constructor
-    placement_vg(const i_vertex_generator &,
+    placement_vg(i_vertex_generator &,
                  const geomtools::placement &);
 
     /// Destructor
@@ -62,8 +55,8 @@ namespace genvtx {
 
     /// Initialization
     void initialize(const ::datatools::properties &,
-                             ::datatools::service_manager &,
-                             ::genvtx::vg_dict_type &) override;
+										::datatools::service_manager &,
+										::genvtx::vg_dict_type &) override;
 
     /// Reset
     void reset() override;
