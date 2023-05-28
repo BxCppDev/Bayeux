@@ -81,7 +81,7 @@ set_property(TARGET exload
 if(BAYEUX_ENABLE_TESTING)
   set(_testname mctools-validation_serialization)
   add_test(NAME ${_testname}
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/run.sh
+    COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/run.sh
     --work-dir "${CMAKE_CURRENT_BINARY_DIR}" --source-dir "${CMAKE_CURRENT_SOURCE_DIR}"
     )
   set(${_testname}_TEST_ENVIRONMENT "PATH=$ENV{PATH}:${PROJECT_BUILD_BINDIR}")

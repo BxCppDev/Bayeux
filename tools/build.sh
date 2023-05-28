@@ -60,8 +60,8 @@ Options:
 Example:
 
     $ ./tools/build.sh \
-       --build-base-dir /scratch/Bayeux/build-devel \
-       --install-base-dir /scratch/Bayeux/install-devel \
+       --build-base-dir /data/work.d/Bayeux/build-devel \
+       --install-base-dir /data/work.d/Bayeux/install-devel \
        --dry-run  
 
 EOF
