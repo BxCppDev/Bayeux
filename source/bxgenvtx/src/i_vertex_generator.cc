@@ -273,6 +273,17 @@ namespace genvtx {
   {
     return true;
   }
+  
+  std::size_t i_vertex_generator::get_counter() const
+  {
+    return _counter_;
+  }
+
+  void i_vertex_generator::reset_counter()
+  {
+    _counter_ = 0;
+    return;
+  }
 
   void i_vertex_generator::_shoot_vertex_(mygsl::rng & random_,
                                           geomtools::vector_3d & vertex_)
@@ -361,6 +372,7 @@ namespace genvtx {
         break;
       }
     } while(true);
+    _counter_++;
     DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
@@ -409,6 +421,7 @@ namespace genvtx {
         break;
       }
     } while(true);
+    _counter_++;
     DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }

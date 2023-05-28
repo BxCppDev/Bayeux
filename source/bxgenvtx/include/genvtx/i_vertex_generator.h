@@ -4,11 +4,9 @@
  * Creation date: 2010-02-12
  * Last modified: 2014-07-15
  *
- * License:
- *
  * Description:
  *
- * History:
+ *   Vertex generator interface/base class
  *
  */
 
@@ -197,6 +195,11 @@ namespace genvtx {
     /// Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
 
+		std::size_t get_counter() const;
+
+		void reset_counter();
+		
+
     /// OCD support
     static void ocd_support(datatools::object_configuration_description &, const std::string & label_ = "");
 
@@ -238,7 +241,7 @@ namespace genvtx {
     virtual void _shoot_vertex_and_time(mygsl::rng & random_,
                                         geomtools::vector_3d & vertex_,
                                         double & time_);
-
+		
   private:
 
     /// Vertex randomization interface method
@@ -257,12 +260,13 @@ namespace genvtx {
     bool                         _time_generator_; //!< The generator also generates a (decay) time associated to the vertex
     std::string                  _geo_label_;    //!< The label of the Geometry Service
     std::string                  _geom_setup_requirement_; //!< The requirement ont the requested geometry setup (label and version)
-    const ::geomtools::manager * _geom_manager_; //!< Handle to the geometry manager
+    const ::geomtools::manager * _geom_manager_ = nullptr; //!< Handle to the geometry manager
     weight_info                  _total_weight_; //!< Weighting data
-    mygsl::rng                 * _external_prng_; //!< Handle to an external PRNG
+    mygsl::rng                 * _external_prng_ = nullptr; //!< Handle to an external PRNG
     bool                         _vertex_validation_support_; //!< Flag for vertex validation support
     boost::scoped_ptr<vertex_validation> _vertex_validation_; //!< Handle to the vertex validation
-
+		std::size_t _counter_ = 0;
+		
     // Factory declaration :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_vertex_generator)
 
