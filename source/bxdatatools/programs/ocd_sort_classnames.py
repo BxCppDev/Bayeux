@@ -24,7 +24,7 @@ if __name__ == "__main__" :
     namespaces={}
     for line in lines:
         l = line.strip()
-        tokens=string.split(l,"::")
+        tokens=l.split("::")
         ntokens=len(tokens)
         classname=tokens[-1]
         namespace=string.replace(l, "::%s" % classname, "", -1)
