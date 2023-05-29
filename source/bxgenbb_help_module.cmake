@@ -47,6 +47,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/single_particle_generator.h
   ${module_include_dir}/${module_name}/combined_particle_generator.h
   ${module_include_dir}/${module_name}/time_slicer_generator.h
+  ${module_include_dir}/${module_name}/poi_generator.h
   ${module_include_dir}/${module_name}/save_to_file_wrapper.h
   ${module_include_dir}/${module_name}/lorentz_boost_wrapper.h
   ${module_include_dir}/${module_name}/from_file_generator.h
@@ -91,6 +92,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/single_particle_generator.cc
   ${module_source_dir}/combined_particle_generator.cc
   ${module_source_dir}/time_slicer_generator.cc
+  ${module_source_dir}/poi_generator.cc
   ${module_source_dir}/save_to_file_wrapper.cc
   ${module_source_dir}/lorentz_boost_wrapper.cc
   ${module_source_dir}/from_file_generator.cc
@@ -153,6 +155,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_nuclear_decay_manager.cxx
   ${module_test_dir}/test_nuclear_decay_generator.cxx
   ${module_test_dir}/test_wdecay0.cxx
+  ${module_test_dir}/test_poi_generator.cxx
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/test_reflection_0.cxx
   )

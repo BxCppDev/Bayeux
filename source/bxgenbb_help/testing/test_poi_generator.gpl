@@ -1,0 +1,19 @@
+set grid
+set xlabel "E (MeV)"
+set ylabel "Counts"
+
+plot [0:][0:] \
+     'test_poi_generator-e1.his' using (0.5*(column(1)+column(2))):(column(3)) title "E1" with histeps, \
+     'test_poi_generator-e2.his' using (0.5*(column(1)+column(2))):(column(3)) title "E2" with histeps, \
+     'test_poi_generator-p1.his' using (0.5*(column(1)+column(2))):(column(3)) title "P1" with histeps, \
+     'test_poi_generator-p2.his' using (0.5*(column(1)+column(2))):(column(3)) title "P2" with histeps, \
+     'test_poi_generator-g1.his' using (0.5*(column(1)+column(2))):(column(3)) title "G1" with histeps, \
+     'test_poi_generator-g2.his' using (0.5*(column(1)+column(2))):(column(3)) title "G2" with histeps
+pause -1 "Hit [Enter]..."
+
+
+## end
+
+
+
+     
