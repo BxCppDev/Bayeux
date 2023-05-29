@@ -26,8 +26,6 @@
  *   A generator of GENBB-like event that uses another generator and
  *   clusterize primary particles in special time slices.
  *
- * History:
- *
  */
 
 #ifndef GENBB_HELP_TIME_SLICER_GENERATOR_H

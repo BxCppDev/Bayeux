@@ -62,7 +62,7 @@ namespace genbb {
     : public datatools::i_serializable,
       public datatools::i_tree_dumpable
   {
-  public:
+  public: 
 
     /// Invalid generation Id
     static const int INVALID_GENERATION_ID = -1;
@@ -73,7 +73,6 @@ namespace genbb {
     /// provided to translate such a code into the corresponding PDG code, if possible.
     /// GEANT3 definition: http://www.star.bnl.gov/public/comp/simu/gstar/Manual/particle_id.html
     enum particle_type {
-      // UNDEF              = -1, //!< @deprecated Undefined particle type
       PARTICLE_UNDEFINED = -1, //!< Undefined particle type
       PARTICLE_UNKNOWN   = 0,  //!< A valid particle but unknown from the genbb library
       GAMMA              = 1,
