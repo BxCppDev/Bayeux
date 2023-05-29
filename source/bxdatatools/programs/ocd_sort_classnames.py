@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import string
 
@@ -41,9 +41,9 @@ if __name__ == "__main__" :
                     if trace :
                         sys.stderr.write(" - processing class = '%s'\n" % classname)
                     if len(classname) :
-                        print "%s::%s" % (namespace,classname)
+                        print("%s::%s" % (namespace,classname))
     else:
         for namespace in namespaces.keys() :
             for classname in namespaces[namespace]:
                 if len(classname) :
-                    print "%s::%s" % (namespace,classname)
+                    print("%s::%s" % (namespace,classname))
