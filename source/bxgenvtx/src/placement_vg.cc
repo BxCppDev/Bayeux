@@ -39,17 +39,17 @@ namespace genvtx {
 
   bool placement_vg::has_vg () const
   {
-    return _vg_ != 0 || _hvg_;
+    return _vg_ != nullptr || _hvg_;
   }
 
   bool placement_vg::is_owned () const
   {
-    return _vg_ != 0 && _owned_;
+    return _vg_ != nullptr && _owned_;
   }
 
   i_vertex_generator & placement_vg::grab_vg ()
   {
-    if (_vg_ != 0) {
+    if (_vg_ != nullptr) {
       return *_vg_;
     } else if (! _hvg_) {
       DT_THROW_IF (true, logic_error,"Missing vertex generator !");
@@ -59,7 +59,7 @@ namespace genvtx {
 
   const i_vertex_generator & placement_vg::get_vg () const
   {
-    if (_vg_ != 0) {
+    if (_vg_ != nullptr) {
       return *_vg_;
     } else if (! _hvg_) {
       DT_THROW_IF (true, logic_error,"Missing vertex generator !");
@@ -69,11 +69,11 @@ namespace genvtx {
 
   void placement_vg::_clear_vg_ ()
   {
-    if (_vg_ != 0) {
+    if (_vg_ != nullptr) {
       if (_owned_) {
         delete _vg_;
       }
-      _vg_ = 0;
+      _vg_ = nullptr;
     }
     _owned_ = false;
     return;
