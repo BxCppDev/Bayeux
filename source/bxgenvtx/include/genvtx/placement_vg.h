@@ -77,8 +77,8 @@ namespace genvtx {
   private:
 
     geomtools::placement _placement_;
-    bool                 _owned_;
-    i_vertex_generator * _vg_;
+    bool                 _owned_ = false;
+    i_vertex_generator * _vg_ = nullptr;
     vg_handle_type       _hvg_;
 
   private:
