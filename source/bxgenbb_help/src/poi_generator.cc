@@ -326,42 +326,33 @@ namespace genbb {
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::poi_generator,ocd_)
 {
   ocd_.set_class_name("genbb::poi_generator");
-  ocd_.set_class_description("Particle-Of-Interest generator");
+  ocd_.set_class_description("Particles-Of-Interest generator");
   ocd_.set_class_library("genbb_help");
-  ocd_.set_class_documentation("The ``genbb::poi_generator`` enables to          \n"
-                               "select the first primary event from a sequence of primary events\n"
-                               "with specific particle/energy topology.               \n"
+  ocd_.set_class_documentation("The ``genbb::poi_generator`` enables to select    \n"
+                               "the first primary event from a sequence of primary\n"
+                               "events with specific particle/energy topology.    \n"
                               );
 
   ::genbb::i_genbb::base_initialize_ocd(ocd_);
 
-  // ocd_.set_configuration_hints("Here are some typical configurations:                        \n"
-  //                              "                                                             \n"
-  //                              "                                                             \n"
-  //                              "***Example 1***                                              \n"
-  //                              "                                                             \n"
-  //                              "A generator that splits prompt and delayed parts of the      \n"
-  //                              "Bi-214 decay events:                                         \n"
-  //                              "::                                                           \n"
-  //                              "  logging.priority : string = \"fatal\"                      \n"
-  //                              "  generator : string = \"Bi214\"                             \n"
-  //                              "  mode : string = \"both_events\"                            \n"
-  //                              "  time_threshold : real as time = 400 ns                     \n"
-  //                              "  time_cut : real as time = 4 second                         \n"
-  //                              "                                                             \n"
-  //                              "                                                             \n"
-  //                              "***Example 2***                                              \n"
-  //                              "                                                             \n"
-  //                              "A generator that splits prompt and delayed parts of the      \n"
-  //                              "Bi-207 decay events:                                         \n"
-  //                              "::                                                           \n"
-  //                              "  logging.priority : string = \"fatal\"                      \n"
-  //                              "  generator : string = \"Bi207\"                             \n"
-  //                              "  mode : string = \"both_events\"                            \n"
-  //                              "  time_threshold : real as time = 10 us                      \n"
-  //                              "  time_cut : real as time = 2 ms                             \n"
-  //                              "                                                             \n"
-  //                              );
+  ocd_.set_configuration_hints("Here are some typical configurations:                        \n"
+                               "                                                             \n"
+                               "***Example***                                              \n"
+                               "                                                             \n"
+                               "A generator that selects Bi-207 events with two high         \n"
+			       "energy electrons:                                            \n"
+                               "::                                                           \n"
+                               "  logging.priority : string = \"fatal\"                      \n"
+                               "  generator : string = \"Bi207\"                             \n"
+                               "  poi.number_of_particules : integer = 2                     \n"
+                               "  poi.particule_0.type : string = \"electron\"               \n"
+			       "  poi.particule_0.min_energy : real as energy =  500 keV     \n"
+			       "  poi.particule_0.max_energy : real as energy = 2000 keV     \n"
+                               "  poi.particule_1.type : string = \"electron\"               \n"
+			       "  poi.particule_1.min_energy : real as energy =  500 keV     \n"
+                               "                                                             \n"
+                               "                                                             \n"
+                               );
 
   ocd_.set_validation_support(false);
   ocd_.lock();

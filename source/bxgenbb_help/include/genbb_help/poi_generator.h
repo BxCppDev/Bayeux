@@ -24,7 +24,7 @@
  * Description:
  *
  *   A generator of GENBB-like event that uses another generator and
- *   select only generated events woth a specific particle/energy topology.
+ *   select only generated events with a specific particle/energy topology.
  *
  */
 
@@ -45,8 +45,7 @@
 
 namespace genbb {
 
-  /// \brief A event generator wrapper which select a specific event topology from another generator
-  ///
+  /// \brief A event generator wrapper which selects a specific event topology from another generator
   class poi_generator
     : public i_genbb
   {
@@ -54,6 +53,7 @@ namespace genbb {
 
   public:
 
+    /// Definition of particle contraints 
     struct poi_info_type 
     {
       int type = (int) primary_particle::PARTICLE_UNDEFINED;
@@ -61,7 +61,8 @@ namespace genbb {
       double max_energy = std::numeric_limits<double>::infinity();
     };
 
-    typedef std::vector<poi_info_type> poi_cut_type;
+    /// List of particles constraints
+    typedef std::vector<poi_info_type> poi_cut_type; 
  
     bool has_generator() const;
 
@@ -99,8 +100,9 @@ namespace genbb {
     ///
     /// Example:
     ///
-    /// Request at least one electron with 1 MeV <= E <= 10 MeV and one gamme with E > 500 keV
+    /// Request at least one electron with 1 MeV <= E <= 10 MeV and one gamma with E >= 500 keV
     ///
+    /// generator : string = "Bi207"
     /// poi.number_of_particules : integer = 2
     /// poi.particle_0.type       : string = "electron"
     /// poi.particle_0.min_energy : real as energy = 1.0 MeV
@@ -141,7 +143,7 @@ namespace genbb {
 
     // Configuration:
     i_genbb * _pg_ = nullptr; //!< Reference to a wrapped particle generator
-    poi_cut_type _poi_cut_;
+    poi_cut_type _poi_cut_; //!< Primary particles selector
     bool _record_original_event_id_ = true; //!< Flag to record the original event ID in the auxiliaries
  
     // Working data:
