@@ -8,7 +8,7 @@
  * Description:
  *
  *   Utilities for units based on the CLHEP library's implementation
-  *
+ *
  */
 #ifndef DATATOOLS_UNITS_H
 #define DATATOOLS_UNITS_H
@@ -481,9 +481,9 @@ namespace datatools {
 
       //! Smart print
       void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_ = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const override;
+										 const std::string & title_ = "",
+										 const std::string & indent_ = "",
+										 bool inherit_ = false) const override;
 
     protected:
 
@@ -603,9 +603,9 @@ namespace datatools {
 
       //! Smart print
       void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_ = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const override;
+										 const std::string & title_ = "",
+										 const std::string & indent_ = "",
+										 bool inherit_ = false) const override;
 
     protected:
 
@@ -696,11 +696,59 @@ namespace datatools {
       //! Register standard units
       void register_standard_units();
 
+      //! Register standard units
+      void register_standard_units_length();
+
+      //! Register standard units
+      void register_standard_units_mass();
+
+      //! Register standard units
+      void register_standard_units_time();
+
+      //! Register standard units
+      void register_standard_units_electric_current();
+
+      //! Register standard units
+      void register_standard_units_temperature();
+
+      //! Register standard units
+      void register_standard_units_amount();
+
+      //! Register standard units
+      void register_standard_units_surface();
+
+      //! Register standard units
+      void register_standard_units_volume();
+
+      //! Register standard units
+      void register_standard_units_cross_section();
+
+      //! Register standard units
+      void register_standard_units_angle();
+
+      //! Register standard units
+      void register_standard_units_solid_angle();
+
+      //! Register standard units
+      void register_standard_units_energy();
+
+      //! Register standard units
+      void register_standard_units_pressure();
+
+      //! Register standard units
+      void register_standard_units_velocity();
+
+      //! Register standard units
+      void register_standard_units_data_storage();
+
+      //! Register standard units
+      void register_standard_units_data_transfer_rate();
+
       //! Smart print
       void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_ = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const override;
+										 const std::string & title_ = "",
+										 const std::string & indent_ = "",
+										 bool inherit_ = false) const override;
 
     protected:
 
