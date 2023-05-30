@@ -4,8 +4,8 @@
 #-----------------------------------------------------------------------
 # Copyright 2012,2013 Ben Morgan <bmorgan.warwick@gmail.com>
 # Copyright 2012,2013 University of Warwick
-# Copyright 2022 François Mauger <mauger@lpccaen.in2p3.fr>
-# Copyright 2022 Université Caen Normandie
+# Copyright 2023 François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright 2023 Université Caen Normandie
 #
 # This file is part of Bayeux.
 #

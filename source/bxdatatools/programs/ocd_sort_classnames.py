@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-import string
+# import string
 
 if __name__ == "__main__" :
     trace=False
@@ -27,7 +27,7 @@ if __name__ == "__main__" :
         tokens=l.split("::")
         ntokens=len(tokens)
         classname=tokens[-1]
-        namespace=string.replace(l, "::%s" % classname, "", -1)
+        namespace=l.replace("::%s" % classname, "", -1)
         if not namespace in namespaces.keys() :
             namespaces[namespace] = []
         namespaces[namespace].append(classname)

@@ -647,6 +647,7 @@ set(${module_name}_MODULE_EXAMPLES
 
 # - Utility script:
 if(BAYEUX_WITH_DEVELOPER_TOOLS)
+  
   configure_file(${module_app_dir}/ocd_make_doc
     ${BAYEUX_BUILD_BINDIR}/bxocd_make_doc @ONLY)
   configure_file(${module_app_dir}/ocd_sort_classnames.py
