@@ -308,6 +308,8 @@ namespace mctools {
       _event_action_->set_aborted_event(false);
       _event_action_->set_killed_event(false);
 
+      // 2023-06-01 FM : introduction of vertex reuse mechanism implies to move
+      // this code in the _generate_event method
       // // Generate the vertex[/time]:
       // geomtools::invalidate(_current_vertex_);
       // datatools::invalidate(_current_time_);
