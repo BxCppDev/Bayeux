@@ -123,7 +123,7 @@ namespace genbb {
     return _record_original_event_id_;
   }
 
-  bool time_slicer_generator::can_external_random () const
+  bool time_slicer_generator::can_external_random() const
   {
     return true;
   }
@@ -289,8 +289,10 @@ namespace genbb {
         primary_event delayed_event;
         if (_record_original_event_id_) {
           int original_event_id = (int) _original_event_counter_;
-          prompt_event.grab_auxiliaries().store("original_event_id", original_event_id);
-          delayed_event.grab_auxiliaries().store("original_event_id", original_event_id);
+          prompt_event.grab_auxiliaries().store(primary_event::original_event_id_key(),
+						original_event_id);
+          delayed_event.grab_auxiliaries().store(primary_event::original_event_id_key(),
+						 original_event_id);
         }
         _original_event_counter_++;
         for (std::size_t ipart = 0; ipart < working_event.get_number_of_particles(); ipart++) {

@@ -51,6 +51,13 @@ namespace genbb {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_event, "genbb::primary_event")
 
+  // static
+  const std::string & primary_event::original_event_id_key()
+  {
+    static const std::string _k("original_event_id");
+    return _k;
+  }
+ 
   bool primary_event::is_valid() const
   {
     if (_particles_.size() == 0) {
@@ -142,8 +149,8 @@ namespace genbb {
 
   void primary_event::set_genbb_weight(double genbb_weight_)
   {
-    DT_THROW_IF (genbb_weight_ < 0.0, std::logic_error,
-                 "Invalid 'genbb_weight' value  (" << genbb_weight_ << " < 0) !");
+    DT_THROW_IF(genbb_weight_ < 0.0, std::logic_error,
+		"Invalid 'genbb_weight' value  (" << genbb_weight_ << " < 0) !");
     _genbb_weight_ = genbb_weight_;
     return;
   }

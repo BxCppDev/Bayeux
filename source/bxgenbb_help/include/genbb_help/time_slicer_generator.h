@@ -23,8 +23,8 @@
  *
  * Description:
  *
- *   A generator of GENBB-like event that uses another generator and
- *   clusterize primary particles in special time slices.
+ *   A generator of GENBB-like events that uses/wraps another generator and
+ *   clusterizes primary particles in special time slices.
  *
  */
 

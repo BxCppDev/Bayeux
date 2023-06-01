@@ -9,8 +9,6 @@
  *
  *   G4 primary event generator action
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_G4_PRIMARY_GENERATOR_H
@@ -123,15 +121,17 @@ namespace mctools {
 
     private:
 
-      bool                 _initialized_;  //!< Initialization flag
-      run_action        *  _run_action_;   //!< The Geant4 run action
-      event_action      *  _event_action_; //!< The Geant4 event action
-      ::genvtx::i_vertex_generator * _vertex_generator_; //!< The external vertex generator
-      ::genbb::i_genbb  *  _event_generator_; //!< The external event generator
-      G4ParticleGun *      _particle_gun_;    //!< The Geant4 particle gun
+      bool                 _initialized_ = false;    //!< Initialization flag
+      run_action        *  _run_action_ = nullptr;   //!< The Geant4 run action
+      event_action      *  _event_action_ = nullptr; //!< The Geant4 event action
+      ::genvtx::i_vertex_generator * _vertex_generator_ = nullptr; //!< The external vertex generator
+      ::genbb::i_genbb  *  _event_generator_ = nullptr; //!< The external event generator
+      G4ParticleGun *      _particle_gun_ = nullptr;    //!< The Geant4 particle gun
+			bool                 _reuse_vertex_at_same_event_id_ = true;
+			int                  _last_event_id_ = -1;
       geomtools::vector_3d _current_vertex_;  //!< The current generated vertex
       double               _current_time_;    //!< The current generated time (if any)
-      size_t               _event_counter_;   //!< The event counter
+      size_t               _event_counter_ = 0;   //!< The event counter
       std::map<std::string, std::string> _particle_names_map_; //!< A dictionary of particle names
       boost::scoped_ptr<mctools::biasing::primary_event_bias> _bias_; //!< Handle to a primary event bias algorithm
 

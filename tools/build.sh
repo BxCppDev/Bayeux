@@ -75,8 +75,12 @@ only_configure=0
 debug=0
 bayeux_source_dir="${opwd}"
 bayeux_version="develop"
-install_base_dir=$(pwd)/_install.d
 build_base_dir=$(pwd)/_build.d
+install_base_dir=$(pwd)/_install.d
+if [ -d /opt/SW/Bayeux3 ]; then
+    build_base_dir="/opt/SW/Bayeux3/_build.d"
+    install_base_dir="/opt/SW/Bayeux3/_install.d"
+fi
 clean_build_dir=false
 bayeux_suffix=
 with_bxdecay0=true

@@ -205,6 +205,8 @@ namespace genbb {
     /// Remove generation Ids from all particle
     void remove_generation_ids();
 
+    static const std::string & original_event_id_key();
+
   protected:
 
     /// Set default attibutes values

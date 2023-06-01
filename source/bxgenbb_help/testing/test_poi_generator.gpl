@@ -1,14 +1,18 @@
 set grid
 set xlabel "E (MeV)"
 set ylabel "Counts"
+set key out
 
 plot [0:][0:] \
-     'test_poi_generator-e1.his' using (0.5*(column(1)+column(2))):(column(3)) title "E1" with histeps, \
-     'test_poi_generator-e2.his' using (0.5*(column(1)+column(2))):(column(3)) title "E2" with histeps, \
-     'test_poi_generator-p1.his' using (0.5*(column(1)+column(2))):(column(3)) title "P1" with histeps, \
-     'test_poi_generator-p2.his' using (0.5*(column(1)+column(2))):(column(3)) title "P2" with histeps, \
-     'test_poi_generator-g1.his' using (0.5*(column(1)+column(2))):(column(3)) title "G1" with histeps, \
-     'test_poi_generator-g2.his' using (0.5*(column(1)+column(2))):(column(3)) title "G2" with histeps
+     'test_poi_generator-e1.his' using (0.5*(column(1)+column(2))):(column(3)) title "e-" with histeps lw 2, \
+     'test_poi_generator-p1.his' using (0.5*(column(1)+column(2))):(column(3)) title "e+" with histeps lw 2, \
+     'test_poi_generator-g1.his' using (0.5*(column(1)+column(2))):(column(3)) title "gamma" with histeps lw 2
+pause -1 "Hit [Enter]..."
+
+plot [0:10][0:] \
+     'test_poi_generator-ne.his'    using (0.5*(column(1)+column(2))):(column(3)) title "Ne-" with histeps lw 2, \
+     'test_poi_generator-ne_he.his' using (0.5*(column(1)+column(2))):(column(3)) title "Ne- (HE)" with histeps lw 2, \
+     'test_poi_generator-ng.his'    using (0.5*(column(1)+column(2))):(column(3)) title "Ng" with histeps lw 2
 pause -1 "Hit [Enter]..."
 
 

@@ -88,7 +88,7 @@ namespace mctools {
 
     bool primary_generator::has_vertex_generator() const
     {
-      return _vertex_generator_ != 0;
+      return _vertex_generator_ != nullptr;
     }
 
     void primary_generator::set_vertex_generator(::genvtx::i_vertex_generator & vertex_generator_)
@@ -125,11 +125,11 @@ namespace mctools {
     primary_generator::primary_generator()
     {
       _initialized_ = false;
-      _run_action_ = 0;
-      _event_action_ = 0;
-      _vertex_generator_ = 0;
-      _event_generator_ = 0;
-      _particle_gun_ = 0;
+      _run_action_ = nullptr;
+      _event_action_ = nullptr;
+      _vertex_generator_ = nullptr;
+      _event_generator_ = nullptr;
+      _particle_gun_ = nullptr;
       _event_counter_ = 0;
       _set_defaults();
       return;
@@ -214,13 +214,19 @@ namespace mctools {
       }
 
       // Checks:
-      if (_run_action_ == 0) {
+      if (_run_action_ == nullptr) {
         G4Exception ("mctools::g4::primary_generator::initialize",
                      "InitializationError",
                      RunMustBeAborted,
                      "Missing run action !");
       }
 
+      // Activate reusing of vertex for events with shared event ID:
+      if (config_.has_key("reuse_vertex_at_same_event_id")) {
+	bool reuseVertexAtSameEventId = config_.fetch_boolean("reuse_vertex_at_same_event_id");
+	_reuse_vertex_at_same_event_id_ = reuseVertexAtSameEventId;
+      }
+ 
       // Activate primary event biasing:
       if (config_.has_key("using_bias")) {
         bool use_bias = config_.fetch_boolean("using_bias");
@@ -234,19 +240,19 @@ namespace mctools {
       }
 
       // Checks:
-      if (_event_action_ == 0) {
+      if (_event_action_ == nullptr) {
         G4Exception("mctools::g4::primary_generator::initialize",
                     "InitializationError",
                     RunMustBeAborted,
                     "Missing event action !");
       }
-      if (_event_generator_ == 0) {
+      if (_event_generator_ == nullptr) {
         G4Exception("mctools::g4::primary_generator::initialize",
                     "InitializationError",
                     RunMustBeAborted,
                     "Missing event generator !");
       }
-      if (_vertex_generator_ == 0) {
+      if (_vertex_generator_ == nullptr) {
         DT_LOG_WARNING(_logprio(), "No vertex generator is provided !");
       }
       _check();
@@ -273,14 +279,14 @@ namespace mctools {
       }
 
       // Destroy the gun:
-      if (_particle_gun_ != 0) {
+      if (_particle_gun_ != nullptr) {
         delete _particle_gun_;
-        _particle_gun_ = 0;
+        _particle_gun_ = nullptr;
       }
-      _run_action_ = 0;
-      _event_action_ = 0;
-      _event_generator_ = 0;
-      _vertex_generator_ = 0;
+      _run_action_ = nullptr;
+      _event_action_ = nullptr;
+      _event_generator_ = nullptr;
+      _vertex_generator_ = nullptr;
       _set_defaults();
       _initialized_ = false;
       return;
@@ -302,14 +308,13 @@ namespace mctools {
       _event_action_->set_aborted_event(false);
       _event_action_->set_killed_event(false);
 
-      // Generate the vertex[/time]:
-      geomtools::invalidate(_current_vertex_);
-      datatools::invalidate(_current_time_);
-      if (! geomtools::is_valid(_current_vertex_)) {
-        if (_vertex_generator_ != 0) {
-          _generate_vertex();
-        }
-      }
+      // // Generate the vertex[/time]:
+      // geomtools::invalidate(_current_vertex_);
+      // datatools::invalidate(_current_time_);
+      // if (_vertex_generator_ != nullptr) {
+      // 	_generate_vertex();
+      // }
+      
       // Generate the primary event:
       _generate_event(g4_event_);
       // Increment the event counter:
@@ -377,6 +382,32 @@ namespace mctools {
       _event_generator_->load_next(current_generated_event);
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["EG"].stop();
+      }
+
+      bool reuseVertex = false;
+      if (_reuse_vertex_at_same_event_id_) {
+	if (current_generated_event.get_auxiliaries().has_key(genbb::primary_event::original_event_id_key())) {
+	  int eventID = current_generated_event.get_auxiliaries().fetch_integer(genbb::primary_event::original_event_id_key());
+	  if (_last_event_id_ != -1) {
+	    if (_last_event_id_ == eventID) {
+	      // Same event ID -> reuse the previous vertex
+	      reuseVertex = true;
+	    } else {
+	      _last_event_id_ = eventID;
+	    }
+	  } else {
+	    _last_event_id_ = eventID;
+	  }
+	}
+      }
+
+      if (not reuseVertex) {
+	// Generate the vertex[/time]:
+	geomtools::invalidate(_current_vertex_);
+	datatools::invalidate(_current_time_);
+	if (_vertex_generator_ != nullptr) {
+          _generate_vertex();
+        }
       }
 
       // Default event reference time:
@@ -449,7 +480,7 @@ namespace mctools {
          *  ...
          */
         G4String g4_particle_name; // = get_g4_particle_name_from_genbb_particle(genbb_particle);
-        G4ParticleDefinition * g4_particle = 0;
+        G4ParticleDefinition * g4_particle = nullptr;
 
         double particle_mass = datatools::invalid_real();
         if (genbb_particle.mass_is_known()) {
@@ -461,7 +492,7 @@ namespace mctools {
           // Support for particle PDG encoding: NOT USABLE YET FOR NOW BECAUSE THIS INTERFACE
           // NEEDS MORE WORKS.
           g4_particle = particle_table->FindParticle(genbb_particle.get_pdg_code());
-          if (g4_particle == 0) {
+          if (g4_particle == nullptr) {
             std::ostringstream message;
             message << "genbb's nucleus particle with PDG code='"
                     << genbb_particle.get_pdg_code()
@@ -587,7 +618,7 @@ namespace mctools {
             }
             // Make it a G4 particle:
             g4_particle = particle_table->FindParticle(g4_particle_name);
-            if (g4_particle == 0) {
+            if (g4_particle == nullptr) {
               std::ostringstream message;
               message << "mctools::g4::primary_generator::_generate_event: "
                       << "Particle named '" << g4_particle_name << "' is not defined within the Geant4 framework !";
@@ -809,7 +840,43 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::primary_generator,ocd_)
                             )
       ;
   }
-
+  
+  {
+    // Description of the 'reuse_vertex_at_same_event_id' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("reuse_vertex_at_same_event_id")
+      .set_terse_description("Flag for vertex reuse for successive events with the same event ID")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+                            "                                                       \n"
+                            "  reuse_vertex_at_same_event_id : boolean = true       \n"
+			    )
+      ;
+  }
+  
+  {
+    // Description of the 'using_bias' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("using_bias")
+      .set_terse_description("Flag for activating primary event biasing")
+	  .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_long_description("Example::                                              \n"
+			    "                                                       \n"
+			    "  using_bias : boolean = true                          \n"
+			    "  bias.mode : string = \"master\"                      \n"
+			    "  bias.particle.labels : string[2] = \"e-\" \"gamma\"  \n"
+			    "  bias.particle.min_energy : real as energy = 200 keV  \n"
+			    "  bias.particle.max_energy : real as energy = 3000 keV  \n"
+			    "  bias.total_min_energy    : real as energy = 1000 keV  \n"
+			    "  bias.total_max_energy    : real as energy = 5000 keV  \n"
+			    )
+      ;
+  }
+  
   {
     // Description of the 'particle_names_map' configuration property :
     datatools::configuration_property_description & cpd
@@ -840,11 +907,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::primary_generator,ocd_)
 
 
   // Additionnal configuration hints :
-  ocd_.set_configuration_hints("Typical configuration is::                                             \n"
-                               "                                                                       \n"
-                               " #@description Set the logging priority                           \n"
-                               " logging.priority : string = \"warning\"                               \n"
-                               "                                                                       \n"
+  ocd_.set_configuration_hints("Typical configuration is::                          \n"
+                               "                                                    \n"
+                               " #@description Set the logging priority             \n"
+                               " logging.priority : string = \"warning\"            \n"
+                               "                                                    \n"
                                );
 
   ocd_.set_validation_support(true);
