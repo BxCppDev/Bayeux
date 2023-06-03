@@ -106,13 +106,13 @@ int main (int argc_, char ** argv_)
       //surface_mask |= geomtools::polycone::FACE_OUTER_SIDE;
       surface_mask |= geomtools::polycone::FACE_BOTTOM;
       //surface_mask |= geomtools::polycone::FACE_TOP;
-      std::cerr << "*** DEVEL *** Surface mask : " << surface_mask << std::endl;
+      // std::cerr << "*** DEVEL *** Surface mask : " << surface_mask << std::endl;
       vg.set_surface_mask(surface_mask);
       vg.set_skin_skip(0.0);
       vg.set_skin_thickness(0.0);
       vg.set_active_all_frustrum();
       vg.initialize_simple();
-      std::cerr << "*** DEVEL *** initialize_simple done." << std::endl;
+      // std::cerr << "*** DEVEL *** initialize_simple done." << std::endl;
       vg.tree_dump(clog, "Polycone vertex generator 1 : ");
       size_t nshoots = 5000;
       geomtools::vector_3d vertex;
@@ -136,7 +136,7 @@ int main (int argc_, char ** argv_)
       vg.set_mode(genvtx::polycone_vg::MODE_BULK);
       int bulk_mask = 0;
       bulk_mask |= genvtx::polycone_vg::BULK_BODY;
-      std::cerr << "*** DEVEL *** Bulk mask : " << bulk_mask << std::endl;
+      // std::cerr << "*** DEVEL *** Bulk mask : " << bulk_mask << std::endl;
       vg.set_bulk_mask(bulk_mask);
       // vg.set_skin_skip(0.20);
       // vg.set_skin_thickness(0.10);
@@ -167,7 +167,7 @@ int main (int argc_, char ** argv_)
       vg.set_mode(genvtx::polycone_vg::MODE_BULK);
       int bulk_mask = 0;
       bulk_mask |= genvtx::polycone_vg::BULK_CAVITY;
-      std::cerr << "*** DEVEL *** Bulk mask : " << bulk_mask << std::endl;
+      // std::cerr << "*** DEVEL *** Bulk mask : " << bulk_mask << std::endl;
       vg.set_bulk_mask(bulk_mask);
       // vg.set_skin_skip(0.20);
       // vg.set_skin_thickness(0.10);
