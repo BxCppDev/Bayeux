@@ -365,6 +365,7 @@ namespace dpp {
     the_module_entry.set_blank ();
 
     DT_LOG_DEBUG (get_logging_priority(), "Fetch module properties...");
+    DT_LOG_DEBUG (get_logging_priority(), "Module: " << module_id_);
 
     bool force_initialization_at_load = false;
 
