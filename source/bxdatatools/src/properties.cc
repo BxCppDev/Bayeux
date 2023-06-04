@@ -4497,20 +4497,27 @@ namespace datatools {
                                           _section_start_line_number_,
                                           _current_line_number_,
                                           "Property override/append is not allowed for array with key '" << prop_key << "'!");
-                DT_PROP_CFG_READ_THROW_IF(! props_.has_key(prop_key),
-                                          std::logic_error,
-                                          _current_filename_,
-                                          _section_name_,
-                                          _section_start_line_number_,
-                                          _current_line_number_,
-                                          "Key '" << prop_key << "' is not used and no append action can be done on it!");
-                DT_PROP_CFG_READ_THROW_IF(! props_.is_vector(prop_key),
-                                          std::logic_error,
-                                          _current_filename_,
-                                          _section_name_,
-                                          _section_start_line_number_,
-                                          _current_line_number_,
-                                          "Key '" << prop_key << "' is not a vector property and no append action can be done on it!");
+		if (! props_.has_key(prop_key)) {
+		  // Revert to non "append mode" for array
+		  array_append = false;
+		  /*
+		  DT_PROP_CFG_READ_THROW_IF(true,
+					    std::logic_error,
+					    _current_filename_,
+					    _section_name_,
+					    _section_start_line_number_,
+					    _current_line_number_,
+					    "Key '" << prop_key << "' is not used and no append action can be done on it!");
+		  */
+		} else {
+		  DT_PROP_CFG_READ_THROW_IF(! props_.is_vector(prop_key),
+					    std::logic_error,
+					    _current_filename_,
+					    _section_name_,
+					    _section_start_line_number_,
+					    _current_line_number_,
+					    "Key '" << prop_key << "' is not a vector property and no append action can be done on it!");
+		}
               } else {
                 if (props_.has_key(prop_key)) {
                   if (!allow_key_override) {
@@ -4532,7 +4539,7 @@ namespace datatools {
                   if (clean_key) {
                     props_.clean(prop_key);
                   }
-               }
+		}
               }
               // std::cerr << "***** DEVEL ***" << "About to store property '" << prop_key << "' ************" << std::endl;
 
@@ -4649,91 +4656,91 @@ namespace datatools {
                   } else {
                     // std::cerr << "***** DEVEL ***" << "Append mode vector property '" << prop_key << "' ************" << std::endl;
                     if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
-                      DT_PROP_CFG_READ_THROW_IF(not props_.is_boolean(prop_key) and not props_.is_vector(prop_key),
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Original property with key '" << prop_key << "' is not a boolean vector property!");
-
-                      data::vbool v_booleans_appended;
-                      props_.fetch(prop_key, v_booleans_appended);
-                      for (auto val : v_booleans) {
-                        v_booleans_appended.push_back(val);
-                      }
-                      props_.update(prop_key, v_booleans_appended);
-                    }
+		      DT_PROP_CFG_READ_THROW_IF(not props_.is_boolean(prop_key) and not props_.is_vector(prop_key),
+						std::logic_error,
+						_current_filename_,
+						_section_name_,
+						_section_start_line_number_,
+						_current_line_number_,
+						"Original property with key '" << prop_key << "' is not a boolean vector property!");
+			
+		      data::vbool v_booleans_appended;
+		      props_.fetch(prop_key, v_booleans_appended);
+		      for (auto val : v_booleans) {
+			v_booleans_appended.push_back(val);
+		      }
+		      props_.update(prop_key, v_booleans_appended);
+		    }
                     if (type == properties::data::TYPE_INTEGER_SYMBOL) {
-                      DT_PROP_CFG_READ_THROW_IF(not props_.is_integer(prop_key) and not props_.is_vector(prop_key),
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Original property with key '" << prop_key << "' is not an integer vector property!");
-
-                      data::vint v_integers_appended;
-                      props_.fetch(prop_key, v_integers_appended);
-                      for (auto val : v_integers) {
-                        v_integers_appended.push_back(val);
-                      }
-                      props_.update(prop_key, v_integers_appended);
+		      DT_PROP_CFG_READ_THROW_IF(not props_.is_integer(prop_key) and not props_.is_vector(prop_key),
+						std::logic_error,
+						_current_filename_,
+						_section_name_,
+						_section_start_line_number_,
+						_current_line_number_,
+						"Original property with key '" << prop_key << "' is not an integer vector property!");
+			
+		      data::vint v_integers_appended;
+		      props_.fetch(prop_key, v_integers_appended);
+		      for (auto val : v_integers) {
+			v_integers_appended.push_back(val);
+		      }
+		      props_.update(prop_key, v_integers_appended);
                     }
                     if (type == properties::data::TYPE_REAL_SYMBOL) {
-                      DT_PROP_CFG_READ_THROW_IF(not props_.is_real(prop_key) and not props_.is_vector(prop_key),
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Original property with key '" << prop_key << "' is not a real vector property!");
-                      data::vdouble v_reals_appended;
-                      props_.fetch(prop_key, v_reals_appended);
-                      for (auto val : v_reals) {
-                        v_reals_appended.push_back(val);
-                      }
-                      if (with_explicit_unit) {
-                        DT_PROP_CFG_READ_THROW_IF(not props_.has_explicit_unit(prop_key),
-                                                  std::logic_error,
-                                                  _current_filename_,
-                                                  _section_name_,
-                                                  _section_start_line_number_,
-                                                  _current_line_number_,
-                                                  "Original real vector key '" << prop_key << "' has no explicit unit!");
-                        DT_PROP_CFG_READ_THROW_IF(props_.has_unit_symbol(prop_key)
-                                                  and props_.get_unit_symbol(prop_key) != unit_symbol,
-                                                  std::logic_error,
-                                                  _current_filename_,
-                                                  _section_name_,
-                                                  _section_start_line_number_,
-                                                  _current_line_number_,
-                                                  "Original real vector key '" << prop_key << "' has unmatching explicit unit '" << props_.get_unit_symbol(prop_key) << "' with respect to appended values with unit '" << unit_symbol << "'!");
-                      }
-                      props_.update(prop_key, v_reals_appended);
+		      DT_PROP_CFG_READ_THROW_IF(not props_.is_real(prop_key) and not props_.is_vector(prop_key),
+						std::logic_error,
+						_current_filename_,
+						_section_name_,
+						_section_start_line_number_,
+						_current_line_number_,
+						"Original property with key '" << prop_key << "' is not a real vector property!");
+		      data::vdouble v_reals_appended;
+		      props_.fetch(prop_key, v_reals_appended);
+		      for (auto val : v_reals) {
+			v_reals_appended.push_back(val);
+		      }
+		      if (with_explicit_unit) {
+			DT_PROP_CFG_READ_THROW_IF(not props_.has_explicit_unit(prop_key),
+						  std::logic_error,
+						  _current_filename_,
+						  _section_name_,
+						  _section_start_line_number_,
+						  _current_line_number_,
+						  "Original real vector key '" << prop_key << "' has no explicit unit!");
+			DT_PROP_CFG_READ_THROW_IF(props_.has_unit_symbol(prop_key)
+						  and props_.get_unit_symbol(prop_key) != unit_symbol,
+						  std::logic_error,
+						  _current_filename_,
+						  _section_name_,
+						  _section_start_line_number_,
+						  _current_line_number_,
+						  "Original real vector key '" << prop_key << "' has unmatching explicit unit '" << props_.get_unit_symbol(prop_key) << "' with respect to appended values with unit '" << unit_symbol << "'!");
+		      }
+		      props_.update(prop_key, v_reals_appended);
                     }
                     if (type == properties::data::TYPE_STRING_SYMBOL) {
-                      DT_PROP_CFG_READ_THROW_IF(not props_.is_string(prop_key) and not props_.is_vector(prop_key),
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Original property with key '" << prop_key << "' is not a string vector property!");
-                      DT_PROP_CFG_READ_THROW_IF(with_explicit_path != props_.is_explicit_path(prop_key),
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Original string vector key '" << prop_key << "' has unmatching explicit path with respect to appended vector!");
-                      data::vstring v_strings_appended;
-                      props_.fetch(prop_key, v_strings_appended);
-                      for (auto val : v_strings) {
-                        v_strings_appended.push_back(val);
-                      }
-                      props_.update(prop_key, v_strings_appended);
-                    }
+		      DT_PROP_CFG_READ_THROW_IF(not props_.is_string(prop_key) and not props_.is_vector(prop_key),
+						std::logic_error,
+						_current_filename_,
+						_section_name_,
+						_section_start_line_number_,
+						_current_line_number_,
+						"Original property with key '" << prop_key << "' is not a string vector property!");
+		      DT_PROP_CFG_READ_THROW_IF(with_explicit_path != props_.is_explicit_path(prop_key),
+						std::logic_error,
+						_current_filename_,
+						_section_name_,
+						_section_start_line_number_,
+						_current_line_number_,
+						"Original string vector key '" << prop_key << "' has unmatching explicit path with respect to appended vector!");
+		      data::vstring v_strings_appended;
+		      props_.fetch(prop_key, v_strings_appended);
+		      for (auto val : v_strings) {
+			v_strings_appended.push_back(val);
+		      }
+		      props_.update(prop_key, v_strings_appended);
+		    }
                   }
                 }
                 prop_description.clear();
