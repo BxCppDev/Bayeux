@@ -353,13 +353,6 @@ namespace mctools {
         mgr.grab_CT_map()["VG"].stop();
       }
 
-      // Save current event vertex:
-      _event_action_->grab_event_data().set_vertex(_current_vertex_);
-      if (datatools::is_valid(_current_time_)) {
-        // Save current event time:
-        _event_action_->grab_event_data().set_time(_current_time_);
-      }
-
       return;
     }
 
@@ -377,7 +370,7 @@ namespace mctools {
       ::genbb::primary_event & current_generated_event
           = _event_action_->grab_event_data().grab_primary_event();
 
-      manager & mgr = _event_action_->grab_run_action ().grab_manager();
+      manager & mgr = _event_action_->grab_run_action().grab_manager();
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["EG"].start();
       }
@@ -410,6 +403,15 @@ namespace mctools {
 	if (_vertex_generator_ != nullptr) {
           _generate_vertex();
         }
+      }
+
+      if (geomtools::is_valid(_current_vertex_)) {
+	// Save current event vertex:
+	_event_action_->grab_event_data().set_vertex(_current_vertex_);
+      }
+      if (datatools::is_valid(_current_time_)) {
+        // Save current event time:
+        _event_action_->grab_event_data().set_time(_current_time_);
       }
 
       // Default event reference time:
