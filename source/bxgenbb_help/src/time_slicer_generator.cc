@@ -227,7 +227,7 @@ namespace genbb {
     if (!has_mode()) {
       if (config_.has_key("mode")) {
         std::string mode = config_.fetch_string("mode");
-        if (mode == "prompt_only") {
+        if (mode == "prompt_event_only") {
           set_mode(SM_PROMPT_EVENT_ONLY);
         } else if (mode == "delayed_event_only") {
           set_mode(SM_DELAYED_EVENT_ONLY);
