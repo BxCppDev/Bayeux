@@ -581,6 +581,7 @@ namespace mctools {
     datatools::i_tree_dumpable::base_print_options popts;
     popts.configure_from(options_);
     bool hit_list  = options_.get<bool>("list_hits", false);
+    bool primary_particle_list  = options_.get<bool>("list_primary_particles", false);
     if (! popts.title.empty ()) {
       out_ << popts.indent << popts.title << std::endl;
     }
@@ -699,12 +700,16 @@ namespace mctools {
     // Primary event:
     {
       out_ << popts.indent << datatools::i_tree_dumpable::tag
-            << "Primary event : " << std::endl;
+	   << "Primary event : "
+	   << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << popts.indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _primary_event_.tree_dump(out_, "", indent_oss.str());
+	boost::property_tree::ptree pe_options;
+	pe_options.put("indent", indent_oss.str());
+	pe_options.put("list_particles", primary_particle_list);
+        _primary_event_.print_tree(out_, pe_options);
       }
     }
 

@@ -395,6 +395,7 @@ namespace genbb {
     base_print_options popts;
     popts.configure_from(options_);
     std::ostringstream outs;
+    bool list_particles = options_.get<bool>("list_particles", true);
     if (! popts.title.empty ()) {
       outs << popts.indent << popts.title << std::endl;
     }
@@ -422,29 +423,30 @@ namespace genbb {
     outs << std::endl;
 
     outs << popts.indent << tag << "Particles: [" << _particles_.size() << "]" << std::endl;
-
-    int particle_counter = 0;
-    for (particles_col_type::const_iterator it = _particles_.begin();
-         it != _particles_.end();
-         it++) {
-      std::ostringstream indent_oss;
-      indent_oss << popts.indent << skip_tag;
-      particles_col_type::const_iterator jt = it;
-      jt++;
-      outs << popts.indent << skip_tag;
-      if (jt == _particles_.end()) {
-        outs << last_tag;
-        indent_oss << last_skip_tag;
-      } else {
-        outs << tag;
-        indent_oss << skip_tag;
+    if (list_particles) {
+      int particle_counter = 0;
+      for (particles_col_type::const_iterator it = _particles_.begin();
+	   it != _particles_.end();
+	   it++) {
+	std::ostringstream indent_oss;
+	indent_oss << popts.indent << skip_tag;
+	particles_col_type::const_iterator jt = it;
+	jt++;
+	outs << popts.indent << skip_tag;
+	if (jt == _particles_.end()) {
+	  outs << last_tag;
+	  indent_oss << last_skip_tag;
+	} else {
+	  outs << tag;
+	  indent_oss << skip_tag;
+	}
+	outs << "Particle #" << particle_counter << " : " << std::endl;
+	boost::property_tree::ptree popts2;
+	popts2.put("indent", indent_oss.str());
+	it->print_tree(outs, popts2);
+	// it->tree_dump(outs, "", indent_oss.str());
+	particle_counter++;
       }
-      outs << "Particle #" << particle_counter << " : " << std::endl;
-      boost::property_tree::ptree popts2;
-      popts2.put("indent", indent_oss.str());
-      it->print_tree(outs, popts2);
-      // it->tree_dump(outs, "", indent_oss.str());
-      particle_counter++;
     }
     outs << popts.indent << tag
          << "GENBB weight : " << get_genbb_weight()
