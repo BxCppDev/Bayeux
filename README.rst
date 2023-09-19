@@ -62,7 +62,7 @@ emfield
 
 genbb(_help)
   C++ port and  extensions to the Genbb/Decay0 program by
-  Vladimir Tretyak, providing input to simulation applications.
+  Volodymyr Tretyak, providing input to simulation applications.
   Now depends on the external BxDecay0_ library.
 
 genvtx
@@ -133,7 +133,7 @@ Bayeux contains some code extracted  from :
 * the *BinReloc* library (Do  What The Fuck You Want To Public License, Version  2),
 * the *EOS portable archive* library (MIT License).
 
-Vladimir Tretyak has kindly accepted that the C++ wrapper and C++ port
+Volodymyr Tretyak has kindly accepted that the C++ wrapper and C++ port
 of the  original Genbb/Decay0 Fortran  library is published  under the
 GPL 3 within Bayeux. This part of the code is now hosted in the
 BxDecay0_ project.
@@ -982,7 +982,7 @@ Acknowledgements
 The authors gratefully thank the following persons for their direct or
 indirect contributions to the Bayeux library:
 
-* Vladimir  Tretyak  is  the  author of  the  original  *Genbb/Decay0*
+* Volodymyr  Tretyak  is  the  author of  the  original  *Genbb/Decay0*
   generator (written in  Fortran 77) from which  a significant portion
   of the Bayeux/genbb_help module is derived.
 * Christian Pfligersdorffer  is the author of  the Boost/Serialization
