@@ -244,12 +244,15 @@ namespace datatools {
           _accept_mode_ = QFileDialog::AcceptOpen;
           _path_dialog_->setAcceptMode(QFileDialog::AcceptOpen);
           _path_dialog_->setFileMode(QFileDialog::ExistingFile);
+          // _path_dialog_->setFileMode(QFileDialog::AnyFile);
         } else if (_param_model_->is_path_output()) {
           _accept_mode_ = QFileDialog::AcceptSave;
           _path_dialog_->setAcceptMode(QFileDialog::AcceptSave);
           _path_dialog_->setFileMode(QFileDialog::AnyFile);
         }
-        connect(this, SIGNAL(clicked()),
+	// 2023-09-18, FM: set option because of unexpected UI freeze on Ubuntu22.04+Qt5.15.3
+	_path_dialog_->setOption(QFileDialog::QFileDialog::DontUseNativeDialog, true);
+	connect(this, SIGNAL(clicked()),
                 this, SLOT(slot_launch_file_dialog()));
         return;
       }
@@ -290,15 +293,19 @@ namespace datatools {
 
       void FileDialogLauncherButton::slot_launch_file_dialog()
       {
+	datatools::logger::priority localLogging = datatools::logger::PRIO_DEBUG;
         DT_LOG_TRACE_ENTERING(logging);
         if (_path_dialog_) {
           DT_LOG_DEBUG(logging, "Show QFileDialog...");
+          DT_LOG_DEBUG(localLogging, "Show QFileDialog...");
           _path_dialog_->setModal(true);
           std::string current_path;
           command::returned_info cri = _path_record_->get_string_value(current_path);
+	  DT_LOG_DEBUG(localLogging, "current_path='" << current_path << "'");
           if (cri.is_success()) {
             if (!current_path.empty()) {
               datatools::fetch_path_with_env(current_path);
+	      DT_LOG_DEBUG(localLogging, "fetch current_path='" << current_path << "'");
               _path_dialog_->selectFile(QString::fromStdString(current_path));
             }
           }

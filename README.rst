@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2022-12-06
+:Date:    2023-09-18
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -169,9 +169,9 @@ Spack_ package manager to satisfy Bayeux's software dependencies.
 Releases
 --------
 
-* Latest release: `Bayeux-3.5.3`_
+* Latest release: `Bayeux-3.5.4`_
 
-.. _`Bayeux-3.5.3`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.3
+.. _`Bayeux-3.5.4`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.4
 
 .. raw:: pdf
 
@@ -193,7 +193,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.5.3, you may use, assuming a
+For example, to download Bayeux version 3.5.4, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -201,17 +201,17 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.3.tar.gz
-   $ mkdir Bayeux-3.5.3 && \
-       tar xvzf Bayeux-3.5.3.tar.gz -C Bayeux-3.5.3 --strip-components=1
-   $ cd Bayeux-3.5.3/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.4.tar.gz
+   $ mkdir Bayeux-3.5.4 && \
+       tar xvzf Bayeux-3.5.4.tar.gz -C Bayeux-3.5.4 --strip-components=1
+   $ cd Bayeux-3.5.4/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.5.3/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.5.4/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.3
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.4
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -309,7 +309,7 @@ managers  (Linuxbrew,  Spack) may  help  too.
 
 .. https://github.com/BxCppDev/BxInstallers
 
-.. _`Bayeux-3.5.3`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.3
+.. _`Bayeux-3.5.4`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.4
 
 We list below the third party softwares required by Bayeux. If some of
 them are not available from the  system package manager, you will have
@@ -324,6 +324,7 @@ to install them manually.
     (bug in the Boost/serialization library) so you'll need to install
     Boost >= 1.69 by yourself
   * Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
+  * Ubuntu 22.04 provides version 1.74.0 (libboost-all-dev)
 
   **Beware**: Boost  versions 1.65 (default  on Ubuntu 18.04)  to 1.68
   are  expected to  cause some  crash with  GCC under  Linux due  to a
@@ -333,20 +334,22 @@ to install them manually.
 * Camp >=0.8.0 (or 0.8.4 recommended) : https://github.com/IRCAD-IHU/camp
   
   * Ubuntu 18.04 does not provide Camp
-  * Ubuntu 20.04 provides version 0.8.4 (libcamp-dev)
+  * Ubuntu 20/22.04 provide version 0.8.4 (libcamp-dev)
 
 * GSL 2.4 or higher: http://www.gnu.org/s/gsl
 
   * Ubuntu 18.04 provides version 2.4 (libgsl-dev)
   * Ubuntu 20.04 provides version 2.5 (libgsl-dev)
+  * Ubuntu 22.04 provides version 2.7.1 (libgsl-dev)
   
 * CLHEP 2.1.3.1, 2.1.4.2 (recommended), 2.4.1.0: http://proj-clhep.web.cern.ch
   
   * Ubuntu 18.04 does not provide CLHEP
-  * Ubuntu 20.04   provides   version   2.1.4.1   (libclhep-dev)   but
+  * Ubuntu 20.04 provides   version   2.1.4.1   (libclhep-dev)   but
     unfortunately  this  version has  no  CMake  support so  you  should
     install this library by yourself. We thus recommend version 2.1.4.2.
- 
+  * Ubuntu 22.04 (not documented yet)
+    
 * Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
 
@@ -360,6 +363,7 @@ to install them manually.
 * Xerces-C (optional, needed for GDML support and Geant4 bridge)
  
   * Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
+  * Ubuntu 22.04 provides version 3.2.3 (libxerces-c-dev)
 
 * ROOT 6.08.00, 6.12.04 or 6.16.00 (recommended): http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
@@ -383,7 +387,8 @@ to install them manually.
 
   * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5,
     qt5-default, qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev)
-
+  * Ubuntu 22.04 provides version 5.15.3
+    
 * BxDecay0 (>=1.1.0) : https://github.com/BxCppDev/bxdecay0
 
   You must  install BxDecay0 by  yourself. BxDecay0 depends on  GSL so
@@ -400,7 +405,7 @@ Install dependencies with BxInstallers
 
 We provide  a collection  of semi-automated installation  scripts from
 the BxInstallers_ project. ``BxInstallers`` is mostly dedicated to the
-Ubuntu  20.04  system. It  allows  to  build,  install and  setup  the
+Ubuntu  20/22.04  system. It  allows  to  build,  install and  setup  the
 software dependency stack for Bayeux.
 
 .. _BxInstallers: https://github.com/BxCppDev/BxInstallers
