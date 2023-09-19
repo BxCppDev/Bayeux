@@ -269,12 +269,14 @@ Core Software Required
   
   * Ubuntu 18.04 provides CMake version 3.10.2.
   * Ubuntu 20.04 provides CMake version 3.16.3.
+  * Ubuntu 22.04 provides CMake version 3.22.1.
 
 * C/C++ compiler supporting at least C++11 standard
   (GNU/Clang/Intel)
   
   * Ubuntu 18.04 provides GCC version 6.5 and 7.3.
   * Ubuntu 20.04 provides GCC version 9.3.
+  * Ubuntu 22.04 provides GCC version 11.4.0.
   * Bayeux is known to work on CentOS with GCC 4.9
   
 On Linux,  you should  install these through  the package  manager for
@@ -345,10 +347,9 @@ to install them manually.
 * CLHEP 2.1.3.1, 2.1.4.2 (recommended), 2.4.1.0: http://proj-clhep.web.cern.ch
   
   * Ubuntu 18.04 does not provide CLHEP
-  * Ubuntu 20.04 provides   version   2.1.4.1   (libclhep-dev)   but
+  * Ubuntu 20/22.04 provides   version   2.1.4.1   (libclhep-dev)   but
     unfortunately  this  version has  no  CMake  support so  you  should
     install this library by yourself. We thus recommend version 2.1.4.2.
-  * Ubuntu 22.04 (not documented yet)
     
 * Geant4 9.6 (optional) : http://geant4.cern.ch
   with GDML support enabled (through the XercesC library)
