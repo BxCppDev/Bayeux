@@ -297,15 +297,15 @@ namespace datatools {
         DT_LOG_TRACE_ENTERING(logging);
         if (_path_dialog_) {
           DT_LOG_DEBUG(logging, "Show QFileDialog...");
-          DT_LOG_DEBUG(localLogging, "Show QFileDialog...");
+          // DT_LOG_DEBUG(localLogging, "Show QFileDialog...");
           _path_dialog_->setModal(true);
           std::string current_path;
           command::returned_info cri = _path_record_->get_string_value(current_path);
-	  DT_LOG_DEBUG(localLogging, "current_path='" << current_path << "'");
+	  // DT_LOG_DEBUG(localLogging, "current_path='" << current_path << "'");
           if (cri.is_success()) {
             if (!current_path.empty()) {
               datatools::fetch_path_with_env(current_path);
-	      DT_LOG_DEBUG(localLogging, "fetch current_path='" << current_path << "'");
+	      // DT_LOG_DEBUG(localLogging, "fetch current_path='" << current_path << "'");
               _path_dialog_->selectFile(QString::fromStdString(current_path));
             }
           }
