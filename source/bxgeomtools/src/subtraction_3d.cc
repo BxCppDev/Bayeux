@@ -504,7 +504,7 @@ namespace geomtools {
     const i_wires_3d_rendering * w3dr1 = dynamic_cast<const i_wires_3d_rendering *>(&sh1);
     const i_wires_3d_rendering * w3dr2 = dynamic_cast<const i_wires_3d_rendering *>(&sh2);
 
-   {
+    {
       double min_dim1;
       datatools::invalidate(min_dim1);
       if (sh1.has_bounding_data()) {
