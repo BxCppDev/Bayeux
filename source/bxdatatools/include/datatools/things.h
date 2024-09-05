@@ -115,9 +115,9 @@ namespace datatools {
       bool has_description() const;
 
       void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_  = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const override;
+                     const std::string & title_  = "",
+                     const std::string & indent_ = "",
+                     bool inherit_ = false) const override;
 
     public:
 
@@ -292,9 +292,9 @@ namespace datatools {
 
     /// Smart print
     void tree_dump(std::ostream & out_ = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_ = false) const override;
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_ = false) const override;
 
     /// Basic print
     void dump(std::ostream & out_ = std::clog) const;

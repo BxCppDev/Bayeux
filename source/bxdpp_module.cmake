@@ -58,6 +58,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/dpp_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/dpp_driver.h
+  # ${module_include_dir}/${module_name}/merger_module.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -86,6 +87,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/ocd_support.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/dpp_driver.cc
+  # ${module_source_dir}/merger_module.cc
   )
 
 # - Published headers

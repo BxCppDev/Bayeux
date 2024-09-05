@@ -29,7 +29,11 @@
 
 // Third party:
 // - Boost :
+#if __cplusplus < 201703L
 #include <boost/variant.hpp>
+#else
+#include <variant>
+#endif
 // - Bayeux/datatools :
 #include <datatools/i_tree_dump.h>
 #include <datatools/types.h>
@@ -44,8 +48,11 @@ namespace mygsl {
     static const int INVALID_INDEX = -1;
 
     //! Type alias for parameter value
+#if __cplusplus < 201703L
     typedef boost::variant<bool, int, double, std::string> param_type;
-
+#else
+    typedef std::variant<bool, int, double, std::string> param_type;
+#endif
     //! \brief Parameter record
     struct parameter_record {
     public:

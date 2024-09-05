@@ -97,7 +97,7 @@ namespace geomtools {
 
     /// Check if a point belongs to the polyline
     bool is_on_curve(const vector_3d & position_,
-                             double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
+                     double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const override;
 
     /// Return the direction at some position along the polyline
     vector_3d get_direction_on_curve(const vector_3d & position_) const override;
@@ -110,13 +110,13 @@ namespace geomtools {
 
     /// Smart print
     void tree_dump(std::ostream & out_         = std::clog,
-                           const std::string & title_  = "",
-                           const std::string & indent_ = "",
-                           bool inherit_               = false) const override;
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_               = false) const override;
 
     /// Generate a sequence of polylines for wires 3D rendering
     void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const override;
+                             uint32_t options_ = 0) const override;
 
   private:
 

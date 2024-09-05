@@ -12,6 +12,7 @@
 
 // Third party:
 // - Boost:
+#include <boost/version.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/thread/mutex.hpp>
 // - Bayeux/datatools:
@@ -587,9 +588,14 @@ namespace mctools {
           if (! output_file_directives) {
             // Analyse the output file extension and check if a Brio writer should
             // be used to save events:
-            using_brio = false;
+	    using_brio = false;
+#if BOOST_VERSION < 108500
             const std::string extension = boost::filesystem::extension(output_file_name);
-            if (extension == brio::store_info::constants::brio_file_extension()) {
+#else
+	    const boost::filesystem::path output_file_path(output_file_name);
+	    const std::string extension = output_file_path.extension().string();
+#endif
+	    if (extension == brio::store_info::constants::brio_file_extension()) {
               using_brio = true;
             } else if (extension == brio::store_info::constants::trio_file_extension()) {
               using_brio = true;

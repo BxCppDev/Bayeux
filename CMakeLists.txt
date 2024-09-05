@@ -62,6 +62,11 @@ message(STATUS "[info] Project version = '${PROJECT_VERSION}'")
 # Common LPC utilities
 #
 include(LPCCMakeSettings)
+message( STATUS "BAYEUX_CXX_STANDARD = ${BAYEUX_CXX_STANDARD}")
+set(CMAKE_CXX_STANDARD "${BAYEUX_CXX_STANDARD}" ) 
+message( STATUS "BAYEUX_CXX_COMPILE_FEATURES = ${BAYEUX_CXX_COMPILE_FEATURES}")
+message( STATUS "CMAKE_CXX_STANDARD = ${CMAKE_CXX_STANDARD}")
+
 include(CMakeDependentOption)
 set(Bayeux_VERSION_REVISION 0)
 
@@ -195,6 +200,7 @@ endif()
 
 #-----------------------------------------------------------------------
 include(BayeuxDependencies)
+message( STATUS "CMAKE_CXX_STANDARD = ${CMAKE_CXX_STANDARD} (after dependencies)")
 
 #-----------------------------------------------------------------------
 # Build the subdirectories

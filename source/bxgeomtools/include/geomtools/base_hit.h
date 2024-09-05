@@ -172,18 +172,19 @@ namespace geomtools {
 
     /// \deprecated Smart print
     void tree_dump (std::ostream & a_out    = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit          = false) const override;
+                    const std::string & a_title  = "",
+                    const std::string & a_indent = "",
+                    bool a_inherit          = false) const override;
     //!
     //! Supported options:
     //! \code
-    //! {
-    //!   "title"    : "My title: ",
-    //!   "indent"   : "[debug] ",
-    //!   "inherit"  : false,
-    //!   "no_list_auxiliaries" : false
-    //! }
+    //! mctools::base_hit hit
+    //! ...
+    //! boost::property_tree::ptree poptions;
+    //! poptions.put("title", "My hit");
+    //! poptions.put("indent", ">>> ");
+    //! poptions.put("no_list_auxiliaries", true);
+    //! hit.print_tree(std::clog, poptions);
     //! \endcode
     void print_tree(std::ostream & out_ = std::clog,
                     const boost::property_tree::ptree & options_ = datatools::i_tree_dumpable::empty_options()) const override;
@@ -402,12 +403,12 @@ DR_CLASS_INIT(::geomtools::base_hit)
 #include <boost/serialization/version.hpp>
 BOOST_CLASS_VERSION(geomtools::base_hit, 1)
 
-#define GEOMTOOLS_HIT_REGISTRATION_INTERFACE(HitClassName)          \
+#define GEOMTOOLS_HIT_REGISTRATION_INTERFACE(HitClassName)              \
   private:                                                              \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::base_hit,HitClassName) \
   /**/
 
-#define GEOMTOOLS_HIT_REGISTRATION_IMPLEMENT(HitClassName,HitClassId) \
+#define GEOMTOOLS_HIT_REGISTRATION_IMPLEMENT(HitClassName,HitClassId)   \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::base_hit,HitClassName,HitClassId) \
   /**/
 

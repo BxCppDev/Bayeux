@@ -28,6 +28,8 @@ if(Bayeux_WITH_GEANT4_MODULE)
     @ONLY
     )
 
+  # set(CMAKE_CXX_STANDARD ${BAYEUX_CXX_STANDARD})
+
   # Disable specific warnings because CLHEP source code makes use
   # of deprecated std::auto_ptr:
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-variable -Wno-deprecated-declarations -Wno-error=deprecated-declarations")
@@ -116,6 +118,9 @@ if(Bayeux_WITH_GEANT4_MODULE)
     ${module_app_dir}/g4/g4_seeds.cxx
     )
 
+  message(STATUS "BAYEUX_CXX_COMPILE_FEATURES=${BAYEUX_CXX_COMPILE_FEATURES}")
+  message(STATUS "CMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}")
+
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   target_compile_features(Bayeux_mctools_geant4 PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
   # Disable specific warnings because CLHEP source code has odd declarations
@@ -137,19 +142,36 @@ if(Bayeux_WITH_GEANT4_MODULE)
   # Hack - strip "-D" flag as we should only supply the def names
   #      - Turn space separated flags into list
   set(Bayeux_Geant4_DEFINITIONS)
-  foreach(_def ${Geant4_DEFINITIONS})
-    string(REGEX REPLACE "^-D" "" _bxdef ${_def})
-    list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxdef})
+  foreach(_g4def ${Geant4_DEFINITIONS})
+    string(REGEX REPLACE "^-D" "" _bxg4def ${_g4def})
+    list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxg4def})
   endforeach()
+  message(STATUS "Bayeux_Geant4_DEFINITIONS=${Bayeux_Geant4_DEFINITIONS}")
 
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
 
-  string(REPLACE " " ";" Geant4_CXX_FLAGS "${Geant4_CXX_FLAGS}")
+  # XXXXX
+  set(_Geant4_CXX_FLAGS_EFFECTIVE "${Geant4_CXX_FLAGS}")
+  message(STATUS "_Geant4_CXX_FLAGS_EFFECTIVE = ${_Geant4_CXX_FLAGS_EFFECTIVE}")
+ # Remove CXX standard hint from Geant4 and let Bayeux decide:
+  message(STATUS "Removing Geant4 flag '-std=c++11'...")
+  string(REPLACE "-std=c++11" "" _Geant4_CXX_FLAGS_EFFECTIVE ${_Geant4_CXX_FLAGS_EFFECTIVE}) 
+  # string(REPLACE "-std=c++14" " " _Geant4_CXX_FLAGS_EFFECTIVE ${_Geant4_CXX_FLAGS_EFFECTIVE}) 
+  # string(REPLACE "-std=c++17" " " _Geant4_CXX_FLAGS_EFFECTIVE ${_Geant4_CXX_FLAGS_EFFECTIVE}) 
+  # string(REPLACE "-std=c++20" " " _Geant4_CXX_FLAGS_EFFECTIVE ${_Geant4_CXX_FLAGS_EFFECTIVE}) 
+  string(REPLACE " " ";" _Geant4_CXX_FLAGS_EFFECTIVE "${_Geant4_CXX_FLAGS_EFFECTIVE}")
+  list(APPEND _Geant4_CXX_FLAGS_EFFECTIVE "-std=c++${CMAKE_CXX_STANDARD}")
+  message(STATUS "_Geant4_CXX_FLAGS_EFFECTIVE = ${_Geant4_CXX_FLAGS_EFFECTIVE}")
   target_compile_options(Bayeux_mctools_geant4
-    PRIVATE ${Geant4_CXX_FLAGS}
+    PRIVATE ${_Geant4_CXX_FLAGS_EFFECTIVE}
     )
+
+  # string(REPLACE " " ";" Geant4_CXX_FLAGS "${Geant4_CXX_FLAGS}")
+  # target_compile_options(Bayeux_mctools_geant4
+  #   PRIVATE ${Geant4_CXX_FLAGS}
+  #   )
 
   message(STATUS "Geant4_LIBRARIES='${Geant4_LIBRARIES}'")
   message(STATUS "Geant4_LIBRARY_DIR='${Geant4_LIBRARY_DIR}'")

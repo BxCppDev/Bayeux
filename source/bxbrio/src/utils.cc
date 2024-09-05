@@ -22,6 +22,7 @@
 #endif
 
 // - Boost:
+#include <boost/version.hpp>
 #include <boost/filesystem.hpp>
 
 namespace brio {
@@ -153,11 +154,15 @@ namespace brio {
   {
     int status = store_info::SUCCESS;
     int mode = 0x0;
-    if (boost::filesystem::extension(filename_) ==
-        constants::brio_file_extension()) {
+#if BOOST_VERSION < 108500
+    const std::string extension = boost::filesystem::extension(filename_);
+#else
+    const boost::filesystem::path file_path(filename_);
+    const std::string extension = file_path.extension().string();
+#endif
+    if (extension == constants::brio_file_extension()) {
       mode |= store_info::MODE_BRIO;
-    } else if (boost::filesystem::extension (filename_) ==
-               constants::trio_file_extension()) {
+    } else if (extension == constants::trio_file_extension()) {
       mode |= store_info::MODE_TRIO;
     } else {
       status = store_info::ERROR;

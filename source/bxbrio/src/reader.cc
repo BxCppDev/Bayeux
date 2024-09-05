@@ -8,6 +8,7 @@
 
 // Third Party:
 // - Boost:
+#include <boost/version.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 // - ROOT:
@@ -41,7 +42,12 @@ namespace brio {
     : detail::base_io (RW_READ, p_)
   {
     reader::_set_default();
-    std::string ext = boost::filesystem::extension(filename_);
+#if BOOST_VERSION < 108500
+    const std::string ext = boost::filesystem::extension(filename_);
+#else
+    const boost::filesystem::path file_path(filename_);
+    const std::string ext = file_path.extension().string();
+#endif
     if (ext == store_info::constants::trio_file_extension()) {
       this->set_format(detail::base_io::text_label());
     } else {

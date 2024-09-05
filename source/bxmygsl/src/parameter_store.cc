@@ -177,7 +177,11 @@ namespace mygsl {
   bool parameter_store::parameter_record::to_boolean() const
   {
     DT_THROW_IF(!_value_set_, std::logic_error, "Parameter's boolean value is not set!");
+#if __cplusplus < 201703L
     return boost::get<bool>(_value_);
+#else
+    return std::get<bool>(_value_);
+#endif
   }
 
   int parameter_store::parameter_record::to_integer() const
@@ -185,19 +189,31 @@ namespace mygsl {
     DT_THROW_IF(!_value_set_, std::logic_error, "Parameter's integer value is not set!");
     // std::cerr << "DEVEL: " << "parameter_store::parameter_record::to_real: "
     //        << std::endl;
+#if __cplusplus < 201703L
     return boost::get<int>(_value_);
+#else
+    return std::get<int>(_value_);
+#endif
   }
 
   double parameter_store::parameter_record::to_real() const
   {
     DT_THROW_IF(!_value_set_, std::logic_error, "Parameter's real value is not set!");
+#if __cplusplus < 201703L
     return boost::get<double>(_value_);
+#else
+    return std::get<double>(_value_);
+#endif
   }
 
   const std::string & parameter_store::parameter_record::to_string() const
   {
     DT_THROW_IF(!_value_set_, std::logic_error, "Parameter's string value is not set!");
+#if __cplusplus < 201703L
     return boost::get<std::string>(_value_);
+#else
+    return std::get<std::string>(_value_);
+#endif
   }
 
   parameter_store::parameter_store()

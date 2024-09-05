@@ -88,6 +88,12 @@ namespace dpp {
                                                       *  abortion of the processing session
                                                       */
 
+      PROCESS_AGAIN    = datatools::bit_mask::bit03, /** Module has to process again the current data record
+                                                      */
+
+      PROCESS_AGAIN_NEW = datatools::bit_mask::bit04, /** Module has to process again a new current data record
+                                                      */
+
       PROCESS_INVALID  = datatools::bit_mask::bit31  /** Invalid process status */
     };
 

@@ -9,6 +9,7 @@
 
 // Third Party
 // - Boost
+#include <boost/version.hpp>
 #include <boost/archive/codecvt_null.hpp>
 #include <boost/filesystem.hpp>
 // - ROOT
@@ -177,7 +178,12 @@ namespace brio {
 
       if (_format_ == FORMAT_UNDEFINED) {
         DT_LOG_NOTICE(this->get_logging_priority(),"Guessing the archive format from the filename !");
-        std::string file_extension = boost::filesystem::extension(filename_);
+#if BOOST_VERSION < 108500
+	std::string file_extension = boost::filesystem::extension(filename_);
+#else
+	const boost::filesystem::path output_file_path(filename_);
+	std::string file_extension = output_file_path.extension().string();
+#endif
         if (file_extension == store_info::constants::trio_file_extension()) {
           this->set_format(FORMAT_TEXT);
           DT_LOG_NOTICE(this->get_logging_priority(),"Using '" << text_label() << "' archive format !");
