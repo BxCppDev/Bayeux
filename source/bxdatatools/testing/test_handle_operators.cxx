@@ -114,9 +114,9 @@ bool test_handle_deref_operator()
     x.reset();
     bool gotException{false};
     try {
-      x->size();
-    }
-    catch (std::logic_error& e) {
+      auto sz = x->size();
+      std::clog << "sz=" << sz << '\n';
+    } catch (std::logic_error& e) {
       //o.k., we've caught the expected error
       gotException = true;
     }

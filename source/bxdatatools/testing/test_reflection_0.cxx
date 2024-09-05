@@ -25,6 +25,13 @@
 #include <datatools/multi_properties.h>
 #include <datatools/things.h>
 
+#if defined(__GNUG__)
+#pragma GCC   diagnostic ignored "-Werror=dangling-reference"
+#endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Werror=dangling-reference"
+#endif
+
 void test_things(bool /*debug_*/);
 void test_multi_properties(bool /*debug_*/);
 void test_properties(bool /*debug_*/);

@@ -90,6 +90,13 @@
 #include <genbb_help/version.h>
 #include <genbb_help/resource.h>
 
+#if defined(__GNUG__)
+#pragma GCC   diagnostic ignored "-Werror=dangling-reference"
+#endif
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Werror=dangling-reference"
+#endif
+
 namespace dtc = datatools::configuration;
 
 namespace genbb {
