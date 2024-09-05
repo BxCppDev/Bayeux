@@ -372,7 +372,15 @@ namespace mygsl {
         if (pr.is_string()) {
           out_ << '"';
         }
-        out_ << pr._value_;
+	if (pr.is_string()) {
+	  out_ << pr.to_string();
+	} else if (pr.is_boolean()) {
+	  out_ << pr.to_boolean();
+	} else if (pr.is_integer()) {
+	  out_ << pr.to_integer();
+	} else if (pr.is_real()) {
+	  out_ << pr.to_real();
+	} 
         if (pr.is_string()) {
           out_ << '"';
         }
