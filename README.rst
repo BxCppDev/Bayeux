@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2023-09-18
+:Date:    2024-09-05
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -169,9 +169,9 @@ Spack_ package manager to satisfy Bayeux's software dependencies.
 Releases
 --------
 
-* Latest release: `Bayeux-3.5.4`_
+* Latest release: `Bayeux-3.5.5`_
 
-.. _`Bayeux-3.5.4`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.4
+.. _`Bayeux-3.5.5`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.5
 
 .. raw:: pdf
 
@@ -193,7 +193,7 @@ Getting Bayeux
 You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
 repository.
 
-For example, to download Bayeux version 3.5.4, you may use, assuming a
+For example, to download Bayeux version 3.5.5, you may use, assuming a
 Linux system:
 
 .. code:: sh
@@ -201,17 +201,17 @@ Linux system:
    $ cd ${HOME}
    $ mkdir -p ${HOME}/BxCppDev
    $ cd ${HOME}/BxCppDev
-   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.4.tar.gz
-   $ mkdir Bayeux-3.5.4 && \
-       tar xvzf Bayeux-3.5.4.tar.gz -C Bayeux-3.5.4 --strip-components=1
-   $ cd Bayeux-3.5.4/
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.5.5.tar.gz
+   $ mkdir Bayeux-3.5.5 && \
+       tar xvzf Bayeux-3.5.5.tar.gz -C Bayeux-3.5.5 --strip-components=1
+   $ cd Bayeux-3.5.5/
 ..
 
 
-The  ``${HOME}/BxCppDev/Bayeux-3.5.4/``   source  directory   is  thus
+The  ``${HOME}/BxCppDev/Bayeux-3.5.5/``   source  directory   is  thus
 created.
 
-You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.4
+You  can  now create  a  dedicated  directory  to build  Bayeux  3.5.5
 following  the guidelines  in the  *Installing Bayeux*  section below.
 Note that  different versions  of Bayeux  may have  slightly different
 build/installation  procedures,  so  you  should  read  carefully  the
@@ -311,7 +311,7 @@ managers  (Linuxbrew,  Spack) may  help  too.
 
 .. https://github.com/BxCppDev/BxInstallers
 
-.. _`Bayeux-3.5.4`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.4
+.. _`Bayeux-3.5.5`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.5
 
 We list below the third party softwares required by Bayeux. If some of
 them are not available from the  system package manager, you will have
@@ -390,7 +390,7 @@ to install them manually.
     qt5-default, qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev)
   * Ubuntu 22.04 provides version 5.15.3
     
-* BxDecay0 (>=1.1.0) : https://github.com/BxCppDev/bxdecay0
+* BxDecay0 (>=1.1.2) : https://github.com/BxCppDev/bxdecay0
 
   You must  install BxDecay0 by  yourself. BxDecay0 depends on  GSL so
   you should  synchronize this dependency from  the Bayeux's dependency on
