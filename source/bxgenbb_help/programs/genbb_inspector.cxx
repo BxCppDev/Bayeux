@@ -1550,7 +1550,7 @@ int main (int argc_, char ** argv_)
     }
 
     datatools::library_loader LL(LL_config);
-    BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
+    for (const std::string & dll_name : LL_dlls) {
       DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Loading DLL '" << dll_name << "'...");
       DT_THROW_IF (LL.load (dll_name) != EXIT_SUCCESS,
                    std::runtime_error,
