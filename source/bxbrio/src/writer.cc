@@ -308,7 +308,7 @@ namespace brio {
                   "File '" << _filename << "' already exists !");
     }
     std::string default_extension = store_info::constants::default_file_extension();
-    #if BOOST_VERSION < 108500
+#if BOOST_VERSION < 108500
     const std::string extension = boost::filesystem::extension(_filename);
 #else
     const boost::filesystem::path file_path(_filename);
