@@ -183,7 +183,12 @@ namespace brio {
 
     std::string default_extension =
       store_info::constants::default_file_extension();
-    std::string extension = boost::filesystem::extension(_filename);
+#if BOOST_VERSION < 108500
+    const std::string extension = boost::filesystem::extension(_filename);
+#else
+    const boost::filesystem::path file_path(_filename);
+    const std::string extension = file_path.extension().string();
+#endif
     DT_LOG_DEBUG(this->get_logging_priority(),
                  "Extension is `" << extension << "' !");
     std::string expected_extension =
