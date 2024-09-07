@@ -40,20 +40,18 @@
 void test_placement()
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
-#if defined(__GNUC__)
-#if __GNUC_VERSION__ >= 130000
-  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdangling-reference"
-#endif
-#endif
+// #if defined(__GNUC__)
+// #if __GNUC_VERSION__ >= 130000
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wdangling-reference"
+// #endif
+// #endif
   const camp::Class & plctMetaClass  = camp::classByName("geomtools::placement");
-#if defined(__GNUC__)
-#if __GNUC_VERSION__ >= 130000
-  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-#pragma GCC diagnostic pop
-#endif
-#endif
+// #if defined(__GNUC__)
+// #if __GNUC_VERSION__ >= 130000
+// #pragma GCC diagnostic pop
+// #endif
+// #endif
 
   camp::UserObject plctObj0 = plctMetaClass.construct();
 
