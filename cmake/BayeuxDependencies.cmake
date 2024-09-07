@@ -76,6 +76,8 @@ endif()
 if (Boost_VERSION VERSION_GREATER_EQUAL 107400)
   message(STATUS "Forcing BOOST_BIND_GLOBAL_PLACEHOLDERS...")
   add_definitions("-DBOOST_BIND_GLOBAL_PLACEHOLDERS")
+  # 2024-09-06 FM: disable for boost/spirit/include/phoenix_core.hpp and others...
+  add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
 endif()
 
 foreach(_boost_lib ${BAYEUX_BOOST_COMPONENTS})

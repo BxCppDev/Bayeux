@@ -18,10 +18,17 @@
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/clhep_units.h>
+#include <datatools/detail/api.h> // for __GNUC_VERSION__
 
 // Introspectable classes :
 #include <genbb_help/primary_particle.h>
 #include <genbb_help/primary_event.h>
+
+// #if defined(__GNUG__)
+// #if GCC_VERSION >= 13
+// #pragma GCC diagnostic ignored "-Wdangling-reference"
+// #endif
+// #endif
 
 void test_primary_particle();
 void test_primary_event();
@@ -61,7 +68,20 @@ int main (int /* argc_ */, char ** /* argv_ */)
 void test_primary_particle()
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & ppMetaClass  = camp::classByName("genbb::primary_particle");
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
 
   camp::UserObject partObj0 = ppMetaClass.construct();
   DT_LOG_NOTICE(logging, "Initializing the primary particle object...");
@@ -87,7 +107,20 @@ void test_primary_particle()
 void test_primary_event()
 {
   //datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & peMetaClass  = camp::classByName("genbb::primary_event");
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
 
   camp::UserObject eventObj0 = peMetaClass.construct();
 

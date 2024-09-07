@@ -22,6 +22,7 @@
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/clhep_units.h>
+#include <datatools/detail/api.h> // for __GNUC_VERSION__
 
 // Introspectable classes :
 #include <geomtools/utils.h>
@@ -29,11 +30,30 @@
 #include <geomtools/base_hit.h>
 #include <geomtools/placement.h>
 
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+#pragma message "GCC13 workaround : applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
 
 void test_placement()
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & plctMetaClass  = camp::classByName("geomtools::placement");
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
 
   camp::UserObject plctObj0 = plctMetaClass.construct();
 

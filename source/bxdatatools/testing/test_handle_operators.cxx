@@ -114,8 +114,12 @@ bool test_handle_deref_operator()
     x.reset();
     bool gotException{false};
     try {
-      auto sz = x->size();
-      std::clog << "sz=" << sz << '\n';
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-value"
+      x->size();
+#pragma GCC diagnostic pop
+#endif
     } catch (std::logic_error& e) {
       //o.k., we've caught the expected error
       gotException = true;

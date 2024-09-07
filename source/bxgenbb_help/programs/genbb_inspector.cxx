@@ -89,12 +89,12 @@
 #include <genbb_help/primary_event.ipp>
 #include <genbb_help/version.h>
 #include <genbb_help/resource.h>
+#include <datatools/detail/api.h> // for __GNUC_VERSION__
 
 #if defined(__GNUG__)
-#pragma GCC   diagnostic ignored "-Werror=dangling-reference"
+#if GCC_VERSION >= 13
+#pragma GCC diagnostic ignored "-Wdangling-reference"
 #endif
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Werror=dangling-reference"
 #endif
 
 namespace dtc = datatools::configuration;

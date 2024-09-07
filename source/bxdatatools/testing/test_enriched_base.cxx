@@ -17,6 +17,7 @@
 #include <datatools/enriched_base.h>
 
 #if DATATOOLS_WITH_REFLECTION == 1
+#include <datatools/detail/api.h> // for __GNUC_VERSION__
 // - Camp:
 #include <camp/userobject.hpp>
 #include <camp/value.hpp>
@@ -29,13 +30,6 @@ void test2();
 #if DATATOOLS_WITH_REFLECTION == 1
 void test_reflection();
 #endif // DATATOOLS_WITH_REFLECTION == 1
-
-#if defined(__GNUG__)
-#pragma GCC   diagnostic ignored "-Werror=dangling-reference"
-#endif
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Werror=dangling-reference"
-#endif
 
 int main(int /* argc_ */, char ** /* argv_ */)
 {
@@ -100,10 +94,28 @@ void test2()
 }
 
 #if DATATOOLS_WITH_REFLECTION == 1
+#if defined(__GNUG__)
+#if GCC_VERSION >= 13
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
 void test_reflection()
 {
   std::cerr << "\n******** Entering test_reflection... " << std::endl;
+// #if defined(__GNUC__)
+// #if __GNUC_VERSION__ >= 130000
+//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wdangling-reference"
+// #endif
+// #endif
   const camp::Class & aoMetaClass = camp::classByName("datatools::enriched_base");
+// #if defined(__GNUC__)
+// #if __GNUC_VERSION__ >= 130000
+//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+// #pragma GCC diagnostic pop
+// #endif
+// #endif
   std::cerr << "******** Go. " << std::endl;
 
   camp::UserObject aoObj = aoMetaClass.construct();
