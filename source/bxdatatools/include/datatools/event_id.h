@@ -217,7 +217,7 @@ namespace datatools {
   /** May be used with the std::find_if standard algorithm.
    */
   class event_id_equal_predicate
-    : public std::unary_function<event_id, bool>
+  //  : public std::unary_function<event_id, bool>
   {
   public:
 

@@ -119,7 +119,7 @@ namespace datatools {
 
     //! \brief Predicate used by the smart_ref template class
     class has_flag
-      : public std::unary_function<smart_ref_type, bool>
+    //  : public std::unary_function<smart_ref_type, bool>
     {
     public:
 

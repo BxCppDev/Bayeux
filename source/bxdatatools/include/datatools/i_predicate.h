@@ -3,14 +3,15 @@
 #define DATATOOLS_I_PREDICATE_H
 
 // Standard Library:
-#include<functional>
+// #include <functional>
 
 namespace datatools {
 
   //! \brief A template predicate abstract class
   template <class T>
   class i_predicate
-    : public std::unary_function<const T&, bool>
+	// obsoleted from C++17
+	// : public std::unary_function<const T&, bool>
   {
   public:
     virtual bool operator()(const T & obj_) const = 0;
