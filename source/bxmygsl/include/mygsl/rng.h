@@ -220,19 +220,18 @@ namespace mygsl {
     void tracker_tag(const std::string & tag_, const Type & value_) const;
 
   };
-
    
   template<class Type>
   void rng::tracker_tag(const std::string & tag_) const
-  {
-    DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
+  { 
+    DT_THROW_IF(not has_tracker(), std::logic_error, "No tracker is defined !");
     *_tracker_.get() << '#' << ' ' << tag_ << std::endl;
   }
   
   template<class Type>
   void rng::tracker_tag(const std::string & tag_, const Type & value_) const
   {
-    DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
+    DT_THROW_IF(not has_tracker(), std::logic_error, "No tracker is defined !");
     *_tracker_.get() << '#' << ' ' << tag_ << " = " << value_ << std::endl;
   }
  
