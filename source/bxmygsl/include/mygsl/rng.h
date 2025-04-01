@@ -125,18 +125,6 @@ namespace mygsl {
 
     void reset_tracker();
 
-    template<class Type>
-    void tracker_tag(const std::string & tag_) {
-      DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
-      *_tracker_.get() << '#' << ' ' << tag_ << std::endl;
-    }
-
-    template<class Type>
-    void tracker_tag(const std::string & tag_, const Type & value_) {
-      DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
-      *_tracker_.get() << '#' << ' ' << tag_ << " = " << value_ << std::endl;
-    }
-
     /// Raw print
     void dump(std::ostream & = std::clog) const;
 
@@ -223,8 +211,31 @@ namespace mygsl {
     std::unique_ptr<std::ofstream> _tracker_;   ///< Embedded tracker (debug)
     int _tracker_counter_;                      ///< Embedded counter (debug)
 
+  public:
+    
+    template<class Type>
+    void tracker_tag(const std::string & tag_) const;
+
+    template<class Type>
+    void tracker_tag(const std::string & tag_, const Type & value_) const;
+
   };
 
+   
+  template<class Type>
+  void rng::tracker_tag(const std::string & tag_) const
+  {
+    DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
+    *_tracker_.get() << '#' << ' ' << tag_ << std::endl;
+  }
+  
+  template<class Type>
+  void rng::tracker_tag(const std::string & tag_, const Type & value_) const
+  {
+    DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
+    *_tracker_.get() << '#' << ' ' << tag_ << " = " << value_ << std::endl;
+  }
+ 
 }
 
 #endif // MYGSL_RNG_H

@@ -591,7 +591,7 @@ namespace genbb {
           std::string angle_unit2_str;
           std::istringstream iss(cone_axis_str);
           iss >> phi >> theta >> std::ws >> angle_unit2_str;
-          if (angle_unit2_str.empty()) {
+          if (not angle_unit2_str.empty()) {
             angle_unit2 = datatools::units::get_angle_unit_from(angle_unit2_str);
           }
           DT_THROW_IF(!iss, std::logic_error,

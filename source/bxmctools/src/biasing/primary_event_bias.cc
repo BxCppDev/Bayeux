@@ -636,7 +636,7 @@ namespace mctools {
       DT_LOG_TRACE_ENTERING(_logging_);
       if (_pois_.size() == 0) {
         // Default to true if no PoIs are available:
-        DT_LOG_TRACE(_logging_, "Particle is validate because no PoI is defined!");
+        DT_LOG_TRACE(_logging_, "Particle is validated because no PoI is defined!");
         DT_LOG_TRACE_EXITING(_logging_);
         return true;
       }
@@ -903,6 +903,8 @@ namespace mctools {
       xmm.add(vertex_.x());
       ymm.add(vertex_.y());
       zmm.add(vertex_.z());
+      rmm.add(0.1);
+      DT_LOG_TRACE(_logging_, "# PoIs = " <<  _pois_.size());
 
       std::map<std::string, int> plot_indexes;
       {
@@ -919,7 +921,19 @@ namespace mctools {
             if (count == 0) {
               ftmp.out() << "#@Attractive_PoIs:" << std::endl;
             }
-            geomtools::gnuplot_draw::draw_sphere(ftmp.out(), pe.poi.get_position(), irot, pe.poi.get_radius());
+	    if (pe.poi.is_sphere()) {
+	      geomtools::gnuplot_draw::draw_sphere(ftmp.out(), pe.poi.get_position(), irot, pe.poi.get_radius());
+	    } else if (pe.poi.is_disc()) {
+	      geomtools::rotation_3d irot2;
+	      geomtools::create_rotation(irot2,
+					 pe.poi.get_orientation().phi(),
+					 pe.poi.get_orientation().theta(),
+					 0.0);	      
+	      geomtools::gnuplot_draw::draw_disk(ftmp.out(),
+						 pe.poi.get_position(),
+						 irot2,
+						 pe.poi.get_radius());
+	    }
             count++;
           }
         }

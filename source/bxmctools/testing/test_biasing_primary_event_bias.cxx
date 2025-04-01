@@ -71,30 +71,50 @@ int main(int argc_, char ** argv_)
 
     if (a_pois) {
       mctools::biasing::point_of_interest target0;
-      target0.set_name("target0");
-      target0.grab_position().set(0.0, 0.0, 1.5 * CLHEP::meter);
-      target0.set_radius(0.45 * CLHEP::meter);
-      target0.set_attractivity(+1.0);
+			datatools::properties target0Config;
+			target0Config.store("name", "target0");
+			target0Config.store("attractive_shape", "sphere");
+			target0Config.store("position", "0.0 0.0 1500.0 (mm)");
+			target0Config.store("radius", 450.0); // mm
+			target0Config.store("attractivity_label", "attractive");
+			target0.initialize(target0Config);
+			// target0Config.store("orientation", "0.0 0.0 1.5 m");
+      // target0.set_name("target0");
+      // target0.grab_position().set(0.0, 0.0, 1.5 * CLHEP::meter);
+      // target0.grab_orientation().set(0.0, 0.0, 1.0);
+      // target0.set_radius(0.45 * CLHEP::meter);
+      // target0.set_attractivity(+1.0);
       target0.tree_dump(std::clog, target0.get_name() + " :");
       peb.add_point_of_interest(target0.get_name(), target0);
     }
 
     if (a_pois) {
       mctools::biasing::point_of_interest target1;
-      target1.set_name("target1");
-      target1.grab_position().set(0.0, 1.0 * CLHEP::meter, 0.0);
-      target1.set_radius(0.25 * CLHEP::meter);
-      target1.set_attractivity(+1.0);
-      target1.tree_dump(std::clog, target1.get_name() + " :");
+			datatools::properties target1Config;
+			target1Config.store("name", "target1");
+			target1Config.store("attractive_shape", "disc");
+			target1Config.store("position", "0.0 1000.0 0.0 (mm)");
+			target1Config.store("orientation", "0.0 1.0 0.0");
+			target1Config.store("radius", 250.0); // mm
+			target1Config.store("attractivity_label", "attractive");
+			target1.initialize(target1Config);
+			target1.tree_dump(std::clog, target1.get_name() + " :");
       peb.add_point_of_interest(target1.get_name(), target1);
     }
 
     if (r_pois) {
       mctools::biasing::point_of_interest veto0;
-      veto0.set_name("veto0");
-      veto0.grab_position().set(0.0, -1.0 * CLHEP::meter, 0.0);
-      veto0.set_radius(0.35 * CLHEP::meter);
-      veto0.set_attractivity(-1.0);
+			datatools::properties veto0Config;
+			veto0Config.store("name", "veto0");
+			veto0Config.store("attractive_shape", "sphere");
+			veto0Config.store("position", "0.0 -1000 0.0 (mm)");
+			veto0Config.store("radius", 350.0); // mm
+			veto0Config.store("attractivity_label", "repulsive");
+			veto0.initialize(veto0Config);
+      // veto0.set_name("veto0");
+      // veto0.grab_position().set(0.0, -1.0 * CLHEP::meter, 0.0);
+      // veto0.set_radius(0.35 * CLHEP::meter);
+      // veto0.set_attractivity(-1.0);
       veto0.tree_dump(std::clog, veto0.get_name() + " :");
       peb.add_point_of_interest(veto0.get_name(), veto0);
     }
@@ -112,8 +132,8 @@ int main(int argc_, char ** argv_)
     spg_config.store("particle_name", "gamma");
     spg_config.store("mode", "energy_range");
     spg_config.store("energy_unit", "keV");
-    spg_config.store_with_explicit_unit("min_energy", 900.0 * CLHEP::keV);
-    spg_config.store_with_explicit_unit("max_energy",1100.0 * CLHEP::keV);
+    spg_config.store_with_explicit_unit("min_energy",  900.0 * CLHEP::keV);
+    spg_config.store_with_explicit_unit("max_energy", 1100.0 * CLHEP::keV);
     // spg_config.store_with_explicit_unit("mean_energy", 1000.0 * CLHEP::keV);
     // spg_config.store_with_explicit_unit("sigma_energy",  50.0 * CLHEP::keV);
     spg.initialize_standalone(spg_config);

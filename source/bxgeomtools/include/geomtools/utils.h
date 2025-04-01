@@ -108,6 +108,20 @@ namespace geomtools {
   //! \brief Parse a vector 3D object from an input string
   bool parse(const std::string & token_, vector_3d & position_);
 
+  //! \brief Parse a vector 3D object from an input string
+  //!
+  //! Supported format is:
+  //! \code
+  //! 1.2 3.4 5.6 
+  //! \endcode
+  //! where x, y and z are the cartesian coordinates in an arbitrary reference frame.
+	//! or:
+  //! \code
+  //! -x | +x | -y | +y | -z | +z    
+  //! \endcode
+	//! 
+  bool parse_direction(const std::string & token_, vector_3d & position_);
+
   void print_xy(std::ostream & out_,
                 const basic_polyline_2d & p_,
                 bool endl_ = true);

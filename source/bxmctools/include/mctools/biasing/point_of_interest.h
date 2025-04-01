@@ -132,6 +132,12 @@ namespace mctools {
       /// Check validity
       bool is_valid() const;
 
+      /// Check disc
+      bool is_disc() const;
+
+      /// Check sphere
+      bool is_sphere() const;
+
       /// Invalidate
       void invalidate();
 

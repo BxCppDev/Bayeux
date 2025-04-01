@@ -106,6 +106,16 @@ namespace mctools {
       return true;
     }
 
+    bool point_of_interest::is_disc() const
+    {
+      return _attractive_shape_ == ATTRACTIVE_SHAPE_DISC;
+    }
+
+    bool point_of_interest::is_sphere() const
+    {
+      return _attractive_shape_ == ATTRACTIVE_SHAPE_SPHERE;
+    }
+
     void point_of_interest::invalidate()
     {
       _name_.clear();
@@ -325,17 +335,25 @@ namespace mctools {
     bool point_of_interest::hit(const geomtools::vector_3d & source_,
                                 const geomtools::vector_3d & direction_) const
     {
+
+      auto logging = datatools::logger::PRIO_TRACE;
+      DT_LOG_TRACE_ENTERING(logging);
       const geomtools::vector_3d & S = source_;
       const geomtools::vector_3d & P = _position_;
       geomtools::vector_3d SP = P - S;
       double dist = SP.mag();
+      DT_LOG_TRACE(logging, "radius = " << _radius_); 
+      DT_LOG_TRACE(logging, "dist   = " << dist); 
+      DT_LOG_TRACE(logging, "orientation = " << _orientation_); 
       if (!_skip_check_inside_ and dist < _radius_) {
+	DT_LOG_TRACE(logging, "dist < radius"); 
 
         if (_attractive_shape_ == ATTRACTIVE_SHAPE_SPHERE) {
           return true;
         }
         if (_attractive_shape_ == ATTRACTIVE_SHAPE_DISC) {
           const geomtools::vector_3d & O = _orientation_;
+	  DT_LOG_TRACE(logging, "====> PLANE");
           geomtools::plane plane_of_the_disk(P,O);
           if (plane_of_the_disk.is_on_surface(S, geomtools::constants::get_default_tolerance())) return true;
         }
@@ -352,6 +370,7 @@ namespace mctools {
          */
       }
       if (SP.dot(direction_) < 0.0) {
+	DT_LOG_TRACE(logging, "SP.dot(dir) < 0"); 
         /*
          *                   _.-"""""-._ PoI
          *                 .'           `.
@@ -368,6 +387,7 @@ namespace mctools {
       // 2019-05-28 FM+RC : to be reviewed:
       double rho = datatools::invalid_real();
       if (_attractive_shape_ == ATTRACTIVE_SHAPE_SPHERE) {
+	DT_LOG_TRACE(logging, "attractive sphere"); 
         geomtools::vector_3d L = S + 2 * dist * direction_.unit();
         geomtools::line_3d SL(source_, L);
         /*
@@ -390,8 +410,11 @@ namespace mctools {
          */
         rho = SL.get_distance_to_line(P);
       } else {
+	DT_LOG_TRACE(logging, "attractive disc"); 
         // ATTRACTIVE_SHAPE_DISC
         const geomtools::vector_3d & O = _orientation_;
+	DT_LOG_TRACE(logging, "P = " << P); 
+	DT_LOG_TRACE(logging, "O = " << O); 
         geomtools::plane plane_of_the_disk(P,O);
         geomtools::vector_3d L = plane_of_the_disk.projection(S, direction_);
         geomtools::vector_3d LP = P - L;

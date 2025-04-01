@@ -441,6 +441,80 @@ namespace geomtools {
     return are_near (vec1_, vec2_, tolerance_);
   }
 
+  bool parse_direction(std::istream & in_, vector_3d & direction_, bool nothing_more_)
+  {
+    invalidate_vector_3d(direction_);
+    double x(0.0), y(0.0), z(0.0);
+    in_ >> std::ws;
+    in_ >> x >> y >> z;
+    if (!in_) {
+      return false;
+    }
+    in_ >> std::ws;
+    if (nothing_more_) {
+      // Check if the stream is empty as we want no more token
+      std::string token;
+      in_ >> token;
+      if (token.length() > 0) {
+        return false;
+      }
+    }
+    direction_.set(x, y, z);
+    return true;
+  }
+
+  bool parse_direction(const std::string & token_, vector_3d & direction_)
+  {
+    invalidate_vector_3d(direction_);
+    {
+      std::istringstream iss(token_);
+      std::string tok;
+      iss >> std::ws >> tok >> std::ws;
+      if (not tok.empty()) { 
+	if (tok == get_direction_label(DIRECTION_XMINUS)) {
+	  direction_.set(-1.0, 0.0, 0.0);
+	} else if (tok == get_direction_label(DIRECTION_XPLUS)) {
+	  direction_.set(+1.0, 0.0, 0.0);
+	} else if (tok == get_direction_label(DIRECTION_YMINUS)) {
+	  direction_.set(0.0, -1.0, 0.0);
+	} else if (tok == get_direction_label(DIRECTION_YPLUS)) {
+	  direction_.set(0.0, +1.0, 0.0);
+	} else if (tok == get_direction_label(DIRECTION_ZMINUS)) {
+	  direction_.set(0.0, 0.0, -1.0);
+	} else if (tok == get_direction_label(DIRECTION_ZPLUS)) {
+	  direction_.set(0.0, 0.0, +1.0);
+	}
+      }
+    }
+    if (is_valid(direction_)) {
+      return true;
+    }
+
+    { // XXX
+      std::istringstream iss(token_);
+      double phi, theta;
+      std::string angleUnitStr;
+      double angleUnit = datatools::units::get_angle_unit_from("degree");
+      iss >> std::ws >> phi >> theta >> angleUnitStr;
+      if (angleUnitStr.empty()) {
+	angleUnit = datatools::units::get_angle_unit_from(angleUnitStr);
+      }
+      phi *= angleUnit;
+      theta *= angleUnit;
+      iss >> std::ws;
+      direction_.set(0.0, 0.0, 1.0);
+      direction_.setTheta(theta);
+      direction_.setPhi(phi);
+    }
+    if (is_valid(direction_)) {
+      return true;
+    }
+    
+    std::istringstream iss(token_);
+    bool ok = parse_direction(iss, direction_, true);
+    return ok;
+  }
+
   bool parse(const std::string & token_, vector_3d & position_)
   {
     std::istringstream iss(token_);
@@ -454,10 +528,11 @@ namespace geomtools {
     double x(0.0), y(0.0), z(0.0);
     double length_unit = CLHEP::mm;
     in_ >> std::ws;
-    in_ >> x >> y >> z >> std::ws;
+    in_ >> x >> y >> z;
     if (!in_) {
       return false;
     }
+    in_ >> std::ws;
     // Extract length unit:
     if (! in_.eof ()) {
       char open = in_.peek();

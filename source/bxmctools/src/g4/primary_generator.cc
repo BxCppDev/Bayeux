@@ -231,11 +231,16 @@ namespace mctools {
       if (config_.has_key("using_bias")) {
         bool use_bias = config_.fetch_boolean("using_bias");
         if (use_bias) {
-          datatools::properties bias_config;
-          config_.export_and_rename_starting_with(bias_config, "bias.", "");
-          _bias_.reset(new mctools::biasing::primary_event_bias);
-          _bias_->set_geometry_manager(_run_action_->get_manager().get_geom_manager());
-          _bias_->initialize(bias_config);
+	  datatools::properties bias_config;
+	  if (config_.has_key("bias_config")) {
+	    std::string bias_config_path = config_.fetch_path("bias_config");
+	    datatools::properties::read_config(bias_config_path, bias_config);
+	  } else {	  
+	    config_.export_and_rename_starting_with(bias_config, "bias.", "");
+	  }
+	  _bias_.reset(new mctools::biasing::primary_event_bias);
+	  _bias_->set_geometry_manager(_run_action_->get_manager().get_geom_manager());
+	  _bias_->initialize(bias_config);
         }
       }
 
