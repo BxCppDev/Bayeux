@@ -1999,8 +1999,19 @@ namespace genbb {
     static const std::string time_range_label[2] = { "prompt", "delayed" };
     inspector_data timing_data[2];
 
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
     // Reflection meta-class :
     const camp::Class & metaClass = camp::classByName("genbb::inspector_data");
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+#pragma GCC diagnostic pop
+#endif
+#endif
 
     // Extract data from the generated event :
     for (int timing = PROMPT; timing <= DELAYED; timing++) {
