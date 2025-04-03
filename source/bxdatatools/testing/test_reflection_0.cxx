@@ -26,12 +26,12 @@
 #include <datatools/things.h>
 #include <datatools/detail/api.h> // for __GNUC_VERSION__
 
-#if defined(__GNUC__)
-#if __GNUC_VERSION__ >= 130000
-#pragma message "GCC13 workaround : applying special diagnostic ignored '-Wdangling-reference'"
-#pragma GCC diagnostic ignored "-Wdangling-reference"
-#endif
-#endif
+// #if defined(__GNUC__)
+// #if __GNUC_VERSION__ >= 130000
+// #pragma message "GCC13 workaround : applying special diagnostic ignored '-Wdangling-reference'"
+// #pragma GCC diagnostic ignored "-Wdangling-reference"
+// #endif
+// #endif
 
 void test_things(bool /*debug_*/);
 void test_multi_properties(bool /*debug_*/);
@@ -93,20 +93,20 @@ void test_things (bool /*debug_*/)
   std::clog << "*** test_things : " << std::endl;
 
   // Access meta class for class 'things' :
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wdangling-reference"
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & tMetaClass = camp::classByName("datatools::things");
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Restoring original diagnostic conditions"
-// #pragma GCC diagnostic pop
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Restoring original diagnostic conditions"
+#pragma GCC diagnostic pop
+#endif
+#endif
   {
 
     // Allocate a new 'things' object from the metaclass factory
