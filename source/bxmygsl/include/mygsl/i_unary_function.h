@@ -6,7 +6,6 @@
 // Standard library:
 #include <iostream>
 #include <limits>
-#include <functional>
 #include <string>
 #include <vector>
 #include <map>
@@ -42,8 +41,7 @@ namespace mygsl {
 
   //! \brief Abstract interface for unary functions : R -> R
   class i_unary_function
-    : public std::unary_function<double,double>
-    , public datatools::i_tree_dumpable
+    : public datatools::i_tree_dumpable
   {
   public:
 
