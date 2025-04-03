@@ -18,20 +18,20 @@ echo "[log] USER=${USER}"
 echo "[log] SELFDIR=${SELFDIR}"
 echo "[log] PROJECTDIR=${PROJECTDIR}"
 
-# Compiler selection
-if [ `uname` == "Linux" ] ; then
-  # GCC 7 is default
-  export CC=gcc-7
-  export CXX=g++-7
-  export FC=gfortran-7
+# # Compiler selection
+# if [ `uname` == "Linux" ] ; then
+#   # GCC 7 is default
+#   export CC=gcc-7
+#   export CXX=g++-7
+#   export FC=gfortran-7
 
-  # GCC 9 on Ubuntu 20.04
-  if [ -e "/usr/bin/gcc-9" ] ; then
-    export CC=gcc-9
-    export CXX=g++-9
-    export FC=gfortran-9
-  fi
-fi
+#   # GCC 9 on Ubuntu 20.04
+#   if [ -e "/usr/bin/gcc-9" ] ; then
+#     export CC=gcc-9
+#     export CXX=g++-9
+#     export FC=gfortran-9
+#   fi
+# fi
 
 # Create build directory, deleting if present
 rm -Rf build && mkdir build
