@@ -48,7 +48,7 @@ jobs:
   #         bash $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
   #       shell: bash
 
-  build-minimal-and-test-ubuntu-22.04:
+  build-minimal-and-test-ubuntu-22_04:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
@@ -77,13 +77,13 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Configure, build, and test
         run: |
-          echo "Running CI-minimal script..."
+          echo "Running CI-minimal script..." 
           ls -l $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
           bash $GITHUB_WORKSPACE/.github/workflows/ciscript-minimal.sh
         shell: bash
 
 
-  build-minimal-and-test-24.04:
+  build-minimal-and-test-ubuntu-24_04:
     # The type of runner that the job will run on
     runs-on: ubuntu-24.04
 
