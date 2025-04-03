@@ -369,7 +369,20 @@ void test_logger (bool /*debug_*/)
         std::clog << "Does not exist: " << "datatools::logger::property" << std::endl;
       }
 
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
       const camp::Enum & tMetaEnum = camp::enumByName("datatools::logger::priority");
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
       for (int i = 0; i < (int) tMetaEnum.size(); i++) {
         std::clog << " - Key '" << tMetaEnum.pair(i).name
                   << "' has value = " << tMetaEnum.pair(i).value << std::endl;
