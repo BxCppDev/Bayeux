@@ -102,20 +102,20 @@ void test2()
 void test_reflection()
 {
   std::cerr << "\n******** Entering test_reflection... " << std::endl;
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wdangling-reference"
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & aoMetaClass = camp::classByName("datatools::enriched_base");
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic pop
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
   std::cerr << "******** Go. " << std::endl;
 
   camp::UserObject aoObj = aoMetaClass.construct();

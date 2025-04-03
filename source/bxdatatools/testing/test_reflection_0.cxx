@@ -169,20 +169,20 @@ void test_things (bool /*debug_*/)
 void test_multi_properties (bool /*debug_*/)
 {
   std::clog << "*** test_multi_properties : " << std::endl;
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wdangling-reference"
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & mpropsMetaClass = camp::classByName("datatools::multi_properties");
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic pop
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
   {
     camp::UserObject mpropsObj = mpropsMetaClass.construct(camp::Args ("id", "class"));
 
@@ -239,20 +239,20 @@ void test_multi_properties (bool /*debug_*/)
 void test_properties (bool /*debug_*/)
 {
   std::clog << "*** test_properties : " << std::endl;
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wdangling-reference"
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & propsMetaClass = camp::classByName("datatools::properties");
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic pop
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
 
   {
     //boost::scoped_ptr<datatools::properties> props (propsMetaClass.construct<datatools::properties> (camp::Args ("A test properties")));
@@ -296,20 +296,20 @@ void test_properties (bool /*debug_*/)
 void test_event_id (bool /*debug_*/)
 {
   std::clog << "*** test_event_id : " << std::endl;
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wdangling-reference"
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
   const camp::Class & evIdMetaClass = camp::classByName("datatools::event_id");
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic pop
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
 
   {
     //boost::scoped_ptr<datatools::event_id> evId (evIdMetaClass.construct<datatools::event_id> (camp::Args (3, 55)));
@@ -343,20 +343,20 @@ void test_logger (bool /*debug_*/)
 {
   std::clog << "*** test_logger : " << std::endl;
   {
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wdangling-reference"
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
+#endif
     const camp::Class & tMetaClass = camp::classByName("datatools::logger");
-// #if defined(__GNUC__)
-// #if __GNUC_VERSION__ >= 130000
-//   // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
-// #pragma GCC diagnostic pop
-// #endif
-// #endif
+#if defined(__GNUC__)
+#if __GNUC_VERSION__ >= 130000
+  // #pragma message "Applying special diagnostic ignored '-Wdangling-reference'"
+#pragma GCC diagnostic pop
+#endif
+#endif
     std::clog << "tMetaClass = " << tMetaClass.name() <<  std::endl;
 
     try {
