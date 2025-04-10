@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2024-09-05
+:Date:    2025-04-10
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -153,8 +153,8 @@ Debian  or Fedora,  as Linux  is our  main development  and production
 environment.  Other  UNIX-like OSes  (Linux, BSD, macOS)  **may** work
 with some work of adapting.
 
-Bayeux uses the C++11 standard by default so this implies the use of a
-modern C++ compiler (example: GCC version >= 4.9).
+Bayeux uses the C++14 standard by default so this implies the use of a
+modern C++ compiler (example: GCC version >= 6.1, see https://gcc.gnu.org/projects/cxx-status.html).
 
 You may  use a dedicated `Linuxbrew`_  *tap* like the one  proposed by
 the BxCppDev_  group (`bxcppdev/bxtap`_). It  may help you to  setup a
@@ -254,10 +254,11 @@ distributions  derived from  Debian and Fedora (RedHat) provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
-- Ubuntu  20.04LTS (current  development  system), 18.04LTS,  16.04LTS
-  (deprecated but should work with  upgrade of some software tools) :
+- Ubuntu  22.04LTS (current  development  system), 24.04LTS
+  (former versions are deprecated but should work with  upgrade of some software tools, C++ compiler...) :
   http://www.ubuntu.com
 - CentOS 7.5: https://www.centos.org/
+- RHEL 9.4, 9.5: https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux
 
 If you have problems on systems other than these, please contact us,
 though support will be on a best effort basis.

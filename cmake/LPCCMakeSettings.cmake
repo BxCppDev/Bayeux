@@ -139,14 +139,14 @@
 # C++ Standard Selection
 # ^^^^^^^^^^^^^^^^^^^^^^
 #
-# LPC projects require support for C++11 at minimum, but users may optionally
+# LPC projects require support for C++14 at minimum, but users may optionally
 # compile against newer standards for compatibility. Including this module
 # adds a CMake option to select the standard:
 #
-# - ``<PROJECT_NAME_UC>_CXX_STANDARD`` : (default : 11)
+# - ``<PROJECT_NAME_UC>_CXX_STANDARD`` : (default : 14)
 #
 #   - Compile projects against this C++ Standard. Allowed values are
-#     ``11`` (default), ``14``, ``17`` (CMake > 3.7) , and ``20`` (CMake > 3.11).
+#     ``14`` (default), ``17`` (CMake > 3.7) , and ``20`` (CMake > 3.11).
 #
 
 #-----------------------------------------------------------------------
@@ -355,7 +355,7 @@ endif()
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # - Allow choice of standard
-set(BX_CXXSTD_VALUES "11" "14")
+set(BX_CXXSTD_VALUES "14")
 if(CMAKE_VERSION VERSION_GREATER 3.7)
   list(APPEND BX_CXXSTD_VALUES "17")
 endif()

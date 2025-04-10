@@ -97,7 +97,7 @@ boost_versions_added=
 minimal_build=false
 gcc_version=
 use_ninja=false
-bayeux_cxx_std=11
+bayeux_cxx_std=14
 
 function cl_parse()
 {
@@ -237,8 +237,8 @@ if [ -f /etc/lsb-release ]; then
 	my_exit 1
     fi
     
-    if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" -a "${distrib_release}" != "20.04"  -a "${distrib_release}" != "22.04" ]; then
-	echo >&2 "[error] Not an Ubuntu Linux version 16.04, 18.04, 20.04 or 22.04! Abort!"
+    if [ "${distrib_release}" != "16.04" -a "${distrib_release}" != "18.04" -a "${distrib_release}" != "20.04"  -a "${distrib_release}" != "22.04"  -a "${distrib_release}" != "24.04" ]; then
+	echo >&2 "[error] Not an Ubuntu Linux version 16.04, 18.04, 20.04, 22.04 or 24.04! Abort!"
 	my_exit 1
     else
 	echo >&2 "[info] Found Ubuntu Linux ${distrib_release}"
