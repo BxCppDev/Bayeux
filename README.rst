@@ -255,9 +255,10 @@ software listed below is installed. However, we can only fully support
 and test the following at present:
 
 - Ubuntu  22.04LTS (current  development  system), 24.04LTS
-  (former versions are deprecated but should work with  upgrade of some software tools, C++ compiler...) :
+  (former versions are deprecated and not tested anymore
+   but should work with  upgrade of some software tools, C++ compiler...) :
   http://www.ubuntu.com
-- CentOS 7.5: https://www.centos.org/
+- CentOS 7.5 and above: https://www.centos.org/
 - RHEL 9.4, 9.5: https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux
 
 If you have problems on systems other than these, please contact us,

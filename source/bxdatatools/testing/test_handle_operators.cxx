@@ -62,8 +62,7 @@ bool test_handle_indirect_operator()
     bool gotException{false};
     try {
       (*x) = 24;
-    }
-    catch (std::logic_error& e) {
+    } catch (std::logic_error& e) {
       //o.k., we've caught the expected error
       gotException = true;
     }
@@ -114,12 +113,16 @@ bool test_handle_deref_operator()
     x.reset();
     bool gotException{false};
     try {
-#if defined(__GNUC__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-value"
-      x->size();
-#pragma GCC diagnostic pop
-#endif
+// #if defined(__GNUC__)
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wunused-value"
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wunused-result"
+      auto sz = x->size();
+      std::clog << "size=" << sz << '\n';
+// #pragma GCC diagnostic pop
+// #pragma GCC diagnostic pop
+// #endif
     } catch (std::logic_error& e) {
       //o.k., we've caught the expected error
       gotException = true;
@@ -136,7 +139,7 @@ int main()
   DT_THROW_IF( !test_make_handle(), std::logic_error,
                "test_make_handle failed" );
   DT_THROW_IF( !test_handle_indirect_operator(), std::logic_error,
-               "test_handle_deref_operator failed" );
+               "test_handle_indirect_operator failed" );
   DT_THROW_IF( !test_handle_deref_operator(), std::logic_error,
                "test_handle_deref_operator failed" );
 

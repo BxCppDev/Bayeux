@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04/22.04) or CentOS (7.5/7.7/7.8).
+# A Bash script to build and install devel Bayeux on Ubuntu (16.04/18.04/20.04/22.04/24.04) or CentOS (7.5/7.7/7.8).
 
 # bayeux_build_env
 # 
@@ -549,6 +549,12 @@ if [ "${root_version}" \> "6.26" ]; then
 	bayeux_cxx_std=14
     fi
 fi
+if [ "${root_version}" \> "6.36" ]; then
+    if [ "17" \> "${bayeux_cxx_std}" ]; then
+	echo >&2 "[info] Forcing C++ standard 17 for recent ROOT..."
+	bayeux_cxx_std=17
+    fi
+fi
 root_dir="${root_prefix}/share/root/cmake"
 root_option="-DROOT_DIR=${root_dir}"
 
@@ -637,7 +643,7 @@ if [ ${system_find_boost} = true ]; then
 fi
 
 echo >&2 "[info] Bayeux C++ standard=${bayeux_cxx_std}"
-cxx_std_option="-DCMAKE_CXX_STANDARD=${bayeux_cxx_std}"
+cxx_std_option="-DCMAKE_CXX_STANDARD=${bayeux_cxx_std} -DBAYEUX_CXX_STANDARD=${bayeux_cxx_std}"
 
 cd ${build_dir}
 echo >&2 ""

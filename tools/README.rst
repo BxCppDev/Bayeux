@@ -16,6 +16,19 @@ Usage
 Build and install
 -----------------
 
+* From Ubuntu 24.04:
+
+  .. code:: bash
+
+     $ bayeux_build_setup 
+     $ bash ./tools/build.sh \
+        --clean-build-dir \
+        --build-base-dir /opt/SW/Bayeux3/_build.d \
+        --install-base-dir /opt/SW/Bayeux3/_install.d \
+	--cxx-17
+  ..
+
+     
 * From the Bayeux base source directory, use the build/installation script:
 
   .. code:: bash

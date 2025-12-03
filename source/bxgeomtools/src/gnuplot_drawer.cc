@@ -605,7 +605,9 @@ namespace geomtools {
             DT_LOG_DEBUG(local_priority, "Found color '" << color_label
                           << "' for logical '" << log.get_name() << "'...");
           }
-          if (color_label != color::transparent()) {
+	  bool isTransparent = false;
+	  isTransparent = (color_label == color::transparent());
+          if (not isTransparent) {
             std::ostringstream & colored_oss = _get_stream (color_label);
             // unsigned long mode = gnuplot_draw::MODE_NULL;
             // if (visibility::is_wired_cylinder(log_visu_config)) {
@@ -904,6 +906,7 @@ namespace geomtools {
         g1.set_title(title_oss.str ());
       }
     }
+    g1.cmd("set clip two");
 
     std::ostringstream cmdstr;
     int col1 = 1;
