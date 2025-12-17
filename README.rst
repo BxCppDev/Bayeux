@@ -6,7 +6,7 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: The BxCppDev_ group
-:Date:    2025-04-10
+:Date:    2025-12-17
 :Contact: bayeux@lpccaen.in2p3.fr
 
 .. contents::
@@ -254,12 +254,12 @@ distributions  derived from  Debian and Fedora (RedHat) provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
-- Ubuntu  22.04LTS (current  development  system), 24.04LTS
+- Ubuntu  24.04LTS (current  development  system)
   (former versions are deprecated and not tested anymore
    but should work with  upgrade of some software tools, C++ compiler...) :
   http://www.ubuntu.com
-- CentOS 7.5 and above: https://www.centos.org/
-- RHEL 9.4, 9.5: https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux
+- CentOS 7.5 and above: https://www.centos.org/ (not tested anymore)
+- RHEL 9.4, 9.5, 9.6, 9.7: https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux (but only tested in the specific environment of a scientific computing center). 
 
 If you have problems on systems other than these, please contact us,
 though support will be on a best effort basis.
@@ -272,6 +272,7 @@ Core Software Required
   * Ubuntu 18.04 provides CMake version 3.10.2.
   * Ubuntu 20.04 provides CMake version 3.16.3.
   * Ubuntu 22.04 provides CMake version 3.22.1.
+  * Ubuntu 24.04 provides CMake version 3.28.3.
 
 * C/C++ compiler supporting at least C++11 standard
   (GNU/Clang/Intel)
@@ -279,7 +280,8 @@ Core Software Required
   * Ubuntu 18.04 provides GCC version 6.5 and 7.3.
   * Ubuntu 20.04 provides GCC version 9.3.
   * Ubuntu 22.04 provides GCC version 11.4.0.
-  * Bayeux is known to work on CentOS with GCC 4.9
+  * Ubuntu 24.04 provides GCC version 13.3.0.
+  * Bayeux is known to work on RHEL with GCC 11.5.0
   
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
@@ -313,14 +315,14 @@ managers  (Linuxbrew,  Spack) may  help  too.
 
 .. https://github.com/BxCppDev/BxInstallers
 
-.. _`Bayeux-3.5.5`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.5
+.. _`Bayeux-3.5.6`: https://github.com/BxCppDev/Bayeux/releases/tag/Bayeux-3.5.6
 
 We list below the third party softwares required by Bayeux. If some of
 them are not available from the  system package manager, you will have
 to install them manually.
 
 
-* Boost  1.69.0, 1.71.0 (tough 1.70 and 1.72+ should work):  http://www.boost.org  with the  following
+* Boost  1.69.0 to 1.83.0:  http://www.boost.org  with the  following
   libraries:    filesystem,    system,    serialization,    iostreams,
   program_options, regex and thread.
 
@@ -329,6 +331,7 @@ to install them manually.
     Boost >= 1.69 by yourself
   * Ubuntu 20.04 provides version 1.71.0 (libboost-all-dev)
   * Ubuntu 22.04 provides version 1.74.0 (libboost-all-dev)
+  * Ubuntu 24.04 provides version 1.83.0 (libboost-all-dev)
 
   **Beware**: Boost  versions 1.65 (default  on Ubuntu 18.04)  to 1.68
   are  expected to  cause some  crash with  GCC under  Linux due  to a
@@ -338,13 +341,14 @@ to install them manually.
 * Camp >=0.8.0 (or 0.8.4 recommended) : https://github.com/IRCAD-IHU/camp
   
   * Ubuntu 18.04 does not provide Camp
-  * Ubuntu 20/22.04 provide version 0.8.4 (libcamp-dev)
+  * Ubuntu 20.04/22.04/24.04 provide version 0.8.4 (libcamp-dev)
 
 * GSL 2.4 or higher: http://www.gnu.org/s/gsl
 
   * Ubuntu 18.04 provides version 2.4 (libgsl-dev)
   * Ubuntu 20.04 provides version 2.5 (libgsl-dev)
   * Ubuntu 22.04 provides version 2.7.1 (libgsl-dev)
+  * Ubuntu 24.04 provides version 2.7.1 (libgsl-dev)
   
 * CLHEP 2.1.3.1, 2.1.4.2 (recommended), 2.4.1.0: http://proj-clhep.web.cern.ch
   
@@ -367,6 +371,7 @@ to install them manually.
  
   * Ubuntu 20.04 provides version 3.2.2 (libxerces-c-dev)
   * Ubuntu 22.04 provides version 3.2.3 (libxerces-c-dev)
+  * Ubuntu 24.04 provides version 3.2.4 (libxerces-c-dev)
 
 * ROOT 6.08.00, 6.12.04 or 6.16.00 (recommended): http://root.cern.ch
   Bayeux/geomtools requires you setup ROOT at least with support for:
@@ -377,7 +382,7 @@ to install them manually.
 
   You must install ROOT by yourself.
 
-  On Ubuntu 18.04  or 20.04, we have identified the  following list of
+  On Ubuntu 18.04 or 20.04, we have identified the  following list of
   packages to be installed to satisfy ROOT dependencies (this list may
   be  incomplete): g++,  gcc,  binutils, libfreetype6-dev,  libgsl-dev
   gsl-bin,  libbz2-dev  ,  zlib1g-dev,  libreadline-dev,  libxml2-dev,
@@ -385,14 +390,16 @@ to install them manually.
   libxpm-dev, libpng-dev,  libjpeg-dev, libgif-dev, libafterimage-dev,
   libtiff5-dev,      liblzma-dev,       liblz4-dev,      libfftw3-dev,
   libgraphviz-dev, libftgl-dev, libglew-dev, libpcre3-dev.
+  For 24.04 this should be the same.
 
 * Qt5 (optional)
 
   * Ubuntu 20.04 provides version 5.12.8 (libqt5core5a, libqt5gui5, libqt5widgets5,
     qt5-default, qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev)
   * Ubuntu 22.04 provides version 5.15.3
-    
-* BxDecay0 (>=1.1.2) : https://github.com/BxCppDev/bxdecay0
+  * Ubuntu 24.04 provides version 5.15.13
+     
+* BxDecay0 (>=1.2.0) : https://github.com/BxCppDev/bxdecay0
 
   You must  install BxDecay0 by  yourself. BxDecay0 depends on  GSL so
   you should  synchronize this dependency from  the Bayeux's dependency on
@@ -408,7 +415,7 @@ Install dependencies with BxInstallers
 
 We provide  a collection  of semi-automated installation  scripts from
 the BxInstallers_ project. ``BxInstallers`` is mostly dedicated to the
-Ubuntu  20/22.04  system. It  allows  to  build,  install and  setup  the
+Ubuntu  20/22/24.04  system. It  allows  to  build,  install and  setup  the
 software dependency stack for Bayeux.
 
 .. _BxInstallers: https://github.com/BxCppDev/BxInstallers
@@ -429,11 +436,6 @@ Note however that it is  perfectly possible to use system installation
 of  some of  the  above  libraries if  your  OS distribution  provides
 adequate support.
 
-Install dependencies with Spack
-...................................
-
-Work under progress.
-
 
 Additional Software Required
 ............................
@@ -450,10 +452,14 @@ Additional Software Required
 	    libqt5svg5-dev libqt5widgets5  \
 	    qt5-default
   ..
+
+  On 24.04, you can find libqt5widgets5t64. It seems there is no need for
+  the qt5-default package also.
+ 
   
 * Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
 
-  On Ubuntu 18.04/20.04, this implies the installation of the following packages:
+  On Ubuntu 18.04/20.04/22.04/24.04, this implies the installation of the following packages:
 
   .. code:: sh
 
@@ -514,11 +520,11 @@ Known Issues on Tested Platforms
 
 - Boost/Serialization library  from version 1.65 to  1.68 introduced a
   bug in  the implementation  of the singleton  template class.   As a
-  consequence, only Boost 1.69 and above should be supported so far.
+  consequence, only Boost 1.69 and above should be used.
 - Despite our efforts, Geant4 10.5 (no  MT build) is not supported yet
   since  the implementation  of hit  collections has  changed in  some
   undocumented way (as usual with  Geant4!) and now causes segfault in
-  the Bayeux/mctools Geant4 extension module.
+  the Bayeux/mctools Geant4 extension module, despite it compiles.
   
 .. raw:: pdf
 
@@ -548,7 +554,7 @@ in a directory isolated from the  source directory. This enables us to
 quickly clean  up in  the event  of issues,  and prevents  commital of
 generated (and hence system dependent) files to the repository.
 
-To configure  Bayeux under  Ubuntu 20.04, simply  do, from  the source
+To configure  Bayeux under  Ubuntu 24.04, simply  do, from  the source
 directory of Bayeux:
 
 .. code:: sh
