@@ -280,27 +280,27 @@ namespace geomtools {
     if (!title_.empty()) out_ << indent << title_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Plugin name     : '"
-        << _name_
-        << "'" << std::endl;
+	 << "Plugin name     : '"
+	 << _name_
+	 << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Plugin ID       : '"
-        << _id_
-        << "'" << std::endl;
+	 << "Plugin ID       : '"
+	 << _id_
+	 << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Plugin description : '"
-        << _description_
-        << "'" << std::endl;
+	 << "Plugin description : '"
+	 << _description_
+	 << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Can be dropped   : "
-        << can_be_dropped() << std::endl;
+	 << "Can be dropped   : "
+	 << can_be_dropped() << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-        << "Plugin status   : "
-        << _status_;
+	 << "Plugin status   : "
+	 << _status_;
     {
       size_t count = 0;
       std::ostringstream status_info;
@@ -316,8 +316,8 @@ namespace geomtools {
       }
       if (count) {
         out_ << ' ' << '('
-            << status_info.str()
-            << ')';
+	     << status_info.str()
+	     << ')';
       }
     }
     out_ << std::endl;
@@ -780,7 +780,7 @@ namespace geomtools {
                   "Property prefix to be preserved in logical must end with a dot '.' ("
                   << prefix << " ) !");
       DT_LOG_NOTICE(_logging,
-                   "Property prefix '" << prefix << "' will be exported by the model factory");
+		    "Property prefix '" << prefix << "' will be exported by the model factory");
       _factory_.add_property_prefix(prefix);
     }
 
@@ -822,9 +822,9 @@ namespace geomtools {
           const datatools::multi_properties::entry & model_mapping_entry = _external_mapping_rules_.get(model_name);
           std::string model_mapping_policy = model_mapping_entry.get_meta();
           if (model_mapping_policy == "merge") {
-             DT_THROW(std::logic_error, "Policy ('" << model_mapping_policy << "') for external mapping rules is not supported yet!");
+	    DT_THROW(std::logic_error, "Policy ('" << model_mapping_policy << "') for external mapping rules is not supported yet!");
           } else if (model_mapping_policy == "ignore") {
-             DT_THROW(std::logic_error, "Policy ('" << model_mapping_policy << "') for external mapping rules is not supported yet!");
+	    DT_THROW(std::logic_error, "Policy ('" << model_mapping_policy << "') for external mapping rules is not supported yet!");
           } else if (model_mapping_policy == "supersede") {
           } else if (model_mapping_policy.empty()) {
             // Default value:
@@ -848,8 +848,8 @@ namespace geomtools {
             /*
             // What to do with "ignore" and "merge" policy:
             if (model_mapping_policy == "ignore") {
-              model_mapping_rules.export_starting_with(factory_model_section,
-              mapping::constants::instance().MAPPING_PREFIX);
+	    model_mapping_rules.export_starting_with(factory_model_section,
+	    mapping::constants::instance().MAPPING_PREFIX);
             }
             if (model_mapping_policy == "merge") {
             }
@@ -1172,34 +1172,34 @@ namespace geomtools {
     if (!title_.empty()) out_ << indent << title_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Logging              : '"
-        << datatools::logger::get_priority_label(_logging) << "'"
-        << std::endl;
+	 << "Logging              : '"
+	 << datatools::logger::get_priority_label(_logging) << "'"
+	 << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Initialized          : "
-        << _initialized_
-        << "" << std::endl;
+	 << "Initialized          : "
+	 << _initialized_
+	 << "" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Setup label          : '"
-        << _setup_label_
-        << "'" << std::endl;
+	 << "Setup label          : '"
+	 << _setup_label_
+	 << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Setup version        : '"
-        << _setup_version_
-        << "'" << std::endl;
+	 << "Setup version        : '"
+	 << _setup_version_
+	 << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Setup description    : '"
-        << _setup_description_
-        << "'" << std::endl;
+	 << "Setup description    : '"
+	 << _setup_description_
+	 << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-        << "Services dictionnary : "
-        << _services_
-        << " " << std::endl;
+	 << "Services dictionnary : "
+	 << _services_
+	 << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Shape factory : "
@@ -1221,26 +1221,26 @@ namespace geomtools {
          << _factory_.get_models().size()
          << " " << std::endl;
 
-   out_ << indent << datatools::i_tree_dumpable::skip_tag
+    out_ << indent << datatools::i_tree_dumpable::skip_tag
          << datatools::i_tree_dumpable::tag
          << "Number of logical volumes  : "
          << _factory_.get_logicals().size()
          << " " << std::endl;
 
-   out_ << indent << datatools::i_tree_dumpable::skip_tag
+    out_ << indent << datatools::i_tree_dumpable::skip_tag
          << datatools::i_tree_dumpable::last_tag
          << "Exported property prefixes : "
          << " " << std::endl;
-   for (size_t i = 0; i < _factory_.get_property_prefixes().size(); i++) {
-     out_ << indent << datatools::i_tree_dumpable::skip_tag
-          << datatools::i_tree_dumpable::last_skip_tag;
-     if (i != _factory_.get_property_prefixes().size() - 1) {
-       out_ << datatools::i_tree_dumpable::tag;
-     } else {
-       out_ << datatools::i_tree_dumpable::last_tag;
-     }
-     out_ << "'" << _factory_.get_property_prefixes()[i] << "'" << std::endl;
-   }
+    for (size_t i = 0; i < _factory_.get_property_prefixes().size(); i++) {
+      out_ << indent << datatools::i_tree_dumpable::skip_tag
+	   << datatools::i_tree_dumpable::last_skip_tag;
+      if (i != _factory_.get_property_prefixes().size() - 1) {
+	out_ << datatools::i_tree_dumpable::tag;
+      } else {
+	out_ << datatools::i_tree_dumpable::last_tag;
+      }
+      out_ << "'" << _factory_.get_property_prefixes()[i] << "'" << std::endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Mapping requested    : "
@@ -1276,27 +1276,27 @@ namespace geomtools {
       std::vector<std::string> plugin_factory_names;
       _plugins_factory_register_.tree_dump(out_,"",indent2.str());
       /*
-      std::vector<std::string> plugin_factory_names;
-      _plugins_factory_register_.list_of_factories(plugin_factory_names);
-      for (int i = 0; i < plugin_factory_names.size(); i++)  {
+	std::vector<std::string> plugin_factory_names;
+	_plugins_factory_register_.list_of_factories(plugin_factory_names);
+	for (int i = 0; i < plugin_factory_names.size(); i++)  {
         int j = i;
         j++;
         out_ << indent;
         out_ << datatools::i_tree_dumpable::skip_tag;
         if (j == plugin_factory_names.size()) {
-          out_ << datatools::i_tree_dumpable::last_tag;
+	out_ << datatools::i_tree_dumpable::last_tag;
         } else {
-          out_ << datatools::i_tree_dumpable::tag;
+	out_ << datatools::i_tree_dumpable::tag;
         }
         out_ << plugin_factory_names[i] << std::endl;
-      }
+	}
       */
     }
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-        << "Plugins                              : "
-        << _plugins_.size()
-        << " " << std::endl;
+	 << "Plugins                              : "
+	 << _plugins_.size()
+	 << " " << std::endl;
     for (plugins_dict_type::const_iterator i = _plugins_.begin();
          i != _plugins_.end();
          i++) {
@@ -1377,12 +1377,25 @@ namespace geomtools {
       }
       else if (option=="--with-type" || option=="-p") {
         int type = -1;
-        options_iss >> type >> std::ws;
-        if (!options_iss) {
+	std::string typeRepr;
+        options_iss >> typeRepr >> std::ws;
+	try {
+	  type = std::stoi(typeRepr);
+	} catch (std::invalid_argument const& error) {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                        "Invalid geometry type format !");
           return 1;
-        }
+	} catch (std::out_of_range const& error) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                       "Invalid geometry type format !");
+          return 1;
+	}
+        // options_iss >> type >> std::ws;
+        // if (!options_iss) {
+        //   DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+        //                "Invalid geometry type format !");
+        //   return 1;
+        // }
         if (type < 0) {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                        "Missing geometry category type (please use: '--with-type TYPE') !");
@@ -1435,7 +1448,7 @@ namespace geomtools {
         if (std::find(requested_categories.begin(),
                       requested_categories.end(),
                       category) != requested_categories.end()) {
-           selected = true;
+	  selected = true;
         }
       }
       if (! selected && requested_types.size()) {
@@ -2014,7 +2027,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                                "    \"@foo:config/plugins/material.conf\"  \\                      \n"
                                "    \"@foo:config/plugins/magfields.conf\"                         \n"
                                "                                                                   \n"
-                              );
+			       );
 
   ocd_.set_validation_support(true);
   ocd_.lock();

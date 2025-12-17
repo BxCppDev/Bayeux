@@ -7,11 +7,8 @@ of the Bayeux library for Ubuntu Linux 18.04/20.04 and CentOS 7.5:
 
 * ``build.sh``
 
-
-
 Usage
 ================
-
 
 Build and install
 -----------------
@@ -22,12 +19,21 @@ Build and install
 
      $ bayeux_build_setup 
      $ bash ./tools/build.sh \
-        --clean-build-dir \
         --build-base-dir /opt/SW/Bayeux3/_build.d \
         --install-base-dir /opt/SW/Bayeux3/_install.d \
 	--cxx-17
   ..
 
+* Clean the build dir after installation:
+
+  .. code:: bash
+
+     $ bash ./tools/build.sh \
+        --clean-build-dir \
+        --build-base-dir /opt/SW/Bayeux3/_build.d \
+        --install-base-dir /opt/SW/Bayeux3/_install.d \
+	--cxx-17
+  ..
      
 * From the Bayeux base source directory, use the build/installation script:
 
@@ -41,7 +47,7 @@ Build and install
      [info] bxdecay0_1_1_0_setup: BxDecay0 version 1.1.0 is now setup !
      [info] root_6_16_00_setup: ROOT version 6.16.00 is now setup !
      $ ./tools/build.sh --help
-     $ bxsuffix="-352"
+     $ bxsuffix="-3.5.6"
      $ rm -fr /scratch/sw/Bayeux/build-develop${bxsuffix}
      $ rm -fr /scratch/sw/Bayeux/install-develop${bxsuffix}
      $ ./tools/build.sh \

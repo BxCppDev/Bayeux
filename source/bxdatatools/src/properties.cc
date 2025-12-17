@@ -805,13 +805,13 @@ namespace datatools {
       DT_THROW(std::logic_error, "properties key must not be empty");
     }
     if (prop_key_.find_first_not_of(kAllowedChars) != std::string::npos) {
-      DT_THROW(std::logic_error, "properties key must only contain alphanumeric chars, underscores, and periods");
+      DT_THROW(std::logic_error, "properties key '" << prop_key_ << "' must only contain alphanumeric chars, underscores, and periods");
     }
     if ((std::isdigit(static_cast<unsigned char>(prop_key_.front())) != 0) || prop_key_.front() == '.') {
-      DT_THROW(std::logic_error, "properties key must not start with a digit or period");
+      DT_THROW(std::logic_error, "properties key '" << prop_key_ << "' must not start with a digit or period");
     }
     if (prop_key_.back() == '.') {
-      DT_THROW(std::logic_error, "properties key must not end with '.'");
+      DT_THROW(std::logic_error, "properties key '" << prop_key_ << "' must not end with '.'");
     }
     return;
   }
